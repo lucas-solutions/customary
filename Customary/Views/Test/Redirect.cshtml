@@ -1,0 +1,30 @@
+﻿@model Custom.Models.RedirectModel
+@{
+    ViewBag.Title = "Redirect";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Redirect</h2>
+<ul>
+    <li>@Model.SessionID</li>
+    <li>@Model.HitCount</li>
+    <li>@Model.Param</li>
+    <li>@Model.Url</li>
+    <li>@Model.OriginalUrl</li>
+    <li>
+        <ul>
+            @foreach (var key in Context.Request.QueryString.AllKeys)
+            {
+                <li><span>@key</span> - <span>@Context.Request.QueryString[key]</span></li>
+            }
+        </ul>
+    </li>
+    <li>
+        <ul>
+            @foreach (var key in Model.QueryString.AllKeys)
+            {
+                <li><span>@key</span> - <span>@Model.QueryString[key.ToUpper()]</span></li>
+            }
+        </ul>
+    </li>
+</ul>

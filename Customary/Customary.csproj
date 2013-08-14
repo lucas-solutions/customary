@@ -182,12 +182,43 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Cookie.cs" />
+    <Compile Include="Controllers\CookieRepository.cs" />
+    <Compile Include="Controllers\CustomController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
+    <Compile Include="Filters\PerformanceCounterAttribute.cs" />
+    <Compile Include="Filters\PerformanceCounterManager.cs" />
+    <Compile Include="Filters\PerformanceCounterTypes.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Loggly\Components\Communicator.cs" />
+    <Compile Include="Loggly\Components\IConfigurationData.cs" />
+    <Compile Include="Loggly\Components\ILogglyConfiguration.cs" />
+    <Compile Include="Loggly\Components\IRequestContext.cs" />
+    <Compile Include="Loggly\Components\LogglyExtensions.cs" />
+    <Compile Include="Loggly\Facet.cs" />
+    <Compile Include="Loggly\FacetQuery.cs" />
+    <Compile Include="Loggly\Fields.cs" />
+    <Compile Include="Loggly\IFacet.cs" />
+    <Compile Include="Loggly\ILogger.cs" />
+    <Compile Include="Loggly\ISearcher.cs" />
+    <Compile Include="Loggly\Logger.cs" />
+    <Compile Include="Loggly\LogglyException.cs" />
+    <Compile Include="Loggly\Order.cs" />
+    <Compile Include="Loggly\Responses\FacetResponse.cs" />
+    <Compile Include="Loggly\Responses\LogResponse.cs" />
+    <Compile Include="Loggly\Responses\Response.cs" />
+    <Compile Include="Loggly\Responses\SearchJsonResponse.cs" />
+    <Compile Include="Loggly\Responses\SearchResponse.cs" />
+    <Compile Include="Loggly\Searcher.cs" />
+    <Compile Include="Loggly\SearchQuery.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\PageModel.cs" />
+    <Compile Include="Models\RedirectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +332,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Test\Redirect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

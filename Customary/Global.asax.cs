@@ -23,6 +23,11 @@ namespace Custom
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+            //Loggly.LogglyConfiguration.Configure(c => c.AuthenticateWith("customary", "querty77"));
+
+            var logger = new Loggly.Logger("21e21e20-67cc-49ec-b817-a5e09e81780c");
+            logger.Log("Application_Start");
         }
     }
 }

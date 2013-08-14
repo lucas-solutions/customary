@@ -10,6 +10,9 @@ namespace Custom.Controllers
     {
         public ActionResult Index()
         {
+            var logger = new Loggly.Logger("21e21e20-67cc-49ec-b817-a5e09e81780c");
+            logger.LogError("Home Index", new HttpException(500, "Text"), new Dictionary<string, object> { { "value", "1" } });
+
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 
             return View();
