@@ -77,3 +77,12 @@ Customary.Tests/bin/Debug/zh-Hans/System.Spatial.resources.dll
 Customary.Tests/bin/Debug/zh-Hant/Microsoft.Data.Edm.resources.dll
 Customary.Tests/bin/Debug/zh-Hant/Microsoft.Data.OData.resources.dll
 Customary.Tests/bin/Debug/zh-Hant/System.Spatial.resources.dll
+Customary/bin/Customary.dll
+Customary/bin/Customary.pdb
+Customary/bin/SimpleInjector.Extensions.LifetimeScoping.dll
+Customary/bin/SimpleInjector.Extensions.LifetimeScoping.xml
+Customary/obj/Debug/Customary.csproj.FileListAbsolute.txt
+Customary/obj/Debug/Customary.csprojResolveAssemblyReference.cache
+Customary/obj/Debug/Customary.dll
+Customary/obj/Debug/Customary.pdb
+Customary/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache

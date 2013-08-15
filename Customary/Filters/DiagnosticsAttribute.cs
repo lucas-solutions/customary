@@ -29,6 +29,7 @@ namespace Custom.Filters
 
         void IActionFilter.OnActionExecuted(ActionExecutedContext filterContext)
         {
+            var time = Stopwatch.GetTimestamp() - _startTime;
         }
 
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
