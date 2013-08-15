@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Loggly.Responses
+namespace Custom.Diagnostics.Responses
 {
     public class FacetResponse
     {

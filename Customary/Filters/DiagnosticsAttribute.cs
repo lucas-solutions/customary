@@ -7,11 +7,13 @@ using System.Web.Mvc;
 
 namespace Custom.Filters
 {
+    using Custom.Diagnostics;
+
     /// <summary>
     /// Easily Add Performance Counters to Your MVC Application:
     /// http://msdn.microsoft.com/en-us/magazine/hh288078.aspx
     /// </summary>
-    public class PerformanceCounterAttribute : FilterAttribute, IActionFilter, IExceptionFilter, IResultFilter
+    public class DiagnosticsAttribute : FilterAttribute, IActionFilter, IExceptionFilter, IResultFilter
     {
         private long _startTime = 0;
 
@@ -65,9 +67,9 @@ namespace Custom.Filters
             _startTime = Stopwatch.GetTimestamp();
         }
 
-        private PerformanceCounterManager GetPerformanceCounterManager(HttpContextBase context)
+        private DiagnosticsManager GetPerformanceCounterManager(HttpContextBase context)
         {
-            PerformanceCounterManager manager = context.Application[PerformanceCounterManager.PerformanceCounterManagerApplicationKey] as PerformanceCounterManager;
+            DiagnosticsManager manager = context.Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] as DiagnosticsManager;
 
             return manager;
         }

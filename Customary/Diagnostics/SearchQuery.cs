@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
     public class SearchQuery
     {

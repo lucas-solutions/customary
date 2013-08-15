@@ -1,7 +1,7 @@
 ﻿
-namespace Loggly
+namespace Custom.Diagnostics
 {
-    using Loggly.Responses;
+    using Custom.Diagnostics.Responses;
 
     public class Facet : IFacet, IRequestContext
     {

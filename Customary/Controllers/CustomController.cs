@@ -7,6 +7,8 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
+    using Custom.Diagnostics;
+
     public abstract class CustomController : Controller
     {
         private readonly NameValueCollection _queryString;

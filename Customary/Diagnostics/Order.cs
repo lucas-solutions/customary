@@ -1,5 +1,5 @@
 ﻿
-namespace Loggly
+namespace Custom.Diagnostics
 {
     public enum Order
     {

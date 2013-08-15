@@ -32,7 +32,7 @@ namespace Custom.App_Start
 
             // For instance:
             // container.Register<IUserRepository, SqlUserRepository>();
-            container.RegisterSingle<Loggly.ILogger>(new Loggly.Logger("21e21e20-67cc-49ec-b817-a5e09e81780c"));
+            container.RegisterSingle<Custom.Diagnostics.ILogger>(new Custom.Diagnostics.LogglyLogger("21e21e20-67cc-49ec-b817-a5e09e81780c"));
         }
     }
 }

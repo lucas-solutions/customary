@@ -4,9 +4,9 @@ using System.Net;
 using System.Text;
 using System.Web;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
-    using Loggly.Responses;
+    using Custom.Diagnostics.Responses;
     using Newtonsoft.Json;
 
     public class Communicator

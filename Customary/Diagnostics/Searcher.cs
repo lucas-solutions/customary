@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
-    using Loggly.Responses;
+    using Custom.Diagnostics.Responses;
 
     public class Searcher : ISearcher, IRequestContext
     {

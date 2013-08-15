@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loggly.Responses
+namespace Custom.Diagnostics.Responses
 {
     public class Response
     {

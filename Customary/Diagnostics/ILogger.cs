@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
-    using Loggly.Responses;
+    using Custom.Diagnostics.Responses;
 
     public interface ILogger
     {

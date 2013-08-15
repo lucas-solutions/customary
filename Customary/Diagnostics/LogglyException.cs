@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
     public class LogglyException : Exception
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
     public static class LogglyExtensions
     {

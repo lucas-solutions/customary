@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Loggly.Responses
+namespace Custom.Diagnostics.Responses
 {
     using Newtonsoft.Json;
 
-    public class SearchJsonResponse
+    public class SearchResponse
     {
-        private IList<JsonRecord> _results;
+        private IList<Record> _results;
 
         [JsonProperty("numFound")]
         public int TotalRecords { get; set; }
 
         [JsonProperty("data")]
-        public IList<JsonRecord> Results
+        public IList<Record> Results
         {
-            get { return _results ?? (_results = new List<JsonRecord>(0)); }
+            get { return _results ?? (_results = new List<Record>(0)); }
         }
     }
 
-    public class JsonRecord
+    public class Record
     {
         public DateTime? Timestamp { get; set; }
         public string InputName { get; set; }
@@ -27,6 +27,6 @@ namespace Loggly.Responses
         [JsonProperty("ip")]
         public string IpAddress { get; set; }
 
-        public IDictionary<string, object> Json { get; set; }
+        public string Text { get; set; }
     }
 }

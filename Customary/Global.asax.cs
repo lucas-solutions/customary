@@ -9,6 +9,8 @@ using System.Web.Routing;
 
 namespace Custom
 {
+    using Custom.Diagnostics;
+
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
@@ -24,10 +26,14 @@ namespace Custom
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-            //Loggly.LogglyConfiguration.Configure(c => c.AuthenticateWith("customary", "querty77"));
+            //Loggly.LogglyConfiguration.Configure(c => c.AuthenticateWith("", ""));
 
-            var logger = new Loggly.Logger("21e21e20-67cc-49ec-b817-a5e09e81780c");
+            var logger = new Custom.Diagnostics.LogglyLogger("21e21e20-67cc-49ec-b817-a5e09e81780c");
             logger.Log("Application_Start");
+
+            var perfCounterMgr = new DiagnosticsManager();
+            perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
+            Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;
         }
     }
 }

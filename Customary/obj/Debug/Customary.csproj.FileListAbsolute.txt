@@ -68,3 +68,4 @@ C:\Playground\Customary\Customary\bin\System.Net.Http.Extensions.xml
 C:\Playground\Customary\Customary\bin\System.Net.Http.Primitives.xml
 C:\Playground\Customary\Customary\bin\Org.Mentalis.Security.Cryptography.xml
 C:\Playground\Customary\Customary\bin\Mono.Math.xml
+C:\Playground\Customary\Customary\obj\Debug\Customary.csprojResolveAssemblyReference.cache

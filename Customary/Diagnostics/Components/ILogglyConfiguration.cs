@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
     public interface ILogglyConfiguration
     {

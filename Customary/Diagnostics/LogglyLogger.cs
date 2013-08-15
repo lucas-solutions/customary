@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Loggly
+namespace Custom.Diagnostics
 {
-    using Loggly.Responses;
+    using Custom.Diagnostics.Responses;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -22,12 +22,12 @@ namespace Loggly
     /// Authorize URL
     /// http://customary.loggly.com/api/oauth/authorize/
     /// </summary>
-    public class Logger : ILogger, IRequestContext
+    public class LogglyLogger : ILogger, IRequestContext
     {
         private string _url = "logs.loggly.com/";
         private readonly string _inputKey;
 
-        public Logger(string inputKey, string alternativeUrl = null)
+        public LogglyLogger(string inputKey, string alternativeUrl = null)
         {
             if (!string.IsNullOrEmpty(alternativeUrl))
                 _url = alternativeUrl;

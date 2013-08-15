@@ -7,9 +7,11 @@ using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Custom.Filters
+namespace Custom.Diagnostics
 {
-    public class PerformanceCounterManager
+    using Custom.Filters;
+
+    public class DiagnosticsManager
     {
         public const string Total = "Total";
         public const string PerformanceCounterManagerApplicationKey = "CustomaryPerformanceCounter";
@@ -43,12 +45,12 @@ namespace Custom.Filters
 
                         foreach (MemberInfo memberInfo in infos)
                         {
-                            foreach (object info in memberInfo.GetCustomAttributes(typeof(PerformanceCounterAttribute), true))
+                            foreach (object info in memberInfo.GetCustomAttributes(typeof(DiagnosticsAttribute), true))
                             {
-                                PerformanceCounterAttribute webPerfCounter = info as PerformanceCounterAttribute;
+                                DiagnosticsAttribute diagnostics = info as DiagnosticsAttribute;
 
-                                string category = webPerfCounter.Category;
-                                string instance = webPerfCounter.Instance;
+                                string category = diagnostics.Category;
+                                string instance = diagnostics.Instance;
 
                                 // Create total rollup instances, if they don't exist
                                 foreach (string type in CounterTypeNames)
