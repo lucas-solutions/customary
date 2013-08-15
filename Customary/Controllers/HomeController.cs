@@ -6,12 +6,11 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CustomController
     {
         public ActionResult Index()
         {
-            var logger = new Custom.Diagnostics.LogglyLogger("21e21e20-67cc-49ec-b817-a5e09e81780c");
-            logger.LogError("Home Index", new HttpException(500, "Text"), new Dictionary<string, object> { { "value", "1" } });
+            Logger.LogError("Home Index", new HttpException(500, "Text"), new Dictionary<string, object> { { "value", "1" } });
 
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 

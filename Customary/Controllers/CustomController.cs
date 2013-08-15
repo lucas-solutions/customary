@@ -8,7 +8,9 @@ using System.Web.Mvc;
 namespace Custom.Controllers
 {
     using Custom.Diagnostics;
+    using Custom.Filters;
 
+    [Diagnostics(Category="Controller", Instance="Custom")]
     public abstract class CustomController : Controller
     {
         private readonly NameValueCollection _queryString;
@@ -45,6 +47,11 @@ namespace Custom.Controllers
             _redirectParam = redirectName;
         }
 
+        public SimpleInjector.Container Container
+        {
+            get { return Environment.Container; }
+        }
+
         protected CookieRepository Identification
         {
             get { return _identification; }
@@ -58,6 +65,11 @@ namespace Custom.Controllers
         protected CookieRepository Globalizations
         {
             get { return _customizations; }
+        }
+
+        public ILogger Logger
+        {
+            get { return Environment.Logger; }
         }
 
         public NameValueCollection QueryString

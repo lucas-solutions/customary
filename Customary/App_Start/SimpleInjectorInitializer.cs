@@ -14,7 +14,7 @@ namespace Custom.App_Start
         public static void Initialize()
         {
             // Did you know the container can diagnose your configuration? Go to: http://bit.ly/YE8OJj.
-            var container = new Container();
+            var container = Environment.Container;
             
             InitializeContainer(container);
 
@@ -32,7 +32,7 @@ namespace Custom.App_Start
 
             // For instance:
             // container.Register<IUserRepository, SqlUserRepository>();
-            container.RegisterSingle<Custom.Diagnostics.ILogger>(new Custom.Diagnostics.LogglyLogger("21e21e20-67cc-49ec-b817-a5e09e81780c"));
+            container.RegisterSingle<Custom.Diagnostics.ILogger>(Environment.Logger);
         }
     }
 }

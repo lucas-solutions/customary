@@ -16,6 +16,11 @@ namespace Custom
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        private ILogger Logger
+        {
+            get { return Environment.Logger; }
+        }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -28,12 +33,11 @@ namespace Custom
 
             //Loggly.LogglyConfiguration.Configure(c => c.AuthenticateWith("", ""));
 
-            var logger = new Custom.Diagnostics.LogglyLogger("21e21e20-67cc-49ec-b817-a5e09e81780c");
-            logger.Log("Application_Start");
+            Logger.Log("Application_Start");
 
             var perfCounterMgr = new DiagnosticsManager();
-            perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
-            Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;
+            /*perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
+            Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;*/
         }
     }
 }
