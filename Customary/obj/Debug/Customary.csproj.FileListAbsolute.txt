@@ -83,3 +83,5 @@ C:\Playground\Customary\Customary\bin\zh-Hant\System.Spatial.resources.dll
 C:\Playground\Customary\Customary\obj\Debug\Customary.csprojResolveAssemblyReference.cache
 C:\Playground\Customary\Customary\obj\Debug\Customary.dll
 C:\Playground\Customary\Customary\obj\Debug\Customary.pdb
+C:\Playground\Customary\Customary\bin\SimpleInjector.Extensions.LifetimeScoping.dll
+C:\Playground\Customary\Customary\bin\SimpleInjector.Extensions.LifetimeScoping.xml
