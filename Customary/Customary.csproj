@@ -216,6 +216,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SimpleInjectorInitializer.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DiagnosticsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GlobalizationController.cs" />
+    <Compile Include="Areas\Admin\Controllers\MasterdataController.cs" />
+    <Compile Include="Areas\Admin\Controllers\MetadataController.cs" />
+    <Compile Include="Areas\Admin\Controllers\NavigationController.cs" />
+    <Compile Include="Areas\ExtJs\Controllers\FormController.cs" />
+    <Compile Include="Areas\ExtJs\Controllers\GridController.cs" />
+    <Compile Include="Areas\ExtJs\Controllers\ModelController.cs" />
+    <Compile Include="Areas\ExtJs\ExtJsAreaRegistration.cs" />
+    <Compile Include="Areas\User\UserAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Cookie.cs" />
     <Compile Include="Controllers\CookieRepository.cs" />
@@ -257,6 +269,8 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\PageModel.cs" />
     <Compile Include="Models\RedirectModel.cs" />
+    <Compile Include="Models\ViewModel.cs" />
+    <Compile Include="Pages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +338,20 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Areas\ExtJs\Views\Web.config" />
+    <Content Include="Areas\ExtJs\Views\Model\Script.cshtml" />
+    <Content Include="Areas\ExtJs\Views\Form\Script.cshtml" />
+    <Content Include="Areas\ExtJs\Views\Grid\Script.cshtml" />
+    <Content Include="Areas\Admin\Views\Web.config" />
+    <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Diagnostics\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Globalization\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Masterdata\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Metadata\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Navigation\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Navigation\Domain.cshtml" />
+    <Content Include="Areas\Admin\Views\Navigation\Segment.cshtml" />
+    <Content Include="Areas\User\Views\Web.config" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />
@@ -380,9 +408,18 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Test\Redirect.cshtml" />
+    <Content Include="Areas\ExtJs\Views\Shared\Page.cshtml" />
+    <Content Include="Areas\ExtJs\Views\Shared\_Viewport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Views\Shared\" />
+    <Folder Include="Areas\ExtJs\Models\" />
+    <Folder Include="Areas\User\Controllers\" />
+    <Folder Include="Areas\User\Models\" />
+    <Folder Include="Areas\User\Views\Shared\" />
+    <Folder Include="Styles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
