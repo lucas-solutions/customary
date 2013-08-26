@@ -21,6 +21,12 @@
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("Dashboard", "Index", "Dashboard", new { area = "Admin" }, null)</li>
+                            <li>@Html.ActionLink("Navigation", "Index", "Navigation", new { area = "Admin" }, null)</li>
+                            <li>@Html.ActionLink("Metadata", "Index", "Metadata", new { area = "Admin" }, null)</li>
+                            <li>@Html.ActionLink("Masterdata", "Index", "Masterdata", new { area = "Admin" }, null)</li>
+                            <li>@Html.ActionLink("Globalization", "Index", "Gobalization", new { area = "Admin" }, null)</li>
+                            <li>@Html.ActionLink("Diagnostics", "Index", "Diagnostics", new { area = "Admin" }, null)</li>
                             <li>@Html.ActionLink("About", "About", "Home")</li>
                             <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                         </ul>
