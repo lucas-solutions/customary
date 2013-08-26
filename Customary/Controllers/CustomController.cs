@@ -15,6 +15,7 @@ namespace Custom.Controllers
     {
         private readonly NameValueCollection _queryString;
         private readonly string _redirectParam;
+        private readonly Uri _redirectUri;
         private readonly CookieRepository _identification = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromMinutes(30));
         private readonly CookieRepository _customizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true);
         private readonly CookieRepository _globalizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true, true);
@@ -27,22 +28,47 @@ namespace Custom.Controllers
         protected CustomController(string redirectName)
             : this()
         {
-            string redirectValue;
-            if (_queryString.TryGetQueryNameValue(ref redirectName, out redirectValue))
+            var request = System.Web.HttpContext.Current.Request;
+            try
             {
-                var requestUrl = HttpUtility.UrlDecode(System.Web.HttpContext.Current.Request.Url.OriginalString);
-                var redirectIndex = GetQueryParamIndex(requestUrl, redirectName);
+                string redirectValue;
+                if (_queryString.TryGetQueryNameValue(ref redirectName, out redirectValue))
+                {
+                    var requestUri = request.Url;
+                    var requestUrl = HttpUtility.UrlDecode(requestUri.OriginalString);
+                    var redirectIndex = GetQueryParamIndex(requestUrl, redirectName);
 
-                redirectValue = requestUrl.Substring(requestUrl.IndexOf('=', redirectIndex) + 1).Trim();
+                    redirectValue = requestUrl.Substring(requestUrl.IndexOf('=', redirectIndex) + 1).Trim();
 
-                var redirectQuery = HttpUtility.ParseQueryString(new Uri(redirectValue).Query);
-                var requestQuery = HttpUtility.ParseQueryString(new Uri(requestUrl.Substring(0, requestUrl.Substring(0, redirectIndex).LastIndexOfAny(new[] { '?', '&' }))).Query);
+                    _queryString = HttpUtility.ParseQueryString(new Uri(requestUrl.Substring(0, requestUrl.Substring(0, redirectIndex).LastIndexOfAny(new[] { '?', '&' }))).Query);
+                    _queryString[redirectName] = redirectValue;
 
-                _queryString = new NameValueCollection();
-                foreach (var param in requestQuery.AllKeys)
-                    _queryString[param] = requestQuery[param];
+                    if (Uri.TryCreate(redirectValue, UriKind.RelativeOrAbsolute, out _redirectUri))
+                    {
+                        if (!_redirectUri.IsAbsoluteUri)
+                        {
+                            var appPath = request.Url.GetLeftPart(UriPartial.Scheme | UriPartial.Authority) + request.ApplicationPath;
+                            var appUri = new Uri(appPath, UriKind.Absolute);
+                            _redirectUri = new Uri(appUri, _redirectUri);
+                        }
 
-                _queryString[redirectName] = redirectValue;
+                        var redirectQuery = HttpUtility.ParseQueryString(_redirectUri.Query);
+
+                        foreach (var key in redirectQuery.AllKeys)
+                        {
+                            string value, name = key;
+                            if (!_queryString.TryGetQueryNameValue(ref name, out value))
+                                _queryString[key] = redirectQuery[key];
+                            else if (_queryString[name] != redirectQuery[key])
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("CustomController::Error parsing redirectionUrl", e);
             }
             _redirectParam = redirectName;
         }

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Custom.Areas.ExtJs.Controllers
+namespace Custom.Areas.User.Controllers
 {
-    public class ModelController : Controller
+    public class ProfileController : Controller
     {
         //
-        // GET: /ExtJs/Model/
+        // GET: /User/Profile/
 
         public ActionResult Index()
         {

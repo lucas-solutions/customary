@@ -13,7 +13,14 @@ namespace Custom.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            //'Customary.model.Navigation'
+            var vm = new Models.ViewModel
+            {
+                ClassName = "App.admin.views.Navigation",
+                PageTitle = "Admin Navigation",
+                ViewName = "~/Areas/Admin/Views/Navigation/Index.cshtml"
+            };
+            return View(Pages.ExtJs, vm);
         }
 
         //
@@ -21,7 +28,13 @@ namespace Custom.Areas.Admin.Controllers
 
         public ActionResult Domain(string id)
         {
-            return View();
+            var vm = new Models.ViewModel
+            {
+                ClassName = "App.admin.views.Navigation.Domain",
+                PageTitle = "Admin Navigation Domain",
+                ViewName = "~/Areas/Admin/Views/Navigation/Domain.cshtml"
+            };
+            return View(Pages.ExtJs, vm);
         }
 
         //
@@ -29,7 +42,13 @@ namespace Custom.Areas.Admin.Controllers
 
         public ActionResult Segment(string id)
         {
-            return View();
+            var vm = new Models.ViewModel
+            {
+                ClassName = "App.admin.views.Navigation.Segment",
+                PageTitle = "Admin Navigation Segment",
+                ViewName = "~/Areas/Admin/Views/Navigation/Segment.cshtml"
+            };
+            return View(Pages.ExtJs, vm);
         }
     }
 }

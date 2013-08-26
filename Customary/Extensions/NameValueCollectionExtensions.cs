@@ -21,5 +21,27 @@ namespace Custom
             value = null;
             return false;
         }
+
+        /// <summary>
+        /// Returns the absolute URL version of a given relative URL.
+        /// If the provided url is absolute it is returned. If not, 
+        /// the curren application URL is used as the base URL.
+        /// </summary>
+        /// <param name="relative">The input URL</param>
+        /// <returns>The absolute URL</returns>
+        private string ConvertToAbsoluteUrl(string relative)
+        {
+            Uri url;
+            if (!Uri.TryCreate(relative, UriKind.RelativeOrAbsolute, out url))
+                return null;
+
+            if (url.IsAbsoluteUri)
+                return url.ToString();
+
+            var request = HttpContext.Current.Request;
+            var absolute = new Uri(request.Url.GetLeftPart(UriPartial.Scheme | UriPartial.Authority) + request.ApplicationPath + '/' + url.ToString());
+
+            return absolute.ToString();
+        }
     }
 }
