@@ -1,0 +1,13 @@
+﻿@model Custom.Models.PageModel
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+@section styles {
+    @Styles.Render("~/Styles/ext")
+}
+@section scripts {
+    @Scripts.Render("~/bundles/ext")
+}
+<h2>@Model.Title</h2>
+@Html.Partial(Model.Main)

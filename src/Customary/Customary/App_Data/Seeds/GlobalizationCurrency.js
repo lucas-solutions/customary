@@ -1,0 +1,10 @@
+﻿{
+    Currency: [
+    ],
+    Language: [
+    ],
+    Measure: [
+    ],
+    Region: [
+    ]
+}
