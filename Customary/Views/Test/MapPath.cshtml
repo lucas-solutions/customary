@@ -1,0 +1,18 @@
+﻿@model Custom.Models.MapPathModel
+@{
+    ViewBag.Title = "MapPath";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Map Path</h2>
+<form target="_self" action="@Url.Action()">
+    <input type="text" id="path" name="path" />
+    <input type="submit" />
+</form>
+<div>
+    <ul>
+        <li><strong>Path:</strong><span>@Model.Path</span></li>
+        <li><strong>Succeeded:</strong><span>@Model.Succeeded</span></li>
+        <li><strong>Full Path:</strong><span>@Model.FullPath</span></li>
+    </ul>
+</div>

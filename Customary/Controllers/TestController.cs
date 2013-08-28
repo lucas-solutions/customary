@@ -6,6 +6,8 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
+    using Custom.Models;
+
     public class TestController : CustomController
     {
         public TestController()
@@ -37,5 +39,17 @@ namespace Custom.Controllers
                 });
         }
 
+        public ActionResult MapPath(string path)
+        {
+            string fullPath;
+            var succeeded = Utils.PathHelper.TryGetFullPath(path, out fullPath);
+
+            return View(new MapPathModel
+                {
+                    Path = path,
+                    FullPath = fullPath,
+                    Succeeded = succeeded ? "True" : "False"
+                });
+        }
     }
 }

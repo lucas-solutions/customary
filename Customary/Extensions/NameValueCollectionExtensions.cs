@@ -29,7 +29,7 @@ namespace Custom
         /// </summary>
         /// <param name="relative">The input URL</param>
         /// <returns>The absolute URL</returns>
-        private string ConvertToAbsoluteUrl(string relative)
+        private static string ConvertToAbsoluteUrl(string relative)
         {
             Uri url;
             if (!Uri.TryCreate(relative, UriKind.RelativeOrAbsolute, out url))
