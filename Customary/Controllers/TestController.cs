@@ -8,7 +8,7 @@ namespace Custom.Controllers
 {
     using Custom.Models;
 
-    public class TestController : CustomController
+    public class TestController : CustomController1
     {
         public TestController()
             : base("returnTo")

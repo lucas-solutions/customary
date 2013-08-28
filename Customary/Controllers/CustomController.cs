@@ -11,7 +11,7 @@ namespace Custom.Controllers
     using Custom.Filters;
 
     [Diagnostics(Category="Controller", Instance="Custom")]
-    public abstract class CustomController : Controller
+    public abstract class CustomController1 : Controller
     {
         private readonly NameValueCollection _queryString;
         private readonly string _redirectParam;
@@ -20,12 +20,12 @@ namespace Custom.Controllers
         private readonly CookieRepository _customizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true);
         private readonly CookieRepository _globalizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true, true);
 
-        public CustomController()
+        public CustomController1()
         {
             _queryString = new NameValueCollection(System.Web.HttpContext.Current.Request.QueryString);
         }
 
-        protected CustomController(string redirectName)
+        protected CustomController1(string redirectName)
             : this()
         {
             var request = System.Web.HttpContext.Current.Request;

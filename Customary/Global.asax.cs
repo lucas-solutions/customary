@@ -38,6 +38,19 @@ namespace Custom
             var perfCounterMgr = new DiagnosticsManager();
             /*perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
             Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;*/
+
+            ControllerBuilder.Current.SetControllerFactory(typeof(Custom.Controllers.ControllerFactory));
+
+            var app_data = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds"));
+            foreach (var file in app_data.GetFiles("business*.js"))
+            {
+                Documents.Business.Import(file.FullName);
+            }
+
+            foreach (var file in app_data.GetFiles("globalization*.js"))
+            {
+                Documents.Globalization.Import(file.FullName);
+            }
         }
     }
 }

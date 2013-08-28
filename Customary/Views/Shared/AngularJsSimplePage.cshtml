@@ -1,0 +1,14 @@
+﻿@model Custom.Models.PageModel
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+@section styles {
+    @Styles.Render("~/Styles/angular")
+}
+@section scripts {
+    <script type="text/javascript" data-ng-autobind="True" src="http://code.angularjs.org/angular.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/adapter.js")" data-framework="Angular" data-main="@Url.Content("~/Scripts/Angular/main.js")"></script>
+    <script type="text/javascript" src="Model.Main"></script>
+}
+<h2>@Model.Title</h2>
