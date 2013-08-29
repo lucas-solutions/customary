@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Serialization
 {
-    using Custom.Reflection;
+    using Custom.Metadata;
     using Newtonsoft.Json.Serialization;
 
     public class MemberContractResolver : DefaultContractResolver

@@ -9,7 +9,7 @@ namespace Custom.Documents
     {
         public static BusinessDomain Store(this BusinessDomain domain)
         {
-            var session = Business.Session;
+            var session = Global.Business.Session;
             session.Store(domain);
             return domain;
         }

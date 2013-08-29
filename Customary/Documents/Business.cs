@@ -6,74 +6,29 @@ using System.Web;
 namespace Custom.Documents
 {
     using Custom.Controllers;
-    using Custom.Reflection;
+    using Custom.Metadata;
     using Custom.Serialization;
     using Newtonsoft.Json;
     using Raven.Client;
     using Raven.Client.Embedded;
     using Raven.Json.Linq;
 
-    public class Business
+    public class Business : DocumentStoreHolder
     {
-        public const string ConnectionStringName = "BusinessStore";
-        
-        private static readonly object _lock = new object();
-
-        [ThreadStatic]
-        private static IDocumentSession _session;
-        
-        private static IDocumentStore _store;
-
-        public static IDocumentSession Session
+        public override string ConnectionStringName
         {
-            get { return _session ?? (_session = Store.OpenSession()); }
+            get { return "BusinessStore"; }
         }
 
-        public static IDocumentStore Store
+        protected override IDocumentStore CreateDocumentStore()
         {
-            get
+            return new EmbeddableDocumentStore
             {
-                var store = _store;
-
-                // return without locking if already exist
-                if (store != null)
-                    return store;
-
-                // lock and check again
-                lock (_lock)
-                {
-                    // create new instance if doesn't exist
-                    store = _store ?? (_store = new EmbeddableDocumentStore()
-                    {
-                        ConnectionStringName = Business.ConnectionStringName
-                    });
-
-                    //instance.Conventions.IdentityPartsSeparator = "-";
-
-                    // initialize store
-                    store.Initialize();
-
-                    // save store instance
-                    _store = store;
-                }
-
-                return store;
-            }
+                ConnectionStringName = ConnectionStringName
+            };
         }
 
-        public void SaveChanges()
-        {
-            var session = _session;
-
-            if (session != null)
-            {
-                _session = null;
-
-                session.SaveChanges();
-            }
-        }
-
-        public static bool Import(string fileName)
+        public bool Import(string fileName)
         {
             var file = new System.IO.FileInfo(fileName);
 
@@ -111,7 +66,7 @@ namespace Custom.Documents
             return true;
         }
 
-        public static BusinessLookup Lookup(Uri url)
+        public BusinessLookup Lookup(Uri url)
         {
             var lookup = new BusinessLookup(url);
 

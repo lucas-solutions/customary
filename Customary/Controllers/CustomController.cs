@@ -75,7 +75,7 @@ namespace Custom.Controllers
 
         public SimpleInjector.Container Container
         {
-            get { return Environment.Container; }
+            get { return Global.Container; }
         }
 
         protected CookieRepository Identification
@@ -95,7 +95,7 @@ namespace Custom.Controllers
 
         public ILogger Logger
         {
-            get { return Environment.Logger; }
+            get { return Global.Logger; }
         }
 
         public NameValueCollection QueryString

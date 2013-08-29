@@ -33,7 +33,7 @@ namespace Custom.Filters
 
         private ILogger Logger
         {
-            get { return Environment.Logger; }
+            get { return Global.Logger; }
         }
 
         void IActionFilter.OnActionExecuted(ActionExecutedContext filterContext)

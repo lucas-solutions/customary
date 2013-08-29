@@ -6,7 +6,7 @@ using System.Web;
 namespace Custom.Documents
 {
     using Custom.Controllers;
-    using Custom.Reflection;
+    using Custom.Metadata;
     using Custom.Serialization;
     using Newtonsoft.Json;
     using Raven.Client;
@@ -15,63 +15,7 @@ namespace Custom.Documents
 
     public class Globalization
     {
-        public const string ConnectionStringName = "BusinessStore";
-
-        private static readonly object _lock = new object();
-
-        [ThreadStatic]
-        private static IDocumentSession _session;
-
-        private static IDocumentStore _store;
-
-        public static IDocumentSession Session
-        {
-            get { return _session ?? (_session = Store.OpenSession()); }
-        }
-
-        public static IDocumentStore Store
-        {
-            get
-            {
-                var store = _store;
-
-                // return without locking if already exist
-                if (store != null)
-                    return store;
-
-                // lock and check again
-                lock (_lock)
-                {
-                    // create new instance if doesn't exist
-                    store = _store ?? (_store = new EmbeddableDocumentStore()
-                    {
-                        ConnectionStringName = Business.ConnectionStringName
-                    });
-
-                    //instance.Conventions.IdentityPartsSeparator = "-";
-
-                    // initialize store
-                    store.Initialize();
-
-                    // save store instance
-                    _store = store;
-                }
-
-                return store;
-            }
-        }
-
-        public void SaveChanges()
-        {
-            var session = _session;
-
-            if (session != null)
-            {
-                _session = null;
-
-                session.SaveChanges();
-            }
-        }
+        public string ConnectionStringName { get { return "BusinessStore"; } }
 
         public static bool Import(string fileName)
         {
