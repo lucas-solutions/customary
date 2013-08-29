@@ -6,9 +6,7 @@ using System.Web;
 namespace Custom.Areas.ExtJs
 {
     using Custom.Areas.ExtJs.Models;
-    using Custom.Objects;
-    using Custom.Reflection;
-    using Custom.Processes;
+    using Custom.Metadata;
 
     public static class Extensions
     {
@@ -33,7 +31,7 @@ namespace Custom.Areas.ExtJs
                         break;
 
                     default:
-                        var propertyType = ReflectionProcesses.Describe(property.PropertyType);
+                        var propertyType = Global.Metadata.Describe(property.PropertyType);
                         if (propertyType != null)
                         {
                             switch (propertyType.MemberType)

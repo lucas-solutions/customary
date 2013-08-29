@@ -7,7 +7,7 @@ using System.Web.Mvc;
 namespace Custom.Areas.ExtJs.Controllers
 {
     using Custom.Areas.ExtJs;
-    using Custom.Reflection;
+    using Custom.Metadata;
 
     public class ReflectionController : Controller
     {
@@ -16,7 +16,7 @@ namespace Custom.Areas.ExtJs.Controllers
 
         public ActionResult GetScriptModel()
         {
-            var model = Custom.Objects.DocumentStoreHolder.Types.OfType<ComplexDescriptor>().SingleOrDefault(o => o.Name == "SalesDocument").ExtModel();
+            var model = Global.Metadata.Types.OfType<ComplexDescriptor>().SingleOrDefault(o => o.Name == "SalesDocument").ExtModel();
             return View(model);
         }
 

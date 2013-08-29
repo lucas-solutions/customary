@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Documents
+namespace Custom.Globalization
 {
-    public class GlobalizationCountry : GlobalizationRegion
+    public class CountryDescriptor : RegionDescriptor
     {
         /// <summary>
         /// Official currency

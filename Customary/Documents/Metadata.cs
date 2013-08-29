@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Custom.Documents
 {
+    using Custom.Metadata;
     using Raven.Client;
     using Raven.Client.Embedded;
 
@@ -13,6 +14,11 @@ namespace Custom.Documents
         public override string ConnectionStringName
         {
             get { return "MetadataStore"; }
+        }
+
+        public IQueryable<TypeDescriptor> Types
+        {
+            get { return Session.Query<TypeDescriptor>(); }
         }
 
         protected override IDocumentStore CreateDocumentStore()

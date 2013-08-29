@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Processes
+namespace Custom.Globalization
 {
-    public static class L10nProcesses
+    public static class LocalizationExtensions
     {
     }
 }

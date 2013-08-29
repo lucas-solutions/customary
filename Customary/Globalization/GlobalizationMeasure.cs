@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Documents
+namespace Custom.Globalization
 {
-    using Custom.Objects;
+    using Custom.Metadata;
 
-    public class GlobalizationCurrency
+    public class MeasureDescriptor
     {
         public string Code { get; set; }
 

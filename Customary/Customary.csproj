@@ -223,9 +223,25 @@
     <Compile Include="Areas\Admin\Controllers\MasterdataController.cs" />
     <Compile Include="Areas\Admin\Controllers\MetadataController.cs" />
     <Compile Include="Areas\Admin\Controllers\NavigationController.cs" />
+    <Compile Include="Areas\AngularJs\AngularJsAreaRegistration.cs" />
+    <Compile Include="Areas\Angular\AngularAreaRegistration.cs" />
+    <Compile Include="Areas\ExtJs\Controllers\ReflectionController.cs" />
+    <Compile Include="Areas\ExtJs\Extensions.cs" />
+    <Compile Include="Areas\ExtJs\ExtJsAreaRegistration.cs" />
+    <Compile Include="Areas\ExtJs\Models\ExtAssociation.cs" />
+    <Compile Include="Areas\ExtJs\Models\ExtField.cs" />
+    <Compile Include="Areas\ExtJs\Models\ExtModel.cs" />
+    <Compile Include="Areas\ExtJs\Models\ExtProxy.cs" />
+    <Compile Include="Areas\Ext\Controllers\BusinessController.cs" />
+    <Compile Include="Areas\Ext\Controllers\PresentationController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ReflectionController.cs" />
+    <Compile Include="Areas\Ext\ExtAreaRegistration.cs" />
     <Compile Include="Areas\User\Controllers\AccountController.cs" />
     <Compile Include="Areas\User\Controllers\ProfileController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
+    <Compile Include="Controllers\ResourceController.cs" />
+    <Compile Include="Globalization\LocalizationExtensions.cs" />
+    <Compile Include="Metadata\MetadataExtensions.cs" />
     <Compile Include="Routing\ControllerDescriptor.cs" />
     <Compile Include="Routing\ControllerExtensions.cs" />
     <Compile Include="Routing\ControllerFactory.cs" />
@@ -240,11 +256,11 @@
     <Compile Include="Metadata\TypeDescriptor.cs" />
     <Compile Include="Documents\DocumentStoreHolder.cs" />
     <Compile Include="Documents\Globalization.cs" />
-    <Compile Include="Documents\GlobalizationCountry.cs" />
-    <Compile Include="Documents\GlobalizationCurrency.cs" />
-    <Compile Include="Documents\GlobalizationLanguage.cs" />
-    <Compile Include="Documents\GlobalizationMeasure.cs" />
-    <Compile Include="Documents\GlobalizationRegion.cs" />
+    <Compile Include="Globalization\GlobalizationCountry.cs" />
+    <Compile Include="Globalization\GlobalizationCurrency.cs" />
+    <Compile Include="Globalization\GlobalizationLanguage.cs" />
+    <Compile Include="Globalization\GlobalizationMeasure.cs" />
+    <Compile Include="Globalization\GlobalizationRegion.cs" />
     <Compile Include="Documents\Masterdata.cs" />
     <Compile Include="Documents\Metadata.cs" />
     <Compile Include="Documents\Navigation.cs" />
@@ -257,8 +273,8 @@
     <Compile Include="Routing\HostExtensions.cs" />
     <Compile Include="Routing\PathDescriptor.cs" />
     <Compile Include="Routing\PathExtensions.cs" />
-    <Compile Include="Objects\BusinessObject.cs" />
-    <Compile Include="Objects\TextObject.cs" />
+    <Compile Include="Metadata\BusinessObject.cs" />
+    <Compile Include="Metadata\TextObject.cs" />
     <Compile Include="Presentation\ModelResult.cs" />
     <Compile Include="Presentation\PageFramework.cs" />
     <Compile Include="Presentation\PageLayout.cs" />
@@ -336,6 +352,7 @@
     <Compile Include="Utils\PathHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AngularTest.html" />
     <Content Include="Areas\Admin\Views\Navigation\NavigationData.js" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -399,6 +416,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="ExtTest.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Areas\Admin\Views\Web.config" />
@@ -412,6 +430,11 @@
     <Content Include="Areas\Admin\Views\Navigation\Segment.cshtml" />
     <Content Include="Areas\User\Views\Web.config" />
     <Content Include="Areas\Admin\Views\Navigation\NavigationModel.cshtml" />
+    <Content Include="Areas\Angular\Views\Web.config" />
+    <Content Include="Areas\AngularJs\Views\Web.config" />
+    <Content Include="Areas\Ext\Views\Web.config" />
+    <Content Include="Areas\ExtJs\Views\Reflection\GetScriptModel.cshtml" />
+    <Content Include="Areas\ExtJs\Views\Web.config" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3511,12 +3534,21 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\Shared\" />
+    <Folder Include="Areas\AngularJs\Controllers\" />
+    <Folder Include="Areas\AngularJs\Models\" />
+    <Folder Include="Areas\AngularJs\Views\Shared\" />
+    <Folder Include="Areas\Angular\Controllers\" />
+    <Folder Include="Areas\Angular\Models\" />
+    <Folder Include="Areas\Angular\Views\Shared\" />
+    <Folder Include="Areas\ExtJs\Views\Shared\" />
+    <Folder Include="Areas\Ext\Models\" />
+    <Folder Include="Areas\Ext\Views\Shared\" />
     <Folder Include="Areas\User\Models\" />
     <Folder Include="Areas\User\Views\Account\" />
     <Folder Include="Areas\User\Views\Profile\" />
     <Folder Include="Areas\User\Views\Shared\" />
-    <Folder Include="Globalization\" />
     <Folder Include="Masterdata\" />
+    <Folder Include="Objects\" />
     <Folder Include="Results\" />
   </ItemGroup>
   <ItemGroup>

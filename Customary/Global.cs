@@ -73,7 +73,7 @@ namespace Custom
             }
         }
 
-        public static Globalization Globalization
+        public static Documents.Globalization Globalization
         {
             get
             {
@@ -83,7 +83,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        globalization = _globalization ?? (_globalization = new Globalization());
+                        globalization = _globalization ?? (_globalization = new Documents.Globalization());
                     }
                 }
 

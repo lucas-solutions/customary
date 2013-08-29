@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Objects
+namespace Custom.Metadata
 {
-    using Custom.Metadata;
     using Raven.Client;
     using Raven.Json.Linq;
 

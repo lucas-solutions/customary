@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Custom.Metadata
 {
-    using Custom.Objects;
+    using Custom.Metadata;
     using Newtonsoft.Json;
     using Raven.Json.Linq;
 
