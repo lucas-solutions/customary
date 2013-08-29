@@ -10,6 +10,7 @@ using System.Web.Routing;
 namespace Custom
 {
     using Custom.Diagnostics;
+    using Custom.Metadata;
 
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
@@ -39,17 +40,17 @@ namespace Custom
             /*perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
             Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;*/
 
-            ControllerBuilder.Current.SetControllerFactory(typeof(Routing.ControllerFactory));
+            ControllerBuilder.Current.SetControllerFactory(typeof(Navigation.ControllerFactory));
 
             var app_data = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds"));
             foreach (var file in app_data.GetFiles("business*.js"))
             {
-                Global.Business.Import(file.FullName);
+                Global.Metadata.Import(file.FullName);
             }
 
             foreach (var file in app_data.GetFiles("globalization*.js"))
             {
-                Documents.Globalization.Import(file.FullName);
+                Repositories.GlobalizationContext.Import(file.FullName);
             }
         }
     }

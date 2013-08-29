@@ -241,38 +241,35 @@
     <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Controllers\ResourceController.cs" />
     <Compile Include="Globalization\LocalizationExtensions.cs" />
+    <Compile Include="Masterdata\MasterdataExtensions.cs" />
     <Compile Include="Metadata\MetadataExtensions.cs" />
-    <Compile Include="Routing\ControllerDescriptor.cs" />
-    <Compile Include="Routing\ControllerExtensions.cs" />
-    <Compile Include="Routing\ControllerFactory.cs" />
+    <Compile Include="Navigation\ControllerDescriptor.cs" />
+    <Compile Include="Navigation\ControllerExtensions.cs" />
+    <Compile Include="Navigation\ControllerFactory.cs" />
     <Compile Include="Controllers\CustomController1.cs" />
     <Compile Include="Controllers\GlobalizationController.cs" />
-    <Compile Include="Documents\Business.cs" />
-    <Compile Include="Documents\BusinessDomain.cs" />
-    <Compile Include="Documents\BusinessLookup.cs" />
-    <Compile Include="Documents\BusinessSegment.cs" />
+    <Compile Include="Navigation\NavigationExtensions.cs" />
+    <Compile Include="Navigation\PathLookup.cs" />
     <Compile Include="Metadata\MethodExtensions.cs" />
     <Compile Include="Metadata\PropertyExtensions.cs" />
     <Compile Include="Metadata\TypeDescriptor.cs" />
-    <Compile Include="Documents\DocumentStoreHolder.cs" />
-    <Compile Include="Documents\Globalization.cs" />
-    <Compile Include="Globalization\GlobalizationCountry.cs" />
-    <Compile Include="Globalization\GlobalizationCurrency.cs" />
-    <Compile Include="Globalization\GlobalizationLanguage.cs" />
-    <Compile Include="Globalization\GlobalizationMeasure.cs" />
-    <Compile Include="Globalization\GlobalizationRegion.cs" />
-    <Compile Include="Documents\Masterdata.cs" />
-    <Compile Include="Documents\Metadata.cs" />
-    <Compile Include="Documents\Navigation.cs" />
-    <Compile Include="Extensions\BusinessDomainExtensions.cs" />
-    <Compile Include="Extensions\BusinessSegmentExtensions.cs" />
+    <Compile Include="Documents\DocumentContext.cs" />
+    <Compile Include="Documents\GlobalizationContext.cs" />
+    <Compile Include="Globalization\CountryDescriptor.cs" />
+    <Compile Include="Globalization\CurrencyDescriptor.cs" />
+    <Compile Include="Globalization\LanguageDescriptor.cs" />
+    <Compile Include="Globalization\MeasureDescriptor.cs" />
+    <Compile Include="Globalization\RegionDescriptor.cs" />
+    <Compile Include="Documents\MasterdataContext.cs" />
+    <Compile Include="Documents\MetadataContext.cs" />
+    <Compile Include="Documents\NavigationContext.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Metadata\TypeExtensions.cs" />
     <Compile Include="Models\MapPathModel.cs" />
-    <Compile Include="Routing\HostDescriptor.cs" />
-    <Compile Include="Routing\HostExtensions.cs" />
-    <Compile Include="Routing\PathDescriptor.cs" />
-    <Compile Include="Routing\PathExtensions.cs" />
+    <Compile Include="Navigation\HostDescriptor.cs" />
+    <Compile Include="Navigation\HostExtensions.cs" />
+    <Compile Include="Navigation\PathDescriptor.cs" />
+    <Compile Include="Navigation\PathExtensions.cs" />
     <Compile Include="Metadata\BusinessObject.cs" />
     <Compile Include="Metadata\TextObject.cs" />
     <Compile Include="Presentation\ModelResult.cs" />
@@ -353,6 +350,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularTest.html" />
+    <Content Include="App_Data\Seeds\Metadata\Entities.js" />
+    <Content Include="App_Data\Seeds\Metadata\BusinessModel.js" />
+    <Content Include="App_Data\Seeds\Metadata\BusinessType.js" />
+    <Content Include="App_Data\Seeds\Globalization\Globalization.js" />
+    <Content Include="App_Data\Seeds\Globalization\Country.js" />
+    <Content Include="App_Data\Seeds\Globalization\Currency.js" />
+    <Content Include="App_Data\Seeds\Globalization\Language.js" />
+    <Content Include="App_Data\Seeds\Globalization\Measure.js" />
+    <Content Include="App_Data\Seeds\Globalization\Texts.js" />
+    <Content Include="App_Data\Seeds\Navigation\localhost.js" />
     <Content Include="Areas\Admin\Views\Navigation\NavigationData.js" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -3531,7 +3538,11 @@
     <Content Include="Views\Template\Message.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\Globalization\" />
+    <Folder Include="App_Data\Masterdata\" />
+    <Folder Include="App_Data\Metadata\" />
+    <Folder Include="App_Data\Navigation\" />
+    <Folder Include="App_Data\Seeds\Masterdata\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Areas\AngularJs\Controllers\" />
@@ -3547,7 +3558,6 @@
     <Folder Include="Areas\User\Views\Account\" />
     <Folder Include="Areas\User\Views\Profile\" />
     <Folder Include="Areas\User\Views\Shared\" />
-    <Folder Include="Masterdata\" />
     <Folder Include="Objects\" />
     <Folder Include="Results\" />
   </ItemGroup>

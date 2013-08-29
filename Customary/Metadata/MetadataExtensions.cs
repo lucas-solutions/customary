@@ -11,7 +11,7 @@ namespace Custom.Metadata
 
     public static class MetadataExtensions
     {
-        public static bool Import(this Documents.Metadata metadata, string fileName)
+        public static bool Import(this Repositories.MetadataContext ctx, string fileName)
         {
             var file = new System.IO.FileInfo(fileName);
 
@@ -26,7 +26,11 @@ namespace Custom.Metadata
                 try
                 {
                     var json = root.Value<RavenJArray>("Type").ToString();
-                    //Types = JsonConvert.DeserializeObject<List<MemberDescriptor>>(json, new MemberConverter());
+                    var types = JsonConvert.DeserializeObject<List<MemberDescriptor>>(json, new MemberConverter());
+                    foreach (var t in types)
+                    {
+                        ctx.Session.Store(t);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -45,7 +49,7 @@ namespace Custom.Metadata
             return true;
         }
 
-        public static TypeDescriptor Describe(this Documents.Metadata metadata, string name)
+        public static TypeDescriptor Describe(this Repositories.MetadataContext metadata, string name)
         {
             var id = "Type/" + name;
             var descriptor = System.Web.HttpContext.Current.Items[id] as TypeDescriptor;
@@ -69,14 +73,14 @@ namespace Custom.Metadata
             return value;
         }
 
-        public static BusinessObject Load(this Documents.Metadata metadata, string id, string type)
+        public static BusinessObject Load(this Repositories.MetadataContext metadata, string id, string type)
         {
             var descriptor = Describe(metadata, type) as EntityDescriptor;
 
             return Load(metadata, id, descriptor);
         }
 
-        public static BusinessObject Load(this Documents.Metadata metadata, string id, EntityDescriptor descriptor)
+        public static BusinessObject Load(this Repositories.MetadataContext metadata, string id, EntityDescriptor descriptor)
         {
             if (descriptor == null)
                 throw new InvalidOperationException();
@@ -103,7 +107,7 @@ namespace Custom.Metadata
             return bo;
         }
 
-        public static void RegisterIdConventions(this Documents.Metadata metadata)
+        public static void RegisterIdConventions(this Repositories.MetadataContext metadata)
         {
             metadata.Store.Conventions.DocumentKeyGenerator = (dbname, commands, entity) => metadata.Store.Conventions.GetTypeTagName(entity.GetType()) + "/";
             metadata.Store.Conventions.RegisterIdConvention<TypeDescriptor>((dbname, commands, type) => "Type/" + type.Name);

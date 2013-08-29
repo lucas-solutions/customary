@@ -6,18 +6,17 @@ using System.Web;
 namespace Custom
 {
     using Custom.Diagnostics;
-    using Custom.Documents;
+    using Custom.Repositories;
 
     public static class Global
     {
         private static readonly object _lock = new object();
         private static SimpleInjector.Container _container;
         private static ILogger _logger;
-        private static Documents.Business _business;
-        private static Documents.Globalization _globalization;
-        private static Documents.Masterdata _masterdata;
-        private static Documents.Metadata _metadata;
-        private static Documents.Navigation _navigation;
+        private static Repositories.GlobalizationContext _globalization;
+        private static Repositories.MasterdataContext _masterdata;
+        private static Repositories.MetadataContext _metadata;
+        private static Repositories.NavigationContext _navigation;
 
         public static SimpleInjector.Container Container
         {
@@ -55,25 +54,7 @@ namespace Custom
             }
         }
 
-        public static Business Business
-        {
-            get
-            {
-                var business = _business;
-
-                if (business == null)
-                {
-                    lock (_lock)
-                    {
-                        business = _business ?? (_business = new Business());
-                    }
-                }
-
-                return business;
-            }
-        }
-
-        public static Documents.Globalization Globalization
+        public static GlobalizationContext Globalization
         {
             get
             {
@@ -83,7 +64,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        globalization = _globalization ?? (_globalization = new Documents.Globalization());
+                        globalization = _globalization ?? (_globalization = new GlobalizationContext());
                     }
                 }
 
@@ -91,7 +72,7 @@ namespace Custom
             }
         }
 
-        public static Masterdata Masterdata
+        public static MasterdataContext Masterdata
         {
             get
             {
@@ -101,7 +82,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        masterdata = _masterdata ?? (_masterdata = new Masterdata());
+                        masterdata = _masterdata ?? (_masterdata = new MasterdataContext());
                     }
                 }
 
@@ -109,7 +90,7 @@ namespace Custom
             }
         }
 
-        public static Documents.Metadata Metadata
+        public static MetadataContext Metadata
         {
             get
             {
@@ -119,7 +100,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        metadata = _metadata ?? (_metadata = new Documents.Metadata());
+                        metadata = _metadata ?? (_metadata = new MetadataContext());
                     }
                 }
 
@@ -127,7 +108,7 @@ namespace Custom
             }
         }
 
-        public static Documents.Navigation Navigation
+        public static NavigationContext Navigation
         {
             get
             {
@@ -137,7 +118,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        navigation = _navigation ?? (_navigation = new Documents.Navigation());
+                        navigation = _navigation ?? (_navigation = new NavigationContext());
                     }
                 }
 
