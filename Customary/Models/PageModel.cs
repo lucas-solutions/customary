@@ -7,7 +7,7 @@ namespace Custom.Models
 {
     using Custom.Presentation;
 
-    public class PageModel
+    public class PageModel : ViewModel
     {
         public string Title
         {
@@ -22,12 +22,6 @@ namespace Custom.Models
         }
 
         public PageFramework Framework
-        {
-            get;
-            set;
-        }
-
-        public PageLayout Layout
         {
             get;
             set;

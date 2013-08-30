@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html lang="@ViewBag.Culture">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("styles", required: false)
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/modernizr")
+    <script type="text/javascript" src="@Url.Content("~/Scripts/ext-all.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/adapter.js")" data-framework="Angular" data-main="@Url.Content("~/Scripts/Ext/main.js")"></script>
+</head>
+<body>
+    @RenderBody()
+    @RenderSection("inline", required: false)
+</body>
+</html>

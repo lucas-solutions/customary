@@ -1,0 +1,15 @@
+﻿@model Custom.Areas.Admin.Models.ExtPageModel
+@{
+    ViewBag.Title = Model.PageTitle;
+    ViewBag.Culture = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+    Layout = "~/Areas/Admin/Views/Shared/_SimpleLayout.cshtml";
+}
+@section styles {
+    @Styles.Render("~/Styles/ext")
+}
+@section scripts {
+    @Scripts.Render("~/bundles/ext")
+}
+@section inline {
+}
+@Html.Partial(Model.ViewName)

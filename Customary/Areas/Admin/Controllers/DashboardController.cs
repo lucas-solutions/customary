@@ -6,6 +6,9 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Admin.Controllers
 {
+    using Custom.Areas.Admin.Models;
+    using Custom.Models;
+
     public class DashboardController : Controller
     {
         //
@@ -13,7 +16,7 @@ namespace Custom.Areas.Admin.Controllers
 
         public ActionResult Index()
         {
-            var vm = new Models.ViewModel
+            var vm = new ExtPageModel
             {
                 ClassName = "App.admin.Dashboard",
                 PageTitle = "Admin Dashboard",

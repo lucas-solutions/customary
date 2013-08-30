@@ -9,7 +9,7 @@ namespace Custom
     {
         public const string Grid = "~/Views/App/Grid.cshtml";
         public const string Form = "~/Views/App/Form.cshtml";
-        public const string Model = "~/Views/App/Model.cshtml";
+        public const string Model = "~/Areas/Admin/Views/Metadata/Model.cshtml";
         public const string Panel = "~/Views/App/Panel.cshtml";
         public const string Store = "~/Views/App/Store.cshtml";
     }

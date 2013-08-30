@@ -6,6 +6,8 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Admin.Controllers
 {
+    using Custom.Areas.Admin.Models;
+
     public class NavigationController : Controller
     {
         //
@@ -14,7 +16,7 @@ namespace Custom.Areas.Admin.Controllers
         public ActionResult Index()
         {
             //'Customary.model.Navigation'
-            var vm = new Models.ViewModel
+            var vm = new ExtPageModel
             {
                 ClassName = "App.admin.views.Navigation",
                 PageTitle = "Admin Navigation",
@@ -24,29 +26,29 @@ namespace Custom.Areas.Admin.Controllers
         }
 
         //
-        // GET: /Admin/Navigation/Domain
+        // GET: /Admin/Navigation/Host
 
-        public ActionResult Domain(string id)
+        public ActionResult Host(string id)
         {
-            var vm = new Models.ViewModel
+            var vm = new ExtPageModel
             {
-                ClassName = "App.admin.views.Navigation.Domain",
+                ClassName = "App.admin.views.Navigation.Host",
                 PageTitle = "Admin Navigation Domain",
-                ViewName = "~/Areas/Admin/Views/Navigation/Domain.cshtml"
+                ViewName = "~/Areas/Admin/Views/Navigation/Host.cshtml"
             };
             return View(Pages.ExtJs, vm);
         }
 
         //
-        // GET: /Admin/Navigation/Segment
+        // GET: /Admin/Navigation/Path
 
-        public ActionResult Segment(string id)
+        public ActionResult Path(string id)
         {
-            var vm = new Models.ViewModel
+            var vm = new ExtPageModel
             {
-                ClassName = "App.admin.views.Navigation.Segment",
+                ClassName = "App.admin.views.Navigation.Path",
                 PageTitle = "Admin Navigation Segment",
-                ViewName = "~/Areas/Admin/Views/Navigation/Segment.cshtml"
+                ViewName = "~/Areas/Admin/Views/Navigation/Path.cshtml"
             };
             return View(Pages.ExtJs, vm);
         }

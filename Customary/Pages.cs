@@ -7,6 +7,6 @@ namespace Custom
 {
     public static class Pages
     {
-        public const string ExtJs = "~/Areas/ExtJs/Views/Shared/Page.cshtml";
+        public const string ExtJs = "~/Areas/Admin/Views/Shared/SimpleExtJsPage.cshtml";
     }
 }
