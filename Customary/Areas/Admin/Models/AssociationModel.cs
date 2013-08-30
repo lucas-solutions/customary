@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
-    public class ExtAssociation
+    public class AssociationModel
     {
         public string Type { get; set; }
 

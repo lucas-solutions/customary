@@ -8,7 +8,8 @@ namespace Custom.Areas.Admin.Models
     /// <summary>
     /// Used to create the Complex ExtJs panel
     /// </summary>
-    public class ComplexViewModel
+    public class ComplexViewModel : TypeViewModel
     {
+        
     }
 }

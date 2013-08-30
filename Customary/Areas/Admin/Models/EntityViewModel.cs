@@ -5,7 +5,8 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
-    public class EntityViewModel
+    public class EntityViewModel : ComplexViewModel
     {
+        
     }
 }

@@ -12,12 +12,12 @@ namespace Custom.Areas.ExtJs
     {
         public static ExtModel ExtModel(this ComplexDescriptor type)
         {
-            List<ExtField> fields = new List<ExtField>();
-            List<ExtAssociation> associations = new List<ExtAssociation>();
+            List<FieldViewModel> fields = new List<FieldViewModel>();
+            List<AssociationViewModel> associations = new List<AssociationViewModel>();
 
             foreach (var property in type.Members.OfType<PropertyDescriptor>())
             {
-                var field = new ExtField
+                var field = new FieldViewModel
                 {
                     Name = property.Name,
                 };
@@ -56,7 +56,7 @@ namespace Custom.Areas.ExtJs
             return new ExtModel
             {
                 Name = type.Name,
-                Fields = fields,
+                //Fields = fields,
                 Associations = associations
             };
         }

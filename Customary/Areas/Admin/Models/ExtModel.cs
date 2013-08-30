@@ -7,14 +7,14 @@ namespace Custom.Areas.Admin.Models
 {
     public class ExtModel
     {
-        ExtProxy _proxy;
+        ProxyViewModel _proxy;
 
         public string Name { get; set; }
 
-        public ExtProxy Proxy { get { return _proxy ?? (_proxy = new ExtProxy()); } set { _proxy = value; } }
+        public ProxyViewModel Proxy { get { return _proxy ?? (_proxy = new ProxyViewModel()); } set { _proxy = value; } }
 
-        public List<ExtField> Fields { get; set; }
+        
 
-        public List<ExtAssociation> Associations { get; set; }
+        public List<AssociationViewModel> Associations { get; set; }
     }
 }

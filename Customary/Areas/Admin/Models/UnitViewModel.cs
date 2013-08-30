@@ -5,6 +5,9 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
+    /// <summary>
+    /// Used to render an Html view
+    /// </summary>
     public class UnitViewModel
     {
     }

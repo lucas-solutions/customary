@@ -5,10 +5,9 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
-    public class ExtProxy
-    {
-        public string Type { get; set; }
+    using Custom.Models;
 
-        public string Url { get; set; }
+    public class TypeViewModel : ViewModel
+    {
     }
 }

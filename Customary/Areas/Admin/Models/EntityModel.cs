@@ -7,5 +7,6 @@ namespace Custom.Areas.Admin.Models
 {
     public class EntityModel : ComplexModel
     {
+        
     }
 }

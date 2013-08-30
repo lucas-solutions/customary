@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
-    public class ExtField
+    public class FieldViewModel
     {
         public string Name { get; set; }
 

@@ -5,8 +5,7 @@ using System.Web;
 
 namespace Custom.Areas.Admin.Models
 {
-    public class ComplexModel
+    public class FormModel
     {
-        
     }
 }
