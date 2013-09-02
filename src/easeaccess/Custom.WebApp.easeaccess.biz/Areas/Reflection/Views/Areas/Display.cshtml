@@ -1,0 +1,310 @@
+﻿@model Custom.Models.AreaViewModel
+
+@{
+    ViewBag.Title = "Areas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.X().ResourceManager().ScriptMode(Ext.Net.ScriptMode.Debug)
+@(Html.X().Viewport()//Window()
+    //.Title("Reflection View")
+    //.Icon(Icon.Application)
+    .Width(800)
+    .Height(600)
+    .Border(false)
+    //.Closable(false)
+    .X(100)
+    .Y(100)
+    //.Plain(true)
+    .Layout(LayoutType.Border)
+    .Items(items =>
+        {
+            items.Add(Html.X().Toolbar()
+                .Region(Region.North));
+            
+            items.Add(Html.X().TreePanel()
+                .BodyPadding(5)
+                .Collapsed(false)
+                .Collapsible(true)
+                //.DockedItems(Html.X().Toolbar()
+                //    .Items(Html.X().ToolbarTextItem()
+                //        .Text("toolbar text")
+                //    )
+                //)
+                .ID("TreePanel")
+                .Listeners(listeners =>
+                {
+                    listeners.AfterRender.Handler = "this.setTitle('');";
+                    listeners.BeforeCollapse.Handler = "this.setTitle('')";
+                    listeners.BeforeExpand.Handler = "this.setTitle(this.initialConfig.title)";
+                    listeners.ItemClick.Handler = "Custom.Handlers.ReflectionTreePanel.prototype.itemClick.call(this, record, item, index, e, { panel: #{TabPanel}, application: #{TabApp}, area: #{TabArea}, files: #{TabFiles}, file: #{TabFile}, lists: #{TabLists}, list: #{TabList}, models: #{TabModels}, model: #{TabModel}, notes: #{TabNotes}, note: #{TabNote} })";// "if (record.data.href) { e.stopEvent(); loadPage(#{Pages}, record); }";
+                    listeners.ItemDblClick.Handler = "Custom.Handlers.ReflectionTreePanel.prototype.itemDbClick.call(this, record, item, index, e, #{TabPanel})";
+                })
+                .MinWidth(175)
+                .Region(Region.West)
+                .Root(Html.X().Node()
+                    .AllowDrag(false)
+                    .Text("localhost")
+                    .CustomAttributes(attributes =>
+                    {
+                        attributes.Add(new ConfigItem { Name = "name", Value = "localhost", Mode = ParameterMode.Value });
+                        attributes.Add(new ConfigItem { Name = "path", Value = "Nodes", Mode = ParameterMode.Value });
+                        attributes.Add(new ConfigItem { Name = "type", Value = "application", Mode = ParameterMode.Value });
+                    })
+                )
+                .RootVisible(true)
+                .Split(true)
+                .Store(store => store.Add(Html.X().TreeStore()
+                    .AutoLoad(true)
+                    .Listeners(listers =>
+                    {
+                        //listers.BeforeLoad.Handler = "Custom.Handlers.ReflectionTreeStore.prototype.beforeLoad.call(this)";
+                    })
+                    .Proxy(Html.X().RestProxy()
+                        .BuildUrl(fn => fn.Handler = "return Custom.Handlers.ReflectionTreeProxy.prototype.buildUrl.call(this, request)")
+                        .Headers(headers => headers.Add(new Parameter { Name = "Accept", Value = "application/json" }))
+                        //.Reader(Html.X().JsonReader()
+                        //  .Root("data")
+                        //)
+                    ))
+                )
+                .Title("Reflection Tree Panel")
+                .View(Html.X().TreeView()
+                    .Plugins(Html.X().TreeViewDragDrop().ContainerScroll(true))
+                )
+                .Width(175));
+
+            items.Add(Html.X().TabPanel()
+                .ID("TabPanel")
+                .Items(tabPanel =>
+                    {
+                        tabPanel.Add(Html.X().Panel()
+                            .BodyPadding(5)
+                            .Closable(true)
+                            .ID("TabApp")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Layout(LayoutType.Fit)
+                            .Width(800)
+                            .Items(form =>
+                            {
+                                form.Add(Html.X().GridPanel()
+                                    //.ColumnWidth(0.6)
+                                    .ColumnModel(columnModel =>
+                                    {
+                                        columnModel.Columns.Add(Html.X().RowNumbererColumn().Width(50).Sortable(false));
+                                        columnModel.Columns.Add(Html.X().Column()
+                                                                        .Text("Company")
+                                                                        .DataIndex("Company")
+                                                                        .Flex(1));
+                                        columnModel.Columns.Add(Html.X().Column()
+                                                                        .Text("Price")
+                                                                        .DataIndex("Price")
+                                                                        .Width(70));
+                                        columnModel.Columns.Add(Html.X().DateColumn()
+                                                                        .Text("LastUpdate")
+                                                                        .DataIndex("LastUpdate")
+                                                                        .Width(140)
+                                                                        .Format("HH:mm:ss"));
+                                    })
+                                    //.DisableSelection(true)
+                                    .Height(500)
+                                    .InvalidateScrollerOnRefresh(false)
+                                    .Listeners(listeners =>
+                                    {
+                                        listeners.AfterRender.Handler = "this.store.guaranteeRange(0, 99);";
+                                        listeners.AfterRender.Delay = 100;
+                                        listeners.SelectionChange.Handler = "if (selected[0]) { #{EditFormPanel1}.getForm().loadRecord(selected[0]); }";
+                                    })
+                                    .SelectionModel(Html.X().RowSelectionModel().Mode(SelectionMode.Single).Listeners(listeners => listeners.SelectionChange.Handler = "if (selected[0]) { #{EditFormPanel1}.getForm().loadRecord(selected[0]); }"))
+                                    .Store(store => store.Add(Html.X().Store()
+                                        .PageSize(100)
+                                        .Buffered(true)
+                                        .AutoLoad(false)
+                                        .Proxy(proxy => proxy.Add(Html.X().AjaxProxy()
+                                                    .Url("/Data/GetData/")
+                                                    .Reader(reader => reader.Add(Html.X().JsonReader()
+                                                                .Root("data")
+                                                            ))
+                                                    ))
+                                        .Model(model => model.Add(Html.X().Model()
+                                                    .Fields(fields =>
+                                                    {
+                                                        fields.Add(Html.X().ModelField().Name("Company"));
+                                                        fields.Add(Html.X().ModelField().Name("Price"));
+                                                        fields.Add(Html.X().ModelField().Name("LastUpdate").Type(ModelFieldType.Date));
+                                                    })
+                                                ))
+                                        ))
+                                    .Title("Applications")
+                                    .VerticalScroller(scroller => scroller.Add(Html.X().GridPagingScroller()))
+                                    .View(view => view.Add(Html.X().GridView().StripeRows(true).TrackOver(false)))
+                                    //.Width(500)
+                                    );
+                                
+                                form.Add(Html.X().Window()
+                                    .Title("Record")
+                                    .Width(300)
+                                    .Height(180)
+                                    .Layout(LayoutType.Fit)
+                                    //.Hidden(true)
+                                    .Closable(false)
+                                    .Shadow(false)
+                                    .Items(wnd =>
+                                        {
+                                            wnd.Add(Html.X().FormPanel()
+                                                .ID("EditFormPanel1")
+                                                .Border(false)
+                                                .DefaultAnchor("100%")
+                                                .BodyPadding(10)
+                                                .Items(wndfrmItems =>
+                                                    {
+                                                        wndfrmItems.Add(Html.X().TextField().Name("Company").FieldLabel("Company"));
+                                                        wndfrmItems.Add(Html.X().TextField().Name("Price").FieldLabel("Price"));
+                                                        wndfrmItems.Add(Html.X().DateField().Name("LastUpdate").FieldLabel("LastUpdate"));
+                                                    }));
+                                        })
+                                    .Listeners(wndListeners =>
+                                        {
+                                            wndListeners.AfterRender.Handler = "this.show();this.el.alignTo(document, 'br-br', [-20,-20]);";
+                                            wndListeners.AfterRender.Delay = 1;
+                                        })
+                                    .Plugins(Html.X().MouseDistanceSensor().MinOpacity(0.3m))
+                                 );
+
+                                //form.Add(Html.X().FieldSet()
+                                //    .ColumnWidth(0.4)
+                                //    .MarginSpec("0 0 0 10")
+                                //    //.ButtonAlign("Right")
+                                //    //.Defaults(fs =>
+                                //    //    {
+                                //    //        fs.Add(Html.X().Parameter().Name("Width").Value("240"));
+                                //    //        fs.Add(Html.X().Parameter().Name("LabelWidth").Value("90"));
+                                //    //    })
+                                //    .Items(fs =>
+                                //        {
+                                //            fs.Add(Html.X().TextField().Name("Company").FieldLabel("Company"));
+                                //            fs.Add(Html.X().TextField().Name("Price").FieldLabel("Price"));
+                                //            fs.Add(Html.X().DateField().Name("LastUpdate").FieldLabel("LastUpdate"));
+                                //        })
+                                //    .Title("Application details"));
+                            })
+                            .Title("Application"));
+                        
+                        tabPanel.Add(Html.X().Panel()
+                            .Closable(true)
+                            .ID("TabArea")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Title("Area"));
+
+                        tabPanel.Add(Html.X().Panel()
+                            .Closable(true)
+                            .ID("TabFile")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Title("File"));
+
+                        tabPanel.Add(Html.X().Panel()
+                            .Closable(true)
+                            .ID("TabList")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Title("List"));
+
+                        tabPanel.Add(Html.X().Panel()
+                            .Closable(true)
+                            .ID("TabModel")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Title("Model"));
+
+                        tabPanel.Add(Html.X().Panel()
+                            .Closable(true)
+                            .ID("TabNote")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Title("Note"));
+
+                        tabPanel.Add(Html.X().Panel()
+                            .BodyPadding(5)
+                            .Closable(true)
+                            .ID("GridTab")
+                            .Hidden(false)
+                            .HideMode(HideMode.Visibility)
+                            .Layout(LayoutType.Fit)
+                            .Width(800)
+                            .Items(form =>
+                            {
+                                form.Add(Html.X().GridPanel()
+                            .ColumnModel(columnModel =>
+                                {
+                                    columnModel.Columns.Add(Html.X().RowNumbererColumn().Width(50).Sortable(false));
+                                    columnModel.Columns.Add(Html.X().Column()
+                                                                    .Text("Company")
+                                                                    .DataIndex("Company")
+                                                                    .Flex(1));
+                                    columnModel.Columns.Add(Html.X().Column()
+                                                                    .Text("Price")
+                                                                    .DataIndex("Price")
+                                                                    .Width(70));
+                                    columnModel.Columns.Add(Html.X().DateColumn()
+                                                                    .Text("LastUpdate")
+                                                                    .DataIndex("LastUpdate")
+                                                                    .Width(140)
+                                                                    .Format("HH:mm:ss"));
+                                })
+                            .DisableSelection(true)
+                            .Height(500)
+                            .InvalidateScrollerOnRefresh(false)
+                            .Listeners(listeners =>
+                                {
+                                    listeners.AfterRender.Handler = "this.store.guaranteeRange(0, 99);";
+                                    listeners.AfterRender.Delay = 1;
+                                    //listeners.SelectionChange.Handler = "if (selected[0]) { this.up('form').getForm().loadRecord(selected[0]); }";
+                                })
+                            .Store(store => store.Add(Html.X().Store()
+                                .PageSize(100)
+                                .Buffered(true)
+                                .AutoLoad(false)
+                                .Proxy(proxy => proxy.Add(Html.X().AjaxProxy()
+                                            .Url("/Data/GetData/")
+                                            .Reader(reader => reader.Add(Html.X().JsonReader()
+                                                        .Root("data")
+                                                    ))
+                                            ))
+                                .Model(model => model.Add(Html.X().Model()
+                                            .Fields(fields =>
+                                            {
+                                                fields.Add(Html.X().ModelField().Name("Company"));
+                                                fields.Add(Html.X().ModelField().Name("Price"));
+                                                fields.Add(Html.X().ModelField().Name("LastUpdate").Type(ModelFieldType.Date));
+                                            })
+                                        ))
+                                ))
+                            .Title("Stock Price")
+                            .VerticalScroller(scroller => scroller.Add(Html.X().GridPagingScroller()))
+                            .View(view => view.Add(Html.X().GridView().TrackOver(false)))
+                            .Width(500));
+                            }));
+                    })
+                .Region(Region.Center));
+            
+            items.Add(Html.X().Panel()
+                .Collapsed(true)
+                .Collapsible(true)
+                .Height(100)
+                .ID("SouthPanel")
+                .Listeners(listers =>
+                    {
+                        listers.AfterRender.Handler = "this.setTitle('');";
+                        listers.BeforeCollapse.Handler = "this.setTitle('')";
+                        listers.BeforeExpand.Handler = "this.setTitle(this.initialConfig.title)";
+                    })
+                .MinHeight(100)
+                .Region(Region.South)
+                .Split(true));    
+        })
+)

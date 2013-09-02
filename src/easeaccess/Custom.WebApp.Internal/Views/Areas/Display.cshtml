@@ -1,0 +1,21 @@
+﻿@model Custom.Models.AreaViewModel
+
+@{
+    ViewBag.Title = "Applications";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <script src="@Url.Content("~/y7-adapter.js")" data-culture="en-US"></script>
+</head>
+<body>
+    <h2>@ViewBag.Title</h2>
+    <div class="y7-widget" data-widget="app-panel"></div>
+</body>
+</html>
+

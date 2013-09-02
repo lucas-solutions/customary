@@ -1,0 +1,39 @@
+﻿@model Custom.Models.RecordViewModel
+
+@{
+    var model = Model.Model;
+    var record = Model.Record;
+    var fields = record.Fields.ToList();
+    var properties = model.Properties.ToList();
+
+    fields.Sort((x, y) => { return string.Compare(x.Property, y.Property); });
+    properties.Sort((x, y) => { return string.Compare(x.Id, y.Id); });
+
+    ViewBag.Title = string.Format("Record {0} ({1}) - Display Fields", Model.Record.Id, model.Id);
+}
+
+<h2>@ViewBag.Title</h2>
+
+<ul>
+    @{
+        var index = 0;
+        var field = fields[index];
+        foreach (var property in properties)
+        {
+            while (string.Compare(field.Property, property.Id, true) < 0)
+            {
+                field = fields[++index];
+            }
+
+            if (property.Id.Equals(field.Property))
+            {
+        <li><span>@property.Id</span><span>@field.Value</span></li>
+            }
+            else
+            {
+        <li><span>property.Id</span><span></span></li>
+            }
+        }
+    }
+</ul>
+

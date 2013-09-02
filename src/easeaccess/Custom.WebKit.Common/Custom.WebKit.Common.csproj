@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{11A7E577-51D5-498A-9D2D-E70579CFD267}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Custom</RootNamespace>
+    <AssemblyName>Custom.WebKit.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Raven.Abstractions, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\net40\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\net40\Raven.Client.Lightweight.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\ReflectionController.cs" />
+    <Compile Include="Binders\ApplicationBinder.cs" />
+    <Compile Include="Binders\FieldBinder.cs" />
+    <Compile Include="Binders\FileBinder.cs" />
+    <Compile Include="Binders\ItemBinder.cs" />
+    <Compile Include="Binders\GridBinder.cs" />
+    <Compile Include="Binders\NoteBinder.cs" />
+    <Compile Include="Binders\ColumnBinder.cs" />
+    <Compile Include="Binders\FormBinder.cs" />
+    <Compile Include="Extensions\HttpRequestExtensions.cs" />
+    <Compile Include="Handlers\MetadataRouteHandler.cs" />
+    <Compile Include="Handlers\MetadataHandler.cs" />
+    <Compile Include="Handlers\ReflectionRouteHandler.cs" />
+    <Compile Include="Models\AngularSyntaxTransformation.cs" />
+    <Compile Include="Models\FormModel.cs" />
+    <Compile Include="Models\MustacheSyntaxTransformation.cs" />
+    <Compile Include="Modules\GuardModule.cs" />
+    <Compile Include="Modules\ReflectionModule.cs" />
+    <Compile Include="OAuthProvider2.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\RazorSyntaxTransformation.cs" />
+    <Compile Include="Models\TemplateSyntaxTransformation.cs" />
+    <Compile Include="Repositories\RequestRepository.cs" />
+    <Compile Include="Repositories\RequestStore.cs" />
+    <Compile Include="Results\ActionsStoreResult.cs" />
+    <Compile Include="Results\AreasStoreResult.cs" />
+    <Compile Include="Results\FieldsStoreResult.cs" />
+    <Compile Include="Results\FilesStoreResult.cs" />
+    <Compile Include="Results\ListsStoreResult.cs" />
+    <Compile Include="Results\GridsStoreResult.cs" />
+    <Compile Include="Results\NotesStoreResult.cs" />
+    <Compile Include="Results\OperationsStoreResult.cs" />
+    <Compile Include="Results\ColumnsStoreResult.cs" />
+    <Compile Include="Results\QueriesStoreResult.cs" />
+    <Compile Include="Results\FormsStoreResult.cs" />
+    <Compile Include="Results\StoreResponseData.cs" />
+    <Compile Include="Results\StoreResult.cs" />
+    <Compile Include="Routing\ApplicationPath.cs" />
+    <Compile Include="Routing\AreaPath.cs" />
+    <Compile Include="Routing\FilePath.cs" />
+    <Compile Include="Routing\ListPath.cs" />
+    <Compile Include="Routing\ModelPath.cs" />
+    <Compile Include="Routing\NotePath.cs" />
+    <Compile Include="Routing\Segment.cs" />
+    <Compile Include="Routing\SegmentType.cs" />
+    <Compile Include="Binders\AreaBinder.cs" />
+    <Compile Include="Binders\ListBinder.cs" />
+    <Compile Include="Utils\CompressionUtils.cs" />
+    <Compile Include="Utils\IpParser.cs" />
+    <Compile Include="Models\RequestReflection.cs" />
+    <Compile Include="Utils\Security\RequestFilter.cs" />
+    <Compile Include="Utils\Security\RequestGuard.cs" />
+    <Compile Include="Utils\Security\RequestPolicy.cs" />
+    <Compile Include="Utils\Security\RequestTracking.cs" />
+    <Compile Include="Utils\UriParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Custom.BizKit.Common\Custom.BizKit.Common.csproj">
+      <Project>{ed7a2796-8b38-4fd6-8d87-27bd8aee9c18}</Project>
+      <Name>Custom.BizKit.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Filters\" />
+    <Folder Include="Utils\Performance\" />
+    <Folder Include="Utils\Security\OAuth\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

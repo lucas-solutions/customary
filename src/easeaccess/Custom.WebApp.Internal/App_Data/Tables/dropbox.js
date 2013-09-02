@@ -1,0 +1,14 @@
+﻿{
+    "DropboxAccounts": [
+        {
+        }
+    ],
+    "DropboxFolders": [
+        {
+        }
+    ],
+    "DropboxFiles": [
+        {
+        }
+    ]
+}

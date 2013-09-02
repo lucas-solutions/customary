@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Infinite Scrolling - Ext.NET Examples</title>
+</head>
+<body>    
+    @Html.X().ResourceManager()
+ 
+    <h1>Infinite Scrolling</h1>
+ 
+    <p>The brand new GridPanel supports infinite scrolling, which enables you to load any number of records into a grid without paging.</p>
+         
+    <p>The GridPanel uses a new virtualized scrolling system to handle potentially infinite data sets without any impact on client side performance.</p>
+     
+    <br />
+ 
+    @(Html.X().GridPanel()
+        .Title("Stock Price")
+        .Height(500)
+        .Width(500)
+        .InvalidateScrollerOnRefresh(false)
+        .DisableSelection(true)
+        .Store(store => store.Add(Html.X().Store()
+            .PageSize(100)
+            .Buffered(true)
+            .AutoLoad(false)
+            .Proxy(proxy => proxy.Add(Html.X().AjaxProxy()
+                        .Url("/Data/GetData/")
+                        .Reader(reader => reader.Add(Html.X().JsonReader()
+                                    .Root("data")
+                                ))
+                        ))
+            .Model(model => model.Add(Html.X().Model()
+                        .Fields(fields => {
+                            fields.Add(Html.X().ModelField().Name("Company")); 
+                            fields.Add(Html.X().ModelField().Name("Price"));
+                            fields.Add(Html.X().ModelField().Name("LastUpdate").Type(ModelFieldType.Date));
+                        })
+                    ))
+            ))
+        .VerticalScroller(scroller => scroller.Add(Html.X().GridPagingScroller()))      
+        .ColumnModel(columnModel => {
+            columnModel.Columns.Add(Html.X().RowNumbererColumn().Width(50).Sortable(false));
+            columnModel.Columns.Add(Html.X().Column()
+                                            .Text("Company")
+                                            .DataIndex("Company")
+                                            .Flex(1));
+            columnModel.Columns.Add(Html.X().Column()
+                                            .Text("Price")
+                                            .DataIndex("Price")
+                                            .Width(70));
+            columnModel.Columns.Add(Html.X().DateColumn()
+                                            .Text("LastUpdate")
+                                            .DataIndex("LastUpdate")
+                                            .Width(140)
+                                            .Format("HH:mm:ss"));
+        })
+        .View(view => view.Add(Html.X().GridView().TrackOver(false)))
+        .Listeners(listeners => {
+            listeners.AfterRender.Handler = "this.store.guaranteeRange(0, 99);";
+            listeners.AfterRender.Delay = 100; 
+        })
+    )
+</body>
+</html>

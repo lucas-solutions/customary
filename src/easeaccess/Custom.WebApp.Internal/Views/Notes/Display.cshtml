@@ -1,0 +1,34 @@
+﻿@model Custom.Models.NoteViewModel
+
+@{
+    ViewBag.Title = "Notes";
+}
+
+@section scripts {
+
+}
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Styles/ext-all.css")">
+<script type="text/javascript" src="@Url.Content("~/Scripts/Ext/ext-base-3.4.0.js")"></script>
+@*<script type="text/javascript" src="@Url.Content("~/Scripts/Ext/ext-jquery-adapter-3.4.0.js")"></script>*@
+<script type="text/javascript" src="@Url.Content("~/Scripts/Ext/ext-all-debug-w-comments-3.4.0.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/Ext/ux/AreaTreeMenu-3.4.0.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/Ext/ux/AreaTreePanel-3.4.0.js")"></script>
+<script type="text/javascript">
+    Ext.onReady(function () {
+
+        // spiffy tooltips!
+        Ext.QuickTips.init();
+
+        // create a new filebrowserpanel and render it to 'ext-areatreepanel'
+        var fb = new Ext.ux.AreaTreePanel({
+            width: 800,
+            height: 600,
+            renderTo: 'ext-areatreepanel'
+        });
+    });
+</script>
+<h2>@ViewBag.Title</h2>
+
+<div id="ext-areatreepanel">
+</div>

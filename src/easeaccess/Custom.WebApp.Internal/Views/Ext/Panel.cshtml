@@ -1,0 +1,21 @@
+﻿@model Custom.Models.PanelModel
+
+@{
+    Layout = null;
+}
+<script>
+Ext.define('@Model.Name', function () {
+
+    return {
+        initComponent: function (config) {
+            var me = this;
+
+            Ext.apply(this,
+                {
+                    items: items
+                });
+            this.callParent();
+        }
+    }
+});
+</script>
