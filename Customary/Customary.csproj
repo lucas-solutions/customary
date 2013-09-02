@@ -216,7 +216,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SimpleInjectorInitializer.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Models\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\DiagnosticsController.cs" />
     <Compile Include="Areas\Admin\Controllers\GlobalizationController.cs" />
@@ -233,7 +233,8 @@
     <Compile Include="Areas\Admin\Models\ExtPageModel.cs" />
     <Compile Include="Areas\Admin\Models\FormModel.cs" />
     <Compile Include="Areas\Admin\Models\MethodViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\ModelViewModel.cs" />
+    <Compile Include="Models\Ext\ModelViewModel.cs" />
+    <Compile Include="Models\Ext\ModelViewModelExtensions.cs" />
     <Compile Include="Areas\Admin\Models\PrimitiveViewModel.cs" />
     <Compile Include="Areas\Admin\Models\PropertyViewModel.cs" />
     <Compile Include="Areas\Admin\Models\RegularViewModel.cs" />
@@ -242,10 +243,10 @@
     <Compile Include="Areas\Admin\Models\TypeViewModel.cs" />
     <Compile Include="Areas\Admin\Models\UnitModel.cs" />
     <Compile Include="Areas\Admin\Models\UnitViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\ValidationViewModel.cs" />
+    <Compile Include="Models\Ext\ValidationViewModel.cs" />
     <Compile Include="Metadata\ComplexExtensions.cs" />
-    <Compile Include="Areas\Admin\Models\AssociationViewModel.cs" />
-    <Compile Include="Areas\Admin\Models\FieldViewModel.cs" />
+    <Compile Include="Models\Ext\AssociationViewModel.cs" />
+    <Compile Include="Models\Ext\FieldViewModel.cs" />
     <Compile Include="Areas\User\Controllers\AccountController.cs" />
     <Compile Include="Areas\User\Controllers\ProfileController.cs" />
     <Compile Include="Controllers\BusinessController.cs" />
@@ -253,8 +254,7 @@
     <Compile Include="Globalization\LocalizationExtensions.cs" />
     <Compile Include="Images\Masterdata\MasterdataExtensions.cs" />
     <Compile Include="Metadata\MetadataExtensions.cs" />
-    <Compile Include="Areas\Admin\Models\ExtModel.cs" />
-    <Compile Include="Areas\Admin\Models\ProxyViewModel.cs" />
+    <Compile Include="Models\Ext\ProxyViewModel.cs" />
     <Compile Include="Navigation\AcceptTypes.cs" />
     <Compile Include="Navigation\ControllerDescriptor.cs" />
     <Compile Include="Navigation\ControllerExtensions.cs" />
@@ -314,7 +314,7 @@
     <Compile Include="Scripts.cs" />
     <Compile Include="Areas\User\UserAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AppController.cs" />
+    <Compile Include="Controllers\ExtController.cs" />
     <Compile Include="Controllers\Cookie.cs" />
     <Compile Include="Controllers\CookieRepository.cs" />
     <Compile Include="Controllers\CustomController.cs" />
@@ -452,7 +452,7 @@
     <Content Include="Areas\Admin\Views\Navigation\Path.cshtml" />
     <Content Include="Areas\User\Views\Web.config" />
     <Content Include="Areas\Admin\Views\Navigation\NavigationModel.cshtml" />
-    <Content Include="Areas\Admin\Views\Metadata\Model.cshtml" />
+    <Content Include="Views\Ext\Model_old.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\SimplePage.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -469,7 +469,7 @@
     <Content Include="Areas\Admin\Views\Shared\_SimpleLayout.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\TreeGrid.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\Grid.cshtml" />
-    <Content Include="Areas\Admin\Views\Shared\Model.cshtml" />
+    <Content Include="Views\Ext\Model.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3547,18 +3547,18 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Test\Redirect.cshtml" />
-    <Content Include="Views\App\Page.cshtml" />
-    <Content Include="Views\App\_Viewport.cshtml" />
+    <Content Include="Views\Ext\Page.cshtml" />
+    <Content Include="Views\Ext\_Viewport.cshtml" />
     <Content Include="Styles\ext\ext-theme-access\Readme.md" />
     <Content Include="Styles\ext\ext-theme-classic-sandbox\Readme.md" />
     <Content Include="Styles\ext\ext-theme-classic\Readme.md" />
     <Content Include="Styles\ext\ext-theme-gray\Readme.md" />
     <Content Include="Styles\ext\ext-theme-neptune\Readme.md" />
     <Content Include="Views\Home\Portal.cshtml" />
-    <Content Include="Views\App\Form.cshtml" />
-    <Content Include="Views\App\Panel.cshtml" />
-    <Content Include="Views\App\Grid.cshtml" />
-    <Content Include="Views\App\Store.cshtml" />
+    <Content Include="Views\Ext\Form.cshtml" />
+    <Content Include="Views\Ext\Panel.cshtml" />
+    <Content Include="Views\Ext\Grid.cshtml" />
+    <Content Include="Views\Ext\Store.cshtml" />
     <Content Include="Views\Test\MapPath.cshtml" />
     <Content Include="Views\Shared\AngularJsSimplePage.cshtml" />
     <Content Include="Views\Shared\_Angular.cshtml" />

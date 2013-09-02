@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Areas.ExtJs
+namespace Custom.Metadata
 {
-    using Custom.Areas.Admin.Models;
+    using Custom.Models.Ext;
     using Custom.Metadata;
 
     public static class ComplexExtensions
     {
-        public static ExtModel ExtModel(this ComplexDescriptor type)
+        public static ModelViewModel Model(this ComplexDescriptor type)
         {
             List<FieldViewModel> fields = new List<FieldViewModel>();
             List<AssociationViewModel> associations = new List<AssociationViewModel>();
@@ -53,9 +53,9 @@ namespace Custom.Areas.ExtJs
                 }
             }
 
-            return new ExtModel
+            return new ModelViewModel
             {
-                Name = type.Name,
+                //Name = type.Name,
                 //Fields = fields,
                 Associations = associations
             };

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Areas.Admin.Models
+namespace Custom.Models.Ext
 {
-    using Custom.Models;
-
     public class ValidationViewModel : ViewModel
     {
         public string Presence

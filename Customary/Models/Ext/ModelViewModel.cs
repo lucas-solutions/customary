@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Areas.Admin.Models
+namespace Custom.Models.Ext
 {
-    using Custom.Models;
-
     public class ModelViewModel : ViewModel
     {
+        public static implicit operator ModelViewModel(Custom.Metadata.EntityDescriptor entity)
+        {
+            return entity != null ? entity.ToModelViewModel() : null;
+        }
+
         private ProxyViewModel _proxy;
         private List<FieldViewModel> _fields;
         private List<AssociationViewModel> _associations;

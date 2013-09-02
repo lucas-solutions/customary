@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Custom.Areas.Admin.Models
+namespace Custom.Models.Ext
 {
     public class AssociationViewModel
     {
