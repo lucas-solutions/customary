@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{ED7A2796-8B38-4FD6-8D87-27BD8AEE9C18}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Custom</RootNamespace>
+    <AssemblyName>Custom.BizKit.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Abstractions, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\net40\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Embedded, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Embedded.2.0.2330\lib\net40\Raven.Client.Embedded.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\net40\Raven.Client.Lightweight.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Database, Version=2.0.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RavenDB.Database.2.0.2330\lib\net40\Raven.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Documents\DocumentStoreHolder.cs" />
+    <Compile Include="Extensions\IDocumentStoreExtensions.cs" />
+    <Compile Include="Extensions\RavenJObjectExtensions.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Indexes\Record_ByField.cs" />
+    <Compile Include="Models\App.cs" />
+    <Compile Include="Models\Area.cs" />
+    <Compile Include="Models\DropboxAccount.cs" />
+    <Compile Include="Models\DropboxFile.cs" />
+    <Compile Include="Models\DropboxFolder.cs" />
+    <Compile Include="Models\EvernoteAccount.cs" />
+    <Compile Include="Models\EvernoteNote.cs" />
+    <Compile Include="Models\EvernoteNotebook.cs" />
+    <Compile Include="Models\Field.cs" />
+    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\Master.cs" />
+    <Compile Include="Models\ProcessResult.cs" />
+    <Compile Include="Models\List.cs" />
+    <Compile Include="Models\Metadata.cs" />
+    <Compile Include="Models\Grid.cs" />
+    <Compile Include="Models\RavenJTokenCallbackModel.cs" />
+    <Compile Include="Models\Schema.cs" />
+    <Compile Include="Areas\Security\Models\Member.cs" />
+    <Compile Include="Models\Note.cs" />
+    <Compile Include="Models\Column.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Areas\Globalization\Models\Text.cs" />
+    <Compile Include="Exceptions\CustomException.cs" />
+    <Compile Include="Exceptions\RepositoryException.cs" />
+    <Compile Include="Extensions\ConcurrentDictionaryExtensions.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\DictionaryParserExtensions.cs" />
+    <Compile Include="Extensions\DocumentRepositoryExtensions.cs" />
+    <Compile Include="Extensions\FieldExtensions.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
+    <Compile Include="Extensions\ItemExtensions.cs" />
+    <Compile Include="Extensions\JObjectExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\GridExtensions.cs" />
+    <Compile Include="Extensions\NoteExtensions.cs" />
+    <Compile Include="Extensions\PropertyExtensions.cs" />
+    <Compile Include="Extensions\FormExtensions.cs" />
+    <Compile Include="Extensions\XmlParserExtensions.cs" />
+    <Compile Include="Models\Action.cs" />
+    <Compile Include="Models\ConcurrentDictionaryObject.cs" />
+    <Compile Include="Models\DictionaryObject.cs" />
+    <Compile Include="Models\DynamicObject.cs" />
+    <Compile Include="Models\Filter.cs" />
+    <Compile Include="Models\Job.cs" />
+    <Compile Include="Models\JsonObject.cs" />
+    <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\Operation.cs" />
+    <Compile Include="Models\Query.cs" />
+    <Compile Include="Models\Reflection.cs" />
+    <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\Table.cs" />
+    <Compile Include="Models\Task.cs" />
+    <Compile Include="Models\Text.cs" />
+    <Compile Include="Models\Masterdata.cs" />
+    <Compile Include="Models\View.cs" />
+    <Compile Include="Models\Worker.cs" />
+    <Compile Include="Objects\ApplicationObject.cs" />
+    <Compile Include="Objects\AreaObject.cs" />
+    <Compile Include="Objects\AssociationObject.cs" />
+    <Compile Include="Objects\CloudObject.cs" />
+    <Compile Include="Objects\ColumnObject.cs" />
+    <Compile Include="Objects\FieldObject.cs" />
+    <Compile Include="Objects\FileObject.cs" />
+    <Compile Include="Objects\MetadataObject.cs" />
+    <Compile Include="Objects\FormObject.cs" />
+    <Compile Include="Objects\GridObject.cs" />
+    <Compile Include="Objects\IDocumentObject.cs" />
+    <Compile Include="Objects\ListObject.cs" />
+    <Compile Include="Objects\NoteObject.cs" />
+    <Compile Include="Objects\PageObject.cs" />
+    <Compile Include="Objects\PropertyObject.cs" />
+    <Compile Include="Objects\ProxyObject.cs" />
+    <Compile Include="Objects\ReportObject.cs" />
+    <Compile Include="Objects\ScreenObject.cs" />
+    <Compile Include="Objects\ServiceObject.cs" />
+    <Compile Include="Objects\StoreObject.cs" />
+    <Compile Include="Objects\UnitObject.cs" />
+    <Compile Include="Objects\MasterdataObject.cs" />
+    <Compile Include="Objects\ModelObject.cs" />
+    <Compile Include="Objects\TextExtensions.cs" />
+    <Compile Include="Objects\TextObject.cs" />
+    <Compile Include="Processes\AreaProcesses.cs" />
+    <Compile Include="Processes\AreaExtensions.cs" />
+    <Compile Include="Processes\ColumnProcesses.cs" />
+    <Compile Include="Processes\FileProcesses.cs" />
+    <Compile Include="Processes\NoteProcesses.cs" />
+    <Compile Include="Processes\ItemProcesses.cs" />
+    <Compile Include="Processes\FieldProcesses.cs" />
+    <Compile Include="Processes\FormProcesses.cs" />
+    <Compile Include="Processes\ListProcesses.cs" />
+    <Compile Include="Processes\GridProcesses.cs" />
+    <Compile Include="Processes\ReflectionProcesses.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ApplicationRepository.cs" />
+    <Compile Include="Repositories\DocumentRepository.cs" />
+    <Compile Include="Repositories\IAreaRepository.cs" />
+    <Compile Include="Repositories\ICommand.cs" />
+    <Compile Include="Repositories\IFieldRepository.cs" />
+    <Compile Include="Repositories\IFileRepository.cs" />
+    <Compile Include="Repositories\IItemRepository.cs" />
+    <Compile Include="Repositories\IListRepository.cs" />
+    <Compile Include="Repositories\IModelRepository.cs" />
+    <Compile Include="Repositories\INoteRepository.cs" />
+    <Compile Include="Repositories\IPropertyRepository.cs" />
+    <Compile Include="Repositories\IRecordRepository.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\ITransaction.cs" />
+    <Compile Include="Repositories\IUnitOfWork.cs" />
+    <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Transform.cs" />
+    <Compile Include="Transforms\AreaTransforms.cs" />
+    <Compile Include="Transforms\StringsTransforms.cs" />
+    <Compile Include="Utils\CollectionHelper.cs" />
+    <Compile Include="Extensions\WebRequestExtensions.cs" />
+    <Compile Include="Utils\AsciiCharCode.cs" />
+    <Compile Include="Utils\AsyncHttpCallErrorEventArgs.cs" />
+    <Compile Include="Utils\AsyncHttpContext.cs" />
+    <Compile Include="Utils\AsyncSocketCallErrorEventArgs.cs" />
+    <Compile Include="Utils\EncodingExtensions.cs" />
+    <Compile Include="Utils\HttpWebRequestCreatedEventArgs.cs" />
+    <Compile Include="Utils\ResponseObject.cs" />
+    <Compile Include="Utils\ResponseObjectParseException.cs" />
+    <Compile Include="Utils\StreamWriteContext.cs" />
+    <Compile Include="Models\UriReflection.cs" />
+    <Compile Include="Utils\XmlAttribute.cs" />
+    <Compile Include="Utils\XmlData.cs" />
+    <Compile Include="Utils\EventArgs.cs" />
+    <Compile Include="Utils\Http\HttpBodyFormData.cs" />
+    <Compile Include="Utils\Http\HttpBodyFormUrlEncodedData.cs" />
+    <Compile Include="Utils\Http\HttpBodyMultipartFormData.cs" />
+    <Compile Include="Utils\Http\HttpClient.Async.cs" />
+    <Compile Include="Utils\Http\HttpClient.AsyncCall.cs" />
+    <Compile Include="Utils\Http\HttpClient.cs" />
+    <Compile Include="Utils\Http\HttpClient.SyncCall.cs" />
+    <Compile Include="Utils\Http\HttpMethodName.cs" />
+    <Compile Include="Utils\Http\HttpProtocolType.cs" />
+    <Compile Include="Utils\Http\HttpRequestCommand.cs" />
+    <Compile Include="Utils\Http\HttpRequestUploadingEventArgs.cs" />
+    <Compile Include="Utils\Http\HttpResponse.cs" />
+    <Compile Include="Utils\Http\HttpResponseException.cs" />
+    <Compile Include="Utils\ExpressionUtil.cs" />
+    <Compile Include="Utils\NullOp.cs" />
+    <Compile Include="Utils\Operator.cs" />
+    <Compile Include="Utils\Retry.cs" />
+    <Compile Include="Utils\OAuth\AccessTokenInfo.cs" />
+    <Compile Include="Utils\OAuth\AuthorizeInfo.cs" />
+    <Compile Include="Utils\OAuth\GetRequestTokenCommand.cs" />
+    <Compile Include="Utils\OAuth\OAuthClient.AsyncCall.cs" />
+    <Compile Include="Utils\OAuth\OAuthClient.cs" />
+    <Compile Include="Utils\OAuth\OAuthClient.InnerClass.cs" />
+    <Compile Include="Utils\OAuth\OAuthClient.Static.cs" />
+    <Compile Include="Utils\OAuth\OAuthClient.SyncCall.cs" />
+    <Compile Include="Utils\OAuth\OAuthMode.cs" />
+    <Compile Include="Utils\OAuth\OAuthSignatureTypes.cs" />
+    <Compile Include="Utils\OAuth\SignatureInfo.cs" />
+    <Compile Include="Utils\Sockets\BufferManager.cs" />
+    <Compile Include="Utils\Sockets\Internal\DataReceiveContext.cs" />
+    <Compile Include="Utils\Sockets\DataReceiveContextException.cs" />
+    <Compile Include="Utils\Sockets\Internal\DataSendContext.cs" />
+    <Compile Include="Utils\Sockets\Internal\DataTransferContext.cs" />
+    <Compile Include="Utils\Sockets\SocketClient.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Utils\Sockets\SocketClient.Net4.cs" />
+    <Compile Include="Exceptions\SocketClientException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\Reflection\" />
+    <Folder Include="Collections\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Utils\Utility\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{11CBD151-137A-4FEA-8451-CF1B925D8963}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Custom</RootNamespace>
+    <AssemblyName>Custom.BizKit.Office</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Areas\Office\Models\Notebook.cs" />
+    <Compile Include="Utils\Dropbox\Command\CopyFileCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\CreateAccountCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\CreateFolderCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\DeleteCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\DropboxCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetAccountCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetCopyRefCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetDeltaCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetFileCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetMetadataCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetRevisionsCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\GetThumbnailsCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\MediaCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\MoveFileCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\PutFileCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\RestoreCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\SearchCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\SharesCommand.cs" />
+    <Compile Include="Utils\Dropbox\Command\UploadFileCommand.cs" />
+    <Compile Include="Utils\Dropbox\Core\DropboxApiUrl.cs" />
+    <Compile Include="Utils\Dropbox\Core\DropboxClient.Async.cs" />
+    <Compile Include="Utils\Dropbox\Core\DropboxClient.AsyncCall.cs" />
+    <Compile Include="Utils\Dropbox\Core\DropboxClient.SyncCall.cs" />
+    <Compile Include="Utils\Dropbox\Core\RootFolder.cs" />
+    <Compile Include="Utils\Dropbox\DropboxFileProvider.cs" />
+    <Compile Include="Utils\Dropbox\DropboxFileRepository.cs" />
+    <Compile Include="Utils\Dropbox\Entity\AccountInfo.cs" />
+    <Compile Include="Utils\Dropbox\Entity\CopyRefInfo.cs" />
+    <Compile Include="Utils\Dropbox\Entity\DeltaInfo.cs" />
+    <Compile Include="Utils\Dropbox\Entity\EntryInfo.cs" />
+    <Compile Include="Utils\Dropbox\Entity\LinkInfo.cs" />
+    <Compile Include="Utils\Dropbox\Entity\Metadata.cs" />
+    <Compile Include="Utils\Dropbox\Entity\QuotaInfo.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Error\EDAMErrorCode.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Error\EDAMNotFoundException.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Error\EDAMSystemException.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Error\EDAMUserException.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Limits\Constants.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\ClientUsageMetrics.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteCollectionCounts.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteEmailParameters.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteFilter.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteList.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteMetadata.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NotesMetadataList.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NotesMetadataResultSpec.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteStore.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\NoteVersionId.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\RelatedQuery.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\RelatedResult.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\RelatedResultSpec.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\SyncChunk.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\SyncChunkFilter.cs" />
+    <Compile Include="Utils\Evernote\EDAM\NoteStore\SyncState.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Accounting.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\BusinessNotebook.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\BusinessUserRole.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Constants.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Data.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\LazyMap.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\LinkedNotebook.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Note.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\NoteAttributes.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Notebook.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\NotebookDescriptor.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\NotebookRestrictions.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\NoteSortOrder.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\PremiumInfo.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\PremiumOrderStatus.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\PrivilegeLevel.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Publishing.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\QueryFormat.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Resource.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\ResourceAttributes.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\SavedSearch.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\SharedNotebook.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\SharedNotebookInstanceRestrictions.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\SharedNotebookPrivilegeLevel.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\SponsoredGroupRole.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\Tag.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\User.cs" />
+    <Compile Include="Utils\Evernote\EDAM\Type\UserAttributes.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\AuthenticationResult.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\BootstrapInfo.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\BootstrapProfile.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\BootstrapSettings.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\Constants.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\PublicUserInfo.cs" />
+    <Compile Include="Utils\Evernote\EDAM\UserStore\UserStore.cs" />
+    <Compile Include="Utils\Evernote\EvernoteNoteProvider.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Collections\THashSet.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TBase.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TBase64Utils.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TBinaryProtocol.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TField.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TList.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TMap.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TMessage.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TMessageType.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TProtocol.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TProtocolException.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TProtocolFactory.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TProtocolUtil.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TSet.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TStruct.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Protocol\TType.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Server\TServer.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Server\TSimpleServer.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Server\TThreadedServer.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Server\TThreadPoolServer.cs" />
+    <Compile Include="Utils\Evernote\Thrift\TApplicationException.cs" />
+    <Compile Include="Utils\Evernote\Thrift\TProcessor.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TFramedTransport.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\THttpClient.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TServerTransport.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TStreamTransport.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TTransport.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TTransportException.cs" />
+    <Compile Include="Utils\Evernote\Thrift\Transport\TTransportFactory.cs" />
+    <Compile Include="Utils\Evernote\EvernoteCache.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\DropboxFileRepository.cs" />
+    <Compile Include="Repositories\EvernoteNoteRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Utils\Dropbox\api.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Custom.BizKit.Common\Custom.BizKit.Common.csproj">
+      <Project>{90e5d777-00e1-4a1d-9b98-d0319c3a9e40}</Project>
+      <Name>Custom.BizKit.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\Facebook\" />
+    <Folder Include="Utils\Flickr\" />
+    <Folder Include="Utils\Twitter\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

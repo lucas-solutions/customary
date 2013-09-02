@@ -1,0 +1,128 @@
+﻿@model Custom.Documents.TypeDescriptor
+@{
+    var typeDescriptor = Model;
+    //var service = Model.Parent;
+    //var model = Model.Object;
+    //var url = Model.Path;
+    //var proxy = model.Proxy;
+    //var fields = model.Properties;
+    //var principal = (LinkObject)null;
+    //var dependants = new List<LinkObject>();
+    foreach (var link in service.Object.Links)
+    {
+        if (!LinkTypes.Association.Equals(link.Type))
+        {
+            if (resource.Name.Equals(link.Principal, StringComparison.InvariantCultureIgnoreCase))
+            {
+                dependants.Add(link);
+            }
+
+            if (resource.Name.Equals(link.Dependant, StringComparison.InvariantCultureIgnoreCase))
+            {
+                principal = link;
+            }
+        }
+    }
+}
+<script type='text/javascript'>
+    Ext.define('@(Model.Name)', {
+        "extends": 'Ext.data.Model',
+        "type": "@(proxy.Type)",
+        "fields": [
+            @foreach (var field in fields)
+            {
+            <text>
+            {
+                name: '@(field.Name)',
+                type: '@(field.Type)',
+                @if (field.Default != null)
+                {
+                    switch (field.Type)
+                    {
+                        case "int":
+                        case "boolean":
+                        case "float":
+                <text>
+                defaultValue: @(field.Default),
+                </text>
+                            break;
+                        default:
+                <text>
+                defaultValue: '@(field.Default)',
+                </text>
+                            break;
+                    }
+                }
+                @if (field.Convert != null)
+                {
+                <text>
+                convert: @(field.Convert),
+                </text>
+                }
+                associations: [
+                @if (principal != null)
+                {
+                <text>
+                {
+                    type: 'belongsTo',
+                    model: '@(principal.Principal)',
+                    primaryKey: '@(principal.PrimaryKey)',
+                    foreignKey: '@(principal.ForeignKey)'
+                }@{if (dependants.Count > 0) { <text>,</text> }}
+                </text>
+                }
+                @for (var i = 0; i < dependants.Count; i++)
+                {
+                    var link = dependants[i];
+                    <text>
+                {
+                    @switch(link.Multiplicity)
+                    {
+                        case "1":
+                    <text>
+                    type: 'hasOne',
+                    </text>
+                            break;
+                         case "0..1":
+                    <text>
+                    type: 'hasOne',
+                    </text>
+                            break;
+                         case "1..*":
+                    <text>
+                    type: 'hasMany',
+                    </text>
+                            break;
+                            default:
+                            // 0..* or *
+                    <text>
+                    type: 'hasMany',
+                    </text>
+                            break;
+                    }
+                    model: '@(link.Dependant)',
+                    primaryKey: '@(link.PrimaryKey)',
+                    foreignKey: '@(link.ForeignKey)'
+                }@{if (dependants.Count > 0){ <text>,</text> }}
+                    </text>
+                }
+                ]
+            }
+            </text>
+            }
+        ],
+        @if (proxy != null)
+        {
+        <text>
+        proxy: {
+            api: {
+                create: '@(url)/Create',
+                read: '@(url)/Retrieve',
+                update: '@(url)/Update',
+                destroy: '@(url)/Delete'
+            }
+        }
+        </text>
+        }
+    });
+</script>
