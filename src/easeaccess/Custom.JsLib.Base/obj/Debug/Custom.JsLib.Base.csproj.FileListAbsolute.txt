@@ -1,0 +1,10 @@
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\Custom.JsLib.Base.xml
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\Custom.JsLib.Base.dll
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\Custom.JsLib.Base.pdb
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\mscorlib.dll
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\Script.Web.dll
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\Script.Web.xml
+A:\Projects\easeaccess\Custom.JsLib.Base\bin\Debug\mscorlib.xml
+A:\Projects\easeaccess\Custom.JsLib.Base\obj\Debug\Custom.JsLib.Base.dll
+A:\Projects\easeaccess\Custom.JsLib.Base\obj\Debug\Custom.JsLib.Base.pdb
+A:\Projects\easeaccess\Custom.JsLib.Base\obj\Debug\Custom.JsLib.Base.csprojResolveAssemblyReference.cache
