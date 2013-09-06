@@ -33,27 +33,27 @@ namespace Custom.Controllers
             return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
         }
 
-        protected internal ScriptResult Script(object model)
+        protected internal ScriptResultOld Script(object model)
         {
             return this.Script((string)null, model);
         }
 
-        protected internal virtual ScriptResult Script(IView view, object model)
+        protected internal virtual ScriptResultOld Script(IView view, object model)
         {
             if (model != null)
             {
                 base.ViewData.Model = model;
             }
-            return new ScriptResult { View = view, TempData = base.TempData };
+            return new ScriptResultOld { View = view, TempData = base.TempData };
         }
 
-        protected internal virtual ScriptResult Script(string viewName, object model)
+        protected internal virtual ScriptResultOld Script(string viewName, object model)
         {
             if (model != null)
             {
                 base.ViewData.Model = model;
             }
-            return new ScriptResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
+            return new ScriptResultOld { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
         }
     }
 }

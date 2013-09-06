@@ -10,14 +10,14 @@ namespace Custom.Metadata
 
     public static class ComplexExtensions
     {
-        public static ModelViewModel Model(this ComplexDescriptor type)
+        public static ModelScriptModel Model(this ComplexDescriptor type)
         {
-            List<FieldViewModel> fields = new List<FieldViewModel>();
-            List<AssociationViewModel> associations = new List<AssociationViewModel>();
+            List<FieldScriptModel> fields = new List<FieldScriptModel>();
+            List<AssociationScriptModel> associations = new List<AssociationScriptModel>();
 
             foreach (var property in type.Members.OfType<PropertyDescriptor>())
             {
-                var field = new FieldViewModel
+                var field = new FieldScriptModel
                 {
                     Name = property.Name,
                 };
@@ -53,7 +53,7 @@ namespace Custom.Metadata
                 }
             }
 
-            return new ModelViewModel
+            return new ModelScriptModel
             {
                 //Name = type.Name,
                 //Fields = fields,

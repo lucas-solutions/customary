@@ -11,10 +11,31 @@ namespace Custom.Metadata
     [JsonObject(IsReference = true)]
     public class MemberDescriptor
     {
-        public string Name { get; set; }
+        private TextObject _title;
+        private TextObject _summary;
 
-        public MemberTypes MemberType { get; set; }
+        public virtual string Name
+        {
+            get;
+            set;
+        }
 
-        public TextObject Title { get; set; }
+        public MemberTypes MemberType
+        {
+            get;
+            set;
+        }
+
+        public TextObject Title
+        {
+            get { return _title ?? (_title = new TextObject()); }
+            set { _title = value; }
+        }
+
+        public TextObject Summary
+        {
+            get { return _summary ?? (_summary = new TextObject()); }
+            set { _summary = value; }
+        }
     }
 }

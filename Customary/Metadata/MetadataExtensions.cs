@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Custom.Metadata
 {
+    using Custom.Repositories;
     using Custom.Serialization;
     using Newtonsoft.Json;
     using Raven.Json.Linq;
@@ -31,10 +32,12 @@ namespace Custom.Metadata
                     {
                         ctx.Session.Store(t);
                     }
+                    ctx.Session.SaveChanges();
                 }
                 catch (Exception e)
                 {
                     var msg = e.Message;
+                    Global.Logger.LogError(msg, e);
                 }
                 /*
                  foreach (var typesJArray in root.Value<RavenJArray>("Types"))
@@ -115,6 +118,67 @@ namespace Custom.Metadata
 
         public static void Validate(this BusinessObject bo)
         {
+        }
+
+        public static void AddOrUpdate(this MetadataContext ctx, TypeDescriptor type, Func<TypeDescriptor, TypeDescriptor> updateFactory)
+        {
+            var original = ctx.Session.Load<TypeDescriptor>(type.ID);
+            if (original != null)
+            {
+                if (updateFactory != null)
+                {
+                    type = updateFactory(original);
+                }
+                else
+                {
+                    // merge
+                }
+            }
+            ctx.Session.Store(original);
+            ctx.Session.SaveChanges();
+        }
+
+        public static bool TryAdd(this MetadataContext ctx, TypeDescriptor type)
+        {
+            var original = ctx.Session.Load<TypeDescriptor>(type.ID);
+            if (original != null)
+                return false;
+
+            ctx.Session.Store(type);
+
+            return true;
+        }
+
+        public static bool TryDescribe(this MetadataContext ctx, Guid id, out TypeDescriptor type)
+        {
+            type = ctx.Session.Load<TypeDescriptor>(id);
+            return type != null;
+        }
+
+        public static bool TryDescribe(this MetadataContext ctx, string name, string ns, out TypeDescriptor type)
+        {
+            type = ctx.Session.Query<TypeDescriptor>().FirstOrDefault(o => o.Name == name && o.Namespace == ns);
+            return type != null;
+        }
+
+        public static bool TryUpdate(this MetadataContext ctx, TypeDescriptor type)
+        {
+            return true;
+        }
+
+        public static bool TryRemove(this MetadataContext ctx, TypeDescriptor type)
+        {
+            return true;
+        }
+
+        public static bool TryRemove(this MetadataContext ctx, Guid id)
+        {
+            return true;
+        }
+
+        public static bool TryRemove(this MetadataContext ctx, string name, string ns)
+        {
+            return true;
         }
     }
 }

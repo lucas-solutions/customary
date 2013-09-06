@@ -28,10 +28,5 @@ namespace Custom.Repositories
                 ConnectionStringName = ConnectionStringName
             };
         }
-
-        public TypeDescriptor Describe(string name)
-        {
-            return null;
-        }
     }
 }

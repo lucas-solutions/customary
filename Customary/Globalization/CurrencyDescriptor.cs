@@ -7,10 +7,8 @@ namespace Custom.Globalization
 {
     using Custom.Metadata;
 
-    public class CurrencyDescriptor
+    public class CurrencyDescriptor : MeasurementDescriptor
     {
-        public string Code { get; set; }
-
-        public TextObject Text { get; set; }
+        public string Symbol { get; set; }
     }
 }

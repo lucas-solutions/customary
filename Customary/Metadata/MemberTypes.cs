@@ -6,38 +6,62 @@ using System.Web;
 
 namespace Custom.Metadata
 {
-    [DefaultValue(MemberTypes.Member)]
-    public enum MemberTypes
+    [DefaultValue(MemberTypes.Constant)]
+    public enum MemberTypes : byte
     {
-        Member,
-
-        Primitive,
-
-        Enum,
-
-        Complex,
-
-        Entity,
-
-        Property,
-
-        Method,
-
-        Event,
-
-        Constant,
-
-        Constructor,
+        /// <summary>
+        /// Constant value
+        /// </summary>
+        Constant = 0x00,
 
         /// <summary>
-        /// Measurement Base Quantity
+        /// Represents the field that will actually store the data
         /// </summary>
-        Measure,
-
+        Property = 0x01,
 
         /// <summary>
-        /// Measurement Unit
+        /// Business procedure.
         /// </summary>
-        Unit,
+        Method = 0x02,
+
+        /// <summary>
+        /// Initializer method.
+        /// </summary>
+        Constructor = 0x03,
+
+        /// <summary>
+        /// Method invoked by user action.
+        /// </summary>
+        Event = 0x04,
+        
+        /// <summary>
+        /// Value: int, string, email, etc.
+        /// </summary>
+        Primitive = 0x8,
+
+        /// <summary>
+        /// Lists with values
+        /// </summary>
+        Enum = 0x9,
+
+        /// <summary>
+        /// Measurement Unit.
+        /// </summary>
+        Unit = 0xA,
+
+        /// <summary>
+        /// Text is like an Unit, but instead of measure it is qualified by a culture.
+        /// </summary>
+        Text = 0xB,
+
+        /// <summary>
+        /// Structure embeded as value.
+        /// </summary>
+        Complex = 0xC,
+
+        /// <summary>
+        /// Structure with identity. Always referenced. Only entities can be referenced.
+        /// </summary>
+        Entity = 0xD
     }
 }

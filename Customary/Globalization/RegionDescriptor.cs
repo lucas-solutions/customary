@@ -9,9 +9,11 @@ namespace Custom.Globalization
 
     public class RegionDescriptor
     {
+        public Guid ID { get; set; }
+
         public string Code { get; set; }
 
-        public TextObject Text { get; set; }
+        public TextObject Title { get; set; }
 
         /// <summary>
         /// Official language

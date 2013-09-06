@@ -42,16 +42,17 @@ namespace Custom
 
             ControllerBuilder.Current.SetControllerFactory(typeof(Navigation.ControllerFactory));
 
-            var app_data = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds"));
-            foreach (var file in app_data.GetFiles("business*.js"))
+            var metadataSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Metadata")).GetFiles("*.js").ToArray();
+            foreach (var file in metadataSeeds)
             {
                 Global.Metadata.Import(file.FullName);
             }
 
-            foreach (var file in app_data.GetFiles("globalization*.js"))
+            /*var globalizationSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Globalization")).GetFiles("*.js").ToArray();
+            foreach (var file in globalizationSeeds)
             {
                 Repositories.GlobalizationContext.Import(file.FullName);
-            }
+            }*/
         }
     }
 }

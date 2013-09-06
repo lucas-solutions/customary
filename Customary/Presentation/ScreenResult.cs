@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Presentation
 {
-    public sealed class ScreenResult : ScriptResult
+    public sealed class ScreenResult : ScriptResultOld
     {
     }
 }

@@ -9,6 +9,8 @@ namespace Custom.Globalization
 
     public class LanguageDescriptor
     {
+        public Guid ID { get; set; }
+
         public string Code { get; set; }
 
         public TextObject Text { get; set; }
