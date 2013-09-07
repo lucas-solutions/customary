@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Custom.Areas.App.Controllersustom.Controllers
+namespace Custom.Areas.App.Metadata.Controllers
 {
     using Custom.Models;
     using Custom.Controllers;

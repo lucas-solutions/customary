@@ -223,6 +223,8 @@
     <Compile Include="Areas\App\Controllers\MasterdataController.cs" />
     <Compile Include="Areas\App\Controllers\MetadataController.cs" />
     <Compile Include="Areas\App\Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Models\ExtPageModel.cs" />
     <Compile Include="Diagnostics\LoggerUdpClient.cs" />
     <Compile Include="Globalization\LanguageDescriptor.cs" />
