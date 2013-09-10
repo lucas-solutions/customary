@@ -5,32 +5,104 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Custom.Presentation
 {
     public abstract class ScriptBuilder
     {
-        public static implicit operator MvcHtmlString (ScriptBuilder builder)
+        public static implicit operator MvcHtmlString(ScriptBuilder builder)
         {
             return builder != null ? new MvcHtmlString(builder.ToString()) : null;
         }
 
-        public virtual ScriptResult Result()
+        public string ClassName
         {
-            return new ScriptResult(this);
+            get;
+            set;
         }
 
-        public abstract void Write(TextWriter writer);
-
-        public override string ToString()
+        protected void Return(TextWriter writer, params Action<TextWriter>[] content)
         {
-            var sb = new StringBuilder();
-            using (var output = new StringWriter(sb))
+            writer.Write("return {");
+            foreach (var action in content)
             {
-                var writer = new ScriptWriter(output);
-                Write(writer);
+                writer.WriteLine();
+                action(writer);
             }
-            return sb.ToString();
+            writer.Write("};");
+            writer.WriteLine();
+        }
+    }
+
+    public class ScriptBuilder<TModel, TBuilder> : IScriptBuilder<TModel>, IScriptBuilder, IHtmlString
+        where TModel : Scriptable
+        where TBuilder : ScriptBuilder<TModel, TBuilder>
+    {
+        private readonly TModel _model;
+
+        public ScriptBuilder(TModel control)
+        {
+            this._model = control;
+        }
+
+        public T Cast<T>()
+            where T : class, IScriptBuilder
+        {
+            return (this as T);
+        }
+
+        public virtual TBuilder ID(string id)
+        {
+            ToModel().ID = id;
+            return (this as TBuilder);
+        }
+
+        public static implicit operator TModel(ScriptBuilder<TModel, TBuilder> builder)
+        {
+            return builder._model;
+        }
+
+        public virtual void Render(Scriptable obj)
+        {
+            //obj.Controls.Add(this.ToComponent());
+        }
+
+        public virtual TModel ToModel()
+        {
+            return _model;
+        }
+
+        // Properties
+        public virtual UrlHelper UrlHelper
+        {
+            get
+            {
+                ViewContext viewContext = this.ViewContext;
+                return new UrlHelper((viewContext != null) ? viewContext.RequestContext : new RequestContext(), RouteTable.Routes);
+            }
+        }
+
+        public virtual ViewContext ViewContext
+        {
+            get
+            {
+                ViewContext viewContext = null;
+                if (ToModel() is Scriptable)
+                {
+                    //viewContext = ((ScriptObject)ToObject()).ViewContext;
+                }
+                /*if ((viewContext == null) && (X.Builder.HtmlHelper != null))
+                {
+                    viewContext = X.Builder.HtmlHelper.ViewContext;
+                }*/
+                return viewContext;
+            }
+        }
+
+        string IHtmlString.ToHtmlString()
+        {
+            throw new NotImplementedException();
         }
     }
 }

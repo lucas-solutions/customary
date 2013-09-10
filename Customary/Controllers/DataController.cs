@@ -17,15 +17,15 @@ namespace Custom.Controllers
         }
 
         //
-        // GET: /Data/{typeID}/Details/{entityID}
+        // GET: /Data/{type}/Details/{id}
 
-        public ActionResult Details(int id)
+        public ActionResult Details(string type, int id)
         {
             return View();
         }
 
         //
-        // GET: /Data/{typeID}/Create
+        // GET: /Data/{type}/Create
 
         public ActionResult Create()
         {
@@ -33,10 +33,10 @@ namespace Custom.Controllers
         }
 
         //
-        // POST: /Data/{typeID}/Create
+        // POST: /Data/{type}/Create
 
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(string type, FormCollection collection)
         {
             try
             {
@@ -51,18 +51,18 @@ namespace Custom.Controllers
         }
 
         //
-        // GET: /Data/{typeID}/Edit/{entityID}
+        // GET: /Data/{type}/Edit/{id}
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string type, int id)
         {
             return View();
         }
 
         //
-        // POST: /Data/{typeID}/Edit/{entityID}
+        // POST: /Data/{type}/Edit/{id}
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(string type, int id, FormCollection collection)
         {
             try
             {
@@ -77,18 +77,18 @@ namespace Custom.Controllers
         }
 
         //
-        // GET: /Data/{typeID}/Delete/{entityID}
+        // GET: /Data/{type}/Delete/{id}
 
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string type, int id)
         {
             return View();
         }
 
         //
-        // POST: /Data/{typeID}/Delete/{entityID}
+        // POST: /Data/{type}/Delete/{id}
 
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(string type, int id, FormCollection collection)
         {
             try
             {

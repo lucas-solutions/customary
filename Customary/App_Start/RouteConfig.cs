@@ -14,6 +14,12 @@ namespace Custom
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "Data",
+                url: "Data/{type}/{action}/{id}",
+                defaults: new { controller = "Data", action = "Index", type = UrlParameter.Optional, id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

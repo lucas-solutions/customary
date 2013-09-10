@@ -6,12 +6,14 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.App.Metadata.Controllers
 {
+    using Ext = Custom.Presentation.Sencha.Ext;
     using Custom.Models;
     using Custom.Controllers;
     using Custom.Metadata;
     using Custom.Navigation;
     using Custom.Presentation;
-    using Custom.Presentation.Sencha.ExtJs;
+    using Custom.Presentation.Sencha.Ext.data;
+    using System.IO;
 
     public class MetadataController : Controller
     {
@@ -43,7 +45,9 @@ namespace Custom.Areas.App.Metadata.Controllers
 
             var type = Global.Metadata.Describe(id);
 
-            var vm = new ModelScriptBuilder()
+            var builder = new Ext.data.Model.Builder();
+
+            builder
             .Name("App.metadata.Entity")
             .Extend("App.metadata.Complex")
             .Proxy(proxy =>
@@ -51,27 +55,46 @@ namespace Custom.Areas.App.Metadata.Controllers
             })
             .Fields(fields =>
             {
-                fields.Add(new FieldScriptBuilder().Name("id").Type("string"));
-                fields.Add(new FieldScriptBuilder().Name("name").Type("string"));
-                fields.Add(new FieldScriptBuilder().Name("extends").Type("string"));
-                fields.Add(new FieldScriptBuilder().Name("identity").Type("string"));
-                fields.Add(new FieldScriptBuilder().Name("label").Type("string"));
+                fields
+                    .Add(name: "id", type: "string")
+                    .Add(name: "name", type: "string")
+                    .Add(name: "extends", type: "string")
+                    .Add(name: "identity", type: "string")
+                    .Add(name: "label", type: "string", covert: (ScriptWriter writer, object state) =>
+                        {
+                            writer.Write("function(inches) {");
+                            writer.WriteLine("return Math.round(inches * 2.54);");
+                            writer.WriteLine("}");
+                        })
+                    .Add(name: "proxy", type: "App.metadata.Proxy");
             })
             .Associations(associations =>
             {
-                associations.Add(new AssociationScriptBuilder().HasMany("App.metadata.Field"));
-                associations.Add(new AssociationScriptBuilder().HasMany("App.metadata.Association"));
-                associations.Add(new AssociationScriptBuilder().HasMany("App.metadata.Validation"));
-                associations.Add(new AssociationScriptBuilder().HasMany("App.metadata.Proxy"));
+                associations
+                    .HasOne(name: "Proxy", model: "App.metadata.Proxy")
+                    .HasMany(name: "Fields", model: "App.metadata.Field")
+                    .HasMany(name: "Associations", model: "App.metadata.Association")
+                    .HasMany(name: "Validations", model: "App.metadata.Validation");
             })
             .Validations(validations =>
             {
-                validations.Add(new ValidationScriptBuilder().Presence(""));
-                validations.Add(new ValidationScriptBuilder().Length(50));
-                validations.Add(new ValidationScriptBuilder().Format(""));
+                validations
+                    .Presence(field: "name")
+                    .Length(field: "Age", min: 50)
+                    .Format(field: "name", matcher: @"/([a-z]+)[0-9]{2,3}/");
             });
 
-            return vm.Result();
+            var serializer = builder
+                .ToModel()
+                .ToSerializer();
+
+            serializer
+                .Ignore(o => o.PersistenceProperty)
+                .Custom(o => o.Proxy, (Ext.data.proxy.Proxy proxy, TextWriter writer) =>
+                    {
+                    });
+
+            return builder.ToModel().Result();
 
             /*var type = Global.Metadata.Describe(id);
 
