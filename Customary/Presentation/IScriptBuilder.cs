@@ -11,9 +11,9 @@ namespace Custom.Presentation
     }
 
     public interface IScriptBuilder<TObject>
-        where TObject : Scriptable
+        where TObject : ScriptObject
     {
-        void Render(Scriptable obj);
+        void Render(ScriptObject obj);
         TObject ToModel();
     }
 }

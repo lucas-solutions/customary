@@ -171,7 +171,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             /// <summary>
             /// An array of validations for this model.
             /// </summary>
-            public TBuilder Validations(Action<ValidationCollection> action)
+            public TBuilder Validations(Action<ValidationsCollection> action)
             {
                 action(ToModel().Validations);
                 return (TBuilder)this;

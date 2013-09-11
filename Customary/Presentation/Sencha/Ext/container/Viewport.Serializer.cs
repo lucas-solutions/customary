@@ -8,7 +8,7 @@ namespace Custom.Presentation.Sencha.Ext.container
 {
     partial class Viewport
     {
-        protected override IScriptSerializer CreateSerializer()
+        protected override IScriptSerializer ToNativeSerializer()
         {
             return new Serializer(this);
         }

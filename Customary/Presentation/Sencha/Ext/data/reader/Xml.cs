@@ -7,7 +7,7 @@ namespace Custom.Presentation.Sencha.Ext.data.reader
 {
     public class Xml : Reader
     {
-        protected override IScriptSerializer CreateSerializer()
+        protected override IScriptSerializer ToNativeSerializer()
         {
             return null;
         }

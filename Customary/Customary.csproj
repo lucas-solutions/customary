@@ -229,6 +229,7 @@
     <Compile Include="Globalization\LanguageDescriptor.cs" />
     <Compile Include="Metadata\PropertyAttributes.cs" />
     <Compile Include="Models\Ext\ViewportModel.cs" />
+    <Compile Include="Models\ViewportHandlers.cs" />
     <Compile Include="Presentation\CssRect.cs" />
     <Compile Include="Presentation\IScriptSerializer.cs" />
     <Compile Include="Presentation\IScriptBuilder.cs" />
@@ -237,13 +238,35 @@
     <Compile Include="Presentation\JFunction.cs" />
     <Compile Include="Presentation\JObject.cs" />
     <Compile Include="Presentation\Margins.cs" />
-    <Compile Include="Presentation\Scriptable.cs" />
+    <Compile Include="Presentation\ScriptObject.cs" />
     <Compile Include="Presentation\ScriptBuilder.cs" />
+    <Compile Include="Presentation\ScriptFunction.Serializer.cs" />
+    <Compile Include="Presentation\ViewRender.cs" />
     <Compile Include="Presentation\ScriptSerializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\AbstractComponent.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\AbstractComponent.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Presentation\Sencha\Ext\button\Button.cs" />
+    <Compile Include="Presentation\Sencha\Ext\button\Cycle.cs" />
+    <Compile Include="Presentation\Sencha\Ext\button\Split.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\axis\Abstract.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Callout.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Chart.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Highlight.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Label.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Legend.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Mask.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Navigation.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\axis\Bar.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\series\Column.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\series\Line.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\series\Pie.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\series\Series.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Shape.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\theme\Base.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\theme\Theme.cs" />
+    <Compile Include="Presentation\Sencha\Ext\chart\Tip.cs" />
     <Compile Include="Presentation\Sencha\Ext\Component.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\container\AbstractContainer.cs">
       <SubType>Code</SubType>
@@ -254,15 +277,40 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Presentation\Sencha\Ext\container\Viewport.Serializer.cs" />
+    <Compile Include="Presentation\Sencha\Ext\data\BelongsToAssociation.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Field.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Field.Serializer.cs" />
+    <Compile Include="Presentation\Sencha\Ext\data\HasManyAssociation.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\NodeInterface.cs" />
+    <Compile Include="Presentation\Sencha\Ext\Editor.cs" />
     <Compile Include="Presentation\Sencha\Ext\ExtMemberTypes.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\FieldSet.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Base.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Checkbox.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\ComboBox.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Date.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Display.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\File.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Hidden.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\HtmlEditor.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Number.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Radio.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Text.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\TextArea.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Time.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\field\Trigger.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\Label.cs" />
     <Compile Include="Presentation\Sencha\Ext\form\Panel.cs" />
+    <Compile Include="Presentation\Sencha\Ext\form\RadioGroup.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\feature\Feature.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\feature\FeatureCollection.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\header\Container.cs" />
+    <Compile Include="Presentation\Sencha\Ext\grid\plugin\Editing.cs" />
+    <Compile Include="Presentation\Sencha\Ext\menu\CheckItem.cs" />
+    <Compile Include="Presentation\Sencha\Ext\menu\Item.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\Menu.cs" />
+    <Compile Include="Presentation\Sencha\Ext\menu\Separator.cs" />
+    <Compile Include="Presentation\Sencha\Ext\menu\TextItem.cs" />
     <Compile Include="Presentation\Sencha\Ext\panel\AbstractPanel.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\AbstractStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\Base.cs">
@@ -273,7 +321,6 @@
     <Compile Include="Presentation\Sencha\Ext\data\ArrayStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Association.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\AssociationCollection.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\AssociationTypes.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\BufferStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\DirectStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\FieldCollection.cs" />
@@ -297,8 +344,8 @@
     <Compile Include="Presentation\Sencha\Ext\data\reader\Json.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\reader\Reader.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\reader\Xml.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\Validation.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\ValidationCollection.cs" />
+    <Compile Include="Presentation\Sencha\Ext\data\Validations.cs" />
+    <Compile Include="Presentation\Sencha\Ext\data\ValidationsCollection.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\ValidationTypes.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\writer\Writer.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\XmlStore.cs" />
@@ -318,10 +365,22 @@
     <Compile Include="Presentation\Sencha\Ext\panel\ScrollDirections.cs" />
     <Compile Include="Presentation\Sencha\Ext\panel\Table.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\panel\Table.cs" />
+    <Compile Include="Presentation\Sencha\Ext\picker\Color.cs" />
+    <Compile Include="Presentation\Sencha\Ext\picker\Date.cs" />
+    <Compile Include="Presentation\Sencha\Ext\ProgressBar.cs" />
     <Compile Include="Presentation\Sencha\Ext\selection\Model.cs" />
+    <Compile Include="Presentation\Sencha\Ext\slider\Multi.cs" />
+    <Compile Include="Presentation\Sencha\Ext\slider\Single.cs" />
     <Compile Include="Presentation\Sencha\Ext\state\Stateful.cs" />
     <Compile Include="Presentation\Sencha\Ext\tab\Panel.cs" />
     <Compile Include="Presentation\Sencha\Ext\tip\Tip.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Fill.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Item.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Paging.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Separator.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Spacer.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\TextItem.cs" />
+    <Compile Include="Presentation\Sencha\Ext\toolbar\Toolbar.cs" />
     <Compile Include="Presentation\Sencha\Ext\tree\Panel.cs" />
     <Compile Include="Presentation\Sencha\Ext\util\Animate.cs" />
     <Compile Include="Presentation\Sencha\Ext\util\Floating.cs" />
@@ -329,11 +388,16 @@
     <Compile Include="Presentation\Sencha\Ext\panel\Panel.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Proxy.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Store.cs" />
+    <Compile Include="Presentation\Sencha\Ext\ux\form\ItemSelector.cs" />
+    <Compile Include="Presentation\Sencha\Ext\ux\form\MultiSelect.cs" />
     <Compile Include="Presentation\Sencha\Ext\ux\GMapPanel.cs" />
     <Compile Include="Presentation\Sencha\Ext\ux\PagingMemoryProxy.cs" />
     <Compile Include="Presentation\Sencha\Ext\view\Table.cs" />
+    <Compile Include="Presentation\Sencha\Ext\view\View.cs" />
     <Compile Include="Presentation\Sencha\Ext\window\Window.cs" />
     <Compile Include="Presentation\ScriptWriter.cs" />
+    <Compile Include="Presentation\ScriptFunction.cs" />
+    <Compile Include="Presentation\TextWriterExtensions.cs" />
     <Compile Include="Presentation\Unit.cs" />
     <Compile Include="Presentation\UnitType.cs" />
     <Compile Include="Presentation\Utilities\EnumerableUtils.cs" />
@@ -3642,6 +3706,7 @@
     <Content Include="Views\Shared\_SimpleLayout.cshtml" />
     <Content Include="Views\Template\Message.cshtml" />
     <Content Include="Views\Sencha\Ext\Panel.cshtml" />
+    <Content Include="Views\Scripts\CommonHandlers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />

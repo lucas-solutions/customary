@@ -8,6 +8,11 @@ namespace Custom.Presentation
 {
     public class ScriptWriter : IEnumerable<string>, IDisposable
     {
+        public static implicit operator string[](ScriptWriter writer)
+        {
+            return writer.Lines.ToArray();
+        }
+
         private const int BUFFER_SIZE = 256;
         private const char SPACE = ' ';
         private const int TAB = 2;
@@ -72,6 +77,8 @@ namespace Custom.Presentation
         {
             get
             {
+                Flush();
+
                 var value = _lines;
 
                 return value;
@@ -197,6 +204,22 @@ namespace Custom.Presentation
         {
             other.Flush();
             var e = other.Lines.GetEnumerator();
+            if (e.MoveNext())
+            {
+                Append(e.Current);
+                while (e.MoveNext())
+                {
+                    var padding = new string(SPACE, _indent * TAB);
+                    _lines.Add(padding + e.Current);
+                }
+            }
+
+            return this;
+        }
+
+        public ScriptWriter Merge(string[] lines)
+        {
+            var e = lines.AsEnumerable<string>().GetEnumerator();
             if (e.MoveNext())
             {
                 Append(e.Current);
@@ -345,6 +368,40 @@ namespace Custom.Presentation
             if (value != null)
             {
                 Write(value.ToCharArray());
+            }
+
+            return this;
+        }
+
+        public ScriptWriter Write(string[] lines)
+        {
+            return Write(lines, 0, lines.Length);
+        }
+
+        public ScriptWriter Write(string[] lines, int index, int count)
+        {
+            if (lines == null)
+            {
+                throw new ArgumentNullException("buffer", "ArgumentNull_Buffer");
+            }
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException("index", "ArgumentOutOfRange_NeedNonNegNum");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException("count", "ArgumentOutOfRange_NeedNonNegNum");
+            }
+            if ((lines.Length - index) < count)
+            {
+                throw new ArgumentException("Argument_InvalidOffLen");
+            }
+            for (int i = 0; i < count; i++)
+            {
+                if (i > 0)
+                    WriteLine();
+
+                Write(lines[index + i]);
             }
 
             return this;

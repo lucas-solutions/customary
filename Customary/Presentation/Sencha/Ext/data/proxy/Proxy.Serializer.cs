@@ -40,22 +40,12 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
 
                 if (model.Reader != null)
                 {
-                    var sriptable = model.Reader as IScriptable;
-                    if (sriptable != null && !sriptable.IsEmpty)
-                    {
-                        writer.Write("reader: ");
-                        sriptable.Script(writer);
-                    }
+                    TryRenderProperty("reader", model.Reader as IScriptable, writer);
                 }
 
                 if (model.Writer != null)
                 {
-                    var sriptable = model.Writer as IScriptable;
-                    if (sriptable != null && !sriptable.IsEmpty)
-                    {
-                        writer.Write("writer: ");
-                        sriptable.Script(writer);
-                    }
+                    TryRenderProperty("writer", model.Writer as IScriptable, writer);
                 }
 
                 writer.WriteLine();

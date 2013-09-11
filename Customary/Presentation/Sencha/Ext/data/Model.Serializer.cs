@@ -15,7 +15,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             return _serializer ?? (_serializer = new Serializer(this));
         }
 
-        protected override IScriptSerializer CreateSerializer()
+        protected override IScriptSerializer ToNativeSerializer()
         {
             return new Serializer(this);
         }
@@ -45,31 +45,6 @@ namespace Custom.Presentation.Sencha.Ext.data
 
             protected override void Serialize(TModel model, ScriptWriter writer)
             {
-                Write(writer);
-            }
-
-            private void Proxy(ScriptWriter writer)
-            {
-                var proxy = ToModel().Proxy;
-                writer.Write("proxy: ");
-                if (proxy == null)
-                    writer.Write("null");
-                IScriptable scriptable = proxy.Model;
-                if (scriptable != null)
-                    scriptable.Script(writer);
-                else if (string.IsNullOrEmpty(proxy.Name))
-                    writer.Write("null");
-                else
-                {
-                    writer.Write('\'');
-                    writer.Write(proxy.Name);
-                    writer.Write('\'');
-                }
-            }
-
-            public void Write(ScriptWriter writer)
-            {
-                var model = ToModel();
                 writer.Write("Ext.regModel('" + model.Name + "', {");
                 writer.WriteLine();
                 Write(writer, model.Fields.Items);
@@ -97,6 +72,25 @@ namespace Custom.Presentation.Sencha.Ext.data
                 writer.WriteLine();
             }
 
+            private void Proxy(ScriptWriter writer)
+            {
+                var proxy = ToModel().Proxy;
+                writer.Write("proxy: ");
+                if (proxy == null)
+                    writer.Write("null");
+                IScriptable scriptable = proxy.Model;
+                if (scriptable != null)
+                    writer.Write(scriptable.Script);
+                else if (string.IsNullOrEmpty(proxy.Name))
+                    writer.Write("null");
+                else
+                {
+                    writer.Write('\'');
+                    writer.Write(proxy.Name);
+                    writer.Write('\'');
+                }
+            }
+
             private static void Write(ScriptWriter writer, IEnumerable<Field> list)
             {
                 var enu = list.GetEnumerator();
@@ -108,7 +102,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 while (any)
                 {
                     IScriptable scriptable = enu.Current;
-                    scriptable.Script(writer);
+                    writer.Write(scriptable.Script);
 
                     if ((any = enu.MoveNext()))
                     {
@@ -145,7 +139,7 @@ namespace Custom.Presentation.Sencha.Ext.data
 
             }
 
-            private static void Write(ScriptWriter writer, IEnumerable<Validation> list)
+            private static void Write(ScriptWriter writer, IEnumerable<Validations> list)
             {
                 var enu = list.GetEnumerator();
                 var any = enu.MoveNext();

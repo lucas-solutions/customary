@@ -60,18 +60,19 @@ namespace Custom.Areas.App.Metadata.Controllers
                     .Add(name: "name", type: "string")
                     .Add(name: "extends", type: "string")
                     .Add(name: "identity", type: "string")
-                    .Add(name: "label", type: "string", covert: (ScriptWriter writer, object state) =>
+                    .Add(name: "label", type: "string", covert: (object state) =>
                         {
-                            writer.Write("function(inches) {");
-                            writer.WriteLine("return Math.round(inches * 2.54);");
-                            writer.WriteLine("}");
+                            var sw = new ScriptWriter();
+                            sw.Write("function(inches) {");
+                            sw.WriteLine("return Math.round(inches * 2.54);");
+                            sw.WriteLine("}");
+                            return sw;
                         })
                     .Add(name: "proxy", type: "App.metadata.Proxy");
             })
             .Associations(associations =>
             {
                 associations
-                    .HasOne(name: "Proxy", model: "App.metadata.Proxy")
                     .HasMany(name: "Fields", model: "App.metadata.Field")
                     .HasMany(name: "Associations", model: "App.metadata.Association")
                     .HasMany(name: "Validations", model: "App.metadata.Validation");

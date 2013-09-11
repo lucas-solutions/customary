@@ -49,43 +49,8 @@ namespace Custom.Presentation
             var response = context.HttpContext.Response ?? context.RequestContext.HttpContext.Response;
 
             response.ContentType = "text/javascript";
-            
-            var output = response.Output;
-            if (string.IsNullOrEmpty(_scriptable.Template))
-            {
-                var writer = new ScriptWriter();
-                _scriptable.Script(writer);
-                writer.WriteTo(output);
-            }
-            else
-            {
-                ViewEngineResult result = null;
 
-                if (_view == null)
-                {
-                    result = ViewEngineCollection.FindView(context, _scriptable.Template, null);
-                    _view = result.View;
-                }
-
-                var sb = new StringBuilder();
-                using (var sw = new StringWriter(sb))
-                {
-                    var viewContext = new ViewContext(context, _view, ViewData, TempData, sw);
-                    _view.Render(viewContext, sw);
-                }
-
-                if (result != null)
-                {
-                    result.ViewEngine.ReleaseView(context, _view);
-                }
-
-                using (var input = new StringReader(sb.ToString()))
-                {
-                    var source = XDocument.Load(input).Nodes().Select(o => o.ToString()).FirstOrDefault();
-
-                    output.Write(source);
-                }
-            }
+            _scriptable.WriteTo(response.Output);
         }
     }
 }

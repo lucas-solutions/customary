@@ -36,7 +36,7 @@ namespace Custom.Presentation
     }
 
     public class ScriptBuilder<TModel, TBuilder> : IScriptBuilder<TModel>, IScriptBuilder, IHtmlString
-        where TModel : Scriptable
+        where TModel : ScriptObject
         where TBuilder : ScriptBuilder<TModel, TBuilder>
     {
         private readonly TModel _model;
@@ -63,7 +63,7 @@ namespace Custom.Presentation
             return builder._model;
         }
 
-        public virtual void Render(Scriptable obj)
+        public virtual void Render(ScriptObject obj)
         {
             //obj.Controls.Add(this.ToComponent());
         }
@@ -88,7 +88,7 @@ namespace Custom.Presentation
             get
             {
                 ViewContext viewContext = null;
-                if (ToModel() is Scriptable)
+                if (ToModel() is ScriptObject)
                 {
                     //viewContext = ((ScriptObject)ToObject()).ViewContext;
                 }

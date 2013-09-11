@@ -103,4 +103,3 @@ C:\Playground\Customary\Customary\bin\Mono.Math.xml
 C:\Playground\Customary\Customary\obj\Debug\Customary.csproj.App.config
 C:\Playground\Customary\Customary\obj\Debug\Customary.dll
 C:\Playground\Customary\Customary\obj\Debug\Customary.pdb
-C:\Playground\Customary\Customary\obj\Debug\Customary.csprojResolveAssemblyReference.cache

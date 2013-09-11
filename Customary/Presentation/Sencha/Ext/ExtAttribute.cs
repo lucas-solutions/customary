@@ -18,5 +18,17 @@ namespace Custom.Presentation.Sencha.Ext
         public ExtAttribute(ExtMemberTypes type)
         {
         }
+
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public string XType
+        {
+            get;
+            set;
+        }
     }
 }

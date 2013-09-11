@@ -8,7 +8,7 @@ using System.Web;
 namespace Custom.Presentation.Sencha.Ext
 {
     [Description("Abstract base class that provides a common interface for publishing events")]
-    public abstract class Base : Scriptable
+    public abstract class Base : ScriptObject
     {
         protected Base()
         {
@@ -26,7 +26,7 @@ namespace Custom.Presentation.Sencha.Ext
             set;
         }
 
-        public new abstract class Builder<TModel, TBuilder> : Scriptable.Builder<TModel, TBuilder>
+        public new abstract class Builder<TModel, TBuilder> : ScriptObject.Builder<TModel, TBuilder>
             where TModel : Base
             where TBuilder : Base.Builder<TModel, TBuilder>
         {
@@ -48,7 +48,7 @@ namespace Custom.Presentation.Sencha.Ext
             }
         }
 
-        public new abstract class Serializer<TModel, TBuilder> : Scriptable.Serializer<TModel, TBuilder>
+        public new abstract class Serializer<TModel, TBuilder> : ScriptObject.Serializer<TModel, TBuilder>
             where TModel : Base
             where TBuilder : Base.Serializer<TModel, TBuilder>
         {

@@ -1,0 +1,34 @@
+﻿@model int
+@using Custom.Models;
+@{
+    switch ((ViewportHandlers)Model)
+    {
+        case ViewportHandlers.Click:
+    <script id="a" type="text/javascript">
+        function a(e) {
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseDown:
+    <script id="b" type="text/javascript">
+        function b(e) {
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseMove:
+    <script id="c" type="text/javascript">
+        function c(e) {
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseUp:
+    <script id="d" type="text/javascript">
+        function d(e) {
+        }
+    </script>
+            break;
+    }
+}

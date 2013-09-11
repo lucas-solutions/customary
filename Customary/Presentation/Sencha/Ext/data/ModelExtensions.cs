@@ -10,7 +10,7 @@ namespace Custom.Presentation.Sencha.Ext.data
 
     public static class ModelExtensions
     {
-        public static IEnumerable<Ext.data.Validation> EnumValidations(this PropertyDescriptor property)
+        public static IEnumerable<Ext.data.Validations> EnumValidations(this PropertyDescriptor property)
         {
             return null;
         }

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public class Validation
+    public class Validations
     {
         public JObject<Field> Field
         {

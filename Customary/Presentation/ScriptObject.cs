@@ -13,12 +13,12 @@ namespace Custom.Presentation
     using System.Globalization;
     using System.IO;
 
-    public abstract class Scriptable : IScriptable
+    public abstract class ScriptObject : IScriptable
     {
         private string _id;
         private string _dynamicID;
 
-        protected Scriptable()
+        protected ScriptObject()
         {
         }
 
@@ -27,29 +27,30 @@ namespace Custom.Presentation
             get { return false; }
         }
 
-        #region - IScriptable -
-
-        bool IScriptable.IsEmpty
+        string[] IScriptable.Script
         {
-            get { return this.IsEmpty; }
+            get { return Render(); }
         }
 
-        string IScriptable.Template
+        private string[] Render()
         {
-            get;
-            set;
+            //var serializer = CreateSerializer();
+            //if (serializer != null)
+            //    serializer.Serialize(writer);
+            return null;
         }
 
-        void IScriptable.Script(ScriptWriter writer)
+        IScriptSerializer IScriptable.ToSerializer()
         {
-            var serializer = CreateSerializer();
-            if (serializer != null)
-                serializer.Serialize(writer);
+            return ToNativeSerializer();
         }
 
-        #endregion - IScriptable -
+        protected abstract IScriptSerializer ToNativeSerializer();
 
-        protected abstract IScriptSerializer CreateSerializer();
+        void IScriptable.WriteTo(TextWriter writer)
+        {
+            writer.Write(Render());
+        }
 
         [Description("")]
         protected string DynamicID
@@ -112,8 +113,8 @@ namespace Custom.Presentation
         }
 
         public class Builder<TModel, TBuilder> : ScriptBuilder<TModel, TBuilder>
-            where TModel : Scriptable
-            where TBuilder : Scriptable.Builder<TModel, TBuilder>
+            where TModel : ScriptObject
+            where TBuilder : ScriptObject.Builder<TModel, TBuilder>
         {
             public Builder(TModel obj)
                 : base(obj)
@@ -128,8 +129,8 @@ namespace Custom.Presentation
         }
 
         public abstract class Serializer<TModel, TSerializer> : ScriptSerializer<TModel, TSerializer>
-            where TModel : Scriptable
-            where TSerializer : Scriptable.Serializer<TModel, TSerializer>
+            where TModel : ScriptObject
+            where TSerializer : ScriptObject.Serializer<TModel, TSerializer>
         {
             public Serializer(TModel model)
                 : base(model)

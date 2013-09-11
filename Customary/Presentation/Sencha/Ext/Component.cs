@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext
 {
+    [Ext(Name = "Ext.Component", XType = "component")]
     public abstract partial class Component : Ext.AbstractComponent
     {
         /// <summary>

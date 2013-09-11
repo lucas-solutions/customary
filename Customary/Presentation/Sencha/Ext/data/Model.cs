@@ -16,7 +16,7 @@ namespace Custom.Presentation.Sencha.Ext.data
     {
         private AssociationCollection _associations;
         private FieldCollection _fields;
-        private ValidationCollection _validations;
+        private ValidationsCollection _validations;
         private JField<Ext.data.proxy.Proxy> _proxy;
 
         /// <summary>
@@ -101,9 +101,9 @@ namespace Custom.Presentation.Sencha.Ext.data
         /// <summary>
         /// An array of validations for this model.
         /// </summary>
-        public ValidationCollection Validations
+        public ValidationsCollection Validations
         {
-            get { return _validations ?? (_validations = new ValidationCollection()); }
+            get { return _validations ?? (_validations = new ValidationsCollection()); }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             return _builder ?? (_builder = new Builder());
         }
 
-        protected override IScriptSerializer CreateSerializer()
+        protected override IScriptSerializer ToNativeSerializer()
         {
             return new Serializer(this);
         }

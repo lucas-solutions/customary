@@ -43,7 +43,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                     writer.WriteLine("name: '" + model.Name + "'");
                     writer.WriteLine("type: '" + model.Type + "'");
                     writer.WriteLine("convert: ");
-                    model.Convert(writer, model);
+                    writer.Write(model.Convert(model));
                     writer.Write("}");
                 }
                 else if (model.Type != "string")

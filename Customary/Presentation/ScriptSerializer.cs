@@ -55,15 +55,16 @@ namespace Custom.Presentation
             writer.WriteLine();
         }
 
-        public abstract void Serialize(ScriptWriter writer);
+        public abstract void Serialize(TextWriter writer);
     }
 
-    public abstract class ScriptSerializer<TModel, TSerializer> : ScriptSerializer, IScriptSerializer<TModel>, IHtmlString
-        where TModel : Scriptable
+    public abstract class ScriptSerializer<TModel, TSerializer> : ScriptSerializer, IHtmlString
+        where TModel : ScriptObject
         where TSerializer : ScriptSerializer<TModel, TSerializer>
     {
         private TModel _model;
         private ViewContext _viewContext;
+        private Func<string[]> _render;
         private string _master;
         private Dictionary<string, RenderInfo> _propertyRender;
 
@@ -153,6 +154,13 @@ namespace Custom.Presentation
         public TSerializer Master(string path)
         {
             _master = path;
+            return (TSerializer)this;
+        }
+
+        public TSerializer Override(Func<string[]> render)
+        {
+            _render = render;
+
             return (TSerializer)this;
         }
 
@@ -254,7 +262,25 @@ namespace Custom.Presentation
             if (value == null)
                 return false;
 
-            value.Script(writer);
+            writer.Write(value.Script);
+
+            return true;
+        }
+
+        protected virtual bool TryRenderProperty(string name, IScriptable value, ScriptWriter writer)
+        {
+            if (value == null)
+                return false;
+
+            var script = value.Script;
+
+            if (script == null || script.Length.Equals(0))
+                return false;
+
+            writer.Write(name);
+            writer.Write(':');
+            writer.Write(' ');
+            writer.Write(script);
 
             return true;
         }
@@ -447,41 +473,14 @@ namespace Custom.Presentation
             return true;
         }
 
-        protected virtual void FileRender(TModel model, TextWriter writer)
+        public sealed override void Serialize(TextWriter writer)
         {
-        }
-
-        public ActionResult ToResult()
-        {
-            return null;
-        }
-
-        public virtual void Serialize(ViewContext viewContext)
-        {
-            _viewContext = viewContext;
-            var writer = new ScriptWriter();
-            Serialize(_model, writer);
-            writer.WriteTo(viewContext.Writer);
-        }
-
-        public virtual void Serialize(TModel model, ViewContext viewContext)
-        {
-            _model = model;
-            _viewContext = viewContext;
-            var writer = new ScriptWriter();
-            Serialize(model, writer);
-            writer.WriteTo(viewContext.Writer);
-        }
-
-        public override void Serialize(ScriptWriter writer)
-        {
-            _viewContext = null;
-            Serialize(_model, writer);
+            var sw = new ScriptWriter();
+            Serialize(_model, sw);
+            sw.WriteTo(writer);
         }
 
         protected abstract void Serialize(TModel model, ScriptWriter writer);
-
-
 
         string IHtmlString.ToHtmlString()
         {
@@ -515,7 +514,7 @@ namespace Custom.Presentation
         public override string ToString()
         {
             var writer = new ScriptWriter();
-            Serialize(writer);
+            Serialize(_model, writer);
             return writer.ToString();
         }
 

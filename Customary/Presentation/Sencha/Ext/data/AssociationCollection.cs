@@ -25,27 +25,15 @@ namespace Custom.Presentation.Sencha.Ext.data
             return this;
         }
 
-        public AssociationCollection Add(string name, string model, AssociationTypes type)
-        {
-            Items.Add(new Association { Name = name, Model = model, Type = type });
-            return this;
-        }
-
         public AssociationCollection BelongsTo(string name)
         {
-            Items.Add(new Association { Name = name, Type = AssociationTypes.belongsTo });
+            Items.Add(new BelongsToAssociation { Name = name });
             return this;
         }
 
         public AssociationCollection HasMany(string name, string model)
         {
-            Items.Add(new Association { Name = name, Model = model, Type = AssociationTypes.hasMany });
-            return this;
-        }
-
-        public AssociationCollection HasOne(string name, string model)
-        {
-            Items.Add(new Association { Name = name, Model = model, Type = AssociationTypes.hasOne });
+            Items.Add(new HasManyAssociation { Name = name, AssociatedModel = model });
             return this;
         }
     }
