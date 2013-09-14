@@ -43,7 +43,7 @@ namespace Custom.Diagnostics
 
         public SearchResponse Search(SearchQuery query)
         {
-            var communicator = new Communicator(this);
+            var communicator = new LogglyHttpCommunicator(this);
             return communicator.GetPayload<SearchResponse>("api/search", query.ToParameters());
         }
 
@@ -93,7 +93,7 @@ namespace Custom.Diagnostics
 
         public SearchJsonResponse SearchJson(SearchQuery query)
         {
-            var communicator = new Communicator(this);
+            var communicator = new LogglyHttpCommunicator(this);
             return communicator.GetPayload<SearchJsonResponse>("api/search", query.ToParameters());
         }
 

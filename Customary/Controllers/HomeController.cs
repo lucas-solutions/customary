@@ -6,11 +6,11 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    public class HomeController : CustomController1
+    public class HomeController : CustomController
     {
         public ActionResult Index()
         {
-            Logger.LogError("Home Index", new HttpException(500, "Text"), new Dictionary<string, object> { { "value", "1" } });
+            Log.Error(new HttpException(500, "some exception text")).Message("Testing HTTP 500");
 
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 

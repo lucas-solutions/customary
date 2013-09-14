@@ -65,14 +65,9 @@ namespace Custom.Presentation.Sencha.Ext.data
             where TModel : Store
             where TSerializer : Store.Serializer<TModel, TSerializer>
         {
-            public Serializer(TModel model)
+            protected Serializer(TModel model)
                 : base(model)
             {
-            }
-
-            protected override void Serialize(TModel model, ScriptWriter writer)
-            {
-                throw new NotImplementedException();
             }
         }
     }

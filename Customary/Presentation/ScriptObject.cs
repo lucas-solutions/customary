@@ -13,43 +13,13 @@ namespace Custom.Presentation
     using System.Globalization;
     using System.IO;
 
-    public abstract class ScriptObject : IScriptable
+    public abstract partial class ScriptObject : Scriptable
     {
         private string _id;
         private string _dynamicID;
 
         protected ScriptObject()
         {
-        }
-
-        protected virtual bool IsEmpty
-        {
-            get { return false; }
-        }
-
-        string[] IScriptable.Script
-        {
-            get { return Render(); }
-        }
-
-        private string[] Render()
-        {
-            //var serializer = CreateSerializer();
-            //if (serializer != null)
-            //    serializer.Serialize(writer);
-            return null;
-        }
-
-        IScriptSerializer IScriptable.ToSerializer()
-        {
-            return ToNativeSerializer();
-        }
-
-        protected abstract IScriptSerializer ToNativeSerializer();
-
-        void IScriptable.WriteTo(TextWriter writer)
-        {
-            writer.Write(Render());
         }
 
         [Description("")]
@@ -112,30 +82,6 @@ namespace Custom.Presentation
             return string.Format("id{0:x}", num - DateTime.Now.Ticks);
         }
 
-        public class Builder<TModel, TBuilder> : ScriptBuilder<TModel, TBuilder>
-            where TModel : ScriptObject
-            where TBuilder : ScriptObject.Builder<TModel, TBuilder>
-        {
-            public Builder(TModel obj)
-                : base(obj)
-            {
-            }
-
-            public virtual TBuilder Namespace(string ns)
-            {
-                ToModel().Namespace = ns;
-                return (this as TBuilder);
-            }
-        }
-
-        public abstract class Serializer<TModel, TSerializer> : ScriptSerializer<TModel, TSerializer>
-            where TModel : ScriptObject
-            where TSerializer : ScriptObject.Serializer<TModel, TSerializer>
-        {
-            public Serializer(TModel model)
-                : base(model)
-            {
-            }
-        }
+        
     }
 }

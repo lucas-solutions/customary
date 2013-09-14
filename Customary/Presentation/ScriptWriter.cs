@@ -15,7 +15,7 @@ namespace Custom.Presentation
 
         private const int BUFFER_SIZE = 256;
         private const char SPACE = ' ';
-        private const int TAB = 2;
+        private const int TABSIZE = 4;
 
         private List<string> _lines;
         private char[] _buffer;
@@ -48,7 +48,11 @@ namespace Custom.Presentation
 
         public int Count
         {
-            get { return Lines.Count; }
+            get
+            {
+                Flush();
+                return _lines.Count;
+            }
         }
 
         public IFormatProvider FormatProvider
@@ -73,13 +77,13 @@ namespace Custom.Presentation
             get { return _lines.Where(o => !string.IsNullOrEmpty(o)).Sum(o => o.Length) + _index; }
         }
 
-        protected List<string> Lines
+        public string[] Lines
         {
             get
             {
                 Flush();
 
-                var value = _lines;
+                var value = _lines.ToArray();
 
                 return value;
             }
@@ -203,13 +207,13 @@ namespace Custom.Presentation
         public ScriptWriter Merge(ScriptWriter other)
         {
             other.Flush();
-            var e = other.Lines.GetEnumerator();
+            var e = other.Lines.AsEnumerable<string>().GetEnumerator();
             if (e.MoveNext())
             {
                 Append(e.Current);
                 while (e.MoveNext())
                 {
-                    var padding = new string(SPACE, _indent * TAB);
+                    var padding = new string(SPACE, _indent * TABSIZE);
                     _lines.Add(padding + e.Current);
                 }
             }
@@ -225,7 +229,7 @@ namespace Custom.Presentation
                 Append(e.Current);
                 while (e.MoveNext())
                 {
-                    var padding = new string(SPACE, _indent * TAB);
+                    var padding = new string(SPACE, _indent * TABSIZE);
                     _lines.Add(padding + e.Current);
                 }
             }
@@ -345,7 +349,7 @@ namespace Custom.Presentation
             var lineLength = CurrentLineLenth;
 
             if (lineLength.HasValue && lineLength.Value == 0)
-                Append(SPACE, _indent * TAB);
+                Append(SPACE, _indent * TABSIZE);
 
             Append(value);
 
@@ -485,12 +489,12 @@ namespace Custom.Presentation
 
         IEnumerator<string> IEnumerable<string>.GetEnumerator()
         {
-            return Lines.GetEnumerator();
+            return Lines.AsEnumerable<string>().GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return Lines.GetEnumerator();
+            return Lines.AsEnumerable<string>().GetEnumerator();
         }
     }
 }

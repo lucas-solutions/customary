@@ -22,7 +22,7 @@ namespace Custom.Diagnostics
     /// Authorize URL
     /// http://customary.loggly.com/api/oauth/authorize/
     /// </summary>
-    public class LogglyLogger : ILogger, IRequestContext
+    public class LogglyLogger : Logger<LogglyLogger>, IRequestContext
     {
         private string _url = "logs.loggly.com/";
         private readonly string _inputKey;
@@ -35,19 +35,9 @@ namespace Custom.Diagnostics
             _inputKey = inputKey;
         }
 
-        public LogResponse LogSync(string message)
+        protected override void Dispose(bool disposing)
         {
-            return LogSync(message, false);
-        }
-
-        public void Log(string message)
-        {
-            Log(message, false);
-        }
-
-        public void Log(string message, Action<LogResponse> callback)
-        {
-            Log(message, false, callback);
+            base.Dispose(disposing);
         }
 
         public string Url
@@ -55,103 +45,40 @@ namespace Custom.Diagnostics
             get { return _url; }
         }
 
-        public LogResponse LogSync(string message, bool json)
+        protected override void Log<TLog>(TLog log)
         {
-            var synchronizer = new AutoResetEvent(false);
+            var context = (LogContext<TLog>)log;
+            var communicator = new LogglyHttpCommunicator(this);
 
-            LogResponse response = null;
-            Log(message, json, r =>
-            {
-                response = r;
-                synchronizer.Set();
-            });
+            LogResponse response;
+            Action<Response> callbackWrapper;
+            
+            var synchronizer = log.Synchronous ? new AutoResetEvent(false) : null;
 
-            synchronizer.WaitOne();
-            return response;
-        }
-
-        public void Log(string message, string category)
-        {
-            Log(message, category, null);
-        }
-
-        public void Log(string message, string category, IDictionary<string, object> data)
-        {
-            var logEntry = new Dictionary<string, object>(data ?? new Dictionary<string, object>())
-                        {
-                           {"message", message}, {"category", category}
-                        };
-            var jsonLogEntry = JsonConvert.SerializeObject(logEntry);
-            Log(jsonLogEntry, true);
-        }
-
-        public void LogInfo(string message)
-        {
-            LogInfo(message, null);
-        }
-
-        public void LogInfo(string message, IDictionary<string, object> data)
-        {
-            Log(message, "info", data);
-        }
-
-        public void LogVerbose(string message)
-        {
-            LogVerbose(message, null);
-        }
-
-        public void LogVerbose(string message, IDictionary<string, object> data)
-        {
-            Log(message, "verbose", data);
-        }
-
-        public void LogWarning(string message)
-        {
-            LogWarning(message, null);
-        }
-
-        public void LogWarning(string message, IDictionary<string, object> data)
-        {
-            Log(message, "warning", data);
-        }
-
-        public void LogError(string message, Exception ex)
-        {
-            LogError(message, ex, null);
-        }
-
-        public void LogError(string message, Exception ex, IDictionary<string, object> data)
-        {
-            var exceptionData = new Dictionary<string, object>(data ?? new Dictionary<string, object>())
-                             {
-                                {"exception", ex.ToString()}
-                             };
-            Log(message, "error", exceptionData);
-        }
-
-        public void Log(string message, bool json)
-        {
-            Log(message, json, null);
-        }
-
-        public void Log(string message, bool json, Action<LogResponse> callback)
-        {
-            var communicator = new Communicator(this);
-            var callbackWrapper = callback == null ? (Action<Response>)null : r =>
+            callbackWrapper = (Response r) =>
             {
                 if (r.Success)
                 {
-                    var res = JsonConvert.DeserializeObject<LogResponse>(r.Raw);
-                    res.Success = true;
-                    callback(res);
+                    response = JsonConvert.DeserializeObject<LogResponse>(r.Raw);
+                    response.Success = true;
                 }
                 else
                 {
-                    var res = new LogResponse { Success = false };
-                    callback(res);
+                    response = new LogResponse { Success = false };
                 }
+
+                if (synchronizer != null)
+                    synchronizer.Set();
+
+                var callback = (Action<LogResponse>)context;
+                if (callback != null)
+                    callback(response);
             };
-            communicator.SendPayload(Communicator.POST, string.Concat("inputs/", _inputKey), message, json, callbackWrapper);
+
+            if (synchronizer != null)
+                synchronizer.WaitOne();
+
+            communicator.SendPayload(LogglyHttpCommunicator.POST, string.Concat("inputs/", _inputKey), context.ToString(), true, callbackWrapper);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Custom.Diagnostics
 
         private FacetResponse DoQuery(string endpoint, FacetQuery query)
         {
-            var communicator = new Communicator(this);
+            var communicator = new LogglyHttpCommunicator(this);
             return communicator.GetPayload<FacetResponse>(endpoint, query.ToParameters());
         }
     }

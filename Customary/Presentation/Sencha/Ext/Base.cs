@@ -52,7 +52,7 @@ namespace Custom.Presentation.Sencha.Ext
             where TModel : Base
             where TBuilder : Base.Serializer<TModel, TBuilder>
         {
-            public Serializer(TModel model)
+            protected Serializer(TModel model)
                 : base(model)
             {
             }

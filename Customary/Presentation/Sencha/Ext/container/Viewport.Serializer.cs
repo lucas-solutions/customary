@@ -29,10 +29,6 @@ namespace Custom.Presentation.Sencha.Ext.container
                 : base(model)
             {
             }
-
-            protected override void Serialize(TModel model, ScriptWriter writer)
-            {
-            }
         }
     }
 }

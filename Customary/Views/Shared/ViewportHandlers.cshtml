@@ -1,0 +1,37 @@
+﻿@model Custom.Models.Ext.ViewportHandlers
+@using Custom.Models.Ext;
+@{
+    switch (Model)
+    {
+        case ViewportHandlers.Click:
+    <script id="onClick" type="text/javascript">
+        function onClick(e) {
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseDown:
+    <script id="onMouseDown" type="text/javascript">
+        function onMouseDown(e) {
+            // handle mouse down event
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseMove:
+    <script id="onMouseMove" type="text/javascript">
+        function onMouseMove(e) {
+            // handle mouse move event
+        }
+    </script>
+            break;
+
+        case ViewportHandlers.MouseUp:
+    <script id="onMouseUp" type="text/javascript">
+        function onMouseUp(e) {
+            // handle mouse up event
+        }
+    </script>
+            break;
+    }
+}

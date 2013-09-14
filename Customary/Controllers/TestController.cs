@@ -6,13 +6,59 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
+    using Custom.Diagnostics;
     using Custom.Models;
 
-    public class TestController : CustomController1
+    public class TestController : CustomController
     {
         public TestController()
             : base("returnTo")
         {
+        }
+
+        public ActionResult Logger()
+        {
+            int intValue;
+
+            foreach (var key in QueryString.AllKeys)
+            {
+                var value = QueryString[key];
+
+                switch (key)
+                {
+                    case "category":
+                        LogCategories category;
+                        if (Enum.TryParse<Custom.Diagnostics.LogCategories>(value, out category))
+                            base.Log.Category(category);
+                        break;
+
+                    case "class":
+                        base.Log.Class(value);
+                        break;
+
+                    case "id":
+                        if (int.TryParse(value, out intValue))
+                            base.Log.ID(intValue);
+                        break;
+
+                    case "message":
+                        base.Log.Message(value);
+                        break;
+
+                    case "method":
+                        base.Log.Method(value);
+                        break;
+
+                    case "namespace":
+                        base.Log.Namespace(value);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            return View((Dictionary<string, object>)base.Log);
         }
 
         //

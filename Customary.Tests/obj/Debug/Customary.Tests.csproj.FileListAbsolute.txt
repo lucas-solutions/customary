@@ -124,3 +124,5 @@ C:\Playground\Customary\Customary.Tests\bin\Debug\Spatial4n.Core.NTS.xml
 C:\Playground\Customary\Customary.Tests\bin\Debug\ICSharpCode.NRefactory.xml
 C:\Playground\Customary\Customary.Tests\bin\Debug\AWSSDK.xml
 C:\Playground\Customary\Customary.Tests\bin\Debug\Microsoft.WindowsAzure.Storage.xml
+C:\Playground\Customary\Customary.Tests\bin\Debug\log4net.dll
+C:\Playground\Customary\Customary.Tests\bin\Debug\log4net.xml

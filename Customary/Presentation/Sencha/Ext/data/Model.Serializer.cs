@@ -43,7 +43,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             {
             }
 
-            protected override void Serialize(TModel model, ScriptWriter writer)
+            /*protected override void Serialize(TModel model, ScriptWriter writer)
             {
                 writer.Write("Ext.regModel('" + model.Name + "', {");
                 writer.WriteLine();
@@ -70,7 +70,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 writer.WriteLine();
                 writer.Write("});");
                 writer.WriteLine();
-            }
+            }*/
 
             private void Proxy(ScriptWriter writer)
             {
@@ -80,7 +80,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                     writer.Write("null");
                 IScriptable scriptable = proxy.Model;
                 if (scriptable != null)
-                    writer.Write(scriptable.Script);
+                    writer.Write(scriptable.ToSerializer().Render());
                 else if (string.IsNullOrEmpty(proxy.Name))
                     writer.Write("null");
                 else
@@ -102,7 +102,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 while (any)
                 {
                     IScriptable scriptable = enu.Current;
-                    writer.Write(scriptable.Script);
+                    writer.Write(scriptable.ToSerializer().Render());
 
                     if ((any = enu.MoveNext()))
                     {

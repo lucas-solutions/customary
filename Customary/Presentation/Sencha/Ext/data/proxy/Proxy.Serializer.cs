@@ -29,7 +29,7 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
             {
             }
 
-            protected override void Serialize(TModel model, ScriptWriter writer)
+            /*protected override void Serialize(TModel model, ScriptWriter writer)
             {
                 writer.Write("{");
                 writer.WriteLine();
@@ -50,7 +50,7 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
 
                 writer.WriteLine();
                 writer.Write("}");
-            }
+            }*/
         }
     }
 }

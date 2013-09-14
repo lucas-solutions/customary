@@ -40,13 +40,32 @@ namespace Custom
         {
             get
             {
+
+                const string LogglyInputDefault = "1205e89a-b51c-467f-a6c4-843f1e2b8827";
+                const string inputJSON = "2405d6e9-00c3-4b3f-9202-2f5676501cdb";
+
                 var logger = _logger;
 
                 if (logger == null)
                 {
                     lock (_lock)
                     {
-                        logger = _logger ?? (_logger = new LogglyLogger("1205e89a-b51c-467f-a6c4-843f1e2b8827"));
+                        //logger = _logger ?? (_logger = new LogglyLogger("1205e89a-b51c-467f-a6c4-843f1e2b8827"));
+
+                        logger = _logger;
+                        
+                        if (logger == null)
+                        {
+                            var multi = new MultiLogger();
+
+                            var loggly = new LogglyLogger(inputJSON);
+                            multi.Add("loggly", loggly);
+                            
+                            //var log4net = new Log4NetLogger();
+                            //multi.Add("log4net", log4net);
+
+                            _logger = logger = multi;
+                        }
                     }
                 }
 

@@ -62,16 +62,12 @@ namespace Custom.Presentation.Sencha.Ext.panel
             }
         }
 
-        public new class Serializer<TModel, TSerializer> : Ext.panel.AbstractPanel.Serializer<TModel, TSerializer>
+        public new abstract class Serializer<TModel, TSerializer> : Ext.panel.AbstractPanel.Serializer<TModel, TSerializer>
             where TModel : Panel
             where TSerializer : Panel.Serializer<TModel, TSerializer>
         {
-            public Serializer(TModel model)
+            protected Serializer(TModel model)
                 : base(model)
-            {
-            }
-
-            protected override void Serialize(TModel model, ScriptWriter writer)
             {
             }
         }

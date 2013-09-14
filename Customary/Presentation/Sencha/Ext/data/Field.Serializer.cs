@@ -35,7 +35,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             {
             }
 
-            protected override void Serialize(TModel model, ScriptWriter writer)
+            /*protected override void Serialize(TModel model, ScriptWriter writer)
             {
                 if (model.Convert != null)
                 {
@@ -54,7 +54,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 {
                     writer.Write("'" + model.Name + "'");
                 }
-            }
+            }*/
         }
     }
 }

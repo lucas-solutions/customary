@@ -15,9 +15,12 @@ namespace Custom.Filters
     /// </summary>
     public class DiagnosticsAttribute : FilterAttribute, IActionFilter, IExceptionFilter, IResultFilter
     {
-        private long _startTime = 0;
-        private IDictionary<string, object> _data = new Dictionary<string, object>();
+        private long _actionExecuting;
+        private long _actionExecuted;
+        private long _resultExecuting;
+        private long _resultExecuted;
         private Exception _exception;
+        private ControllerLog _log;
 
         public string Category
         {
@@ -31,34 +34,60 @@ namespace Custom.Filters
             set;
         }
 
-        private ILogger Logger
+        private void Log()
         {
-            get { return Global.Logger; }
+            if (_log != null && !_log.Completed)
+                _log.Send();
+        }
+
+        private ControllerLog Log(ControllerBase controller)
+        {
+            var customController = controller as Custom.Controllers.CustomController;
+            if (customController != null)
+            {
+                var log = customController.Log;
+
+                if (log != null)
+                    _log = log;
+                if (_log != null)
+                    customController.Log = _log;
+                else
+                {
+                    customController.Log = _log = Global.Logger.Log<ControllerLog>();
+                }
+            }
+            return _log;
         }
 
         void IActionFilter.OnActionExecuted(ActionExecutedContext filterContext)
         {
-            _data["Controller"] = filterContext.RouteData.Values["controller"];
-            _data["Action"] = filterContext.RouteData.Values["action"];
-            
-            var time = Stopwatch.GetTimestamp() - _startTime;
+            _actionExecuted = DateTime.UtcNow.Ticks;
 
-            Logger.Log(string.Format("Action Controller: {1}, Action: {2} took {0}", time, filterContext.RouteData.Values["controller"], filterContext.RouteData.Values["action"]));
+            var latency = _actionExecuted - _actionExecuting;
+
+            Log(filterContext.Controller)
+                .ActionLatency(TimeSpan.FromTicks(latency))
+                .Duration(TimeSpan.FromTicks(latency));
         }
 
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
-            _data["Controller"] = filterContext.RouteData.Values["controller"];
-            _data["Action"] = filterContext.RouteData.Values["action"];
-            _data["ActionStartTime"] = _startTime = Stopwatch.GetTimestamp();
+            Log(filterContext.Controller)
+                .Timestamp(DateTime.Now)
+                .Controller(filterContext.Controller);
+
+            _actionExecuting = DateTime.UtcNow.Ticks;
         }
 
         void IExceptionFilter.OnException(ExceptionContext filterContext)
         {
-            _data["Controller"] = filterContext.RouteData.Values["controller"];
-            _data["Action"] = filterContext.RouteData.Values["action"];
-
             _exception = filterContext.Exception;
+
+            var duration = DateTime.UtcNow.Ticks - _actionExecuting;
+
+            Log(filterContext.Controller)
+                .Duration(TimeSpan.FromTicks(duration))
+                .Error(filterContext.Exception);
         }
 
         /// <summary>
@@ -69,35 +98,37 @@ namespace Custom.Filters
         /// <param name="filterContext"></param>
         void IResultFilter.OnResultExecuted(ResultExecutedContext filterContext)
         {
-            _data["Controller"] = filterContext.RouteData.Values["controller"];
-            _data["Action"] = filterContext.RouteData.Values["action"];
+            _resultExecuted = DateTime.UtcNow.Ticks;
+            
+            var latency = _resultExecuted - _resultExecuting;
+            var duration = _resultExecuted - _actionExecuting;
 
-            // Stop counter for latency
-            var time = Stopwatch.GetTimestamp() - _startTime;
-
-            Logger.Log(string.Format("Result Controller: {1}, Action: {2} took {0}", time, filterContext.RouteData.Values["controller"], filterContext.RouteData.Values["action"]));
+            Log(filterContext.Controller)
+                .ResultLatency(TimeSpan.FromTicks(latency))
+                .Duration(TimeSpan.FromTicks(duration));
 
             /*var countManager = GetPerformanceCounterManager(filterContext.HttpContext);
 
             if (countManager != null)
             {
-                countManager.RecordLatency(Instance, time);
-            }*/
-
-            _data["Controller"] = filterContext.RouteData.Values["controller"];
-            _data["Action"] = filterContext.RouteData.Values["action"];
-        }
+                countManager.RecordLatency(Instance, latency);
+            }*/        }
 
         void IResultFilter.OnResultExecuting(ResultExecutingContext filterContext)
         {
-            _startTime = Stopwatch.GetTimestamp();
+            _resultExecuting = DateTime.UtcNow.Ticks;
+            
+            var duration = _resultExecuting - _actionExecuting;
+
+            Log(filterContext.Controller)
+                .Duration(TimeSpan.FromTicks(duration));
         }
 
-        private DiagnosticsManager GetPerformanceCounterManager(HttpContextBase context)
+        /*private DiagnosticsManager GetPerformanceCounterManager(HttpContextBase context)
         {
             DiagnosticsManager manager = context.Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] as DiagnosticsManager;
 
             return manager;
-        } 
+        }*/
     }
 }

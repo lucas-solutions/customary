@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -9,23 +7,28 @@ namespace Custom.Controllers
 {
     using Custom.Diagnostics;
     using Custom.Filters;
+    using Custom.Models;
+    using Custom.Presentation;
+    using System.Web.Routing;
 
     [Diagnostics(Category="Controller", Instance="Custom")]
-    public abstract class CustomController1 : Controller
+    public abstract class CustomController : Controller
     {
         private readonly NameValueCollection _queryString;
         private readonly string _redirectParam;
         private readonly Uri _redirectUri;
+        private ControllerLog _log;
         private readonly CookieRepository _identification = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromMinutes(30));
         private readonly CookieRepository _customizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true);
         private readonly CookieRepository _globalizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true, true);
 
-        public CustomController1()
+        public CustomController()
         {
+            var logger = Global.Container.GetInstance<ILogger>();
             _queryString = new NameValueCollection(System.Web.HttpContext.Current.Request.QueryString);
         }
 
-        protected CustomController1(string redirectName)
+        protected CustomController(string redirectName)
             : this()
         {
             var request = System.Web.HttpContext.Current.Request;
@@ -68,7 +71,7 @@ namespace Custom.Controllers
             }
             catch (Exception e)
             {
-                Logger.LogError("CustomController::Error parsing redirectionUrl", e);
+                Log.Message("Error parsing redirectionUrl").Error(e).Category(LogCategories.Error);
             }
             _redirectParam = redirectName;
         }
@@ -93,9 +96,10 @@ namespace Custom.Controllers
             get { return _customizations; }
         }
 
-        public ILogger Logger
+        public ControllerLog Log
         {
-            get { return Global.Logger; }
+            get { return _log ?? (_log = Global.Logger.Log<ControllerLog>()); }
+            set { _log = value; }
         }
 
         public NameValueCollection QueryString
@@ -129,6 +133,42 @@ namespace Custom.Controllers
                 }
             }
             return index;
+        }
+
+        protected override IAsyncResult BeginExecute(RequestContext requestContext, AsyncCallback callback, object state)
+        {
+            Log.Controller(this);
+            var result = base.BeginExecute(requestContext, callback, state);
+            //_log.Controller(this);
+            return result;
+        }
+
+        protected override void EndExecute(IAsyncResult asyncResult)
+        {
+            base.EndExecute(asyncResult);
+            _log.Send();
+        }
+
+        static readonly string[] Framework = new[] {
+            "JQuery",
+            "IE",
+            "Mobile",
+            "Knockout",
+            "AngularJs",
+            "ExtJs"
+        };
+
+        protected internal virtual PageResult Page(string viewName, string layout, object model)
+        {
+            if (model != null)
+            {
+                base.ViewData.Model = new PageModel
+                {
+                    Title = ViewBag.Title,
+                    Main = viewName,
+                };
+            }
+            return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
         }
     }
 }

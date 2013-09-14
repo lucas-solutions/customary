@@ -8,8 +8,7 @@ namespace Custom.Presentation
 {
     public interface IScriptSerializer
     {
-        TSerializer Cast<TSerializer>() where TSerializer : class, IScriptSerializer;
-
+        string[] Render();
         void Serialize(TextWriter writer);
     }
 }

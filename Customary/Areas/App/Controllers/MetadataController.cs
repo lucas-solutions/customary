@@ -21,7 +21,7 @@ namespace Custom.Areas.App.Metadata.Controllers
         // GET: /App/Metadata/
 
         public ActionResult Index()
-        {   
+        {
             return View();
         }
 
@@ -89,11 +89,17 @@ namespace Custom.Areas.App.Metadata.Controllers
                 .ToModel()
                 .ToSerializer();
 
+            Func<Ext.data.proxy.Proxy, string[]> proxyRender = (Ext.data.proxy.Proxy proxy) =>
+                    {
+                        return new string[0];
+                    };
+
             serializer
                 .Ignore(o => o.PersistenceProperty)
-                .Custom(o => o.Proxy, (Ext.data.proxy.Proxy proxy, TextWriter writer) =>
-                    {
-                    });
+                .Property<Ext.data.proxy.Proxy>(o => o.Proxy, (Ext.data.proxy.Proxy proxy) =>
+                {
+                    return new string[0];
+                });
 
             return builder.ToModel().Result();
 

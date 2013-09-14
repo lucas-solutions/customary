@@ -9,6 +9,8 @@ namespace Custom.Presentation
     public class JField<TModel> : JObject<TModel>, IScriptable
         where TModel : class
     {
+        Serializer _serializer;
+
         public JField()
         {
         }
@@ -19,22 +21,6 @@ namespace Custom.Presentation
             Model = other.Model;
         }
 
-        string[] IScriptable.Script
-        {
-            get { return Render(); }
-        }
-
-        private string[] Render()
-        {
-            //var name = Name ?? string.Empty;
-            //var scriptable = Model as IScriptable;
-            //if (scriptable != null)
-            //    scriptable.Script(writer);
-            //else
-            //    writer.Write("'" + name + "'");
-            return null;
-        }
-
         IScriptSerializer IScriptable.ToSerializer()
         {
             return ToSerializer();
@@ -42,19 +28,37 @@ namespace Custom.Presentation
 
         public Serializer ToSerializer()
         {
-            return null;// _serializer ?? (_serializer = new Serializer(this));
+            return  _serializer ?? (_serializer = new Serializer(this));
         }
 
-        void IScriptable.WriteTo(TextWriter writer)
+        public class Serializer : Serializer<JField<TModel>, Serializer>
         {
-            writer.Write(Render());
-        }
-
-        public class Serializer : IScriptSerializer
-        {
-            public TSerializer Cast<TSerializer>() where TSerializer : class, IScriptSerializer
+            public Serializer(JField<TModel> field)
+                : base(field)
             {
-                throw new NotImplementedException();
+            }
+        }
+
+        public abstract class Serializer<TField, TSerializer> : IScriptSerializer
+            where TField : JField<TModel>
+            where TSerializer : Serializer<TField, TSerializer>
+        {
+            private readonly TField _field;
+
+            protected Serializer(TField field)
+            {
+                _field = field;
+            }
+
+            public string[] Render()
+            {
+                //var name = Name ?? string.Empty;
+                //var scriptable = Model as IScriptable;
+                //if (scriptable != null)
+                //    scriptable.Script(writer);
+                //else
+                //    writer.Write("'" + name + "'");
+                return null;
             }
 
             public void Serialize(TextWriter writer)

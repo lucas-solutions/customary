@@ -12,45 +12,28 @@ namespace Custom.Presentation
     public class ScriptResult : ActionResult
     {
         private readonly IScriptable _scriptable;
-        private TempDataDictionary _tempData;
-        private ViewDataDictionary _viewData;
-        private IView _view;
-        private ViewEngineCollection _viewEngineCollection;
         
         public ScriptResult(IScriptable scriptable)
         {
             _scriptable = scriptable;
         }
 
-        public TempDataDictionary TempData
-        {
-            get { return _tempData ?? (_tempData = new TempDataDictionary()); }
-            set { _tempData = value; }
-        }
-
-        public ViewDataDictionary ViewData
-        {
-            get { return _viewData ?? (_viewData = new ViewDataDictionary()); }
-            set { _viewData = value; }
-        }
-
-        public ViewEngineCollection ViewEngineCollection
-        {
-            get { return (_viewEngineCollection ?? (_viewEngineCollection = ViewEngines.Engines)); }
-        }
-
         public override void ExecuteResult(ControllerContext context)
         {
-            if (context == null)
+            if (context != null)
             {
-                throw new ArgumentNullException("context");
+                var view = _scriptable.ToSerializer() as ScriptView;
+                if (view != null)
+                {
+                    view.ControllerContext = context;
+                }
             }
 
             var response = context.HttpContext.Response ?? context.RequestContext.HttpContext.Response;
 
             response.ContentType = "text/javascript";
 
-            _scriptable.WriteTo(response.Output);
+            _scriptable.ToSerializer().Serialize(response.Output);
         }
     }
 }
