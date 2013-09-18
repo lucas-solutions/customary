@@ -8,9 +8,9 @@ namespace Custom.Presentation
 {
     public static class TextWriterExtensions
     {
-        public static void Write(this TextWriter writer, string[] lines)
+        public static void WriteAllLines(this TextWriter writer, List<string> lines)
         {
-            if (lines != null && lines.Length > 0)
+            if (lines != null && lines.Count > 0)
                 foreach (var line in lines)
                     writer.WriteLine(line);
         }

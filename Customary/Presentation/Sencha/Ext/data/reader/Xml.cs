@@ -5,11 +5,26 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data.reader
 {
-    public class Xml : Reader
+    public abstract class Xml : Reader
     {
-        protected override IScriptSerializer ToNativeSerializer()
+        private Builder _builder;
+
+        public Builder ToBuilder()
         {
-            return null;
+            return _builder ?? (_builder = new Builder(this));
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
+        public class Builder : Builder<Xml, Builder>
+        {
+            public Builder(Xml model)
+                : base(model)
+            {
+            }
         }
     }
 }

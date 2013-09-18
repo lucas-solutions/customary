@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public partial class Field : Base
+    public partial class Field : ScriptObject
     {
-        private Builder _builder;
-
-        public JFunction Convert
+        public ScriptFunction Convert
         {
             get;
             set;
@@ -40,6 +39,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             set;
         }
 
+        [DefaultValue(false)]
         public bool Persist
         {
             get;
@@ -52,32 +52,24 @@ namespace Custom.Presentation.Sencha.Ext.data
             set;
         }
 
-        public JFunction SortType
+        public ScriptFunction SortType
         {
             get;
             set;
         }
 
+        [DefaultValue("string")]
         public string Type
         {
             get;
             set;
         }
 
+        [DefaultValue(true)]
         public bool UseNulls
         {
             get;
             set;
-        }
-
-        public Builder ToBuilder()
-        {
-            return _builder ?? (_builder = new Builder());
-        }
-
-        protected override IScriptSerializer ToNativeSerializer()
-        {
-            return new Serializer(this);
         }
     }
 }

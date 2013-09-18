@@ -226,6 +226,8 @@
     <Compile Include="Areas\App\Controllers\MasterdataController.cs" />
     <Compile Include="Areas\App\Controllers\MetadataController.cs" />
     <Compile Include="Areas\App\Controllers\NavigationController.cs" />
+    <Compile Include="Areas\App\Models\EntityViewModel.cs" />
+    <Compile Include="Areas\App\Models\EnumViewModel.cs" />
     <Compile Include="Automation\Scheduler.cs" />
     <Compile Include="Configuration\ApplicationSettings.cs" />
     <Compile Include="Controllers\DataController.cs" />
@@ -258,24 +260,22 @@
     <Compile Include="Presentation\CssRect.cs" />
     <Compile Include="Presentation\IScriptSerializer.cs" />
     <Compile Include="Presentation\IScriptable.cs" />
-    <Compile Include="Presentation\JField.cs" />
-    <Compile Include="Presentation\JFunction.cs" />
-    <Compile Include="Presentation\JObject.cs" />
+    <Compile Include="Presentation\ListExtensions.cs" />
+    <Compile Include="Presentation\ScriptField.cs" />
     <Compile Include="Presentation\LoggerExtensions.cs" />
     <Compile Include="Presentation\Margins.cs" />
     <Compile Include="Diagnostics\RequestLog.cs" />
-    <Compile Include="Presentation\Scriptable.cs" />
-    <Compile Include="Presentation\Scriptable.Serializer.cs" />
+    <Compile Include="Presentation\Presenter.cs" />
+    <Compile Include="Presentation\ScriptArray.cs" />
     <Compile Include="Presentation\ScriptLog.cs" />
     <Compile Include="Presentation\ScriptObject.Builder.cs" />
     <Compile Include="Presentation\ScriptObject.cs" />
-    <Compile Include="Presentation\ScriptFunction.Serializer.cs" />
-    <Compile Include="Presentation\ScriptObject.Serializer.cs" />
     <Compile Include="Presentation\ScriptView.cs" />
     <Compile Include="Presentation\Sencha\Ext\AbstractComponent.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\AbstractComponent.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Presentation\Sencha\Ext\Base.Builder.cs" />
     <Compile Include="Presentation\Sencha\Ext\button\Button.cs" />
     <Compile Include="Presentation\Sencha\Ext\button\Cycle.cs" />
     <Compile Include="Presentation\Sencha\Ext\button\Split.cs" />
@@ -305,12 +305,11 @@
     <Compile Include="Presentation\Sencha\Ext\container\Viewport.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Presentation\Sencha\Ext\container\Viewport.Serializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\BelongsToAssociation.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Field.Builder.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\Field.Serializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\HasManyAssociation.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\NodeInterface.cs" />
+    <Compile Include="Presentation\Sencha\Ext\data\reader\Array.cs" />
     <Compile Include="Presentation\Sencha\Ext\Editor.cs" />
     <Compile Include="Presentation\Sencha\Ext\ExtMemberTypes.cs" />
     <Compile Include="Presentation\Sencha\Ext\form\FieldSet.cs" />
@@ -335,13 +334,13 @@
     <Compile Include="Presentation\Sencha\Ext\grid\feature\FeatureCollection.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\header\Container.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\Panel.Builder.cs" />
-    <Compile Include="Presentation\Sencha\Ext\grid\Panel.Serializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\grid\plugin\Editing.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\CheckItem.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\Item.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\Menu.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\Separator.cs" />
     <Compile Include="Presentation\Sencha\Ext\menu\TextItem.cs" />
+    <Compile Include="Presentation\Sencha\Ext\MixinCollection.cs" />
     <Compile Include="Presentation\Sencha\Ext\panel\AbstractPanel.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\AbstractStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\Base.cs">
@@ -358,7 +357,6 @@
     <Compile Include="Presentation\Sencha\Ext\data\JsonPStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\JsonStore.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\Model.Builder.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\Model.Serializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\ModelExtensions.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Ajax.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Client.cs" />
@@ -367,7 +365,6 @@
     <Compile Include="Presentation\Sencha\Ext\data\proxy\LocalStorage.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Memory.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Proxy.Builder.cs" />
-    <Compile Include="Presentation\Sencha\Ext\data\proxy\Proxy.Serializer.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Rest.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\Server.cs" />
     <Compile Include="Presentation\Sencha\Ext\data\proxy\SessionStorage.cs" />
@@ -425,6 +422,7 @@
     <Compile Include="Presentation\Sencha\Ext\window\Window.cs" />
     <Compile Include="Presentation\ScriptWriter.cs" />
     <Compile Include="Presentation\ScriptFunction.cs" />
+    <Compile Include="Presentation\Scriptable.cs" />
     <Compile Include="Presentation\TextWriterExtensions.cs" />
     <Compile Include="Presentation\Unit.cs" />
     <Compile Include="Presentation\UnitType.cs" />
@@ -636,6 +634,8 @@
     <Content Include="Views\Shared\TreeGrid.cshtml" />
     <Content Include="Views\Shared\Grid.cshtml" />
     <Content Include="Areas\App\Views\Web.config" />
+    <Content Include="Areas\App\Views\Navigation\Enum.cshtml" />
+    <Content Include="Areas\App\Views\Metadata\Entity.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3733,6 +3733,7 @@
     <Content Include="Views\Sencha\Ext\Panel.cshtml" />
     <Content Include="Views\Shared\ViewportHandlers.cshtml" />
     <Content Include="Views\Test\Logger.cshtml" />
+    <Content Include="Views\Shared\Ext.container.Viewport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />
@@ -3740,7 +3741,7 @@
     <Folder Include="App_Data\Metadata\" />
     <Folder Include="App_Data\Navigation\" />
     <Folder Include="App_Data\Seeds\Masterdata\" />
-    <Folder Include="Areas\App\Models\" />
+    <Folder Include="Areas\App\Views\Masterdata\" />
     <Folder Include="Areas\App\Views\Shared\" />
     <Folder Include="Areas\User\Models\" />
     <Folder Include="Areas\User\Views\Account\" />
@@ -3751,6 +3752,12 @@
     <Folder Include="Presentation\JQuery\Mobile\" />
     <Folder Include="Presentation\Microsoft\Silverlight\" />
     <Folder Include="Presentation\Microsoft\Wpf\" />
+    <Folder Include="Presentation\Sencha\Ext\dd\" />
+    <Folder Include="Presentation\Sencha\Ext\direct\" />
+    <Folder Include="Presentation\Sencha\Ext\draw\" />
+    <Folder Include="Presentation\Sencha\Ext\fx\" />
+    <Folder Include="Presentation\Sencha\Ext\layout\" />
+    <Folder Include="Presentation\Sencha\Ext\resizer\" />
     <Folder Include="Presentation\Sencha\Touch\" />
     <Folder Include="Presentation\Telerik\Icenium\" />
     <Folder Include="Presentation\Telerik\KendoUI\" />

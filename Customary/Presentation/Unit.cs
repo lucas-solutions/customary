@@ -14,7 +14,7 @@ namespace Custom.Presentation
     using System.Web.Util;
 
     [Serializable, StructLayout(LayoutKind.Sequential)]
-    public struct Unit
+    public class Unit
     {
         internal const int MaxValue = 0x7fff;
         internal const int MinValue = -32768;
@@ -315,11 +315,6 @@ namespace Custom.Presentation
                 throw new ArgumentOutOfRangeException("value");
             }
             return UnitType.Ex;
-        }
-
-        static Unit()
-        {
-            Empty = new Unit();
         }
     }
 }

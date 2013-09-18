@@ -15,6 +15,12 @@ namespace Custom.Utils
         /// <returns>True if it was able to return a valid physical path</returns>
         public static bool TryGetFullPath(string path, out string fullPath)
         {
+            if (path == null)
+            {
+                fullPath = null;
+                return false;
+            }
+
             if (System.IO.Path.IsPathRooted(path))
             {
                 fullPath = System.IO.Path.GetFullPath(path);

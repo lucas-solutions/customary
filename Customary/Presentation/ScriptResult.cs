@@ -22,10 +22,10 @@ namespace Custom.Presentation
         {
             if (context != null)
             {
-                var view = _scriptable.ToSerializer() as ScriptView;
-                if (view != null)
+                var scriptView = _scriptable as ScriptView;
+                if (scriptView != null)
                 {
-                    view.ControllerContext = context;
+                    scriptView.ControllerContext = context;
                 }
             }
 
@@ -33,7 +33,7 @@ namespace Custom.Presentation
 
             response.ContentType = "text/javascript";
 
-            _scriptable.ToSerializer().Serialize(response.Output);
+            _scriptable.Write(response.Output);
         }
     }
 }

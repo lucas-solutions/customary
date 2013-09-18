@@ -11,6 +11,12 @@ namespace Custom.Models.Ext
     /// </summary>
     public class ViewportModel
     {
+        public bool Define
+        {
+            get;
+            set;
+        }
+
         public Ext.container.Viewport Object
         {
             get;

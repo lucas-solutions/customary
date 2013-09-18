@@ -10,26 +10,32 @@ using System.Xml;
 
 namespace Custom.Presentation
 {
-    public class ScriptView
+    public partial class ScriptView : IScriptable
     {
-        private ControllerContext _controllerContext;
         private object _model;
+        private string _viewName;
+        private ControllerContext _controllerContext;
         private TempDataDictionary _tempData;
         private IView _view;
         private ViewDataDictionary _viewData;
-        private string _viewName;
         private ViewEngineCollection _viewEngineCollection;
-
-        public ControllerContext ControllerContext
-        {
-            get { return _controllerContext; }
-            set { _controllerContext = value; }
-        }
 
         public object Model
         {
             get { return _model; }
             set { _model = value; }
+        }
+
+        public string ViewName
+        {
+            get { return _viewName; }
+            set { _viewName = value; }
+        }
+
+        public ControllerContext ControllerContext
+        {
+            get { return _controllerContext; }
+            set { _controllerContext = value; }
         }
 
         public TempDataDictionary TempData
@@ -50,82 +56,78 @@ namespace Custom.Presentation
             set { _viewData = value; }
         }
 
-        public string ViewName
-        {
-            get { return _viewName; }
-            set { _viewName = value; }
-        }
-
         public ViewEngineCollection ViewEngineCollection
         {
             get { return (_viewEngineCollection ?? (_viewEngineCollection = ViewEngines.Engines)); }
         }
 
-        public string[] Naked()
+        public void Naked(List<string> lines)
         {
-            return Strip(Render());
+            var first = lines.Count;
+            Render(lines);
+            Strip(lines, first, lines.Count - 1);
         }
 
-        public string[] NakedFn()
+        public void NakedFn(List<string> lines)
         {
             string name;
             NameValueCollection attributes;
-            return NakedFn(out name, out attributes);
+            NakedFn(lines, out name, out attributes);
         }
 
-        public string[] NakedFn(out string name, out NameValueCollection attributes)
+        public void NakedFn(List<string> lines, out string name, out NameValueCollection attributes)
         {
             const string function = "function";
 
             name = null;
 
             attributes = new NameValueCollection();
-            var output = Strip(Render(), attributes);
 
-            if (output != null && output.Length > 0)
+            var first = lines.Count;
+            Render(lines);
+            Strip(lines, first, lines.Count - 1, attributes);
+
+            if (lines != null && lines.Count > 0)
             {
-                var line = (output[0] ?? string.Empty);
+                var line = (lines[0] ?? string.Empty);
                 var padding = line.IndexOf(function);
                 if (padding < 0)
                 {
                     // log error
-                    return output;
+                    return;
                 }
 
                 var paramsIndex = line.IndexOf('(', padding + function.Length);
                 if (paramsIndex < 0)
                 {
                     // log error
-                    return output;
                 }
 
                 name = line.Substring(padding + function.Length, paramsIndex - (padding + function.Length)).Trim();
-                output[0] = string.Concat(function, ' ', line.Substring(paramsIndex));
-                for (var i = 1; padding > 0 && i < output.Length; i++)
+                lines[0] = string.Concat(function, ' ', line.Substring(paramsIndex));
+                for (var i = 1; padding > 0 && i < lines.Count; i++)
                 {
-                    if (string.IsNullOrEmpty(output[i]))
+                    if (string.IsNullOrEmpty(lines[i]))
                         continue;
 
-                    if (string.IsNullOrWhiteSpace(output[i].Substring(0, padding)))
-                        output[i] = output[i].Substring(padding);
+                    if (string.IsNullOrWhiteSpace(lines[i].Substring(0, padding)))
+                        lines[i] = lines[i].Substring(padding);
                     else
-                        output[i] = output[i].TrimStart();
+                        lines[i] = lines[i].TrimStart();
                 }
             }
-
-            return output;
         }
 
-        public static string[] Strip(string[] input, NameValueCollection attributes = null)
+        public static void Strip(List<string> lines, int first, int last, NameValueCollection attributes = null)
         {
-            int first = 0, last = input.Length - 1, tagIndex = -1;
-            for (var i = 0; i < input.Length; i++)
+            int tagIndex = -1;
+            for (var i = 0; i < lines.Count; i++)
             {
-                if (string.IsNullOrWhiteSpace(input[i]))
+                if (string.IsNullOrWhiteSpace(lines[i]))
                     first = i + 1;
                 else
                 {
-                    var line = input[i].Trim().ToLower();
+                    var line = lines[i].Trim().ToLower();
                     if (line.StartsWith("<script"))
                     {
                         tagIndex = i;
@@ -135,13 +137,13 @@ namespace Custom.Presentation
                 }
             }
 
-            for (var i = input.Length - 1; i >= first; i++)
+            for (var i = lines.Count - 1; i >= first; i++)
             {
-                if (string.IsNullOrWhiteSpace(input[i]))
+                if (string.IsNullOrWhiteSpace(lines[i]))
                     last = i - 1;
                 else
                 {
-                    var line = input[i].Trim().ToLower();
+                    var line = lines[i].Trim().ToLower();
                     if (line.StartsWith("</script"))
                         last = i - 1;
                     break;
@@ -150,7 +152,7 @@ namespace Custom.Presentation
 
             if (attributes != null && tagIndex > -1)
             {
-                var xml = input[tagIndex].Trim();
+                var xml = lines[tagIndex].Trim();
                 using (var sr = new StringReader(xml))
                 {
                     var reader = XmlTextReader.Create(sr);
@@ -173,25 +175,20 @@ namespace Custom.Presentation
             }
 
             var length = last - first + 1;
-            var output = new string[length];
-
-            Array.Copy(input, first, output, 0, length);
-
-            return output;
+            lines.RemoveRange(last + 1, lines.Count - last - 1);
+            lines.RemoveRange(0, first);
         }
 
-        public string[] Render()
+        public void Render(List<string> lines)
         {
-            var lines = new List<string>();
             using (var input = new StringReader(ToString()))
             {
                 for (var line = input.ReadLine(); line != null; line = input.ReadLine())
                     lines.Add(string.IsNullOrWhiteSpace(line) ? string.Empty : line.TrimEnd());
             }
-            return lines.ToArray();
         }
 
-        public void Render(TextWriter writer)
+        public void Write(System.IO.TextWriter writer)
         {
             ViewEngineResult result = null;
 
@@ -203,12 +200,12 @@ namespace Custom.Presentation
 
             ViewData.Model = Model;
 
-            var viewContext = new ViewContext(ControllerContext, View, ViewData, TempData, writer);
+            var viewContext = new ViewContext(ControllerContext, _view, ViewData, TempData, writer);
             _view.Render(viewContext, writer);
 
             if (result != null)
             {
-                result.ViewEngine.ReleaseView(ControllerContext, View);
+                result.ViewEngine.ReleaseView(ControllerContext, _view);
             }
         }
 
@@ -217,7 +214,7 @@ namespace Custom.Presentation
             var sb = new StringBuilder();
             using (var writer = new StringWriter(sb))
             {
-                Render(writer);
+                Write(writer);
             }
             return sb.ToString();
         }

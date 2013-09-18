@@ -46,7 +46,7 @@ namespace Custom.Controllers
                 .Builder()
                 .ToModel();
 
-            return Script(model);
+            return Script((Scriptable)model);
         }
 
         protected JsonResult List(string id)

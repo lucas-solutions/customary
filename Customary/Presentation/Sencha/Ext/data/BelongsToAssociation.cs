@@ -7,6 +7,8 @@ namespace Custom.Presentation.Sencha.Ext.data
 {
     public class BelongsToAssociation : Ext.data.Association
     {
+        private Builder _builder;
+
         /// <summary>
         /// The name of the foreign key on the owner model that links it to the associated model.
         /// </summary>
@@ -42,9 +44,22 @@ namespace Custom.Presentation.Sencha.Ext.data
             get { return "belongsTo"; }
         }
 
-        protected override IScriptSerializer ToNativeSerializer()
+        public Builder ToBuilder()
         {
-            throw new NotImplementedException();
+            return _builder ?? (_builder = new Builder(this));
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
+        public class Builder : Builder<BelongsToAssociation, Builder>
+        {
+            public Builder(BelongsToAssociation model)
+                : base(model)
+            {
+            }
         }
     }
 }

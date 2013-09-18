@@ -18,7 +18,7 @@ namespace Custom.Controllers
         {
             var fn = new ScriptFunction();
 
-            var view = CreateScriptView("~/Views/Script/ViewportHandlers.cshtml");
+            var view = CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml");
 
             int key;
             ViewportHandlers handler;
@@ -32,7 +32,7 @@ namespace Custom.Controllers
             else
                 view.Model = 0;
 
-            fn.ToSerializer().Override(view.NakedFn);
+            fn.Override(view.NakedFn);
 
             return Script(fn);
         }

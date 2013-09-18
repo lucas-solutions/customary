@@ -15,9 +15,9 @@ namespace Custom.Presentation.Sencha.Ext.data
             return _builder ?? (_builder = new Builder());
         }
 
-        protected override IScriptSerializer ToNativeSerializer()
+        protected override Scriptable ToScriptable()
         {
-            return new Serializer(this);
+            return ToBuilder();
         }
 
         public class Builder : Store.Builder<Store, Store.Builder>
@@ -43,29 +43,6 @@ namespace Custom.Presentation.Sencha.Ext.data
             where TBuilder : Store.Builder<TModel, TBuilder>
         {
             public Builder(TModel model)
-                : base(model)
-            {
-            }
-        }
-
-        public class Serializer : Store.Serializer<Store, Store.Serializer>
-        {
-            public Serializer()
-                : base(null)
-            {
-            }
-
-            public Serializer(Store model)
-                : base(model)
-            {
-            }
-        }
-
-        public new abstract class Serializer<TModel, TSerializer> : AbstractStore.Serializer<TModel, TSerializer>
-            where TModel : Store
-            where TSerializer : Store.Serializer<TModel, TSerializer>
-        {
-            protected Serializer(TModel model)
                 : base(model)
             {
             }

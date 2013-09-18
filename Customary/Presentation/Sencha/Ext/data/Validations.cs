@@ -6,9 +6,11 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public class Validations
+    public class Validations : ScriptObject
     {
-        public JObject<Field> Field
+        private Builder _builder;
+
+        public ScriptField<Field> Field
         {
             get;
             set;
@@ -37,11 +39,23 @@ namespace Custom.Presentation.Sencha.Ext.data
             get;
             set;
         }
-        public void WriteTo(ScriptWriter writer)
+
+        public Builder ToBuilder()
         {
-            writer.Write("{");
-            writer.WriteLine();
-            writer.Write("}");
+            return _builder ?? (_builder = new Builder(this));
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
+        public class Builder : Builder<Validations, Builder>
+        {
+            public Builder(Validations model)
+                : base(model)
+            {
+            }
         }
     }
 }

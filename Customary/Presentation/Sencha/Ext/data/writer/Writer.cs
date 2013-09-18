@@ -7,21 +7,11 @@ namespace Custom.Presentation.Sencha.Ext.data.writer
 {
     public abstract class Writer : Base
     {
-        public new abstract class Builder<TModel, TBuilder> : Base.Builder<TModel, TBuilder>
-            where TModel : Writer
-            where TBuilder : Writer.Builder<TModel, TBuilder>
+        public new abstract class Builder<TScript, TBuilder> : Base.Builder<TScript, TBuilder>
+            where TScript : Writer
+            where TBuilder : Writer.Builder<TScript, TBuilder>
         {
-            public Builder(TModel model)
-                : base(model)
-            {
-            }
-        }
-
-        public new abstract class Serializer<TModel, TSerializer> : Base.Serializer<TModel, TSerializer>
-            where TModel : Writer
-            where TSerializer : Writer.Serializer<TModel, TSerializer>
-        {
-            public Serializer(TModel model)
+            public Builder(TScript model)
                 : base(model)
             {
             }

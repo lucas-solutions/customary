@@ -8,6 +8,8 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
 {
     public class Rest : Ext.data.proxy.Ajax
     {
+        private Builder _builder;
+
         public Rest()
         {
             Type = "rest";
@@ -33,7 +35,7 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
         /// <summary>
         /// True to batch actions of a particular type when synchronizing the store.
         /// </summary>
-        public bool BatchActions
+        public new bool BatchActions
         {
             get;
             set;
@@ -46,6 +48,24 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
         {
             get;
             set;
+        }
+
+        public Builder ToBuilder()
+        {
+            return _builder ?? (_builder = new Builder(this));
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
+        public class Builder : Builder<Rest, Builder>
+        {
+            public Builder(Rest model)
+                : base(model)
+            {
+            }
         }
     }
 }

@@ -7,10 +7,10 @@ namespace Custom.Presentation.Sencha.Ext.data
 {
     public enum ValidationTypes
     {
-        presence,
-        length,
-        inclusion,
-        exclusion,
-        format
+        Presence,
+        Length,
+        Inclusion,
+        Exclusion,
+        Format
     }
 }

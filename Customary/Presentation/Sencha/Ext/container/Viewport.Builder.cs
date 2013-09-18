@@ -7,6 +7,11 @@ namespace Custom.Presentation.Sencha.Ext.container
 {
     partial class Viewport
     {
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
         public class Builder : Ext.container.Viewport.Builder<Viewport, Viewport.Builder>
         {
             public Builder()

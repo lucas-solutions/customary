@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public abstract class Association : Ext.Base
+    public abstract class Association : ScriptObject
     {
         /// <summary>
         /// The string name of the model that is being associated with.
@@ -38,6 +38,12 @@ namespace Custom.Presentation.Sencha.Ext.data
             set;
         }
 
+        public string Name
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// The name of the primary key on the associated model
         /// </summary>
@@ -53,10 +59,6 @@ namespace Custom.Presentation.Sencha.Ext.data
         public abstract string Type
         {
             get;
-        }
-
-        public void WriteTo(ScriptWriter writer)
-        {
         }
     }
 }

@@ -7,6 +7,18 @@ namespace Custom.Presentation.Sencha.Ext.data
 {
     partial class Field
     {
+        private Builder _builder;
+
+        public Builder ToBuilder()
+        {
+            return _builder ?? (_builder = new Builder());
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
         public class Builder : Field.Builder<Field, Field.Builder>
         {
             public Builder()
@@ -19,13 +31,13 @@ namespace Custom.Presentation.Sencha.Ext.data
             {
             }
 
-            public static implicit operator Field.Builder(Field model)
+            public static implicit operator Builder(Field model)
             {
                 return model.ToBuilder();
             }
         }
 
-        public new abstract class Builder<TModel, TBuilder> : Base.Builder<TModel, TBuilder>
+        public new abstract class Builder<TModel, TBuilder> : ScriptObject.Builder<TModel, TBuilder>
             where TModel : Field
             where TBuilder : Field.Builder<TModel, TBuilder>
         {
@@ -34,7 +46,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             {
             }
 
-            public TBuilder Convert(JFunction value)
+            public TBuilder Convert(ScriptFunction value)
             {
                 ToModel().Convert = value;
                 return (TBuilder)this;
@@ -75,7 +87,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 return (TBuilder)this;
             }
 
-            public TBuilder SortType(JFunction value)
+            public TBuilder SortType(ScriptFunction value)
             {
                 ToModel().SortType = value;
                 return (TBuilder)this;

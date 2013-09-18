@@ -137,7 +137,7 @@ namespace Custom.Controllers
 
         protected override IAsyncResult BeginExecute(RequestContext requestContext, AsyncCallback callback, object state)
         {
-            Log.Controller(this);
+            Log.Request(requestContext);
             var result = base.BeginExecute(requestContext, callback, state);
             //_log.Controller(this);
             return result;

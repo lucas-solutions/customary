@@ -5,26 +5,8 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public class AssociationCollection
+    public class AssociationCollection : ScriptArray<AssociationCollection, Association>
     {
-        public List<Association> _items;
-
-        public int Count
-        {
-            get { return _items != null ? _items.Count : 0; }
-        }
-
-        public List<Association> Items
-        {
-            get { return _items ?? (_items = new List<Association>()); }
-        }
-
-        public AssociationCollection Add(Association item)
-        {
-            Items.Add(item);
-            return this;
-        }
-
         public AssociationCollection BelongsTo(string name)
         {
             Items.Add(new BelongsToAssociation { Name = name });

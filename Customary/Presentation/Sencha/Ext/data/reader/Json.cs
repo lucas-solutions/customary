@@ -5,11 +5,8 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data.reader
 {
-    public class Json : Reader
+    public abstract class Json : Reader
     {
-        protected override IScriptSerializer ToNativeSerializer()
-        {
-            return null;
-        }
+        
     }
 }

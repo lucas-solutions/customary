@@ -9,21 +9,15 @@ namespace Custom.Presentation.Sencha.Ext.panel
     public class Panel : Ext.panel.AbstractPanel
     {
         private Builder _builder;
-        private Serializer _serializer;
 
         public Builder ToBuilder()
         {
-            return _builder ?? (_builder = new Builder());
+            return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override IScriptSerializer ToNativeSerializer()
+        protected override Scriptable ToScriptable()
         {
-            return ToSerializer();
-        }
-
-        public Serializer ToSerializer()
-        {
-            return _serializer ?? (_serializer = new Serializer(this));
+            return ToBuilder();
         }
 
         public class Builder : Panel.Builder<Panel, Panel.Builder>
@@ -38,7 +32,7 @@ namespace Custom.Presentation.Sencha.Ext.panel
             {
             }
 
-            public static implicit operator Panel.Builder(Panel model)
+            public static implicit operator Builder(Panel model)
             {
                 return model.ToBuilder();
             }
@@ -49,24 +43,6 @@ namespace Custom.Presentation.Sencha.Ext.panel
             where TBuilder : Panel.Builder<TModel, TBuilder>
         {
             public Builder(TModel model)
-                : base(model)
-            {
-            }
-        }
-
-        public class Serializer : Panel.Serializer<Panel, Panel.Serializer>
-        {
-            public Serializer(Panel model)
-                : base(model)
-            {
-            }
-        }
-
-        public new abstract class Serializer<TModel, TSerializer> : Ext.panel.AbstractPanel.Serializer<TModel, TSerializer>
-            where TModel : Panel
-            where TSerializer : Panel.Serializer<TModel, TSerializer>
-        {
-            protected Serializer(TModel model)
                 : base(model)
             {
             }

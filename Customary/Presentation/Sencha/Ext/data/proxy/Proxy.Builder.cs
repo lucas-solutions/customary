@@ -7,6 +7,11 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
 {
     partial class Proxy
     {
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
         public class Builder : Proxy.Builder<Proxy, Proxy.Builder>
         {
             public Builder()
@@ -64,7 +69,7 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
             /// <summary>
             /// The Ext.data.reader.Relader to use to decode the server's response or data read from client.
             /// </summary>
-            public TBuilder Reader(JObject<Ext.data.reader.Reader> value)
+            public TBuilder Reader(ScriptField<Ext.data.reader.Reader> value)
             {
                 ToModel().Reader = value;
                 return (TBuilder)this;
@@ -73,7 +78,7 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
             /// <summary>
             /// The Ext.data.writer.Writer to use to encode any request sent to the server or saved to client.
             /// </summary>
-            public TBuilder Writer(JObject<Ext.data.writer.Writer> value)
+            public TBuilder Writer(ScriptField<Ext.data.writer.Writer> value)
             {
                 ToModel().Writer = value;
                 return (TBuilder)this;

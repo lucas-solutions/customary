@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Custom.Presentation
 {
     public interface IScriptable
     {
-        IScriptSerializer ToSerializer();
+        void Render(List<string> lines);
+
+        void Write(TextWriter writer);
     }
 }

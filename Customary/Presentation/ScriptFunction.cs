@@ -6,11 +6,27 @@ using System.Web;
 
 namespace Custom.Presentation
 {
-    public partial class ScriptFunction : Scriptable
+    public partial class ScriptFunction : IScriptable
     {
-        protected override IScriptSerializer ToNativeSerializer()
+        private Action<List<string>> _render;
+
+        public ScriptFunction Override(Action<List<string>> render)
         {
-            return ToSerializer();
+            _render = render;
+            return this;
+        }
+
+        public void Render(List<string> lines)
+        {
+            if (_render != null)
+                _render(lines);
+        }
+
+        public void Write(TextWriter writer)
+        {
+            var lines = new List<string>();
+            Render(lines);
+            writer.WriteAllLines(lines);
         }
     }
 }

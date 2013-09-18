@@ -16,15 +16,5 @@ namespace Custom.Presentation.Sencha.Ext.data
             {
             }
         }
-
-        public new abstract class Serializer<TModel, TSerializer> : Base.Serializer<TModel, TSerializer>
-            where TModel : AbstractStore
-            where TSerializer : AbstractStore.Serializer<TModel, TSerializer>
-        {
-            public Serializer(TModel model)
-                : base(model)
-            {
-            }
-        }
     }
 }

@@ -98,7 +98,7 @@ namespace Custom.Presentation
             _index++;
         }
 
-        private void Append(string s)
+        public ScriptWriter Append(string s)
         {
             Flush();
 
@@ -114,6 +114,32 @@ namespace Custom.Presentation
                     _lines[lastIndex] = string.IsNullOrEmpty(lastLine) ? s : lastLine + s;
                     break;
             }
+
+            return this;
+        }
+
+        public ScriptWriter Append(string[] lines)
+        {
+            if (lines == null || lines.Length == 0)
+                return this;
+
+            Flush();
+
+            switch (_lines.Count)
+            {
+                case 0:
+                    _lines.AddRange(lines);
+                    break;
+
+                default:
+                    var lastIndex = _lines.Count - 1;
+                    var lastLine = _lines[lastIndex];
+                    _lines[lastIndex] = string.IsNullOrEmpty(lastLine) ? lines[0] : lastLine + lines[0];
+                    _lines.AddRange(lines.Skip(1));
+                    break;
+            }
+
+            return this;
         }
 
         public void Append(char c, int count)
@@ -379,7 +405,9 @@ namespace Custom.Presentation
 
         public ScriptWriter Write(string[] lines)
         {
-            return Write(lines, 0, lines.Length);
+            if (lines != null)
+                Write(lines, 0, lines.Length);
+            return this;
         }
 
         public ScriptWriter Write(string[] lines, int index, int count)

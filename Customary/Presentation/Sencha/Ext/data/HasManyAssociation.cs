@@ -7,6 +7,8 @@ namespace Custom.Presentation.Sencha.Ext.data
 {
     public class HasManyAssociation : Ext.data.Association
     {
+        private Builder _builder;
+
         /// <summary>
         /// True to automatically load the related store from a remote source when instantiated.
         /// </summary>
@@ -60,9 +62,22 @@ namespace Custom.Presentation.Sencha.Ext.data
             get { return "hasMany"; }
         }
 
-        protected override IScriptSerializer ToNativeSerializer()
+        public Builder ToBuilder()
         {
-            throw new NotImplementedException();
+            return _builder ?? (_builder = new Builder(this));
+        }
+
+        protected override Scriptable ToScriptable()
+        {
+            return ToBuilder();
+        }
+
+        public class Builder : Builder<HasManyAssociation, Builder>
+        {
+            public Builder(HasManyAssociation model)
+                : base(model)
+            {
+            }
         }
     }
 }

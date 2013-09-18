@@ -16,7 +16,7 @@ namespace Custom.Presentation.Sencha.Ext
 
         public ConfigOptionsCollection ConfigOptions
         {
-            get { return _configOptions ?? (_configOptions = new ConfigOptionsCollection(); }
+            get { return _configOptions ?? (_configOptions = new ConfigOptionsCollection()); }
         }
 
         public ItemState State

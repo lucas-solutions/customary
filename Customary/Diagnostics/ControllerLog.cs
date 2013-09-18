@@ -30,7 +30,7 @@ namespace Custom.Diagnostics
 
         public TLog ActionLatency(TimeSpan latency)
         {
-            Context.Data["ActionLatency"] = latency.ToString();
+            Context["ActionLatency"] = latency.ToString();
             return (TLog)this;
         }
 
@@ -49,15 +49,15 @@ namespace Custom.Diagnostics
 
         public TLog ResultLatency(TimeSpan latency)
         {
-            Context.Data["ResultLatency"] = latency.ToString();
+            Context["ResultLatency"] = latency.ToString();
             return (TLog)this;
         }
 
         public TLog Route(RouteData route)
         {
-            Context.Data["Controller"] = route.Values["controller"];
-            Context.Data["Action"] = route.Values["action"];
-            Context.Data["Area"] = route.Values["area"];
+            Context["Controller"] = route.Values["controller"];
+            Context["Action"] = route.Values["action"];
+            Context["Area"] = route.Values["area"];
 
             return (TLog)this;
         }

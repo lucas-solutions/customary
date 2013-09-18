@@ -5,26 +5,8 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    public class FieldCollection
+    public class FieldCollection : ScriptArray<FieldCollection, Field>
     {
-        public List<Field> _items;
-
-        public int Count
-        {
-            get { return _items != null ? _items.Count : 0; }
-        }
-
-        public List<Field> Items
-        {
-            get { return _items ?? (_items = new List<Field>()); }
-        }
-
-        public FieldCollection Add(Field item)
-        {
-            Items.Add(item);
-            return this;
-        }
-
         public FieldCollection Add(string name)
         {
             Items.Add(new Field { Name = name });
@@ -37,7 +19,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             return this;
         }
 
-        public FieldCollection Add(string name, string type, JFunction covert)
+        public FieldCollection Add(string name, string type, ScriptFunction covert)
         {
             Items.Add(new Field { Name = name, Type = type, Convert = covert });
             return this;

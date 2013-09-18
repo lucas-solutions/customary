@@ -113,7 +113,7 @@ namespace Custom.Presentation.Sencha.Ext.panel
         /// Layout may be specified as either as an Object or as a String
         /// </summary>
         [DefaultValue(LayoutTypes.fit)]
-        public JObject<Ext.panel.Layout> Layout
+        public ScriptField<Ext.panel.Layout> Layout
         {
             get;
             set;
@@ -191,7 +191,7 @@ namespace Custom.Presentation.Sencha.Ext.panel
         /// The Store the grid should use as its data source.
         /// </summary>
         [Required]
-        public JObject<Ext.data.Store> Store
+        public ScriptField<Ext.data.Store> Store
         {
             get;
             set;

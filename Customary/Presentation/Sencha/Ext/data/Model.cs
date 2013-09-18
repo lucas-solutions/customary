@@ -17,7 +17,7 @@ namespace Custom.Presentation.Sencha.Ext.data
         private AssociationCollection _associations;
         private FieldCollection _fields;
         private ValidationsCollection _validations;
-        private JField<Ext.data.proxy.Proxy> _proxy;
+        private ScriptField<Ext.data.proxy.Proxy> _proxy;
 
         /// <summary>
         /// An array of associations for this model.
@@ -92,10 +92,10 @@ namespace Custom.Presentation.Sencha.Ext.data
         /// <summary>
         /// The proxy to use for this model.
         /// </summary>
-        public JObject<Ext.data.proxy.Proxy> Proxy
+        public ScriptField<Ext.data.proxy.Proxy> Proxy
         {
-            get { return _proxy ?? (_proxy = new JField<Ext.data.proxy.Proxy>()); }
-            set { (_proxy ?? (_proxy = new JField<Ext.data.proxy.Proxy>())).Assign(value); }
+            get { return _proxy ?? (_proxy = new ScriptField<Ext.data.proxy.Proxy>()); }
+            set { (_proxy ?? (_proxy = new ScriptField<Ext.data.proxy.Proxy>())).Assign(value); }
         }
 
         /// <summary>

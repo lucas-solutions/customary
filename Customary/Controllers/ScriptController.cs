@@ -21,13 +21,33 @@ namespace Custom.Controllers
 
         protected virtual ScriptView CreateScriptView(string viewName)
         {
-            return new ScriptView
+            var view = new ScriptView
             {
-                ControllerContext = ControllerContext,
-                TempData = TempData,
-                ViewName = viewName,
-                ViewData = ViewData
+                ViewName = viewName
             };
+
+            var serializer = view;
+            serializer.ControllerContext = ControllerContext;
+            serializer.TempData = TempData;
+            serializer.ViewData = ViewData;
+
+            return view;
+        }
+
+        protected virtual ScriptView CreateScriptView(string viewName, object model)
+        {
+            var view = new ScriptView
+            {
+                Model = model,
+                ViewName = viewName
+            };
+            
+            var serializer = view;
+            serializer.ControllerContext = ControllerContext;
+            serializer.TempData = TempData;
+            serializer.ViewData = ViewData;
+
+            return view;
         }
 
         protected virtual ScriptResult Script(IScriptable scriptable)
@@ -36,10 +56,11 @@ namespace Custom.Controllers
 
             if (view != null)
             {
-                view.ControllerContext = ControllerContext;
-                view.TempData = TempData;
-                view.ViewData = ViewData;
-            }
+                var serializer = view;
+                serializer.ControllerContext = ControllerContext;
+                serializer.TempData = TempData;
+                serializer.ViewData = ViewData;
+            };
 
             return new ScriptResult(scriptable);
         }

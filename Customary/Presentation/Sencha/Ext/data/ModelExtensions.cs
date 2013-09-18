@@ -96,7 +96,7 @@ namespace Custom.Presentation.Sencha.Ext.data
 
         public static ScriptResult Result(this Ext.data.Model model)
         {
-            return new ScriptResult(model);
+            return new ScriptResult((Scriptable)model);
         }
     }
 }

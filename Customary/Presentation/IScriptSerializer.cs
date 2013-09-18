@@ -9,6 +9,6 @@ namespace Custom.Presentation
     public interface IScriptSerializer
     {
         string[] Render();
-        void Serialize(TextWriter writer);
+        void Write(TextWriter writer);
     }
 }

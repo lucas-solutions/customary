@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,16 +8,71 @@ using System.Web.Mvc;
 namespace Custom.Areas.App.Metadata.Controllers
 {
     using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Areas.App.Models;
     using Custom.Models;
+    using Custom.Models.Ext;
     using Custom.Controllers;
     using Custom.Metadata;
     using Custom.Navigation;
     using Custom.Presentation;
     using Custom.Presentation.Sencha.Ext.data;
-    using System.IO;
-
-    public class MetadataController : Controller
+    
+    public class MetadataController : ScriptController
     {
+        public ActionResult Entity(string id)
+        {
+            var descriptor = new EntityDescriptor
+            {
+            };
+
+            var model = new Ext.data.Model
+            {
+            };
+
+            var builder = new Ext.grid.Panel
+            {
+            }.ToBuilder();
+
+            var viewModel = new EntityViewModel
+            {
+                Descriptor = descriptor,
+                Panel = builder.ToModel(),
+                Model = model
+            };
+
+            var view = CreateScriptView("~/Areas/App/Views/Metadata/Enum.cshtml", viewModel);
+            //var view = CreateScriptView(model);
+
+            return Script(view);
+        }
+
+        public ActionResult Enum(string id)
+        {
+            var descriptor = new EnumDescriptor
+            {
+            };
+
+            var model = new Ext.data.Model
+            {
+            };
+
+            var builder = new Ext.grid.Panel
+            {
+            }.ToBuilder();
+
+            var viewModel = new EnumViewModel
+            {
+                Descriptor = descriptor,
+                Panel = builder.ToModel(),
+                Model = model
+            };
+
+            var view = CreateScriptView("~/Areas/App/Views/Metadata/Enum.cshtml", viewModel);
+            //var view = CreateScriptView(model);
+
+            return Script(view);
+        }
+
         //
         // GET: /App/Metadata/
 
@@ -60,14 +116,14 @@ namespace Custom.Areas.App.Metadata.Controllers
                     .Add(name: "name", type: "string")
                     .Add(name: "extends", type: "string")
                     .Add(name: "identity", type: "string")
-                    .Add(name: "label", type: "string", covert: (object state) =>
+                    /*.Add(name: "label", type: "string", covert: (object state) =>
                         {
                             var sw = new ScriptWriter();
                             sw.Write("function(inches) {");
                             sw.WriteLine("return Math.round(inches * 2.54);");
                             sw.WriteLine("}");
                             return sw;
-                        })
+                        })*/
                     .Add(name: "proxy", type: "App.metadata.Proxy");
             })
             .Associations(associations =>
@@ -85,21 +141,27 @@ namespace Custom.Areas.App.Metadata.Controllers
                     .Format(field: "name", matcher: @"/([a-z]+)[0-9]{2,3}/");
             });
 
-            var serializer = builder
-                .ToModel()
-                .ToSerializer();
+            builder.Define();
 
             Func<Ext.data.proxy.Proxy, string[]> proxyRender = (Ext.data.proxy.Proxy proxy) =>
                     {
                         return new string[0];
                     };
 
-            serializer
+            builder
                 .Ignore(o => o.PersistenceProperty)
-                .Property<Ext.data.proxy.Proxy>(o => o.Proxy, (Ext.data.proxy.Proxy proxy) =>
+                .Property<ScriptField<Ext.data.proxy.Proxy>>(o => o.Proxy, (lines, proxy) => 
                 {
-                    return new string[0];
+                    if (proxy != null)
+                    {
+                    }
                 });
+
+            builder
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.Click).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseDown).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseMove).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseUp).Naked));
 
             return builder.ToModel().Result();
 

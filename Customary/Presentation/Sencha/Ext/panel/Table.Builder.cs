@@ -103,7 +103,7 @@ namespace Custom.Presentation.Sencha.Ext.panel
             /// If the layout configuration is not explicitly specified for a general purpose container (e.g. Container or Panel) the default layout manager will be used which does nothing but render child components sequentially into the Container (no sizing or positioning will be performed in this situation).
             /// Layout may be specified as either as an Object or as a String
             /// </summary>
-            public TBuilder Layout(JObject<Ext.panel.Layout> value)
+            public TBuilder Layout(ScriptField<Ext.panel.Layout> value)
             {
                 ToModel().Layout = value;
                 return (TBuilder)this;
@@ -175,7 +175,7 @@ namespace Custom.Presentation.Sencha.Ext.panel
             /// <summary>
             /// The Store the grid should use as its data source.
             /// </summary>
-            public TBuilder Store(JObject<Ext.data.Store> value)
+            public TBuilder Store(ScriptField<Ext.data.Store> value)
             {
                 ToModel().Store = value;
                 return (TBuilder)this;
