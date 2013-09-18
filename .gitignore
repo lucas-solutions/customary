@@ -1130,3 +1130,8 @@ src/easeaccess/USTA - ExtJs.Content/bin/System.Web.WebPages.xml
 src/easeaccess/USTA - ExtJs.Content/bin/USTA - ExtJs.Content.dll
 src/easeaccess/USTA - ExtJs.Content/bin/USTA - ExtJs.Content.pdb
 src/easeaccess/USTA - ExtJs.Content/bin/WebGrease.dll
+Customary/App_Data/Metadata/Data
+Customary/App_Data/Metadata/Indexes/indexing.crash-marker
+Customary/App_Data/Metadata/logs/RVN.log
+Customary/App_Data/Metadata/system/RVN.chk
+Customary/App_Data/Metadata/temp/tmp.edb
