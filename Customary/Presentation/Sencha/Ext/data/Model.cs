@@ -5,19 +5,29 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data
 {
-    using Custom.Presentation.Sencha.Ext.Util;
+    using Ext = Custom.Presentation.Sencha.Ext;
     using System.IO;
 
     /// <summary>
     /// Alternative name: Ext.data.Record
     /// </summary>
     [Ext("Ext.data.Model")]
-    public partial class Model : Base, Observable
+    public partial class Model : Ext.Class
     {
+        public static implicit operator Ext.util.Observable(Ext.data.Model model)
+        {
+            return model.Mixins.Get<Ext.util.Observable>();
+        }
+
         private AssociationCollection _associations;
         private FieldCollection _fields;
         private ValidationsCollection _validations;
         private ScriptField<Ext.data.proxy.Proxy> _proxy;
+
+        public Model()
+        {
+            Mixins.Get<Ext.util.Observable>();
+        }
 
         /// <summary>
         /// An array of associations for this model.

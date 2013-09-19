@@ -13,6 +13,27 @@ namespace Custom.Presentation
             lines.Add(string.Empty);
         }
 
+        public static void Add(this List<string> lines, char c)
+        {
+            lines.Add(c.ToString());
+        }
+
+        public static void Add(this List<string> lines, char c, string indent)
+        {
+            lines.Add(indent + c.ToString());
+        }
+
+        public static void Add(this List<string> lines, string s, string indent)
+        {
+            lines.Add(indent + s);
+        }
+
+        public static void Add(this List<string> lines, List<string> block, string indent)
+        {
+            foreach (var line in block)
+                lines.Add(indent + line);
+        }
+
         public static void Append(this List<string> lines, char c)
         {
             if (lines.Count > 0)
@@ -48,6 +69,43 @@ namespace Custom.Presentation
         public static void TrimEnd(this List<string> lines, char c)
         {
             lines[lines.Count - 1] = lines[lines.Count - 1].TrimEnd(c);
+        }
+
+        public static void TrimLeft(this List<string> lines)
+        {
+            if (lines != null && lines.Count > 0)
+            {
+                int minPadding = int.MaxValue;
+                for (int i = 0, count = lines.Count; i < count; i++)
+                {
+                    var line = lines[i];
+
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    int leftPadding;
+                    for (leftPadding = 0; leftPadding < line.Length && minPadding > leftPadding && char.IsWhiteSpace(line, leftPadding); leftPadding++) ;
+
+                    if (minPadding > leftPadding && leftPadding < line.Length)
+                        minPadding = leftPadding;
+
+                    if (minPadding.Equals(0))
+                        break;
+                }
+
+                if (minPadding > 0)
+                {
+                    for (int i = 0, count = lines.Count; i < count; i++)
+                    {
+                        var line = lines[i];
+
+                        if (string.IsNullOrWhiteSpace(line))
+                            lines[i] = string.Empty;
+                        else
+                            lines[i] = line.Substring(minPadding);
+                    }
+                }
+            }
         }
 
         public static void Write(this List<string> lines, TextWriter writer)

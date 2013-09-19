@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.selection
 {
-    public class Model
+    public class Model : Ext.util.Observable
     {
     }
 }

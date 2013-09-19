@@ -10,7 +10,7 @@ namespace Custom.Presentation
     {
         public abstract class Builder<TModel, TBuilder> : Scriptable
             where TModel : ScriptObject
-            where TBuilder : ScriptObject.Builder<TModel, TBuilder>
+            where TBuilder : Builder<TModel, TBuilder>
         {
             private readonly TModel _model;
             private ScriptView _view;

@@ -1,0 +1,51 @@
+﻿@using Ext = Custom.Presentation.Sencha.Ext
+@{
+    //
+    // Events
+    if (Model is Ext.data.Connection.Events)
+    {
+
+        var model = (Ext.data.Connection.Events)Model;
+        switch (model)
+        {
+            case Ext.data.Connection.Events.Beforerequest:
+                // Fires before a network request is made to retrieve a data object.
+                // Parameters:
+                //   conn : Ext.data.Connection - This Connection object.
+                //   options : Object - The options config object passed to the request method.
+                //   eOpts : Object - The options object passed to Ext.util.Observable.addListener.
+    <script type="text/javascript">
+        function onBeforeRequest(conn, options, eOpts) {
+        }
+    </script>
+                break;
+
+            case Ext.data.Connection.Events.Requestcomplete:
+                // Fires if the request was successfully completed.
+                // Parameters:
+                //   conn : Ext.data.Connection - This Connection object.
+                //   response : Object - The XHR object containing the response data. See The XMLHttpRequest Object for details.
+                //   options : Object - The options config object passed to the request method.
+                //   eOpts : Object - The options object passed to Ext.util.Observable.addListener.
+    <script type="text/javascript">
+        function onRequestComplete(conn, response, options, eOpts) {
+        }
+    </script>
+                break;
+
+
+            case Ext.data.Connection.Events.Requestexception:
+                // Fires if an error HTTP status was returned from the server. See HTTP Status Code Definitions for details of HTTP status codes.
+                // Parameters:
+                //   conn : Ext.data.Connection - This Connection object.
+                //   response : Object - The XHR object containing the response data. See The XMLHttpRequest Object for details.
+                //   options : Object - The options config object passed to the request method.
+                //   eOpts : Object - The options object passed to Ext.util.Observable.addListener.
+    <script type="text/javascript">
+        function onRequestException(conn, response, options, eOpts) {
+        }
+    </script>
+                break;
+        }
+    }
+}

@@ -6,8 +6,13 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.data.proxy
 {
-    public partial class Proxy : Base
+    public partial class Proxy : Ext.Class
     {
+        public static implicit operator Ext.util.Observable(Ext.data.proxy.Proxy model)
+        {
+            return model.Mixins.Get<Ext.util.Observable>();
+        }
+
         private Builder _builder;
         private ScriptField<Ext.data.reader.Reader> _reader;
         private ScriptField<Ext.data.writer.Writer> _writer;

@@ -5,7 +5,11 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.chart.series
 {
-    public class Series
+    public abstract class Series : Ext.Class
     {
+        public static implicit operator Ext.util.Observable(Ext.chart.series.Series model)
+        {
+            return model.Mixins.Get<Ext.util.Observable>();
+        }
     }
 }

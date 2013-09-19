@@ -32,7 +32,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             var builder = new Model.Builder();
 
             builder
-                .Name(entity.Namespace + '.' + entity.Name)
+                .Define(entity.Namespace + '.' + entity.Name)
                 .Proxy(proxy =>
                 {
 

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Ext = Custom.Presentation.Sencha.Ext
+@{
     ViewBag.Title = "Home Page";
 }
 @section featured {
@@ -20,10 +21,10 @@
 }
 <h3>Index</h3>
 @{
-    var fnViewportClick = Url.Action("Viewport", "Fn", new { id = Custom.Models.Ext.ViewportHandlers.Click });
-    var fnViewportMouseMove = Url.Action("Viewport", "Fn", new { id = Custom.Models.Ext.ViewportHandlers.MouseMove });
-    var fnViewportMouseDown = Url.Action("Viewport", "Fn", new { id = Custom.Models.Ext.ViewportHandlers.MouseDown });
-    var fnViewportMouseUp = Url.Action("Viewport", "Fn", new { id = Custom.Models.Ext.ViewportHandlers.MouseUp });
+    var fnViewportClick = Url.Action("Viewport", "Fn", new { id = Ext.container.Viewport.Events.Click });
+    var fnViewportMouseMove = Url.Action("Viewport", "Fn", new { id = Ext.container.Viewport.Events.MouseMove });
+    var fnViewportMouseDown = Url.Action("Viewport", "Fn", new { id = Ext.container.Viewport.Events.MouseDown });
+    var fnViewportMouseUp = Url.Action("Viewport", "Fn", new { id = Ext.container.Viewport.Events.MouseUp });
     var redirectTo = Url.Action("Redirect", "Test", new { returnTO = "https://www.easeaccess.com/thisisgood?aparam=1&antoherParam=2" });
     var redirectTo2 = "/Test/Redirect?returnTO=https://www.easeaccess.com/thisisgood?aparam=1&antoherParam=2";
     var mapPath = Url.Action("MapPath", "Test", new { path = "~Test/MapPath" });

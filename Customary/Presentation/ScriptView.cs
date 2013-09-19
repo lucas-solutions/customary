@@ -66,6 +66,7 @@ namespace Custom.Presentation
             var first = lines.Count;
             Render(lines);
             Strip(lines, first, lines.Count - 1);
+            lines.TrimLeft();
         }
 
         public void NakedFn(List<string> lines)
@@ -86,6 +87,7 @@ namespace Custom.Presentation
             var first = lines.Count;
             Render(lines);
             Strip(lines, first, lines.Count - 1, attributes);
+            lines.TrimLeft();
 
             if (lines != null && lines.Count > 0)
             {
@@ -105,7 +107,7 @@ namespace Custom.Presentation
 
                 name = line.Substring(padding + function.Length, paramsIndex - (padding + function.Length)).Trim();
                 lines[0] = string.Concat(function, ' ', line.Substring(paramsIndex));
-                for (var i = 1; padding > 0 && i < lines.Count; i++)
+                /*for (var i = 1; padding > 0 && i < lines.Count; i++)
                 {
                     if (string.IsNullOrEmpty(lines[i]))
                         continue;
@@ -114,7 +116,7 @@ namespace Custom.Presentation
                         lines[i] = lines[i].Substring(padding);
                     else
                         lines[i] = lines[i].TrimStart();
-                }
+                }*/
             }
         }
 

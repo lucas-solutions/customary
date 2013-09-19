@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.grid.feature
 {
-    public class Feature
+    public class Feature : Ext.util.Observable
     {
     }
 }

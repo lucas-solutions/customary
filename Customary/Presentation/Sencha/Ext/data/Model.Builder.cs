@@ -19,7 +19,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             return ToBuilder();
         }
 
-        public class Builder : Model.Builder<Model, Model.Builder>
+        public class Builder : Ext.data.Model.Builder<Model, Model.Builder>
         {
             public Builder()
                 : this(new Model())
@@ -38,7 +38,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             }
         }
 
-        public new abstract class Builder<TModel, TBuilder> : Base.Builder<TModel, TBuilder>
+        public new abstract class Builder<TModel, TBuilder> : Ext.Class.Builder<TModel, TBuilder>
             where TModel : Model
             where TBuilder : Model.Builder<TModel, TBuilder>
         {
@@ -70,7 +70,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             /// </summary>
             public TBuilder BelongsTo(Model value)
             {
-                ToModel().BelongsTo = value.Name;
+                //ToModel().BelongsTo = value.Name;
                 return (TBuilder)this;
             }
 
@@ -165,7 +165,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                 {
                     ToModel().Proxy = proxy = new Ext.data.proxy.Proxy
                     {
-                        Name = (string)ToModel().Proxy
+                        //Name = (string)ToModel().Proxy
                     };
                 }
 

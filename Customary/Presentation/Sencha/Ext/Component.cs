@@ -9,6 +9,11 @@ namespace Custom.Presentation.Sencha.Ext
     [Ext(Name = "Ext.Component", XType = "component")]
     public abstract partial class Component : Ext.AbstractComponent
     {
+        public static implicit operator Ext.util.Floating(Ext.Component model)
+        {
+            return model.Mixins.Get<Ext.util.Floating>();
+        }
+
         /// <summary>
         /// True to use overflow:'auto' on the components layout element and show scroll bars automatically when necessary, false to clip any overflowing content.
         /// </summary>

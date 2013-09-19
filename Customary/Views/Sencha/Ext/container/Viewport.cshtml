@@ -1,15 +1,62 @@
-﻿@model Custom.Models.Ext.ViewportModel
+﻿@using Ext = Custom.Presentation.Sencha.Ext
 @{
-    switch (Model.Options)
+    //
+    // Events
+    if (Model is Ext.container.Viewport.Events)
     {
-        case 0:
-            <script type="text/javascript">
-            </script>
-            break;
+        var model = (Ext.container.Viewport.Events)Model;
+        switch (model)
+        {
+            case Ext.container.Viewport.Events.Click:
+    <script id="onClick" type="text/javascript">
+        function onClick(e) {
+            // handle mouse click event
+        }
+    </script>
+                break;
 
-        case 1:
-            <script type="text/javascript">
-            </script>
-            break;
+            case Ext.container.Viewport.Events.MouseDown:
+    <script id="onMouseDown" type="text/javascript">
+        function onMouseDown(e) {
+            // handle mouse down event
+        }
+    </script>
+                break;
+
+            case Ext.container.Viewport.Events.MouseMove:
+    <script id="onMouseMove" type="text/javascript">
+        function onMouseMove(e) {
+            // handle mouse move event
+        }
+    </script>
+                break;
+
+            case Ext.container.Viewport.Events.MouseUp:
+    <script id="onMouseUp" type="text/javascript">
+        function onMouseUp(e) {
+            // handle mouse up event
+        }
+    </script>
+                break;
+        }
+    }
+    else if (Model is Ext.container.Viewport)
+    {
+        var model = Model as Ext.container.Viewport;
+        var builder = model.ToBuilder();
+        /*if (model.Define)
+        {
+    <script type="text/javascript">
+        Ext.Define("", function () {
+        });
+    </script>
+        }
+        else
+        {
+    <script type="text/javascript">
+        Ext.Create("", {
+        });
+    </script>
+        }*/
     }
 }

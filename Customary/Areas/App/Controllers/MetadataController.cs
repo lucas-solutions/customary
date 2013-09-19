@@ -10,7 +10,6 @@ namespace Custom.Areas.App.Metadata.Controllers
     using Ext = Custom.Presentation.Sencha.Ext;
     using Custom.Areas.App.Models;
     using Custom.Models;
-    using Custom.Models.Ext;
     using Custom.Controllers;
     using Custom.Metadata;
     using Custom.Navigation;
@@ -104,7 +103,7 @@ namespace Custom.Areas.App.Metadata.Controllers
             var builder = new Ext.data.Model.Builder();
 
             builder
-            .Name("App.metadata.Entity")
+            .Define("App.metadata.Entity")
             .Extend("App.metadata.Complex")
             .Proxy(proxy =>
             {
@@ -141,27 +140,25 @@ namespace Custom.Areas.App.Metadata.Controllers
                     .Format(field: "name", matcher: @"/([a-z]+)[0-9]{2,3}/");
             });
 
-            builder.Define();
-
             Func<Ext.data.proxy.Proxy, string[]> proxyRender = (Ext.data.proxy.Proxy proxy) =>
                     {
                         return new string[0];
                     };
 
-            builder
+            /*builder
                 .Ignore(o => o.PersistenceProperty)
                 .Property<ScriptField<Ext.data.proxy.Proxy>>(o => o.Proxy, (lines, proxy) => 
                 {
                     if (proxy != null)
                     {
                     }
-                });
+                });*/
 
             builder
-                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.Click).Naked))
-                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseDown).Naked))
-                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseMove).Naked))
-                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml", ViewportHandlers.MouseUp).Naked));
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Sencha/Ext/container/Viewport.cshtml", Ext.container.Viewport.Events.Click).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Sencha/Ext/container/Viewport.cshtml", Ext.container.Viewport.Events.MouseDown).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Sencha/Ext/container/Viewport.cshtml", Ext.container.Viewport.Events.MouseMove).Naked))
+                .Resource(new ScriptFunction().Override(CreateScriptView("~/Views/Sencha/Ext/container/Viewport.cshtml", Ext.container.Viewport.Events.MouseUp).Naked));
 
             return builder.ToModel().Result();
 

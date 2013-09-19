@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    using Custom.Models.Ext;
+    using Ext = Custom.Presentation.Sencha.Ext;
     using Custom.Presentation;
 
     public class FnController : ScriptController
@@ -18,14 +18,13 @@ namespace Custom.Controllers
         {
             var fn = new ScriptFunction();
 
-            var view = CreateScriptView("~/Views/Shared/ViewportHandlers.cshtml");
+            var view = CreateScriptView("~/Views/Sencha/Ext/container/Viewport.cshtml");
 
             int key;
-            ViewportHandlers handler;
-            if (Enum.TryParse<ViewportHandlers>(id, out handler))
+            Ext.container.Viewport.Events handler;
+            if (Enum.TryParse<Ext.container.Viewport.Events>(id, out handler))
             {
                 view.Model = handler;
-                view.ViewName = typeof(ViewportHandlers).Name;
             }
             else if (int.TryParse(id, out key))
                 view.Model = key;

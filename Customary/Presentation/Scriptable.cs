@@ -151,7 +151,7 @@ namespace Custom.Presentation
                     if (CamelCase)
                         name = name.CamelCase();
 
-                    output.Add(name);
+                    output.Add('\'' + name + '\'');
 
                     return true;
                 }

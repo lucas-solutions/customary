@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.util
 {
-    public class Animate
+    public class Animate //: Ext.Base
     {
     }
 }

@@ -6,8 +6,18 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext
 {
-    public abstract partial class AbstractComponent : Base
+    public abstract partial class AbstractComponent : Ext.Class
     {
+        public static implicit operator Ext.util.Animate(Ext.AbstractComponent model)
+        {
+            return model.Mixins.Get<Ext.util.Animate>();
+        }
+
+        public static implicit operator Ext.util.Observable(Ext.AbstractComponent model)
+        {
+            return model.Mixins.Get<Ext.util.Observable>();
+        }
+
         /// <summary>
         /// A tag name or DomHelper spec used to create the Element which will encapsulate this Component.
         /// </summary>
@@ -428,7 +438,7 @@ namespace Custom.Presentation.Sencha.Ext
         /// <summary>
         /// The xtype configuration option can be used to optimize Component creation and rendering. It serves as a shortcut to the full componet name. For example, the component Ext.button.Button has an xtype of button.
         /// </summary>
-        public string Xtype
+        public string XType
         {
             get;
             set;
