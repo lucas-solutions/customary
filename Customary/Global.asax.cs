@@ -34,7 +34,7 @@ namespace Custom
 
             //Loggly.LogglyConfiguration.Configure(c => c.AuthenticateWith("", ""));
 
-            Logger.LogInfo("Application_Start");
+            Logger.Log<AppLog>().Info("Application_Start");
 
             var perfCounterMgr = new DiagnosticsManager();
             /*perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");

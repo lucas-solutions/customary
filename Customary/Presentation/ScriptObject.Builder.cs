@@ -8,14 +8,13 @@ namespace Custom.Presentation
 {
     partial class ScriptObject
     {
-        public abstract class Builder<TModel, TBuilder> : Scriptable
+        public abstract class Builder<TModel, TBuilder>
             where TModel : ScriptObject
             where TBuilder : Builder<TModel, TBuilder>
         {
             private readonly TModel _model;
-            private ScriptView _view;
             private string _master;
-            private Dictionary<string, Delegate> _propertyRender;
+            
 
             public static implicit operator TModel(Builder<TModel, TBuilder> builder)
             {
@@ -25,19 +24,6 @@ namespace Custom.Presentation
             protected Builder(TModel model)
             {
                 _model = model;
-                _propertyRender = new Dictionary<string, Delegate>();
-            }
-
-            public virtual TBuilder ID(string id)
-            {
-                ToModel().ID = id;
-                return (this as TBuilder);
-            }
-
-            public virtual TBuilder Namespace(string ns)
-            {
-                ToModel().Namespace = ns;
-                return (this as TBuilder);
             }
 
             public virtual TModel ToModel()
@@ -50,7 +36,7 @@ namespace Custom.Presentation
                 var propertyInfo = GetPropertyInfo(propertyLambda);
                 if (propertyInfo != null)
                 {
-                    _propertyRender[propertyInfo.Name] = render;
+                    _model._propertyRender[propertyInfo.Name] = render;
                 }
                 return (TBuilder)this;
             }
@@ -60,7 +46,7 @@ namespace Custom.Presentation
                 var propertyInfo = GetPropertyInfo(propertyLambda);
                 if (propertyInfo != null)
                 {
-                    _propertyRender[propertyInfo.Name] = render;
+                    _model._propertyRender[propertyInfo.Name] = render;
                 }
                 return (TBuilder)this;
             }
@@ -70,7 +56,7 @@ namespace Custom.Presentation
                 var propertyInfo = GetPropertyInfo(propertyLambda);
                 if (propertyInfo != null)
                 {
-                    _propertyRender[propertyInfo.Name] = null;
+                    _model._propertyRender[propertyInfo.Name] = null;
                 }
                 return (TBuilder)this;
             }
@@ -108,18 +94,6 @@ namespace Custom.Presentation
             {
                 _master = path;
                 return (TBuilder)this;
-            }
-
-            public override void Render(List<string> lines)
-            {
-                RenderObject(_model, _propertyRender, lines);
-            }
-
-            public override void Write(TextWriter writer)
-            {
-                var lines = new List<string>();
-                Render(lines);
-                writer.WriteAllLines(lines);
             }
 
             #region - reflection utils

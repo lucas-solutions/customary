@@ -15,11 +15,6 @@ namespace Custom.Presentation.Sencha.Ext.panel
             return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Panel.Builder<Panel, Panel.Builder>
         {
             public Builder()

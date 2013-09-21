@@ -67,11 +67,6 @@ namespace Custom.Presentation.Sencha.Ext.data
             return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Builder<HasManyAssociation, Builder>
         {
             public Builder(HasManyAssociation model)

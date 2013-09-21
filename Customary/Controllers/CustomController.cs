@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Custom.Controllers
 {
@@ -9,8 +10,8 @@ namespace Custom.Controllers
     using Custom.Filters;
     using Custom.Models;
     using Custom.Presentation;
-    using System.Web.Routing;
-
+    using Custom.Results;
+    
     [Diagnostics(Category="Controller", Instance="Custom")]
     public abstract class CustomController : Controller
     {
@@ -74,6 +75,11 @@ namespace Custom.Controllers
                 Log.Message("Error parsing redirectionUrl").Error(e).Category(LogCategories.Error);
             }
             _redirectParam = redirectName;
+        }
+
+        protected System.Web.Caching.Cache Cache
+        {
+            get { return System.Web.Hosting.HostingEnvironment.Cache; }
         }
 
         public SimpleInjector.Container Container
@@ -169,6 +175,60 @@ namespace Custom.Controllers
                 };
             }
             return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
+        }
+
+        protected virtual ScriptFunction.Builder ScriptFunction()
+        {
+            return ScriptFunction(null, null);
+        }
+
+        protected virtual ScriptFunction.Builder ScriptFunction(object model)
+        {
+            return ScriptFunction(null, model);
+        }
+
+        protected virtual ScriptFunction.Builder ScriptFunction(string viewName)
+        {
+            return ScriptFunction(viewName, null);
+        }
+
+        protected virtual ScriptFunction.Builder ScriptFunction(string viewName, object model)
+        {
+            return new ScriptFunction.Builder(new ScriptFunction
+            {
+                ControllerContext = ControllerContext,
+                Model = model,
+                TempData = TempData,
+                ViewData = ViewData,
+                ViewName = viewName
+            });
+        }
+
+        protected virtual ScriptViewResult.Builder ScriptView()
+        {
+            return ScriptView(null, null);
+        }
+
+        protected virtual ScriptViewResult.Builder ScriptView(object model)
+        {
+            return ScriptView(null, model);
+        }
+
+        protected virtual ScriptViewResult.Builder ScriptView(string viewName)
+        {
+            return ScriptView(viewName, null);
+        }
+
+        protected virtual ScriptViewResult.Builder ScriptView(string viewName, object model)
+        {
+            return new ScriptViewResult.Builder(new ScriptViewResult
+            {
+                ControllerContext = ControllerContext,
+                Model = model,
+                TempData = TempData,
+                ViewData = ViewData,
+                ViewName = viewName
+            });
         }
     }
 }

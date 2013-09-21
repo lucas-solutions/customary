@@ -13,6 +13,8 @@ namespace Custom.Presentation.Sencha.Ext
         private List<string> _alias;
         private Mixins _mixins;
         private Requires _requires;
+        private List<object> _resources;
+        private string _define;
 
         /// <summary>
         /// List of short aliases for class names. Most useful for defining xtypes for widgets.
@@ -108,16 +110,66 @@ namespace Custom.Presentation.Sencha.Ext
             set;
         }
 
+        public override void Render(List<string> lines)
+        {
+            if (string.IsNullOrEmpty(_define))
+                RenderCreate(lines);
+            else
+                RenderDefine(lines, _define);
+        }
+
+        protected virtual void RenderCreate(List<string> lines)
+        {
+            var block = new List<string>();
+            base.Render(block);
+
+            lines.Add("Ext.create(\"" + GetType().ClassName() + "\", ");
+            lines.Append(block, string.Empty);
+            lines.Append(");");
+        }
+
+        protected virtual void RenderDefine(List<string> lines, string name)
+        {
+            var block = new List<string>();
+            base.Render(block);
+
+            lines.Add("Ext.define(\"" + name + "\", function {");
+
+            RenderResources(lines);
+
+            lines.Add();
+            lines.Add(INDENT + "return ");
+            lines.Append(block, INDENT);
+            lines.Append(';');
+            lines.Add("});");
+        }
+
+        protected virtual void RenderResources(List<string> lines)
+        {
+            if (_resources != null && _resources.Count > 0)
+            {
+                var block = new List<string>();
+                foreach (var resource in _resources)
+                {
+                    if (RenderValue(resource, block))
+                    {
+                        lines.Add();
+                        lines.Add(block, INDENT);
+                        if (!lines.EndsWith(';'))
+                            lines.Append(';');
+                        block.Clear();
+                    }
+                }
+            }
+        }
+
         public new abstract class Builder<TModel, TBuilder> : Ext.Base.Builder<TModel, TBuilder>
             where TModel : Class
             where TBuilder : Builder<TModel, TBuilder>
         {
-            private string _define;
-            private List<object> _resources;
-
             protected List<object> Resources
             {
-                get { return _resources ?? (_resources = new List<object>()); }
+                get { return ToModel()._resources ?? (ToModel()._resources = new List<object>()); }
             }
 
             public Builder(TModel model)
@@ -125,7 +177,7 @@ namespace Custom.Presentation.Sencha.Ext
             {
                 Property(o => o.Extend, (lines, parent) =>
                 {
-                    if (!string.IsNullOrEmpty(_define))
+                    if (!string.IsNullOrEmpty(ToModel()._define))
                         lines.Append('\'' + (parent ?? ToModel().GetType().ClassName()) + '\'');
                 });
 
@@ -134,7 +186,7 @@ namespace Custom.Presentation.Sencha.Ext
                     // don't render
                     return;
 
-                    var type = _define ?? ToModel().GetType().ClassName();
+                    var type = ToModel()._define ?? ToModel().GetType().ClassName();
                     if (mixins != null && mixins.Count > 0)
                     {
                         lines.Append('{');
@@ -156,7 +208,7 @@ namespace Custom.Presentation.Sencha.Ext
                     // don't render
                     return;
 
-                    var type = _define ?? ToModel().GetType().ClassName();
+                    var type = ToModel()._define ?? ToModel().GetType().ClassName();
                     if (requires != null && requires.Count > 0)
                     {
                         lines.Append('[');
@@ -174,13 +226,13 @@ namespace Custom.Presentation.Sencha.Ext
 
             public TBuilder Create()
             {
-                _define = null;
+                ToModel()._define = null;
                 return (TBuilder)this;
             }
 
             public TBuilder Define(string name)
             {
-                _define = name;
+                ToModel()._define = name;
                 return (TBuilder)this;
             }
 
@@ -194,59 +246,6 @@ namespace Custom.Presentation.Sencha.Ext
             {
                 Resources.Add(resource);
                 return (TBuilder)this;
-            }
-
-            public override void Render(List<string> lines)
-            {
-                if (string.IsNullOrEmpty(_define))
-                    RenderCreate(lines);
-                else
-                    RenderDefine(lines, _define);
-            }
-
-            protected virtual void RenderCreate(List<string> lines)
-            {
-                var block = new List<string>();
-                base.Render(block);
-
-                lines.Add("Ext.create(\"" + ToModel().GetType().ClassName() + "\", ");
-                lines.Append(block, string.Empty);
-                lines.Append(");");
-            }
-
-            protected virtual void RenderDefine(List<string> lines, string name)
-            {
-                var block = new List<string>();
-                base.Render(block);
-
-                lines.Add("Ext.define(\"" + name + "\", function {");
-
-                RenderResources(lines);
-
-                lines.Add();
-                lines.Add(INDENT + "return ");
-                lines.Append(block, INDENT);
-                lines.Append(';');
-                lines.Add("});");
-            }
-
-            protected virtual void RenderResources(List<string> lines)
-            {
-                if (_resources != null && _resources.Count > 0)
-                {
-                    var block = new List<string>();
-                    foreach (var resource in _resources)
-                    {
-                        if (RenderValue(resource, block))
-                        {
-                            lines.Add();
-                            lines.Add(block, INDENT);
-                            if (!lines.EndsWith(';'))
-                                lines.Append(';');
-                            block.Clear();
-                        }
-                    }
-                }
             }
         }
     }

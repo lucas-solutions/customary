@@ -1,0 +1,37 @@
+﻿@model Custom.Presentation.Sencha.Ext.data.Model
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.entity.Model', {
+        extend: 'Ext.data.Model',
+        fields: [
+            {
+                name: "Name"
+            },
+            {
+                name: "Title"
+            },
+            {
+                name: "Summary"
+            },
+            {
+                name: 'CreatedBy',
+            },
+            {
+                name: "CreatedOn",
+                type: "date",
+                dateFormat: "Y-m-d\\TH:i:s"
+            },
+            {
+                name: "ModifiedOn",
+                type: "date",
+                dateFormat: "Y-m-d\\TH:i:s"
+            },
+            {
+                name: 'ModifiedBy',
+            },
+        ]
+    });
+</script>

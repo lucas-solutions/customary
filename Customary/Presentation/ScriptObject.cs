@@ -14,18 +14,14 @@ namespace Custom.Presentation
     using Utilities;
     using Newtonsoft.Json.Linq;
 
-    public abstract partial class ScriptObject
+    public abstract partial class ScriptObject : Scriptable
     {
-        public static implicit operator Scriptable(ScriptObject script)
-        {
-            return script.ToScriptable();
-        }
-
-        private string _id;
-        private string _dynamicID;
+        private Dictionary<string, Delegate> _propertyRender;
 
         protected ScriptObject()
         {
+            _propertyRender = new Dictionary<string, Delegate>();
+
             var arr = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var propInfo in arr)
             {
@@ -41,43 +37,6 @@ namespace Custom.Presentation
             }
         }
 
-        [Description("")]
-        protected string DynamicID
-        {
-            get
-            {
-                if (_dynamicID.IsEmpty())
-                {
-                    _dynamicID = GenerateID();
-                }
-                return _dynamicID;
-            }
-        }
-
-        public Unit Height
-        {
-            get;
-            set;
-        }
-
-        public string ID
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
-        }
-
-        public string Namespace
-        {
-            get;
-            set;
-        }
-
         protected virtual string FormatValue(object value, string format)
         {
             if (value == null)
@@ -91,16 +50,16 @@ namespace Custom.Presentation
             return string.Format(CultureInfo.CurrentCulture, format, new object[] { value });
         }
 
-        public static string GenerateID()
+        public override void Render(List<string> lines)
         {
-            long num = 1L;
-            foreach (byte num2 in Guid.NewGuid().ToByteArray())
-            {
-                num *= num2 + 1;
-            }
-            return string.Format("id{0:x}", num - DateTime.Now.Ticks);
+            RenderObject(this, _propertyRender, lines);
         }
 
-        protected abstract Scriptable ToScriptable();
+        public override void Write(TextWriter writer)
+        {
+            var lines = new List<string>();
+            Render(lines);
+            writer.WriteAllLines(lines);
+        }
     }
 }

@@ -55,11 +55,6 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
             return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Builder<Rest, Builder>
         {
             public Builder(Rest model)

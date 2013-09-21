@@ -24,14 +24,12 @@ namespace Custom.Diagnostics
     /// </summary>
     public class LogglyLogger : Logger<LogglyLogger>, IRequestContext
     {
-        private string _url = "logs.loggly.com/";
+        private string _url;
         private readonly string _inputKey;
 
-        public LogglyLogger(string inputKey, string alternativeUrl = null)
+        public LogglyLogger(string inputKey, string url = "logs.loggly.com/")
         {
-            if (!string.IsNullOrEmpty(alternativeUrl))
-                _url = alternativeUrl;
-
+            _url = url;
             _inputKey = inputKey;
         }
 

@@ -10,7 +10,9 @@ using System.Web;
 
 namespace Custom.Presentation
 {
-    public abstract class Scriptable : IScriptable
+    using Custom.Results;
+
+    public abstract class Scriptable : ScriptResult
     {
         public const int INLINE_LENGH = 40;
         public const string INDENT = "    ";
@@ -21,15 +23,6 @@ namespace Custom.Presentation
         {
             get { return _camelCase; }
             set { _camelCase = value; }
-        }
-
-        public abstract void Render(List<string> lines);
-
-        public virtual void Write(TextWriter writer)
-        {
-            var lines = new List<string>();
-            Render(lines);
-            writer.WriteAllLines(lines);
         }
 
         protected virtual bool TryRenderDynamic(IDynamicMetaObjectProvider dyn, ScriptWriter writer)

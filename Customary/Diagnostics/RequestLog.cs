@@ -53,7 +53,6 @@ namespace Custom.Diagnostics
         {
             Context["AuthUser"] = serverVariables["AUTH_USER"];
             Context["UserAgent"] = serverVariables["HTTP_USER_AGENT"];
-            Context["LocalAddr"] = serverVariables["LOCAL_ADDR"];
             Context["QueryString"] = serverVariables["QueryString"];
             Context["Url"] = serverVariables["URL"];
             return (TLog)this;

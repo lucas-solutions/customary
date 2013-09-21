@@ -1,13 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.WebPages;
 
 namespace System.Web.Mvc
 {
+    using Custom.Presentation;
+
     public static class RazorExtensions
     {
+        public static string Absolute(this UrlHelper url, string path = null)
+        {
+            var request = url.RequestContext.HttpContext.Request;
+            var root = request.Url.GetLeftPart(UriPartial.Scheme | UriPartial.Authority) + request.ApplicationPath;
+            path = path != null ? path.TrimStart('~', '/') : string.Empty;
+            return new Uri(new Uri(root, UriKind.Absolute), path).ToString().TrimEnd('/');
+        }
+
+        /// <summary>
+        /// Render same view with new model.
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="model">model</param>
+        public static void Render(this HtmlHelper helper, object model)
+        {
+            var view = helper.ViewContext.View;
+            var controllerContext = helper.ViewContext.Controller.ControllerContext;
+            var viewData = helper.ViewContext.ViewData;
+            var tempData = helper.ViewContext.TempData;
+            
+
+            if (System.Web.Hosting.HostingEnvironment.IsDevelopmentEnvironment)
+            {
+                viewData.Model = model;
+                
+                var sb = new StringBuilder();
+                using (var sw = new StringWriter(sb))
+                {
+                    var viewContext = new ViewContext(controllerContext, view, viewData, tempData, sw);
+                    view.Render(viewContext, sw);
+                }
+
+                var lines = new List<string>();
+                using (var sr = new StringReader(sb.ToString()))
+                {
+                    for (var line = sr.ReadLine(); line != null; line = sr.ReadLine())
+                        lines.Add(line);
+                }
+
+                lines.TrimLeft();
+
+                var writer = helper.ViewContext.Writer;
+
+                foreach (var line in lines)
+                    writer.WriteLine(line);
+            }
+            else
+            {
+                var writer = helper.ViewContext.Writer;
+                var viewContext = new ViewContext(controllerContext, view, viewData, tempData, writer);
+                viewData.Model = model;
+                view.Render(viewContext, writer);
+            }
+        }
+
+        public static HelperResult Result(this Scriptable scriptale)
+        {
+            return new HelperResult(writer =>
+                {
+                    var lines = new List<string>();
+                    scriptale.Render(lines);
+                    writer.WriteAllLines(lines);
+                });
+        }
+
         public static HelperResult List<T>(this IEnumerable<T> items, Func<T, HelperResult> template)
         {
             return new HelperResult(writer =>

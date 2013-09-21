@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 
 namespace Custom.Diagnostics
 {
     using Custom.Diagnostics.Responses;
-
+    
     /// <summary>
     /// Log builder class.
     /// </summary>
@@ -84,9 +85,9 @@ namespace Custom.Diagnostics
             set;
         }
 
-        public TLog Application(string text)
+        public TLog Application(string value)
         {
-            Context["Application"] = text;
+            Context["Application"] = value;
             return (TLog)this;
         }
 
@@ -214,6 +215,17 @@ namespace Custom.Diagnostics
             return (TLog)this;
         }
 
+        /// <summary>
+        /// System.Web.Hosting.HostingEnvironment.IsDevelopmentEnvironment
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TLog Development(bool value)
+        {
+            Context["Development"] = value;
+            return (TLog)this;
+        }
+
         public TLog Detail(string text)
         {
             Context["Detail"] = text;
@@ -296,6 +308,27 @@ namespace Custom.Diagnostics
             return Category(LogCategories.Info);
         }
 
+        /// <summary>
+        /// Set log category to Info and set message
+        /// </summary>
+        /// <returns>this</returns>
+        public TLog Info(string message)
+        {
+            return Category(LogCategories.Info).Message(message);
+        }
+
+        public TLog LocalAddr(string value)
+        {
+            Context["LocalAddr"] = value;
+            return (TLog)this;
+        }
+
+        public TLog LocalAddr(IPAddress value)
+        {
+            Context["LocalAddr"] = value.ToString();
+            return (TLog)this;
+        }
+
         public TLog Location()
         {
             return Class().Method().File();
@@ -374,6 +407,17 @@ namespace Custom.Diagnostics
         public TLog Version(int value)
         {
             Context["Version"] = value;
+            return (TLog)this;
+        }
+
+        /// <summary>
+        /// Set version
+        /// </summary>
+        /// <param name="value">version</param>
+        /// <returns>this</returns>
+        public TLog Version(Version value)
+        {
+            Context["Version"] = value.ToString();
             return (TLog)this;
         }
 

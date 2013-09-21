@@ -13,7 +13,7 @@ namespace Custom.Controllers
     /// <summary>
     /// Sencha ExtJs Controller
     /// </summary>
-    public abstract class ExtController : ScriptController
+    public abstract class ExtController : CustomController
     {
         protected ActionResult Data(Guid? id, TypeDescriptor entity)
         {
@@ -46,7 +46,7 @@ namespace Custom.Controllers
                 .Builder()
                 .ToModel();
 
-            return Script((Scriptable)model);
+            return model;
         }
 
         protected JsonResult List(string id)

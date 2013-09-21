@@ -7,6 +7,7 @@ using System.Web;
 namespace Custom.Presentation.Sencha.Ext.data
 {
     using Custom.Metadata;
+    using Custom.Results;
 
     public static class ModelExtensions
     {
@@ -92,11 +93,6 @@ namespace Custom.Presentation.Sencha.Ext.data
                 });
 
             return builder.ToModel();
-        }
-
-        public static ScriptResult Result(this Ext.data.Model model)
-        {
-            return new ScriptResult((Scriptable)model);
         }
     }
 }

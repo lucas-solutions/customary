@@ -82,11 +82,6 @@ namespace Custom.Presentation.Sencha.Ext
             return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Builder<Action, Builder>
         {
             public Builder(Action model)

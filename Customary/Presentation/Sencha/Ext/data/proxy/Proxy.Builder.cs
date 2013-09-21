@@ -7,11 +7,6 @@ namespace Custom.Presentation.Sencha.Ext.data.proxy
 {
     partial class Proxy
     {
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Proxy.Builder<Proxy, Proxy.Builder>
         {
             public Builder()

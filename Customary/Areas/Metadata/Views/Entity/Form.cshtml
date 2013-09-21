@@ -1,0 +1,147 @@
+﻿@model Custom.Presentation.Sencha.Ext.form.Panel
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+
+    var fields = [
+            {
+                allowBlank: false,
+                fieldLabel: "Name",
+                name: "Name",
+                xtype: "textfield",
+            },
+            {
+                fieldLabel: "Title",
+                name: "Title",
+                xtype: "textfield",
+            },
+            {
+                fieldLabel: "Sumary",
+                name: "Sumary",
+                xtype: "textfield",
+            },
+            {
+                cls: 'x-item-disabled', // simulate disabled; submitted
+                fieldLabel: "Modified On",
+                format: "n/j/Y",
+                name: "ModifiedOn",
+                readOnly: true,
+                xtype: "datefield",
+            },
+            {
+                cls: 'x-item-disabled', // simulate disabled; submitted
+                fieldLabel: "Modified By",
+                name: "ModifiedBy",
+                readOnly: true,
+                xtype: "textfield",
+            },
+            {
+                cls: 'x-item-disabled', // simulate disabled; submitted
+                fieldLabel: "Created On",
+                format: "n/j/Y",
+                name: "CreatedOn",
+                readOnly: true,
+                xtype: "datefield",
+            },
+            {
+                cls: 'x-item-disabled', // simulate disabled; submitted
+                fieldLabel: "Created By",
+                name: "CreatedBy",
+                readOnly: true,
+                xtype: "textfield",
+            }
+                        /*{
+                            fieldLabel: 'Email',
+                            name: 'email',
+                            allowBlank: false,
+                            vtype: 'email'
+                        }, {
+                            fieldLabel: 'First',
+                            name: 'first',
+                            allowBlank: false
+                        }, {
+                            fieldLabel: 'Last',
+                            name: 'last',
+                            allowBlank: false
+                        }*/
+    ];
+
+    Ext.define('App.metadata.entity.Form', {
+        extend: 'Ext.form.Panel',
+        //alias: 'widget.writerform',
+
+        requires: ['Ext.form.field.Text'],
+
+        initComponent: function () {
+
+            var me = this;
+            var scope = this.initialConfig.scope || this;
+
+            this.updateButton = Ext.create('Ext.Button', {
+                iconCls: 'icon-save',
+                text: 'Update',
+                disabled: true,
+                scope: scope,
+                handler: scope.onUpdate
+            });
+
+            this.cancelButton = Ext.create('Ext.Button', {
+                iconCls: 'icon-reset',
+                text: 'Cancel',
+                scope: scope,
+                handler: scope.onCancel
+            });
+
+            Ext.apply(this,
+                {
+                    items: fields,
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'bottom',
+                            ui: 'footer',
+                            items: ['->', this.updateButton, this.cancelButton]
+                        }
+                    ]
+                });
+
+            this.callParent();
+        },
+
+        setStore: function (store) {
+        },
+
+        setActiveRecord: function (record) {
+            var active = this.activeRecord;
+
+            if (typeof active !== 'undefined' && active !== null) {
+            }
+
+            this.activeRecord = record;
+
+            if (record) {
+                this.updateButton.enable();
+                this.getForm().loadRecord(record);
+            } else {
+                this.updateButton.disable();
+                this.getForm().reset();
+            }
+        },
+
+        onUpdate: function () {
+            var form = this.getForm();
+
+            /*if (form.isValid()) {
+                this.fireEvent('create', this, form.getValues());
+                form.reset();
+            }*/
+        },
+
+        onCancel: function () {
+            this.getForm().reset();
+            this.getForm().loadRecord(this.activeRecord);
+        }
+    });
+</script>

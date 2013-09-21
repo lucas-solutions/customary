@@ -14,11 +14,6 @@ namespace Custom.Presentation.Sencha.Ext.data
             return _builder ?? (_builder = new Builder());
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Field.Builder<Field, Field.Builder>
         {
             public Builder()

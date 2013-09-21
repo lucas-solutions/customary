@@ -73,10 +73,15 @@ namespace Custom.Presentation
 
         public static void TrimLeft(this List<string> lines)
         {
+            TrimLeft(lines, 0, lines.Count);
+        }
+
+        public static void TrimLeft(this List<string> lines, int first, int count)
+        {
             if (lines != null && lines.Count > 0)
             {
                 int minPadding = int.MaxValue;
-                for (int i = 0, count = lines.Count; i < count; i++)
+                for (int i = first; i < first + count; i++)
                 {
                     var line = lines[i];
 
@@ -95,7 +100,7 @@ namespace Custom.Presentation
 
                 if (minPadding > 0)
                 {
-                    for (int i = 0, count = lines.Count; i < count; i++)
+                    for (int i = first; i < first + count; i++)
                     {
                         var line = lines[i];
 

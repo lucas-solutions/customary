@@ -14,11 +14,6 @@ namespace Custom.Presentation.Sencha.Ext.data.reader
             return _builder ?? (_builder = new Builder(this));
         }
 
-        protected override Scriptable ToScriptable()
-        {
-            return ToBuilder();
-        }
-
         public class Builder : Builder<Xml, Builder>
         {
             public Builder(Xml model)
