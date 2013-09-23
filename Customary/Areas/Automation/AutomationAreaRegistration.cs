@@ -14,6 +14,12 @@ namespace Custom.Areas.Automation
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+            // Ext JS route
+            context.MapRoute(
+                "Automation_ext",
+                "App/Automation/{controller}/{action}.js"
+            );
+
             context.MapRoute(
                 "Automation_default",
                 "Automation/{controller}/{action}/{id}",

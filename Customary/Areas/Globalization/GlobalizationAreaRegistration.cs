@@ -14,6 +14,12 @@ namespace Custom.Areas.Globalization
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+            // Ext JS route
+            context.MapRoute(
+                "Globalization_ext",
+                "App/Globalization/{controller}/{action}.js"
+            );
+
             context.MapRoute(
                 "Globalization_default",
                 "Globalization/{controller}/{action}/{id}",

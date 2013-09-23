@@ -172,7 +172,7 @@ namespace Custom.Areas.Metadata.Controllers
 
             var page = this.Page(entity);
 
-            page.Title = "Entity";
+            page.Title = "Metadata - Entity";
 
             return page;
         }

@@ -15,7 +15,6 @@ namespace Custom.Presentation
             private readonly TModel _model;
             private string _master;
             
-
             public static implicit operator TModel(Builder<TModel, TBuilder> builder)
             {
                 return builder._model;

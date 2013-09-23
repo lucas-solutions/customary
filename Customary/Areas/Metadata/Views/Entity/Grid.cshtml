@@ -31,9 +31,19 @@
                 editor: {
                     allowBlank: true
                 },
+                dataIndex: "Namespace",
+                fixed: false,
+                flex: 1,
+                text: "Namespace",
+                width: 120
+            },
+            {
+                editor: {
+                    allowBlank: true
+                },
                 dataIndex: "Title",
                 fixed: false,
-                flex: 2,
+                flex: 1,
                 text: "Title",
                 width: 120
             },
@@ -43,43 +53,43 @@
                 },
                 dataIndex: "Summary",
                 fixed: false,
-                flex: 5,
+                flex: 3,
                 text: "Summary",
                 width: 120
-            },
+            }/*,
             {
-                dataIndex: "ModifiedOn",
+                dataindex: "modifiedon",
                 fixed: false,
                 flex: 1,
-                format: "H:i:s",
-                text: "Modified On",
+                format: "h:i:s",
+                text: "modified on",
                 width: 80,
                 xtype: "datecolumn"
             },
             {
-                dataIndex: "ModifiedBy",
+                dataindex: "modifiedby",
                 fixed: false,
                 flex: 1,
-                text: "Modified By",
+                text: "modified by",
                 width: 80
             },
             {
-                dataIndex: "CreatedOn",
+                dataindex: "createdon",
                 fixed: false,
                 flex: 1,
-                format: "H:i:s",
-                text: "Created On",
+                format: "h:i:s",
+                text: "created on",
                 width: 80,
                 xtype: "datecolumn"
             },
             {
-                dataIndex: "CreatedBy",
+                dataindex: "createdby",
                 fixed: false,
                 flex: 1,
-                format: "H:i:s",
-                text: "Create By",
+                format: "h:i:s",
+                text: "create by",
                 width: 80
-            }
+            }*/
         ];
 
         return {
@@ -105,12 +115,10 @@
                 var me = this;
                 var scope = this.initialConfig.scope || this;
                 var path = this.initialConfig.path;
-                var model = Ext.create('App.metadata.entity.Model', {
+                /*var model = Ext.create('App.metadata.entity.Model', {
                 });
                 var store = Ext.create('App.metadata.entity.Store', {
-                });
-
-                me.form = form;
+                });*/
 
                 me.edit = Ext.create('Ext.window.Window', {
                     //xtype: "window",
@@ -121,30 +129,30 @@
                     closable: true,
                     title: "Edit",
                     width: 300,
-                    items: [this.form],
+                    //items: [this.form],
                     plugins: [
-                        Ext.create('Ext.ux.MouseDistanceSensor', {
+                        /*Ext.create('Ext.ux.MouseDistanceSensor', {
                             threshold: 25,
                             opacity: true,
                             minOpacity: 0.3,
-                            maxOpacity: 1.0/*,
-                        getSensorEls: function () {
-                            return Ext.get('header');
-                        },
-                        getConstrainEls: function () {
-                            return Ext.get('header');
-                        },
-                        listeners: {
-                            far: {
-                                fn: function (item) {
-                                    Ext.get('toolbar').hide();
-                                }
+                            maxOpacity: 1.0,
+                            getSensorEls: function () {
+                                return Ext.get('header');
                             },
-                            /*near: {
-                                fn: near
+                            getConstrainEls: function () {
+                                return Ext.get('header');
+                            },
+                            listeners: {
+                                far: {
+                                    fn: function (item) {
+                                        Ext.get('toolbar').hide();
+                                    }
+                                },
+                                near: {
+                                    fn: near
+                                }
                             }
-                        }*/
-                        })
+                        })*/
                     ],
                     listeners: {
                         // Fires if the user clicks on the windows's close button, but before the close event is fired.
@@ -177,13 +185,13 @@
                     }
                 });
 
-                me.editing = Ext.create('Ext.grid.plugin.RowEditing', {
+                /*me.editing = Ext.create('Ext.grid.plugin.RowEditing', {
                     clicksToEdit: 2,
                     clicksToMoveEditor: 1,
                     autoCancel: true
                 });
 
-                me.plugins = [me.editing];
+                me.plugins = [me.editing];*/
 
                 Ext.apply(me,
                     {
@@ -280,7 +288,7 @@
                                 scope: this
                             }
                         },
-                        store: store,
+                        //store: store,
                         selModel: Ext.create("Ext.selection.RowModel",
                             {
                                 selType: "rowmodel",
@@ -296,13 +304,13 @@
                     });
 
                 this.callParent();
-                this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+                //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
 
                 // appy the config
                 //Ext.apply(this, config);
 
                 // Call parent (required)
-                //App.ux.AreasPanel.superclass.initComponent.apply(this, arguments);
+                //App.metadata.entity.Grid.superclass.initComponent.apply(this, arguments);
             },
 
             // Add button was clicked on the grid toolbar.

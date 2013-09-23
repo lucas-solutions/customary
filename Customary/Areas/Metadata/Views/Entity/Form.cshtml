@@ -5,53 +5,146 @@
 @using Ext = Custom.Presentation.Sencha.Ext
 <script type="text/javascript">
 
-    var fields = [
+
+    Ext.define('App.metadata.entity.Form', function () {
+
+        // The data store containing the list of states
+        var states = Ext.create('Ext.data.Store', {
+            fields: ['value', 'display'],
+            data: [
+                { "value": 1, "display": "New" },
+                { "value": 2, "display": "Typo" },
+                { "value": 3, "display": "Minor" },
+                { "value": 4, "display": "Mayor" },
+                { "value": 5, "display": "Revision" }
+                //...
+            ]
+        });
+
+        var fields = [
             {
-                allowBlank: false,
-                fieldLabel: "Name",
-                name: "Name",
-                xtype: "textfield",
+                xtype: 'fieldset',
+                columnWidth: 0.5,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                defaults: { anchor: '100%' },
+                layout: 'anchor',
+                items: [
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Name",
+                        name: "Name"
+                    },
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Title",
+                        name: "Title"
+                    }
+                ]
             },
             {
-                fieldLabel: "Title",
-                name: "Title",
-                xtype: "textfield",
+                xtype: 'fieldset',
+                columnWidth: 0.5,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                layout: 'anchor',
+                items: [
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Namespace",
+                        name: "Namespace"
+                    },
+                    {
+                        cls: 'x-item-disabled', // simulate disabled; submitted
+                        fieldLabel: "Version",
+                        name: "Version",
+                        readOnly: true,
+                    }
+                ]
             },
             {
-                fieldLabel: "Sumary",
-                name: "Sumary",
-                xtype: "textfield",
+                xtype: 'fieldset',
+                columnWidth: 1,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                defaults: { anchor: '100%' },
+                layout: 'anchor',
+                items: [
+                    {
+                        fieldLabel: "Summary",
+                        name: "Summary",
+                        xtype: "textarea",
+                    }
+                ]
             },
             {
-                cls: 'x-item-disabled', // simulate disabled; submitted
-                fieldLabel: "Modified On",
-                format: "n/j/Y",
-                name: "ModifiedOn",
-                readOnly: true,
-                xtype: "datefield",
+                xtype: 'panel',
+                layout: 'column',
+                title: 'Change status',
+                columnWidth: 1,
+                frame: true,
+                items: [
+                    {
+                        xtype: 'fieldset',
+                        columnWidth: 0.5,
+                        border: false,
+                        collapsible: false,
+                        defaultType: 'textfield',
+                        defaults: { anchor: '100%' },
+                        layout: 'anchor',
+                        items: [
+                            {
+                                cls: 'x-item-disabled', // simulate disabled; submitted
+                                fieldLabel: "Who",
+                                format: "n/j/Y",
+                                name: "ModifiedBy",
+                                readOnly: true,
+                                xtype: "datefield",
+                            },
+                            {
+                                //cls: 'x-item-disabled', // simulate disabled; submitted
+                                fieldLabel: "Why",
+                                name: "ModifiedFor",
+                                //readOnly: true,
+                                xtype: "combobox",
+                                store: states,
+                                queryMode: 'local',
+                                displayField: 'display',
+                                valueField: 'value',
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'fieldset',
+                        columnWidth: 0.5,
+                        border: false,
+                        collapsible: false,
+                        defaultType: 'textfield',
+                        layout: 'anchor',
+                        items: [
+                            {
+                                cls: 'x-item-disabled', // simulate disabled; submitted
+                                fieldLabel: "When",
+                                format: "n/j/Y",
+                                name: "ModifiedOn",
+                                readOnly: true,
+                                xtype: "datefield",
+                            },
+                            {
+                                cls: 'x-item-disabled', // simulate disabled; submitted
+                                fieldLabel: "Where",
+                                name: "ModifiedAt",
+                                readOnly: true,
+                                xtype: "textfield",
+                            }
+                        ]
+                    },
+                ]
             },
-            {
-                cls: 'x-item-disabled', // simulate disabled; submitted
-                fieldLabel: "Modified By",
-                name: "ModifiedBy",
-                readOnly: true,
-                xtype: "textfield",
-            },
-            {
-                cls: 'x-item-disabled', // simulate disabled; submitted
-                fieldLabel: "Created On",
-                format: "n/j/Y",
-                name: "CreatedOn",
-                readOnly: true,
-                xtype: "datefield",
-            },
-            {
-                cls: 'x-item-disabled', // simulate disabled; submitted
-                fieldLabel: "Created By",
-                name: "CreatedBy",
-                readOnly: true,
-                xtype: "textfield",
-            }
+
                         /*{
                             fieldLabel: 'Email',
                             name: 'email',
@@ -66,82 +159,89 @@
                             name: 'last',
                             allowBlank: false
                         }*/
-    ];
+        ];
 
-    Ext.define('App.metadata.entity.Form', {
-        extend: 'Ext.form.Panel',
-        //alias: 'widget.writerform',
+        return {
+            extend: 'Ext.form.Panel',
+            //alias: 'widget.writerform',
 
-        requires: ['Ext.form.field.Text'],
+            requires: ['Ext.form.field.Text'],
 
-        initComponent: function () {
+            initComponent: function () {
 
-            var me = this;
-            var scope = this.initialConfig.scope || this;
+                var me = this;
+                var scope = this.initialConfig.scope || this;
 
-            this.updateButton = Ext.create('Ext.Button', {
-                iconCls: 'icon-save',
-                text: 'Update',
-                disabled: true,
-                scope: scope,
-                handler: scope.onUpdate
-            });
-
-            this.cancelButton = Ext.create('Ext.Button', {
-                iconCls: 'icon-reset',
-                text: 'Cancel',
-                scope: scope,
-                handler: scope.onCancel
-            });
-
-            Ext.apply(this,
-                {
-                    items: fields,
-                    dockedItems: [
-                        {
-                            xtype: 'toolbar',
-                            dock: 'bottom',
-                            ui: 'footer',
-                            items: ['->', this.updateButton, this.cancelButton]
-                        }
-                    ]
+                this.updateButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-save',
+                    text: 'Save',
+                    disabled: true,
+                    scope: scope,
+                    handler: scope.onUpdate
                 });
 
-            this.callParent();
-        },
+                this.cancelButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-reset',
+                    text: 'Cancel',
+                    scope: scope,
+                    handler: scope.onCancel
+                });
 
-        setStore: function (store) {
-        },
+                Ext.apply(this,
+                    {
+                        frame: true,
+                        //bodyStyle: 'padding:5px 5px 0',
+                        layout: 'column',
+                        defaults: {
+                            bodyPadding: 4
+                        },
+                        items: fields,
+                        dockedItems: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                items: ['->', this.updateButton, this.cancelButton]
+                            }
+                        ]
+                    });
 
-        setActiveRecord: function (record) {
-            var active = this.activeRecord;
+                this.callParent();
+            },
 
-            if (typeof active !== 'undefined' && active !== null) {
-            }
+            setStore: function (store) {
+            },
 
-            this.activeRecord = record;
+            setActiveRecord: function (record) {
+                var active = this.activeRecord;
 
-            if (record) {
-                this.updateButton.enable();
-                this.getForm().loadRecord(record);
-            } else {
-                this.updateButton.disable();
+                if (typeof active !== 'undefined' && active !== null) {
+                }
+
+                this.activeRecord = record;
+
+                if (record) {
+                    this.updateButton.enable();
+                    this.getForm().loadRecord(record);
+                } else {
+                    this.updateButton.disable();
+                    this.getForm().reset();
+                }
+            },
+
+            onUpdate: function () {
+                var form = this.getForm();
+
+                /*if (form.isValid()) {
+                    this.fireEvent('create', this, form.getValues());
+                    form.reset();
+                }*/
+            },
+
+            onCancel: function () {
                 this.getForm().reset();
+                this.getForm().loadRecord(this.activeRecord);
             }
-        },
-
-        onUpdate: function () {
-            var form = this.getForm();
-
-            /*if (form.isValid()) {
-                this.fireEvent('create', this, form.getValues());
-                form.reset();
-            }*/
-        },
-
-        onCancel: function () {
-            this.getForm().reset();
-            this.getForm().loadRecord(this.activeRecord);
         }
     });
 </script>

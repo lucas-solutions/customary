@@ -5,11 +5,11 @@
 @{
     if (Model is Entity)
     {
-        /*Html.Render((Ext.data.Model)Model);
-        Html.Render((Ext.data.Store)Model);
-        Html.Render((Ext.data.proxy.Proxy)Model);
-        Html.Render((Ext.grid.Panel)Model);
-        Html.Render((Ext.form.Panel)Model);*/
+        Html.Render((Ext.data.Model)Model);
+        //Html.Render((Ext.data.Store)Model);
+        //Html.Render((Ext.data.proxy.Proxy)Model);
+        //Html.Render((Ext.grid.Panel)Model);
+        //Html.Render((Ext.form.Panel)Model);
 
         Html.Render(Entity.Handlers.OnClick);
         Html.Render(Entity.Handlers.OnMouseMove);
@@ -17,7 +17,7 @@
         
     <script type="text/javascript">
         Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
-        Ext.Loader.setPath('App', '@Url.Absolute()');
+        Ext.Loader.setPath('App', '@Url.Absolute("/App")');
     </script>
         
         
@@ -25,6 +25,9 @@
         Ext.onReady(function () {
 
             var form = Ext.create('App.metadata.entity.Form', {
+                title: 'General',
+                //columnWidth: .5, 
+
                 border: false,
                 activeRecord: null,
                 //iconCls: 'icon-user',
@@ -60,41 +63,64 @@
                 layout: 'border',
                 items: [{
                     region: 'north',
-                    html: '<h1 class="x-panel-header">@ViewBag.Title</h1>',
+                    html: '<center><h1 class="x-panel-header">@ViewBag.Title</h1></center>',
                     autoHeight: true,
                     border: false,
                     margins: '0 0 5 0'
                 }, {
                     region: 'west',
+                    flex: 1,
                     collapsible: true,
-                    title: 'Navigation',
-                    width: 150
+                    title: 'Index'
+                    //width: 150
                     // could use a TreePanel or AccordionLayout for navigational items
                 }, {
                     region: 'south',
-                    title: 'South Panel',
+                    title: 'Messages',
                     collapsible: true,
                     html: 'Information goes here',
                     split: true,
                     height: 100,
                     minHeight: 100
-                }, /*{
+                },
+                {
                     region: 'east',
-                    title: 'East Panel',
+                    title: "Edit",
+                    flex: 3,
                     collapsible: true,
                     split: true,
-                    width: 150
-                }*/ form, Ext.create('App.metadata.entity.Grid', {
-                    region: 'center'
-                })/*{
-                    region: 'center',
+                    //width: 250,
                     xtype: 'tabpanel', // TabPanel itself has no title
                     activeTab: 0,      // First tab active by default
-                    items: {
-                        title: 'Default Tab',
-                        html: 'The first tab\'s content. Others may be added dynamically'
-                    }
-                }*/]
+                    items: [
+                        form,
+                        {
+                            title: 'Properties',
+                            html: 'Entity properties'
+                        },
+                        {
+                            title: 'Associations',
+                            html: 'Entity to entity associations'
+                        },
+                        {
+                            title: 'Validations',
+                            html: 'Extended field validations'
+                        },
+                        {
+                            title: 'Persistence',
+                            html: 'Storage and mapping parameters'
+                        },
+                        {
+                            title: 'Presentation',
+                            html: 'UI parameters'
+                        }
+                    ]
+                },
+                Ext.create('App.metadata.entity.Grid', {
+                    region: 'center',
+                    flex: 3,
+                    title: 'Select'
+                })]
             });
         });
     </script>

@@ -14,6 +14,12 @@ namespace Custom.Areas.Navigation
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+            // Ext JS route
+            context.MapRoute(
+                "Navigation_ext",
+                "App/Navigation/{controller}/{action}.js"
+            );
+
             context.MapRoute(
                 "Navigation_default",
                 "Navigation/{controller}/{action}/{id}",

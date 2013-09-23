@@ -14,9 +14,10 @@ namespace Custom.Areas.Metadata
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+            // Ext JS route
             context.MapRoute(
-                "Metadata_js",
-                "Metadata/{controller}/{action}.js"
+                "Metadata_ext",
+                "App/Metadata/{controller}/{action}.js"
             );
 
             context.MapRoute(

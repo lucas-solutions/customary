@@ -14,6 +14,12 @@ namespace Custom.Areas.Diagnostics
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
+            // Ext JS route
+            context.MapRoute(
+                "Diagnostics_ext",
+                "App/Diagnostics/{controller}/{action}.js"
+            );
+
             context.MapRoute(
                 "Diagnostics_default",
                 "Diagnostics/{controller}/{action}/{id}",

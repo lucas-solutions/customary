@@ -223,6 +223,7 @@
     <Compile Include="Areas\Automation\Controllers\SchedulerController.cs" />
     <Compile Include="Areas\Diagnostics\Controllers\LoggerController.cs" />
     <Compile Include="Areas\Diagnostics\DiagnosticsAreaRegistration.cs" />
+    <Compile Include="Areas\Metadata\Models\EntityExtensions.cs" />
     <Compile Include="Areas\Metadata\Models\Enum.cs" />
     <Compile Include="Areas\Navigation\Controllers\RouteController.cs" />
     <Compile Include="Areas\Globalization\Controllers\CountryController.cs" />
@@ -279,6 +280,7 @@
     <Compile Include="Presentation\ScriptLog.cs" />
     <Compile Include="Presentation\ScriptObject.Builder.cs" />
     <Compile Include="Presentation\ScriptObject.cs" />
+    <Compile Include="Presistence\Change.cs" />
     <Compile Include="Results\ScriptResult.cs" />
     <Compile Include="Results\ScriptViewResult.cs" />
     <Compile Include="Presentation\Sencha\Ext\AbstractComponent.Builder.cs" />
@@ -3741,7 +3743,9 @@
     <Content Include="Styles\ext\themes\images\gray\window\icon-info.gif" />
     <Content Include="Styles\ext\themes\images\gray\window\icon-question.gif" />
     <Content Include="Styles\ext\themes\images\gray\window\icon-warning.gif" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

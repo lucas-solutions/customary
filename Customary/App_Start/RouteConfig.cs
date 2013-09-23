@@ -20,6 +20,11 @@ namespace Custom
             );
 
             routes.MapRoute(
+                name: "Ext",
+                url: "App/{controller}/{action}.js"
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
