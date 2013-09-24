@@ -15,24 +15,29 @@ namespace Custom.Metadata
         Constant = 0x00,
 
         /// <summary>
+        /// Represents an Enum member
+        /// </summary>
+        Member = 0x01,
+
+        /// <summary>
         /// Represents the field that will actually store the data
         /// </summary>
-        Property = 0x01,
+        Property = 0x02,
 
         /// <summary>
         /// Business procedure.
         /// </summary>
-        Method = 0x02,
+        Method = 0x03,
 
         /// <summary>
         /// Initializer method.
         /// </summary>
-        Constructor = 0x03,
+        Constructor = 0x04,
 
         /// <summary>
         /// Method invoked by user action.
         /// </summary>
-        Event = 0x04,
+        Event = 0x05,
         
         /// <summary>
         /// Value: int, string, email, etc.

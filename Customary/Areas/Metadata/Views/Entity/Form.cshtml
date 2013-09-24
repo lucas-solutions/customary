@@ -32,12 +32,12 @@
                     {
                         allowBlank: false,
                         fieldLabel: "Name",
-                        name: "Name"
+                        name: "name"
                     },
                     {
                         allowBlank: false,
                         fieldLabel: "Title",
-                        name: "Title"
+                        name: "title"
                     }
                 ]
             },
@@ -52,12 +52,12 @@
                     {
                         allowBlank: false,
                         fieldLabel: "Namespace",
-                        name: "Namespace"
+                        name: "namespace"
                     },
                     {
                         cls: 'x-item-disabled', // simulate disabled; submitted
                         fieldLabel: "Version",
-                        name: "Version",
+                        name: "version",
                         readOnly: true,
                     }
                 ]
@@ -73,7 +73,7 @@
                 items: [
                     {
                         fieldLabel: "Summary",
-                        name: "Summary",
+                        name: "summary",
                         xtype: "textarea",
                     }
                 ]
@@ -98,14 +98,14 @@
                                 cls: 'x-item-disabled', // simulate disabled; submitted
                                 fieldLabel: "Who",
                                 format: "n/j/Y",
-                                name: "ModifiedBy",
+                                name: "modifiedBy",
                                 readOnly: true,
                                 xtype: "datefield",
                             },
                             {
                                 //cls: 'x-item-disabled', // simulate disabled; submitted
                                 fieldLabel: "Why",
-                                name: "ModifiedFor",
+                                name: "modifiedFor",
                                 //readOnly: true,
                                 xtype: "combobox",
                                 store: states,
@@ -127,36 +127,21 @@
                                 cls: 'x-item-disabled', // simulate disabled; submitted
                                 fieldLabel: "When",
                                 format: "n/j/Y",
-                                name: "ModifiedOn",
+                                name: "modifiedOn",
                                 readOnly: true,
                                 xtype: "datefield",
                             },
                             {
                                 cls: 'x-item-disabled', // simulate disabled; submitted
                                 fieldLabel: "Where",
-                                name: "ModifiedAt",
+                                name: "modifiedAt",
                                 readOnly: true,
                                 xtype: "textfield",
                             }
                         ]
                     },
                 ]
-            },
-
-                        /*{
-                            fieldLabel: 'Email',
-                            name: 'email',
-                            allowBlank: false,
-                            vtype: 'email'
-                        }, {
-                            fieldLabel: 'First',
-                            name: 'first',
-                            allowBlank: false
-                        }, {
-                            fieldLabel: 'Last',
-                            name: 'last',
-                            allowBlank: false
-                        }*/
+            }
         ];
 
         return {
@@ -171,16 +156,20 @@
 
             initComponent: function () {
 
-                var me = this;
-                var scope = this.initialConfig.scope || this;
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.init', {
+                    fn: function (/*source, */grid) {
+
+                        grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+
+                        Ext.apply(this, {
+                            store: grid.store
+                        });
+                    },
+                    scope: this
+                });
 
                 App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
-                    fn: function (/*source, */selModel, selections) {
-                        var selected = selections[0];
-                        var form = this.getForm();
-                        form.reset();
-                        //this.form.setActiveRecord(selections[0]);
-                    },
+                    fn: this.onSelectionChange,
                     scope: this
                 });
 
@@ -188,15 +177,15 @@
                     iconCls: 'icon-save',
                     text: 'Save',
                     disabled: true,
-                    scope: scope,
-                    handler: scope.onUpdate
+                    scope: this,
+                    handler: this.onUpdate
                 });
 
                 this.cancelButton = Ext.create('Ext.Button', {
                     iconCls: 'icon-reset',
                     text: 'Cancel',
-                    scope: scope,
-                    handler: scope.onCancel
+                    scope: this,
+                    handler: this.onCancel
                 });
 
                 Ext.apply(this,
@@ -219,25 +208,31 @@
                     });
 
                 this.callParent();
+
+                App.util.Adapter.publish('App.metadata.entity.Form.init', this);
             },
 
             setStore: function (store) {
             },
 
-            setActiveRecord: function (record) {
-                var active = this.activeRecord;
+            setRecord: function (record) {
 
-                if (typeof active !== 'undefined' && active !== null) {
+                var form = this.getForm();
+
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
                 }
 
-                this.activeRecord = record;
+                this.record = null;
 
-                if (record) {
+                form.reset();
+
+                if (typeof record === 'object') {
+                    this.record = record;
+                    form.loadRecord(this.record);
                     this.updateButton.enable();
-                    this.getForm().loadRecord(record);
                 } else {
                     this.updateButton.disable();
-                    this.getForm().reset();
                 }
             },
 
@@ -253,6 +248,14 @@
             onCancel: function () {
                 this.getForm().reset();
                 this.getForm().loadRecord(this.activeRecord);
+            },
+
+            onSelectionChange: function (selModel, selections) {
+                if (typeof selections === 'object' && selections.length === 1) {
+                    this.setRecord(selections[0]);
+                } else {
+                    this.setRecord(null);
+                }
             }
         }
     });

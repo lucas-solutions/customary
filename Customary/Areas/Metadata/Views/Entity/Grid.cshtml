@@ -133,7 +133,7 @@
             columns: {
                 items: columns
             },
-            
+
             /**
              * Called by Ext when instantiating
              * param {Object} config Configuration object
@@ -197,14 +197,63 @@
                     }]
                 });
 
+                var dockedItems = [
+                    {
+                        dock: 'bottom',
+                        ui: 'footer',
+                        frame: true,
+                        xtype: 'toolbar',
+                        items: [
+                            {
+                                iconCls: 'icon-add',
+                                text: 'Add',
+                                scope: this,
+                                handler: this.onAddClick
+                            },
+                            {
+                                iconCls: 'icon-delete',
+                                text: 'Delete',
+                                disabled: true,
+                                itemId: 'delete',
+                                scope: this,
+                                handler: this.onDeleteClick,
+                                disabled: true
+                            }, '|',
+                            {
+                                iconCls: 'icon-sync',
+                                text: 'Commit',
+                                scope: this,
+                                handler: this.onCommitClick
+                            },
+                            {
+                                iconCls: 'icon-sync',
+                                text: 'Sync',
+                                scope: this,
+                                handler: this.onSyncClick
+                            },
+                            , '->',
+                            {
+                                scope: this,
+                                xtype: 'textfield'
+                            },
+                            {
+                                iconCls: 'icon-search',
+                                text: 'Search',
+                                scope: this,
+                                handler: this.onSearchClick
+                            },
+                        ]
+                    }
+                ];
+
                 Ext.apply(this,
                     {
                         iconCls: 'icon-grid',
                         layout: 'fit',
-                        
+                        dockedItems: dockedItems,
                         plugins: [this.editing],
                         store: store,
-                        
+
                         selModel: Ext.create("Ext.selection.RowModel",
                             {
                                 selType: "rowmodel",
@@ -222,11 +271,33 @@
                 this.callParent();
 
                 //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+
+                App.util.Adapter.publish('App.metadata.entity.Grid.init', this);
+            },
+
+            onAddClick: function () {
+                App.util.Adapter.publish('App.metadata.entity.Grid.add');
+            },
+
+            onDeleteClick: function () {
+                App.util.Adapter.publish('App.metadata.entity.Grid.delete');
+            },
+
+            onCommitClick: function () {
+                App.util.Adapter.publish('App.metadata.entity.Grid.commit');
+            },
+
+            onSearchClick: function () {
+                App.util.Adapter.publish('App.metadata.entity.Grid.search');
             },
 
             onSelectionChange: function (selModel, selections) {
                 App.util.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
                 //this.down('#delete').setDisabled(selections.length === 0);
+            },
+
+            onSyncClick: function () {
+                App.util.Adapter.publish('App.metadata.entity.Grid.sync');
             }
         };
     });

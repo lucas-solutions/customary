@@ -20,6 +20,19 @@
             },
             { name: "modifiedAt" },
             { name: "modifiedFor" }
-        ]
+        ],
+        associations: [
+            { type: 'hasMany', model: 'App.metadata.property.Model', name: 'members' }
+        ],
+        validations: [
+            {type: 'presence',  field: 'name'},
+            { type: 'length', field: 'name', min: 2 },
+            { type: 'presence', field: 'namespace' },
+            { type: 'length', field: 'namespace', min: 2 }
+            //{type: 'inclusion', field: 'gender',   list: ['Male', 'Female']},
+            //{type: 'exclusion', field: 'username', list: ['Admin', 'Operator']},
+            //{type: 'format',    field: 'username', matcher: /([a-z]+)[0-9]{2,3}/}
+        ]/*,
+        proxy: 'App.metadata.entity.Proxy'*/
     });
 </script>
