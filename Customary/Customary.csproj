@@ -243,6 +243,7 @@
     <Compile Include="Areas\Globalization\GlobalizationAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\Models\Entity.cs" />
     <Compile Include="Binders\SortBinder.cs" />
+    <Compile Include="Controllers\UtilController.cs" />
     <Compile Include="Extensions\QuariableExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Models\ResultObject.cs" />
@@ -3829,6 +3830,7 @@
     <Content Include="Views\Test\Logger.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Connection.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Model.cshtml" />
+    <Content Include="Views\Util\Adapter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />

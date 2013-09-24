@@ -163,12 +163,26 @@
             extend: 'Ext.form.Panel',
             //alias: 'widget.writerform',
 
-            requires: ['Ext.form.field.Text'],
+            requires: [
+                'Ext.form.field.Text',
+                'App.util.Adapter',
+                'App.metadata.entity.Model'
+            ],
 
             initComponent: function () {
 
                 var me = this;
                 var scope = this.initialConfig.scope || this;
+
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                    fn: function (/*source, */selModel, selections) {
+                        var selected = selections[0];
+                        var form = this.getForm();
+                        form.reset();
+                        //this.form.setActiveRecord(selections[0]);
+                    },
+                    scope: this
+                });
 
                 this.updateButton = Ext.create('Ext.Button', {
                     iconCls: 'icon-save',

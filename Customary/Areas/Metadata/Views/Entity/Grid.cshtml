@@ -126,6 +126,7 @@
             requires: [
                 'Ext.form.field.Text',
                 'Ext.toolbar.TextItem',
+                'App.util.Adapter',
                 'App.metadata.entity.Model'
             ],
 
@@ -200,8 +201,7 @@
                     {
                         iconCls: 'icon-grid',
                         layout: 'fit',
-                        //frame: true,
-                        //items: [this.edit],
+                        
                         plugins: [this.editing],
                         store: store,
                         
@@ -225,10 +225,8 @@
             },
 
             onSelectionChange: function (selModel, selections) {
+                App.util.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
                 //this.down('#delete').setDisabled(selections.length === 0);
-                //var form = this.form.getForm();
-                //form.reset();
-                //this.form.setActiveRecord(selections[0]);
             }
         };
     });
