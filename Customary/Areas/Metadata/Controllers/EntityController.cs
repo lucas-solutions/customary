@@ -17,6 +17,19 @@ namespace Custom.Areas.Metadata.Controllers
 
     public class EntityController : Custom.Controllers.CustomController
     {
+        //
+        // GET: /Metadata/Entity
+
+        public ActionResult Index()
+        {
+            var entity = new Entity();
+
+            var page = this.Page(entity);
+
+            page.Title = "Metadata - Entity";
+
+            return page;
+        }
 
         //
         // GET: /Metadata/Entity/Create/
@@ -27,9 +40,9 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Data/
+        // GET: /Metadata/Entity/Details/5
 
-        public ActionResult Data()
+        public ActionResult Details(int id)
         {
             return Json(null);
         }
@@ -63,6 +76,8 @@ namespace Custom.Areas.Metadata.Controllers
 
         public ActionResult Model(string id)
         {
+            return ScriptView();
+
             Guid identity;
 
             if (id == null)
@@ -164,20 +179,6 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Page/
-
-        public ActionResult Page()
-        {
-            var entity = new Entity();
-
-            var page = this.Page(entity);
-
-            page.Title = "Metadata - Entity";
-
-            return page;
-        }
-
-        //
         // GET: /Metadata/Entity/Panel/
 
         public ActionResult Panel()
@@ -194,11 +195,27 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Retrive/
-
-        public ActionResult Retrive()
+        // GET: /Metadata/Entity/Read/
+        //[HttpGet, HttpOptions]
+        public ActionResult Read(int? page, int? start, int? limit, IEnumerable<Sort> sort, string culture)
         {
-            return Json(null);
+            var source = EntityRepository.Current.AsQueryable();
+
+            if (start.HasValue)
+                source = source.Skip(start.Value);
+
+            if (limit.HasValue)
+                source = source.Take(limit.Value);
+
+            if (sort != null)
+                source = source.Sort(sort);
+
+            return new ResultObject
+            {
+                Success = true,
+                Data = source,
+                Total = EntityRepository.Current.Count
+            };
         }
 
         //

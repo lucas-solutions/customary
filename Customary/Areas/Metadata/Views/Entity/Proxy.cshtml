@@ -4,10 +4,68 @@
 @using Custom.Presentation
 @using Ext = Custom.Presentation.Sencha.Ext
 <script type="text/javascript">
-    Ex.Define('App.metadata.entity.Proxy', function () {
+    Ext.define('App.metadata.entity.Proxy', function () {
+
+        var writer = Ext.create('Ext.data.writer.Json', {
+            root: 'data',
+            allowSingle: false, // force data to be array
+            //dateFormat: "",
+            writeAllFields: false,
+            writeRecordId: true,
+            getRecordData: function (record) {
+                return {
+                    'id': record.data.id,
+                    'name': record.data.name,
+                    'namespace': record.data.namespace,
+                    'title': record.data.title,
+                    'summary': record.data.summary,
+                    'culture': record.data.culture
+                };
+            }
+        });
 
         return {
-            extend: 'Ext.data.proxy.Proxy'
+            extend: 'Ext.data.proxy.Ajax',
+
+            // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+            // and for jsonp the api is the same, but the method is GET
+            type: 'ajax', // rest, jsonp or ajax. 
+            api: {
+                create: '@Url.Absolute("/Medatada/Entity/Create")',
+                read: '@Url.Absolute("/Medatada/Entity/Read")',
+                update: '@Url.Absolute("/Medatada/Entity/Update")',
+                destroy: '@Url.Absolute("/Medatada/Entity/Destroy")'
+            },
+            //url: path,
+            headers: {
+                "Accept": "application/json"
+            },
+            listeners: {
+                exception: function (proxy, response, operation) {
+                    Ext.MessageBox.show({
+                        title: 'REMOTE EXCEPTION',
+                        msg: operation.getError(),
+                        icon: Ext.MessageBox.ERROR,
+                        buttons: Ext.Msg.OK
+                    });
+                }
+            },
+            reader: {
+                type: "json",
+                root: "data",
+                //dateFormat: "",
+                totalProperty: 'total',
+                successProperty: 'success',
+                messageProperty: 'message'
+            },
+            writer: {
+                type: 'json',
+                root: 'data',
+                allowSingle: false, // force data to be array
+                //dateFormat: "",
+                writeAllFields: false,
+                writeRecordId: true
+            }
         };
     });
 </script>

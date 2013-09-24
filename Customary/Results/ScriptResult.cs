@@ -11,11 +11,16 @@ namespace Custom.Results
 
     public abstract class ScriptResult : ActionResult, IScriptable
     {
+        protected virtual string ContentType
+        {
+            get { return "text/javascript"; }
+        }
+
         public override void ExecuteResult(ControllerContext context)
         {
             var response = context.HttpContext.Response ?? context.RequestContext.HttpContext.Response;
 
-            response.ContentType = "text/javascript";
+            response.ContentType = ContentType;
 
             Write(response.Output);
         }

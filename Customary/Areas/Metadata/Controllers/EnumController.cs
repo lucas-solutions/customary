@@ -9,6 +9,14 @@ namespace Custom.Areas.Metadata.Controllers
     public class EnumController : Controller
     {
         //
+        // GET: /Metadata/Enum/
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        //
         // GET: /Metadata/Enum/Create/
 
         public ActionResult Create()
@@ -32,14 +40,6 @@ namespace Custom.Areas.Metadata.Controllers
             return View();
         }
 
-
-        //
-        // GET: /Metadata/Enum/
-
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         //
         // GET: /Metadata/Enum/Model/

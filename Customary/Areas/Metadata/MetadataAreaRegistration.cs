@@ -23,7 +23,7 @@ namespace Custom.Areas.Metadata
             context.MapRoute(
                 "Metadata_default",
                 "Metadata/{controller}/{action}/{id}",
-                new { action = "Page", id = UrlParameter.Optional }
+                new { action = "Index", id = UrlParameter.Optional }
             );
         }
     }

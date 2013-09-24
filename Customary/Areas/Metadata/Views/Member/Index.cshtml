@@ -1,0 +1,176 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+@{
+    if (Model is Member)
+    {
+        Html.Render((Ext.data.Model)Model);
+        //Html.Render((Ext.data.Store)Model);
+        //Html.Render((Ext.data.proxy.Proxy)Model);
+        //Html.Render((Ext.grid.Panel)Model);
+        //Html.Render((Ext.form.Panel)Model);
+
+        Html.Render(Entity.Handlers.OnClick);
+        Html.Render(Entity.Handlers.OnMouseMove);
+        Html.Render(Entity.Handlers.OnMouseUp);
+        
+    <script type="text/javascript">
+        Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
+        Ext.Loader.setPath('App', '@Url.Absolute("/App")');
+    </script>
+        
+        
+    <script type="text/javascript">
+        Ext.onReady(function () {
+
+            var form = Ext.create('App.metadata.entity.Form', {
+                title: 'General',
+                //columnWidth: .5, 
+
+                border: false,
+                activeRecord: null,
+                //iconCls: 'icon-user',
+                frame: false,
+                defaultType: 'textfield',
+                bodyPadding: 5,
+
+                fieldDefaults: {
+                    anchor: '100%',
+                    labelAlign: 'right'
+                },
+
+                defaultAnchor: "100%"
+            });
+
+            var writer = Ext.create('Ext.data.writer.Json', {
+                root: 'data',
+                allowSingle: false, // force data to be array
+                //dateFormat: "",
+                writeAllFields: false,
+                writeRecordId: true,
+                getRecordData: function (record) {
+                    return {
+                        'id': record.data.id,
+                        'Name': record.data.Name,
+                        'Tittle': record.data.Title,
+                        'Summary': record.data.Summary
+                    };
+                }
+            });
+
+            Ext.create('Ext.container.Viewport', {
+                layout: 'border',
+                items: [{
+                    region: 'north',
+                    html: '<center><h1 class="x-panel-header">@ViewBag.Title</h1></center>',
+                    autoHeight: true,
+                    border: false,
+                    margins: '0 0 5 0'
+                }, {
+                    region: 'west',
+                    flex: 1,
+                    collapsible: true,
+                    title: 'Index'
+                    //width: 150
+                    // could use a TreePanel or AccordionLayout for navigational items
+                }, {
+                    region: 'south',
+                    title: 'Messages',
+                    collapsible: true,
+                    html: 'Information goes here',
+                    split: true,
+                    height: 100,
+                    minHeight: 100
+                },
+                {
+                    region: 'east',
+                    title: "Edit",
+                    flex: 3,
+                    collapsible: true,
+                    split: true,
+                    //width: 250,
+                    xtype: 'tabpanel', // TabPanel itself has no title
+                    activeTab: 0,      // First tab active by default
+                    items: [
+                        form,
+                        {
+                            title: 'Properties',
+                            html: 'Entity properties'
+                        },
+                        {
+                            title: 'Associations',
+                            html: 'Entity to entity associations'
+                        },
+                        {
+                            title: 'Validations',
+                            html: 'Extended field validations'
+                        },
+                        {
+                            title: 'Persistence',
+                            html: 'Storage and mapping parameters'
+                        },
+                        {
+                            title: 'Presentation',
+                            html: 'UI parameters'
+                        }
+                    ]
+                },
+                Ext.create('App.metadata.entity.Grid', {
+                    region: 'center',
+                    flex: 3,
+                    title: 'Select'
+                })]
+            });
+        });
+    </script>
+    }
+    else if (Model is Entity.Handlers)
+    {
+        switch ((Entity.Handlers)Model)
+        {
+            case Entity.Handlers.OnClick:
+                // 
+                //
+    <script type="text/javascript">
+        function onClick() {
+        }
+    </script>
+                break;
+
+            case Entity.Handlers.OnMouseMove:
+                //
+                //
+    <script type="text/javascript">
+        function onMouseMove() {
+        }
+    </script>
+                break;
+
+            case Entity.Handlers.OnMouseUp:
+                //
+                //
+    <script type="text/javascript">
+        function onMouseUp() {
+        }
+    </script>
+                break;
+        }
+    }
+    if (Model is Ext.data.Model)
+    {
+        var model = Model as Ext.data.Model;
+    <script type="text/javascript">
+        Ex.Define('App.metadata.entity.Model', @((model as Scriptable).Result())
+            );
+    </script>
+    }
+    else if (Model is Ext.data.Store)
+    {
+        var model = Model as Ext.data.Model;
+    <script type="text/javascript">
+        Ex.Define('App.metadata.entity.Model', @((model as Scriptable).Result())
+            );
+    </script>
+    }
+}

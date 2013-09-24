@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Ext = Custom.Presentation.Sencha.Ext;
     using Custom.Metadata;
     using Custom.Presentation;
+    using Ext = Custom.Presentation.Sencha.Ext;
 
     public class Entity
     {
@@ -46,6 +46,13 @@ namespace Custom.Areas.Metadata.Models
             return entity.Store;
         }
 
+        private readonly EntityDescriptor _descriptor;
+        private Ext.form.Panel _form;
+        private Ext.grid.Panel _grid;
+        private Ext.data.Model _model;
+        private Ext.data.proxy.Proxy _proxy;
+        private Ext.data.Store _store;
+
         public Entity()
             : this(new EntityDescriptor())
         {
@@ -53,15 +60,8 @@ namespace Custom.Areas.Metadata.Models
 
         public Entity(EntityDescriptor descriptor)
         {
-            _descriptor = descriptor;
+            _descriptor = descriptor ?? new EntityDescriptor();
         }
-
-        private readonly EntityDescriptor _descriptor;
-        private Ext.form.Panel _form;
-        private Ext.grid.Panel _grid;
-        private Ext.data.Model _model;
-        private Ext.data.proxy.Proxy _proxy;
-        private Ext.data.Store _store;
 
         public EntityDescriptor Descriptor
         {

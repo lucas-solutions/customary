@@ -214,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
+    <Compile Include="App_Start\BinderConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -223,8 +224,16 @@
     <Compile Include="Areas\Automation\Controllers\SchedulerController.cs" />
     <Compile Include="Areas\Diagnostics\Controllers\LoggerController.cs" />
     <Compile Include="Areas\Diagnostics\DiagnosticsAreaRegistration.cs" />
+    <Compile Include="Areas\Metadata\Controllers\MemberController.cs" />
+    <Compile Include="Areas\Metadata\Controllers\PropertyController.cs" />
+    <Compile Include="Areas\Metadata\Models\EntityRepository.cs" />
     <Compile Include="Areas\Metadata\Models\EntityExtensions.cs" />
     <Compile Include="Areas\Metadata\Models\Enum.cs" />
+    <Compile Include="Areas\Metadata\Models\EnumExtensions.cs" />
+    <Compile Include="Areas\Metadata\Models\Member.cs" />
+    <Compile Include="Areas\Metadata\Models\MemberExtensions.cs" />
+    <Compile Include="Areas\Metadata\Models\Property.cs" />
+    <Compile Include="Areas\Metadata\Models\PropertyExtensions.cs" />
     <Compile Include="Areas\Navigation\Controllers\RouteController.cs" />
     <Compile Include="Areas\Globalization\Controllers\CountryController.cs" />
     <Compile Include="Areas\Globalization\Controllers\CurrencyController.cs" />
@@ -233,6 +242,10 @@
     <Compile Include="Areas\Globalization\Controllers\RegionController.cs" />
     <Compile Include="Areas\Globalization\GlobalizationAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\Models\Entity.cs" />
+    <Compile Include="Binders\SortBinder.cs" />
+    <Compile Include="Extensions\QuariableExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Models\ResultObject.cs" />
     <Compile Include="Models\Page.cs" />
     <Compile Include="Areas\Metadata\Controllers\EntityController.cs" />
     <Compile Include="Areas\Metadata\Controllers\EnumController.cs" />
@@ -267,6 +280,8 @@
     <Compile Include="Diagnostics\Components\LogglyUtpCommunicator.cs" />
     <Compile Include="Globalization\LanguageDescriptor.cs" />
     <Compile Include="Metadata\PropertyAttributes.cs" />
+    <Compile Include="Models\Sort.cs" />
+    <Compile Include="Models\SortDirection.cs" />
     <Compile Include="Presentation\CssRect.cs" />
     <Compile Include="Presentation\IScriptSerializer.cs" />
     <Compile Include="Presentation\IScriptable.cs" />
@@ -690,7 +705,7 @@
     <Content Include="Views\Shared\_Page.cshtml" />
     <Content Include="Areas\Metadata\Views\Web.config" />
     <Content Include="Areas\Metadata\Views\Entity\Model.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Page.cshtml" />
+    <Content Include="Areas\Metadata\Views\Entity\Index.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Panel.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Store.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Proxy.cshtml" />
@@ -706,6 +721,21 @@
     <Content Include="Areas\Navigation\Views\Web.config" />
     <Content Include="Areas\Diagnostics\Views\Web.config" />
     <Content Include="Areas\Automation\Views\Web.config" />
+    <Content Include="Areas\Metadata\Views\Property\Form.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Grid.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Index.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Model.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Proxy.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Store.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Form.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Grid.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Index.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Model.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Proxy.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Store.cshtml" />
+    <Content Include="Areas\Metadata\Views\Entity\Copy of Grid.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />

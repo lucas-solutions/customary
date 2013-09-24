@@ -7,31 +7,19 @@
     Ext.define('App.metadata.entity.Model', {
         extend: 'Ext.data.Model',
         fields: [
+            { name: 'id' },
+            { name: 'name' },
+            { name: 'namespace' },
+            { name: 'title' },
+            { name: 'summary' },
+            { name: 'modifiedBy' },
             {
-                name: "Name"
-            },
-            {
-                name: "Title"
-            },
-            {
-                name: "Summary"
-            },
-            {
-                name: 'CreatedBy',
-            },
-            {
-                name: "CreatedOn",
+                name: "modifiedOn",
                 type: "date",
                 dateFormat: "Y-m-d\\TH:i:s"
             },
-            {
-                name: "ModifiedOn",
-                type: "date",
-                dateFormat: "Y-m-d\\TH:i:s"
-            },
-            {
-                name: 'ModifiedBy',
-            }
+            { name: "modifiedAt" },
+            { name: "modifiedFor" }
         ]
     });
 </script>

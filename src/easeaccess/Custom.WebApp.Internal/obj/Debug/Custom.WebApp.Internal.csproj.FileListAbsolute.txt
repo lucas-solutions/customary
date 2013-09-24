@@ -88,3 +88,6 @@ A:\Projects\easeaccess\Custom.WebApp.Internal\bin\ICSharpCode.NRefactory.xml
 A:\Projects\easeaccess\Custom.WebApp.Internal\bin\Esent.Interop.pdb
 A:\Projects\easeaccess\Custom.WebApp.Internal\bin\Esent.Interop.xml
 A:\Projects\easeaccess\Custom.WebApp.Internal\bin\AWSSDK.xml
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Internal\obj\Debug\Custom.WebApp.Internal.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Internal\obj\Debug\Custom.WebApp.Internal.dll
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Internal\obj\Debug\Custom.WebApp.Internal.pdb

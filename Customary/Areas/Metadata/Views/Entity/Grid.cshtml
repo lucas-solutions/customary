@@ -21,7 +21,7 @@
                     allowBlank: true
                     //vtype: 'email'
                 },
-                dataIndex: "Name",
+                dataIndex: "name",
                 fixed: false,
                 flex: 1,
                 text: "Name",
@@ -31,7 +31,7 @@
                 editor: {
                     allowBlank: true
                 },
-                dataIndex: "Namespace",
+                dataIndex: "namespace",
                 fixed: false,
                 flex: 1,
                 text: "Namespace",
@@ -41,7 +41,7 @@
                 editor: {
                     allowBlank: true
                 },
-                dataIndex: "Title",
+                dataIndex: "title",
                 fixed: false,
                 flex: 1,
                 text: "Title",
@@ -51,373 +51,184 @@
                 editor: {
                     allowBlank: true
                 },
-                dataIndex: "Summary",
+                dataIndex: "summary",
                 fixed: false,
                 flex: 3,
                 text: "Summary",
                 width: 120
-            }/*,
-            {
-                dataindex: "modifiedon",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "modified on",
-                width: 80,
-                xtype: "datecolumn"
-            },
-            {
-                dataindex: "modifiedby",
-                fixed: false,
-                flex: 1,
-                text: "modified by",
-                width: 80
-            },
-            {
-                dataindex: "createdon",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "created on",
-                width: 80,
-                xtype: "datecolumn"
-            },
-            {
-                dataindex: "createdby",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "create by",
-                width: 80
-            }*/
+            }
         ];
+
+        var writer = Ext.create('Ext.data.writer.Json', {
+            root: 'data',
+            allowSingle: false, // force data to be array
+            //dateFormat: "",
+            writeAllFields: false,
+            writeRecordId: true,
+            getRecordData: function (record) {
+                return {
+                    'id': record.data.id,
+                    'name': record.data.name,
+                    'namespace': record.data.namespace,
+                    'title': record.data.title,
+                    'summary': record.data.summary,
+                    'culture': record.data.culture
+                };
+            }
+        });
+
+        var proxy = {
+            // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+            // and for jsonp the api is the same, but the method is GET
+            type: 'ajax', // rest, jsonp or ajax. 
+            api: {
+                create: '@Url.Absolute("/Metadata/Entity/Create")',
+                read: '@Url.Absolute("/Metadata/Entity/Read")',
+                update: '@Url.Absolute("/Metadata/Entity/Update")',
+                destroy: '@Url.Absolute("/Metadata/Entity/Destroy")'
+            },
+            //url: path,
+            autoLoad: true,
+            headers: {
+                "Accept": "application/json"
+            },
+            listeners: {
+                exception: function (proxy, response, operation) {
+                    Ext.MessageBox.show({
+                        title: 'REMOTE EXCEPTION',
+                        msg: operation.getError(),
+                        icon: Ext.MessageBox.ERROR,
+                        buttons: Ext.Msg.OK
+                    });
+                }
+            },
+            reader: {
+                type: "json",
+                root: "data",
+                //dateFormat: "",
+                totalProperty: 'total',
+                successProperty: 'success',
+                messageProperty: 'message'
+            },
+            writer: {
+                type: 'json',
+                root: 'data',
+                allowSingle: false, // force data to be array
+                //dateFormat: "",
+                writeAllFields: false,
+                writeRecordId: true
+            }
+        };
 
         return {
             extend: 'Ext.grid.Panel',
+            //alias: 'widget.entityGrid',
             requires: [
                 'Ext.form.field.Text',
-                'Ext.toolbar.TextItem'
+                'Ext.toolbar.TextItem',
+                'App.metadata.entity.Model'
             ],
-
-            edit: null,
-            form: null,
 
             columns: {
                 items: columns
             },
-
+            
             /**
              * Called by Ext when instantiating
              * param {Object} config Configuration object
              */
             initComponent: function (config) {
 
-                var me = this;
                 var scope = this.initialConfig.scope || this;
-                var path = this.initialConfig.path;
-                /*var model = Ext.create('App.metadata.entity.Model', {
-                });
-                var store = Ext.create('App.metadata.entity.Store', {
-                });*/
 
-                me.edit = Ext.create('Ext.window.Window', {
-                    //xtype: "window",
-                    hideMode: 'display',
-                    hidden: false,
-                    shadow: false,
-                    layout: "fit",
-                    closable: true,
-                    title: "Edit",
-                    width: 300,
-                    //items: [this.form],
-                    plugins: [
-                        /*Ext.create('Ext.ux.MouseDistanceSensor', {
-                            threshold: 25,
-                            opacity: true,
-                            minOpacity: 0.3,
-                            maxOpacity: 1.0,
-                            getSensorEls: function () {
-                                return Ext.get('header');
-                            },
-                            getConstrainEls: function () {
-                                return Ext.get('header');
-                            },
-                            listeners: {
-                                far: {
-                                    fn: function (item) {
-                                        Ext.get('toolbar').hide();
-                                    }
-                                },
-                                near: {
-                                    fn: near
-                                }
-                            }
-                        })*/
-                    ],
-                    listeners: {
-                        // Fires if the user clicks on the windows's close button, but before the close event is fired.
-                        beforeclose: {
-                            fn: function (window) {
-                                if (!this.form.getForm().isDirty()) {
-                                    this.onClose(window);
-                                }
-                                else {
-                                    Ext.Msg.confirm('Changes', 'Changes are not saved. Continue?', function (answer) {
-                                        if (answer == 'yes') {
-                                            //window.hide(null); // null to "unset" animation target
-                                            //window.destroy();
-                                            this.onClose(window);
-                                        }
-                                    });
-                                    return false; // always stop default close if dirty
-                                }
-                                return false; // always stop default close if dirty
-                            },
-                            scope: me
-                        },
-                        // Fires to indicate that the window is to be closed, usually because the user has clicked the close button.
-                        close: {
-                            fn: function (window) {
-                                return false;
-                            },
-                            scope: me
-                        }
-                    }
-                });
-
-                /*me.editing = Ext.create('Ext.grid.plugin.RowEditing', {
+                this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
                     clicksToEdit: 2,
                     clicksToMoveEditor: 1,
                     autoCancel: true
                 });
 
-                me.plugins = [me.editing];*/
+                var convertText = function (text) {
+                    switch (typeof text) {
+                        case 'string':
+                            return text;
 
-                Ext.apply(me,
+                        case 'object':
+                            return text.en;
+
+                        default:
+                            return text;
+                    }
+                };
+
+                Ext.define('App.metadata.entity.grid.store.Model', {
+                    extend: 'Ext.data.Model',
+                    fields: [
+                        { name: 'id' },
+                        { name: 'name' },
+                        { name: 'namespace' },
+                        { name: 'title', convert: convertText },
+                        { name: 'summary', convert: convertText }
+                    ]
+                });
+
+                var store = new Ext.data.Store({
+                    // destroy the store if the grid is destroyed
+                    autoDestroy: true,
+                    autoLoad: true,
+                    //autoSave: true,
+                    autoSync: false,
+                    batchActions: true,
+                    //buffered: true,
+                    model: 'App.metadata.entity.grid.store.Model',
+                    proxy: proxy,
+                    pageSize: 100,
+                    listeners: {
+                        write: function (proxy, operation) {
+                            if (operation.action == 'destroy') {
+                                //main.child('#form').setActiveRecord(null);
+                            }
+                            //Ext.example.msg(operation.action, operation.resultSet.message);
+                        }
+                    },
+                    sorters: [{
+                        property: 'name',
+                        direction: 'ASC'
+                    }]
+                });
+
+                Ext.apply(this,
                     {
                         iconCls: 'icon-grid',
                         layout: 'fit',
                         //frame: true,
                         //items: [this.edit],
-                        //plugins: [this.editing],
-                        dockedItems: [
-                            {
-                                dock: 'bottom',
-                                ui: 'footer',
-                                frame: true,
-                                xtype: 'toolbar',
-                                items: [
-                                    {
-                                        iconCls: 'icon-add',
-                                        text: 'Add',
-                                        scope: me,
-                                        handler: me.onAddClick
-                                    },
-                                    {
-                                        iconCls: 'icon-delete',
-                                        text: 'Delete',
-                                        disabled: true,
-                                        itemId: 'delete',
-                                        scope: me,
-                                        handler: me.onDeleteClick,
-                                        disabled: true
-                                    }, '|',
-                                    {
-                                        iconCls: 'icon-sync',
-                                        text: 'Commit',
-                                        scope: me,
-                                        handler: me.onCommitClick
-                                    },
-                                    {
-                                        iconCls: 'icon-sync',
-                                        text: 'Sync',
-                                        scope: me,
-                                        handler: me.onSyncClick
-                                    },
-                                    , '->',
-                                    {
-                                        scope: this,
-                                        xtype: 'textfield'
-                                    },
-                                    {
-                                        iconCls: 'icon-search',
-                                        text: 'Search',
-                                        scope: me,
-                                        handler: this.onSearchClick
-                                    },
-                                ]
-                            }
-                        ],
-                        listeners: {
-                            afterrender: {
-                                delay: 1,
-                                fn: function (item) {
-                                    this.edit.show();
-                                    this.edit.el.alignTo(this, 'br-br', [-20, -20]);
-                                    this.onOpenClick();
-                                },
-                                scope: this
-                            },
-                            expand: {
-                                fn: function (view, e, eOpts) {
-                                    this.onFocus();
-                                },
-                                scope: this
-                            },
-                            collapse: {
-                                fn: function (view, e, eOpts) {
-                                    this.onBlur();
-                                },
-                                scope: this
-                            },
-                            blur: {
-                                // this : Ext.Component
-                                // e : Ext.EventObject, blur event.
-                                // eOpts : Object, The options object passed to Ext.util.Observable.addListener.
-                                fn: function (view, e, eOpts) {
-                                    publish('CanEdit', false);
-                                    this.onBlur(e, eOpts);
-                                },
-                                scope: this
-                            },
-                            focus: {
-                                fn: function (view, e, eOpts) {
-                                    publish('CanEdit', true);
-                                    this.onFocus(e, eOpts);
-                                },
-                                scope: this
-                            }
-                        },
-                        //store: store,
+                        plugins: [this.editing],
+                        store: store,
+                        
                         selModel: Ext.create("Ext.selection.RowModel",
                             {
                                 selType: "rowmodel",
-                                /*listeners: {
+                                listeners: {
                                     selectionchange: {
                                         fn: function (selModel, selections) {
                                             this.onSelectionChange(selModel, selections)
                                         },
                                         scope: this
                                     }
-                                }*/
+                                }
                             })
                     });
 
                 this.callParent();
+
                 //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
-
-                // appy the config
-                //Ext.apply(this, config);
-
-                // Call parent (required)
-                //App.metadata.entity.Grid.superclass.initComponent.apply(this, arguments);
-            },
-
-            // Add button was clicked on the grid toolbar.
-            onAddClick: function () {
-                this.editing.cancelEdit();
-
-                // Create a model instance
-                var r = new this.model/* Ext.create('Employee', {
-                name: 'New Guy',
-                email: 'new@sencha-test.com',
-                start: Ext.Date.clearTime(new Date()),
-                salary: 50000,
-                active: true
-            })*/;
-
-                this.store.insert(0, r);
-                this.editing.startEdit(0, 0);
-            },
-
-            onBeforeCloseDialog: function () {
-                //if (this.form.getForm().isDirty()) {
-                publish('CancelCloseDialog');
-                Ext.Msg.confirm('Changes', 'Changes are not saved. Continue?', function (answer) {
-                    if (answer == 'yes') {
-                        publish('CloseDialog');
-                    }
-                });
-                //}
-            },
-
-            onBlur: function (e, eOpts) {
-                this.title = "Areas (blur)";
-                publish('CanEdit', false);
-                unsubscribe('BeforeCloseDialog', this.onBeforeCloseDialog);
-            },
-
-            // Windows close window was clicked on the edit dialog.
-            onCloseClick: function () {
-                this.edit.hide(this.edit, function () {
-                    this.tools[3].enable();
-                }, this); // null to "unset" animation target
-            },
-
-            onCommitClick: function () {
-                this.store.commitChanges();
-                if (!this.store.isDirty()) {
-                    //this.saveButton.disable();
-                }
-            },
-
-            // Delete button was clicked.
-            onDeleteClick: function () {
-                this.editing.cancelEdit();
-
-                var view = this.getView();
-                var sm = view.getSelectionModel();
-                var selection = sm.getSelection();
-
-                var index;
-                for (var i = 0; i < selection.length; i++) {
-                    var record = selection[i];
-                    index = Math.min(index || record.index, record.index);
-                    this.store.remove(selection[i]);
-                }
-
-                var count = this.store.getCount();
-                if (!!index && count > 0) {
-                    sm.select(Math.min(index, count - 1));
-                }
-            },
-
-            onFocus: function (e, eOpts) {
-                publish('CanEdit', true);
-                subscribe('BeforeCloseDialog', this.onBeforeCloseDialog);
-            },
-
-            // Open button was clicked on the grid toolbar to open the edit dialog 
-            onOpenClick: function () {
-                this.edit.show(this.edit, function () {
-                    this.tools[3].disable();
-                }, this);
-            },
-
-            // Refresh buton was clicked.
-            onRefreshClick: function () {
-            },
-
-            // Reset button was clicked.
-            onResetClick: function () {
-                this.form.loadRecord(this.selected[0]);
-            },
-
-            onSaveClick: function () {
-            },
-
-            onSyncClick: function () {
-                this.store.sync();
-            },
-
-            onSearchClick: function () {
             },
 
             onSelectionChange: function (selModel, selections) {
-                this.down('#delete').setDisabled(selections.length === 0);
-                var form = this.form.getForm();
-                form.reset();
-                this.form.setActiveRecord(selections[0]);
+                //this.down('#delete').setDisabled(selections.length === 0);
+                //var form = this.form.getForm();
+                //form.reset();
+                //this.form.setActiveRecord(selections[0]);
             }
         };
     });

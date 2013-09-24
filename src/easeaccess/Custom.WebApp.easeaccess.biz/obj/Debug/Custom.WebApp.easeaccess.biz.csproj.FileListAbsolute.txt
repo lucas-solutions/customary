@@ -262,3 +262,6 @@ A:\Projects\easeaccess\Custom.WebApp.easeaccess.biz\bin\DotNetOpenAuth.OAuth.Con
 A:\Projects\easeaccess\Custom.WebApp.easeaccess.biz\bin\DotNetOpenAuth.OAuth.xml
 A:\Projects\easeaccess\Custom.WebApp.easeaccess.biz\bin\DotNetOpenAuth.OpenId.xml
 A:\Projects\easeaccess\Custom.WebApp.easeaccess.biz\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.easeaccess.biz\obj\Debug\Custom.WebApp.easeaccess.biz.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.easeaccess.biz\obj\Debug\Custom.WebApp.easeaccess.biz.dll
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.easeaccess.biz\obj\Debug\Custom.WebApp.easeaccess.biz.pdb

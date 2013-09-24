@@ -1,0 +1,21 @@
+﻿@model Custom.Presentation.Sencha.Ext.data.Store
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.member.Store', function () {
+
+        return {
+            extend: 'Ext.data.Store',
+            fields: ['value', 'display'],
+            data: [
+                { "Name": "New", "Value": 1, "Title": { en: "New" }, "Summary": { } },
+                { "Name": "Typo", "Value": 2, "Title": { en: "Typo" }, "Summary": {} },
+                { "Name": "Minor", "Value": 3, "Title": { en: "Minor" }, "Summary": {} },
+                { "Name": "Mayor", "Value": 4, "Title": { en: "Mayor" }, "Summary": {} },
+                { "Name": "Revision", "Value": 5, "Title": { en: "Revision" }, "Summary": {} }
+            ]
+        };
+    });
+</script>

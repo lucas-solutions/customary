@@ -5,7 +5,7 @@
 @{
     if (Model is Entity)
     {
-        Html.Render((Ext.data.Model)Model);
+        //Html.Render((Ext.data.Model)Model);
         //Html.Render((Ext.data.Store)Model);
         //Html.Render((Ext.data.proxy.Proxy)Model);
         //Html.Render((Ext.grid.Panel)Model);
@@ -41,22 +41,6 @@
                 },
 
                 defaultAnchor: "100%"
-            });
-
-            var writer = Ext.create('Ext.data.writer.Json', {
-                root: 'data',
-                allowSingle: false, // force data to be array
-                //dateFormat: "",
-                writeAllFields: false,
-                writeRecordId: true,
-                getRecordData: function (record) {
-                    return {
-                        'id': record.data.id,
-                        'Name': record.data.Name,
-                        'Tittle': record.data.Title,
-                        'Summary': record.data.Summary
-                    };
-                }
             });
 
             Ext.create('Ext.container.Viewport', {

@@ -127,3 +127,6 @@ A:\Projects\easeaccess\Custom.WebKit.Common\bin\Debug\ICSharpCode.NRefactory.xml
 A:\Projects\easeaccess\Custom.WebKit.Common\bin\Debug\Esent.Interop.pdb
 A:\Projects\easeaccess\Custom.WebKit.Common\bin\Debug\Esent.Interop.xml
 A:\Projects\easeaccess\Custom.WebKit.Common\bin\Debug\AWSSDK.xml
+C:\Playground\Customary\src\easeaccess\Custom.WebKit.Common\obj\Debug\Custom.WebKit.Common.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.WebKit.Common\obj\Debug\Custom.WebKit.Common.dll
+C:\Playground\Customary\src\easeaccess\Custom.WebKit.Common\obj\Debug\Custom.WebKit.Common.pdb

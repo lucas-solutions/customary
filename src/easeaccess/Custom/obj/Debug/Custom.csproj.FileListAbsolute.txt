@@ -182,3 +182,6 @@ C:\Playground\Custom\bin\ICSharpCode.NRefactory.xml
 C:\Playground\Custom\bin\Esent.Interop.pdb
 C:\Playground\Custom\bin\Esent.Interop.xml
 C:\Playground\Custom\bin\AWSSDK.xml
+C:\Playground\Customary\src\easeaccess\Custom\obj\Debug\Custom.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom\obj\Debug\Custom.dll
+C:\Playground\Customary\src\easeaccess\Custom\obj\Debug\Custom.pdb

@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Ext = Custom.Presentation.Sencha.Ext;
     using Custom.Metadata;
     using Custom.Presentation;
+    using Ext = Custom.Presentation.Sencha.Ext;
 
     public static class EntityExtensions
     {

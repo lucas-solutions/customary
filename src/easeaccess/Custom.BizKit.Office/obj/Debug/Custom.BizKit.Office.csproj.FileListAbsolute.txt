@@ -134,3 +134,6 @@ A:\Projects\easeaccess\Custom.BizKit.Office\bin\Debug\ICSharpCode.NRefactory.xml
 A:\Projects\easeaccess\Custom.BizKit.Office\bin\Debug\Esent.Interop.pdb
 A:\Projects\easeaccess\Custom.BizKit.Office\bin\Debug\Esent.Interop.xml
 A:\Projects\easeaccess\Custom.BizKit.Office\bin\Debug\AWSSDK.xml
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Office\obj\Debug\Custom.BizKit.Office.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Office\obj\Debug\Custom.BizKit.Office.dll
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Office\obj\Debug\Custom.BizKit.Office.pdb

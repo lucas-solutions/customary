@@ -46,3 +46,6 @@ A:\Projects\easeaccess\Custom.WebApp.Public\bin\DotNetOpenAuth.OpenId.xml
 A:\Projects\easeaccess\Custom.WebApp.Public\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
 A:\Projects\easeaccess\Custom.WebApp.Public\obj\Debug\Custom.WebApp.Public.dll
 A:\Projects\easeaccess\Custom.WebApp.Public\obj\Debug\Custom.WebApp.Public.pdb
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Public\obj\Debug\Custom.WebApp.Public.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Public\obj\Debug\Custom.WebApp.Public.dll
+C:\Playground\Customary\src\easeaccess\Custom.WebApp.Public\obj\Debug\Custom.WebApp.Public.pdb

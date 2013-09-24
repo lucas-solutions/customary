@@ -117,3 +117,6 @@ A:\Projects\easeaccess\Custom.BizKit.Common\bin\Debug\Esent.Interop.pdb
 A:\Projects\easeaccess\Custom.BizKit.Common\bin\Debug\Esent.Interop.xml
 A:\Projects\easeaccess\Custom.BizKit.Common\bin\Debug\AWSSDK.xml
 A:\Projects\easeaccess\Custom.BizKit.Common\obj\Debug\Custom.BizKit.Common.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Common\obj\Debug\Custom.BizKit.Common.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Common\obj\Debug\Custom.BizKit.Common.dll
+C:\Playground\Customary\src\easeaccess\Custom.BizKit.Common\obj\Debug\Custom.BizKit.Common.pdb

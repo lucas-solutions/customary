@@ -7,7 +7,46 @@
     Ext.define('App.metadata.entity.Store', function () {
 
         return {
-            extend: 'Ext.data.Store'
+            extend: 'Ext.data.Store',
+            requires: [
+                'App.metadata.entity.Proxy',
+                'App.metadata.entity.Model'
+            ],
+            // destroy the store if the grid is destroyed
+            autoDestroy: true,
+            autoLoad: true,
+            //autoSave: true,
+            autoSync: false,
+            batchActions: true,
+            //buffered: true,
+            pageSize: 100,
+            /*listeners: {
+                write: function (proxy, operation) {
+                    if (operation.action == 'destroy') {
+                        //main.child('#form').setActiveRecord(null);
+                    }
+                    //Ext.example.msg(operation.action, operation.resultSet.message);
+                }
+            },
+            sorters: [{
+                property: 'id',
+                direction: 'ASC'
+            }],*/
+
+            initComponent: function (config) {
+
+                var model = config.model || this.initialConfig.model || Ext.create('App.metadata.entity.Model');
+                var proxy = config.proxy || this.initialConfig.proxy || Ext.create('App.metadata.entity.Proxy');
+
+                Ext.object.merge(config, {
+                    model: model,
+                    proxy: proxy
+                });
+
+                Ext.apply(this, config);
+
+                this.callParent();
+            }
         };
     });
 </script>
