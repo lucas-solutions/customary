@@ -1,0 +1,166 @@
+﻿@model Custom.Presentation.Sencha.Ext.form.Panel
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.association.Form', function () {
+
+        var fields = [
+            {
+                xtype: 'fieldset',
+                columnWidth: 0.5,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                defaults: { anchor: '100%' },
+                layout: 'anchor',
+                items: [
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Name",
+                        name: "name"
+                    },
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Title",
+                        name: "titleText"
+                    }
+                ]
+            },
+            {
+                xtype: 'fieldset',
+                columnWidth: 0.5,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                layout: 'anchor',
+                items: [
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Type",
+                        name: "propertyType"
+                    },
+                    {
+                        allowBlank: false,
+                        fieldLabel: "Type",
+                        name: "propertyType"
+                    }
+                ]
+            },
+            {
+                xtype: 'fieldset',
+                columnWidth: 1,
+                border: false,
+                collapsible: false,
+                defaultType: 'textfield',
+                defaults: { anchor: '100%' },
+                layout: 'anchor',
+                items: [
+                    {
+                        fieldLabel: "Summary",
+                        name: "summaryText",
+                        xtype: "textarea",
+                    }
+                ]
+            }
+        ];
+
+        return {
+            extend: 'Ext.form.Panel',
+            alias: 'widget.associationForm',
+            requires: ['Ext.form.field.Text'],
+            initComponent: function () {
+
+                this.updateButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-save',
+                    text: 'Save',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onUpdate
+                });
+
+                this.cancelButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-reset',
+                    text: 'Cancel',
+                    scope: this,
+                    handler: this.onCancel
+                });
+
+                Ext.apply(this,
+                    {
+                        frame: true,
+                        //bodyStyle: 'padding:5px 5px 0',
+                        layout: 'column',
+                        defaults: {
+                            bodyPadding: 4
+                        },
+                        items: fields,
+                        dockedItems: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                items: ['->', this.updateButton, this.cancelButton]
+                            }
+                        ]
+                    });
+
+                this.callParent();
+
+                App.util.Adapter.subscribe('App.association.property.Grid.init', {
+                    fn: function (grid) {
+                        //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+                    },
+                    scope: this
+                });
+
+                App.util.Adapter.subscribe('App.metadata.association.Grid.selectionchange', {
+                    fn: this.onSelectionChange,
+                    scope: this
+                });
+
+                App.util.Adapter.publish('App.metadata.association.Form.init', this);
+            },
+
+            onUpdate: function () {
+                var form = this.getForm();
+
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
+                }
+            },
+
+            onCancel: function () {
+                this.getForm().reset();
+                this.getForm().loadRecord(this.activeRecord);
+            },
+
+            onSelectionChange: function (selModel, selections) {
+                if (typeof selections === 'object' && selections.length === 1) {
+                    this.setRecord(selections[0]);
+                } else {
+                    this.setRecord(null);
+                }
+            },
+
+            setRecord: function (record) {
+
+                var form = this.getForm();
+
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
+                }
+
+                this.record = null;
+
+                form.reset();
+
+                if (typeof record === 'object') {
+                    this.record = record;
+                    form.loadRecord(this.record);
+                }
+            },
+        }
+    });
+</script>

@@ -37,7 +37,7 @@
                     {
                         allowBlank: false,
                         fieldLabel: "Title",
-                        name: "title"
+                        name: "titleText"
                     }
                 ]
             },
@@ -73,7 +73,7 @@
                 items: [
                     {
                         fieldLabel: "Summary",
-                        name: "summary",
+                        name: "summaryText",
                         xtype: "textarea",
                     }
                 ]
@@ -156,23 +156,6 @@
 
             initComponent: function () {
 
-                App.util.Adapter.subscribe('App.metadata.entity.Grid.init', {
-                    fn: function (/*source, */grid) {
-
-                        grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
-
-                        Ext.apply(this, {
-                            store: grid.store
-                        });
-                    },
-                    scope: this
-                });
-
-                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
-                    fn: this.onSelectionChange,
-                    scope: this
-                });
-
                 this.updateButton = Ext.create('Ext.Button', {
                     iconCls: 'icon-save',
                     text: 'Save',
@@ -188,52 +171,39 @@
                     handler: this.onCancel
                 });
 
-                Ext.apply(this,
-                    {
-                        frame: true,
-                        //bodyStyle: 'padding:5px 5px 0',
-                        layout: 'column',
-                        defaults: {
-                            bodyPadding: 4
-                        },
-                        items: fields,
-                        dockedItems: [
-                            {
-                                xtype: 'toolbar',
-                                dock: 'bottom',
-                                ui: 'footer',
-                                items: ['->', this.updateButton, this.cancelButton]
-                            }
-                        ]
-                    });
+                Ext.apply(this, {
+                    frame: true,
+                    //bodyStyle: 'padding:5px 5px 0',
+                    layout: 'column',
+                    defaults: {
+                        bodyPadding: 4
+                    },
+                    items: fields,
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'bottom',
+                            ui: 'footer',
+                            items: ['->', this.updateButton, this.cancelButton]
+                        }
+                    ]
+                });
 
                 this.callParent();
 
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.init', {
+                    fn: function (grid) {
+                        //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+                    },
+                    scope: this
+                });
+
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                    fn: this.onSelectionChange,
+                    scope: this
+                });
+
                 App.util.Adapter.publish('App.metadata.entity.Form.init', this);
-            },
-
-            setStore: function (store) {
-            },
-
-            setRecord: function (record) {
-
-                var form = this.getForm();
-
-                if (form.isDirty() && form.isValid() && !!this.record) {
-                    form.updateRecord(this.record);
-                }
-
-                this.record = null;
-
-                form.reset();
-
-                if (typeof record === 'object') {
-                    this.record = record;
-                    form.loadRecord(this.record);
-                    this.updateButton.enable();
-                } else {
-                    this.updateButton.disable();
-                }
             },
 
             onUpdate: function () {
@@ -256,7 +226,28 @@
                 } else {
                     this.setRecord(null);
                 }
-            }
+            },
+
+            setRecord: function (record) {
+
+                var form = this.getForm();
+
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
+                }
+
+                this.record = null;
+
+                form.reset();
+
+                if (typeof record === 'object') {
+                    this.record = record;
+                    form.loadRecord(this.record);
+                    this.updateButton.enable();
+                } else {
+                    this.updateButton.disable();
+                }
+            },
         }
     });
 </script>

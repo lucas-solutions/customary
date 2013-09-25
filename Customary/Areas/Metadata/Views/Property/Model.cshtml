@@ -6,16 +6,31 @@
 <script type="text/javascript">
     Ext.define('App.metadata.property.Model', {
         extend: 'Ext.data.Model',
-        belongsTo: 'App.metadata.entity.Model',
+        requires: ['App.util.Adapter'],
+        //belongsTo: 'App.metadata.entity.Model',
         fields: [
             { name: 'name' },
-            { name: 'propertyType' },
+            { name: 'propertyType', defaultValue: 'string' },
             { name: 'title' },
-            { name: 'summary' }
+            {
+                name: 'titleText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.util.Adapter.text('title', value, record);
+                }
+            },
+            { name: 'summary' },
+            {
+                name: 'summaryText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.util.Adapter.text('summary', value, record);
+                }
+            },
         ],
         validations: [
-            {type: 'presence',  field: 'name'},
-            {type: 'length',    field: 'name',     min: 2}
+            { type: 'presence',  field: 'name' },
+            { type: 'length',    field: 'name',     min: 2 }
             //{type: 'inclusion', field: 'gender',   list: ['Male', 'Female']},
             //{type: 'exclusion', field: 'username', list: ['Admin', 'Operator']},
             //{type: 'format',    field: 'username', matcher: /([a-z]+)[0-9]{2,3}/}

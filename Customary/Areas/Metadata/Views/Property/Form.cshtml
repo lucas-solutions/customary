@@ -6,19 +6,6 @@
 <script type="text/javascript">
     Ext.define('App.metadata.property.Form', function () {
 
-        // The data store containing the list of states
-        var states = Ext.create('Ext.data.Store', {
-            fields: ['value', 'display'],
-            data: [
-                { "value": 1, "display": "New" },
-                { "value": 2, "display": "Typo" },
-                { "value": 3, "display": "Minor" },
-                { "value": 4, "display": "Mayor" },
-                { "value": 5, "display": "Revision" }
-                //...
-            ]
-        });
-
         var fields = [
             {
                 xtype: 'fieldset',
@@ -32,12 +19,12 @@
                     {
                         allowBlank: false,
                         fieldLabel: "Name",
-                        name: "Name"
+                        name: "name"
                     },
                     {
                         allowBlank: false,
                         fieldLabel: "Title",
-                        name: "Title"
+                        name: "titleText"
                     }
                 ]
             },
@@ -51,14 +38,13 @@
                 items: [
                     {
                         allowBlank: false,
-                        fieldLabel: "Namespace",
-                        name: "Namespace"
+                        fieldLabel: "Type",
+                        name: "propertyType"
                     },
                     {
-                        cls: 'x-item-disabled', // simulate disabled; submitted
-                        fieldLabel: "Version",
-                        name: "Version",
-                        readOnly: true,
+                        allowBlank: false,
+                        fieldLabel: "Type",
+                        name: "propertyType"
                     }
                 ]
             },
@@ -73,90 +59,11 @@
                 items: [
                     {
                         fieldLabel: "Summary",
-                        name: "Summary",
+                        name: "summaryText",
                         xtype: "textarea",
                     }
                 ]
-            },
-            {
-                xtype: 'panel',
-                layout: 'column',
-                title: 'Change status',
-                columnWidth: 1,
-                frame: true,
-                items: [
-                    {
-                        xtype: 'fieldset',
-                        columnWidth: 0.5,
-                        border: false,
-                        collapsible: false,
-                        defaultType: 'textfield',
-                        defaults: { anchor: '100%' },
-                        layout: 'anchor',
-                        items: [
-                            {
-                                cls: 'x-item-disabled', // simulate disabled; submitted
-                                fieldLabel: "Who",
-                                format: "n/j/Y",
-                                name: "ModifiedBy",
-                                readOnly: true,
-                                xtype: "datefield",
-                            },
-                            {
-                                //cls: 'x-item-disabled', // simulate disabled; submitted
-                                fieldLabel: "Why",
-                                name: "ModifiedFor",
-                                //readOnly: true,
-                                xtype: "combobox",
-                                store: states,
-                                queryMode: 'local',
-                                displayField: 'display',
-                                valueField: 'value',
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        columnWidth: 0.5,
-                        border: false,
-                        collapsible: false,
-                        defaultType: 'textfield',
-                        layout: 'anchor',
-                        items: [
-                            {
-                                cls: 'x-item-disabled', // simulate disabled; submitted
-                                fieldLabel: "When",
-                                format: "n/j/Y",
-                                name: "ModifiedOn",
-                                readOnly: true,
-                                xtype: "datefield",
-                            },
-                            {
-                                cls: 'x-item-disabled', // simulate disabled; submitted
-                                fieldLabel: "Where",
-                                name: "ModifiedAt",
-                                readOnly: true,
-                                xtype: "textfield",
-                            }
-                        ]
-                    },
-                ]
-            },
-
-                        /*{
-                            fieldLabel: 'Email',
-                            name: 'email',
-                            allowBlank: false,
-                            vtype: 'email'
-                        }, {
-                            fieldLabel: 'First',
-                            name: 'first',
-                            allowBlank: false
-                        }, {
-                            fieldLabel: 'Last',
-                            name: 'last',
-                            allowBlank: false
-                        }*/
+            }
         ];
 
         return {
@@ -167,22 +74,19 @@
 
             initComponent: function () {
 
-                var me = this;
-                var scope = this.initialConfig.scope || this;
-
                 this.updateButton = Ext.create('Ext.Button', {
                     iconCls: 'icon-save',
                     text: 'Save',
                     disabled: true,
-                    scope: scope,
-                    handler: scope.onUpdate
+                    scope: this,
+                    handler: this.onUpdate
                 });
 
                 this.cancelButton = Ext.create('Ext.Button', {
                     iconCls: 'icon-reset',
                     text: 'Cancel',
-                    scope: scope,
-                    handler: scope.onCancel
+                    scope: this,
+                    handler: this.onCancel
                 });
 
                 Ext.apply(this,
@@ -205,41 +109,60 @@
                     });
 
                 this.callParent();
-            },
 
-            setStore: function (store) {
-            },
+                App.util.Adapter.subscribe('App.metadata.property.Grid.init', {
+                    fn: function (grid) {
+                        //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+                    },
+                    scope: this
+                });
 
-            setActiveRecord: function (record) {
-                var active = this.activeRecord;
+                App.util.Adapter.subscribe('App.metadata.property.Grid.selectionchange', {
+                    fn: this.onSelectionChange,
+                    scope: this
+                });
 
-                if (typeof active !== 'undefined' && active !== null) {
-                }
-
-                this.activeRecord = record;
-
-                if (record) {
-                    this.updateButton.enable();
-                    this.getForm().loadRecord(record);
-                } else {
-                    this.updateButton.disable();
-                    this.getForm().reset();
-                }
+                App.util.Adapter.publish('App.metadata.property.Form.init', this);
             },
 
             onUpdate: function () {
                 var form = this.getForm();
 
-                /*if (form.isValid()) {
-                    this.fireEvent('create', this, form.getValues());
-                    form.reset();
-                }*/
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
+                }
             },
 
             onCancel: function () {
                 this.getForm().reset();
                 this.getForm().loadRecord(this.activeRecord);
-            }
+            },
+
+            onSelectionChange: function (selModel, selections) {
+                if (typeof selections === 'object' && selections.length === 1) {
+                    this.setRecord(selections[0]);
+                } else {
+                    this.setRecord(null);
+                }
+            },
+
+            setRecord: function (record) {
+
+                var form = this.getForm();
+
+                if (form.isDirty() && form.isValid() && !!this.record) {
+                    form.updateRecord(this.record);
+                }
+
+                this.record = null;
+
+                form.reset();
+
+                if (typeof record === 'object') {
+                    this.record = record;
+                    form.loadRecord(this.record);
+                }
+            },
         }
     });
 </script>

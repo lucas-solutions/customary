@@ -151,6 +151,19 @@
         return {
             singleton: true,
 
+            culture: 'en',
+
+            text: function (name, value, record) {
+                if (typeof value !== 'string' || value.length === 0) {
+                    var text = record.get(name);
+                    if (typeof text === 'object') {
+                        var culture = App.util.Adapter.culture;
+                        value = text[culture];
+                    }
+                }
+                return value;
+            },
+
             // publish an event
             publish: function (event) {
                 if (cache.hasOwnProperty(event)) {
@@ -178,7 +191,7 @@
                 if (!cache.hasOwnProperty(event)) {
                     cache[event] = [];
                 }
-                if (0 > cache[event].indexOf(callback)) {
+                //if (0 > cache[event].indexOf(callback)) {
                     switch (typeof callback) {
                         case 'object':
                             cache[event].push(callback);
@@ -187,7 +200,7 @@
                             cache[event].push({ scope: this, fn: callback });
                             break;
                     }
-                }
+                //}
             },
 
             // unsubscribe to event

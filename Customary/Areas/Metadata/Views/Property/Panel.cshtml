@@ -3,10 +3,41 @@
 @using Custom.Presentation
 @using Ext = Custom.Presentation.Sencha.Ext
 <script type="text/javascript">
-    Ex.Define('App.metadata.property.Panel', function () {
+    Ext.define('App.metadata.property.Panel', function () {
 
         return {
-            extend: 'Ext.panel.Panel'
+            extend: 'Ext.panel.Panel',
+            alias: 'widget.associationPanel',
+            requires: [
+                'App.metadata.property.Grid',
+                'App.metadata.property.Form'
+            ],
+            initComponent: function (config) {
+
+                Ext.apply(this, {
+                    items: [
+                        Ext.create('App.metadata.property.Grid', {
+                            header: false,
+                            region: 'center',
+                            flex: 1,
+                            split: true
+                        }),
+                        Ext.create('App.metadata.property.Form', {
+                            title: "Edit",
+                            header: false,
+                            region: 'south',
+                            flex: 1,
+                            collapsible: true,
+                            split: true,
+                            frame: true
+                        })
+                    ]
+                });
+
+                this.callParent();
+
+                App.util.Adapter.publish('App.metadata.property.Panel.init', this);
+            }
         };
     });
 </script>

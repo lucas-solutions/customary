@@ -132,6 +132,8 @@ namespace Custom.Areas.Metadata.Controllers
 
         public ActionResult Model(string id)
         {
+            return ScriptView();
+
             Guid identity;
 
             if (id == null)

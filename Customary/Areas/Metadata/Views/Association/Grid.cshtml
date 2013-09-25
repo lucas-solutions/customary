@@ -1,0 +1,210 @@
+﻿@model Custom.Presentation.Sencha.Ext.grid.Panel
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.association.Grid', function () {
+
+        return {
+            extend: 'Ext.grid.Panel',
+            requires: [
+                'App.metadata.association.Model',
+                'Ext.form.field.Text',
+                'Ext.grid.plugin.RowEditing',
+                'Ext.toolbar.TextItem'
+            ],
+
+            /**
+             * Called by Ext when instantiating
+             * param {Object} config Configuration object
+             */
+            initComponent: function (config) {
+
+                var columns = [
+                    {
+                        editor: {
+                            allowBlank: false
+                            //vtype: 'email'
+                        },
+                        dataIndex: "name",
+                        fixed: false,
+                        flex: 1,
+                        text: "Name"
+                    },
+                    {
+                        editor: {
+                            allowBlank: false
+                            //vtype: 'email'
+                        },
+                        dataIndex: 'propertyType',
+                        fixed: false,
+                        flex: 1,
+                        text: "Type",
+                    },
+                    {
+                        editor: {
+                            allowBlank: true
+                        },
+                        dataIndex: "titleText",
+                        fixed: false,
+                        flex: 1,
+                        text: "Title"
+                    },
+                    {
+                        editor: {
+                            allowBlank: true
+                        },
+                        dataIndex: "summaryText",
+                        fixed: false,
+                        flex: 3,
+                        text: "Summary"
+                    }
+                ];
+
+                this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
+                    clicksToEdit: 2,
+                    clicksToMoveEditor: 1,
+                    autoCancel: true
+                });
+
+                var store = Ext.create('Ext.data.Store', {
+                    model: 'App.metadata.association.Model',
+                    proxy: {
+                        type: 'memory',
+                        reader: {
+                            type: 'json',
+                            root: 'associations'
+                        }
+                    },
+                    listeners: {
+                        write: function (proxy, operation) {
+                            if (operation.action == 'destroy') {
+                                //main.child('#form').setActiveRecord(null);
+                            }
+                            //Ext.example.msg(operation.action, operation.resultSet.message);
+                        }
+                    },
+                    sorters: [{
+                        property: 'name',
+                        direction: 'ASC'
+                    }]
+                });
+
+                Ext.apply(this,
+                    {
+                        iconCls: 'icon-grid',
+                        layout: 'fit',
+                        //frame: true,
+                        columns: columns,
+                        plugins: [this.editing],
+                        dockedItems: [
+                            {
+                                dock: 'bottom',
+                                ui: 'footer',
+                                frame: true,
+                                xtype: 'toolbar',
+                                items: [
+                                    {
+                                        iconCls: 'icon-add',
+                                        text: 'Add',
+                                        scope: this,
+                                        handler: this.onAddClick
+                                    },
+                                    {
+                                        iconCls: 'icon-delete',
+                                        text: 'Delete',
+                                        disabled: true,
+                                        itemId: 'delete',
+                                        scope: this,
+                                        handler: this.onDeleteClick,
+                                        disabled: true
+                                    }
+                                ]
+                            }
+                        ],
+                        store: store,
+                        selModel: Ext.create("Ext.selection.RowModel", {
+                                selType: "rowmodel",
+                                listeners: {
+                                    selectionchange: {
+                                        fn: function (selModel, selections) {
+                                            this.onSelectionChange(selModel, selections)
+                                        },
+                                        scope: this
+                                    }
+                                }
+                            })
+                    });
+
+                this.callParent();
+                //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                    fn: function (selModel, selections) {
+                        if (typeof selections === 'object' && selections.length === 1) {
+                            this.setSource(selections[0]);
+                        } else {
+                            this.setSource(null);
+                        }
+                    },
+                    scope: this
+                });
+
+                App.util.Adapter.publish('App.metadata.association.Grid.init', this);
+            },
+
+            setSource: function (record) {
+                this.store.loadData(record.data);
+            },
+
+            // Add button was clicked on the grid toolbar.
+            onAddClick: function () {
+                this.editing.cancelEdit();
+
+                // Create a model instance
+                var r = new this.model/* Ext.create('Employee', {
+                name: 'New Guy',
+                email: 'new@sencha-test.com',
+                start: Ext.Date.clearTime(new Date()),
+                salary: 50000,
+                active: true
+            })*/;
+
+                this.store.insert(0, r);
+                this.editing.startEdit(0, 0);
+            },
+
+            // Delete button was clicked.
+            onDeleteClick: function () {
+                this.editing.cancelEdit();
+
+                var view = this.getView();
+                var sm = view.getSelectionModel();
+                var selection = sm.getSelection();
+
+                var index;
+                for (var i = 0; i < selection.length; i++) {
+                    var record = selection[i];
+                    index = Math.min(index || record.index, record.index);
+                    this.store.remove(selection[i]);
+                }
+
+                var count = this.store.getCount();
+                if (!!index && count > 0) {
+                    sm.select(Math.min(index, count - 1));
+                }
+            },
+
+            // Reset button was clicked.
+            onResetClick: function () {
+                this.form.loadRecord(this.selected[0]);
+            },
+
+            onSelectionChange: function (selModel, selections) {
+                //this.down('#delete').setDisabled(selections.length === 0);
+                App.util.Adapter.publish('App.metadata.association.Grid.selectionchange', selModel, selections);
+            }
+        };
+    });
+</script>

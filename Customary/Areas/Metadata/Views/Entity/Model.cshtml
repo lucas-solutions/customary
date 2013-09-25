@@ -6,12 +6,34 @@
 <script type="text/javascript">
     Ext.define('App.metadata.entity.Model', {
         extend: 'Ext.data.Model',
+        requires: [
+            'App.metadata.association.Model',
+            'App.metadata.property.Model',
+            'App.util.Adapter'
+        ],
         fields: [
             { name: 'id' },
             { name: 'name' },
             { name: 'namespace' },
             { name: 'title' },
+            {
+                name: 'titleText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.util.Adapter.text('title', value, record);
+                }
+            },
+            //{ name: 'dep', type: 'auto' },
+            //{ name: 'dep_id', type: 'int', mapping: 'dep.dep_id' },
+            //{ name: 'dep_Name', type: 'string', mapping: 'dep.dep_Name' },
             { name: 'summary' },
+            {
+                name: 'summaryText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.util.Adapter.text('summary', value, record);
+                }
+            },
             { name: 'modifiedBy' },
             {
                 name: "modifiedOn",
@@ -19,10 +41,13 @@
                 dateFormat: "Y-m-d\\TH:i:s"
             },
             { name: "modifiedAt" },
-            { name: "modifiedFor" }
+            { name: "modifiedFor" },
+            //{ name: 'members' },
+            //{ name: 'associations' }
         ],
-        associations: [
-            { type: 'hasMany', model: 'App.metadata.property.Model', name: 'members' }
+        hasMany: [
+            { model: 'App.metadata.property.Model', name: 'members' },
+            { model: 'App.metadata.association.Model', name: 'associations' }
         ],
         validations: [
             {type: 'presence',  field: 'name'},

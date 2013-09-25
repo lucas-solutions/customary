@@ -4,107 +4,15 @@
 @using Custom.Presentation
 @using Ext = Custom.Presentation.Sencha.Ext
 <script type="text/javascript">
-    Ext.define('App.metadata.properyt.Grid', function () {
-
-        var columns = [
-            {
-                /*editor: {
-                    // defaults to textfield if no xtype is supplied
-                    allowBlank: true
-                },*/
-                sortable: false,
-                width: 50,
-                xtype: "rownumberer",
-            },
-            {
-                editor: {
-                    allowBlank: true
-                    //vtype: 'email'
-                },
-                dataIndex: "Name",
-                fixed: false,
-                flex: 1,
-                text: "Name",
-                width: 80
-            },
-            {
-                editor: {
-                    allowBlank: true
-                },
-                dataIndex: "Namespace",
-                fixed: false,
-                flex: 1,
-                text: "Namespace",
-                width: 120
-            },
-            {
-                editor: {
-                    allowBlank: true
-                },
-                dataIndex: "Title",
-                fixed: false,
-                flex: 1,
-                text: "Title",
-                width: 120
-            },
-            {
-                editor: {
-                    allowBlank: true
-                },
-                dataIndex: "Summary",
-                fixed: false,
-                flex: 3,
-                text: "Summary",
-                width: 120
-            }/*,
-            {
-                dataindex: "modifiedon",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "modified on",
-                width: 80,
-                xtype: "datecolumn"
-            },
-            {
-                dataindex: "modifiedby",
-                fixed: false,
-                flex: 1,
-                text: "modified by",
-                width: 80
-            },
-            {
-                dataindex: "createdon",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "created on",
-                width: 80,
-                xtype: "datecolumn"
-            },
-            {
-                dataindex: "createdby",
-                fixed: false,
-                flex: 1,
-                format: "h:i:s",
-                text: "create by",
-                width: 80
-            }*/
-        ];
+    Ext.define('App.metadata.property.Grid', function () {
 
         return {
             extend: 'Ext.grid.Panel',
             requires: [
                 'Ext.form.field.Text',
+                'Ext.grid.plugin.RowEditing',
                 'Ext.toolbar.TextItem'
             ],
-
-            edit: null,
-            form: null,
-
-            columns: {
-                items: columns
-            },
 
             /**
              * Called by Ext when instantiating
@@ -112,94 +20,60 @@
              */
             initComponent: function (config) {
 
-                var me = this;
-                var scope = this.initialConfig.scope || this;
-                var path = this.initialConfig.path;
-                /*var model = Ext.create('App.metadata.entity.Model', {
-                });
-                var store = Ext.create('App.metadata.entity.Store', {
-                });*/
-
-                me.edit = Ext.create('Ext.window.Window', {
-                    //xtype: "window",
-                    hideMode: 'display',
-                    hidden: false,
-                    shadow: false,
-                    layout: "fit",
-                    closable: true,
-                    title: "Edit",
-                    width: 300,
-                    //items: [this.form],
-                    plugins: [
-                        /*Ext.create('Ext.ux.MouseDistanceSensor', {
-                            threshold: 25,
-                            opacity: true,
-                            minOpacity: 0.3,
-                            maxOpacity: 1.0,
-                            getSensorEls: function () {
-                                return Ext.get('header');
-                            },
-                            getConstrainEls: function () {
-                                return Ext.get('header');
-                            },
-                            listeners: {
-                                far: {
-                                    fn: function (item) {
-                                        Ext.get('toolbar').hide();
-                                    }
-                                },
-                                near: {
-                                    fn: near
-                                }
-                            }
-                        })*/
-                    ],
-                    listeners: {
-                        // Fires if the user clicks on the windows's close button, but before the close event is fired.
-                        beforeclose: {
-                            fn: function (window) {
-                                if (!this.form.getForm().isDirty()) {
-                                    this.onClose(window);
-                                }
-                                else {
-                                    Ext.Msg.confirm('Changes', 'Changes are not saved. Continue?', function (answer) {
-                                        if (answer == 'yes') {
-                                            //window.hide(null); // null to "unset" animation target
-                                            //window.destroy();
-                                            this.onClose(window);
-                                        }
-                                    });
-                                    return false; // always stop default close if dirty
-                                }
-                                return false; // always stop default close if dirty
-                            },
-                            scope: me
+                var columns = [
+                    {
+                        editor: {
+                            allowBlank: false
+                            //vtype: 'email'
                         },
-                        // Fires to indicate that the window is to be closed, usually because the user has clicked the close button.
-                        close: {
-                            fn: function (window) {
-                                return false;
-                            },
-                            scope: me
-                        }
+                        dataIndex: "name",
+                        fixed: false,
+                        flex: 1,
+                        text: "Name"
+                    },
+                    {
+                        editor: {
+                            allowBlank: false
+                            //vtype: 'email'
+                        },
+                        dataIndex: 'propertyType',
+                        fixed: false,
+                        flex: 1,
+                        text: "Type",
+                    },
+                    {
+                        editor: {
+                            allowBlank: true
+                        },
+                        dataIndex: "titleText",
+                        fixed: false,
+                        flex: 1,
+                        text: "Title"
+                    },
+                    {
+                        editor: {
+                            allowBlank: true
+                        },
+                        dataIndex: "summaryText",
+                        fixed: false,
+                        flex: 3,
+                        text: "Summary"
                     }
-                });
+                ];
 
-                /*me.editing = Ext.create('Ext.grid.plugin.RowEditing', {
+                this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
                     clicksToEdit: 2,
                     clicksToMoveEditor: 1,
                     autoCancel: true
                 });
 
-                me.plugins = [me.editing];*/
-
-                Ext.apply(me,
+                Ext.apply(this,
                     {
                         iconCls: 'icon-grid',
                         layout: 'fit',
                         //frame: true,
-                        //items: [this.edit],
-                        //plugins: [this.editing],
+                        columns: columns,
+                        plugins: [this.editing],
                         dockedItems: [
                             {
                                 dock: 'bottom',
@@ -210,107 +84,51 @@
                                     {
                                         iconCls: 'icon-add',
                                         text: 'Add',
-                                        scope: me,
-                                        handler: me.onAddClick
+                                        scope: this,
+                                        handler: this.onAddClick
                                     },
                                     {
                                         iconCls: 'icon-delete',
                                         text: 'Delete',
                                         disabled: true,
                                         itemId: 'delete',
-                                        scope: me,
-                                        handler: me.onDeleteClick,
-                                        disabled: true
-                                    }, '|',
-                                    {
-                                        iconCls: 'icon-sync',
-                                        text: 'Commit',
-                                        scope: me,
-                                        handler: me.onCommitClick
-                                    },
-                                    {
-                                        iconCls: 'icon-sync',
-                                        text: 'Sync',
-                                        scope: me,
-                                        handler: me.onSyncClick
-                                    },
-                                    , '->',
-                                    {
                                         scope: this,
-                                        xtype: 'textfield'
-                                    },
-                                    {
-                                        iconCls: 'icon-search',
-                                        text: 'Search',
-                                        scope: me,
-                                        handler: this.onSearchClick
-                                    },
+                                        handler: this.onDeleteClick,
+                                        disabled: true
+                                    }
                                 ]
                             }
                         ],
-                        listeners: {
-                            afterrender: {
-                                delay: 1,
-                                fn: function (item) {
-                                    this.edit.show();
-                                    this.edit.el.alignTo(this, 'br-br', [-20, -20]);
-                                    this.onOpenClick();
-                                },
-                                scope: this
-                            },
-                            expand: {
-                                fn: function (view, e, eOpts) {
-                                    this.onFocus();
-                                },
-                                scope: this
-                            },
-                            collapse: {
-                                fn: function (view, e, eOpts) {
-                                    this.onBlur();
-                                },
-                                scope: this
-                            },
-                            blur: {
-                                // this : Ext.Component
-                                // e : Ext.EventObject, blur event.
-                                // eOpts : Object, The options object passed to Ext.util.Observable.addListener.
-                                fn: function (view, e, eOpts) {
-                                    publish('CanEdit', false);
-                                    this.onBlur(e, eOpts);
-                                },
-                                scope: this
-                            },
-                            focus: {
-                                fn: function (view, e, eOpts) {
-                                    publish('CanEdit', true);
-                                    this.onFocus(e, eOpts);
-                                },
-                                scope: this
-                            }
-                        },
-                        //store: store,
-                        selModel: Ext.create("Ext.selection.RowModel",
-                            {
+                        selModel: Ext.create("Ext.selection.RowModel", {
                                 selType: "rowmodel",
-                                /*listeners: {
+                                listeners: {
                                     selectionchange: {
                                         fn: function (selModel, selections) {
                                             this.onSelectionChange(selModel, selections)
                                         },
                                         scope: this
                                     }
-                                }*/
+                                }
                             })
                     });
 
                 this.callParent();
                 //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
 
-                // appy the config
-                //Ext.apply(this, config);
+                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                    fn: function (selModel, selections) {
+                        if (typeof selections === 'object' && selections.length === 1) {
+                            this.setSource(selections[0]);
+                        } else {
+                            this.setSource(null);
+                        }
+                    },
+                    scope: this
+                });
+            },
 
-                // Call parent (required)
-                //App.metadata.entity.Grid.superclass.initComponent.apply(this, arguments);
+            setSource: function (record) {
+                this.reconfigure(record.members());
             },
 
             // Add button was clicked on the grid toolbar.
@@ -328,37 +146,6 @@
 
                 this.store.insert(0, r);
                 this.editing.startEdit(0, 0);
-            },
-
-            onBeforeCloseDialog: function () {
-                //if (this.form.getForm().isDirty()) {
-                publish('CancelCloseDialog');
-                Ext.Msg.confirm('Changes', 'Changes are not saved. Continue?', function (answer) {
-                    if (answer == 'yes') {
-                        publish('CloseDialog');
-                    }
-                });
-                //}
-            },
-
-            onBlur: function (e, eOpts) {
-                this.title = "Areas (blur)";
-                publish('CanEdit', false);
-                unsubscribe('BeforeCloseDialog', this.onBeforeCloseDialog);
-            },
-
-            // Windows close window was clicked on the edit dialog.
-            onCloseClick: function () {
-                this.edit.hide(this.edit, function () {
-                    this.tools[3].enable();
-                }, this); // null to "unset" animation target
-            },
-
-            onCommitClick: function () {
-                this.store.commitChanges();
-                if (!this.store.isDirty()) {
-                    //this.saveButton.disable();
-                }
             },
 
             // Delete button was clicked.
@@ -382,42 +169,14 @@
                 }
             },
 
-            onFocus: function (e, eOpts) {
-                publish('CanEdit', true);
-                subscribe('BeforeCloseDialog', this.onBeforeCloseDialog);
-            },
-
-            // Open button was clicked on the grid toolbar to open the edit dialog 
-            onOpenClick: function () {
-                this.edit.show(this.edit, function () {
-                    this.tools[3].disable();
-                }, this);
-            },
-
-            // Refresh buton was clicked.
-            onRefreshClick: function () {
-            },
-
             // Reset button was clicked.
             onResetClick: function () {
                 this.form.loadRecord(this.selected[0]);
             },
 
-            onSaveClick: function () {
-            },
-
-            onSyncClick: function () {
-                this.store.sync();
-            },
-
-            onSearchClick: function () {
-            },
-
             onSelectionChange: function (selModel, selections) {
-                this.down('#delete').setDisabled(selections.length === 0);
-                var form = this.form.getForm();
-                form.reset();
-                this.form.setActiveRecord(selections[0]);
+                //this.down('#delete').setDisabled(selections.length === 0);
+                App.util.Adapter.publish('App.metadata.property.Grid.selectionchange', selModel, selections);
             }
         };
     });

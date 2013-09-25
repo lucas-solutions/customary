@@ -6,6 +6,19 @@
 <script type="text/javascript">
     Ext.define('App.metadata.entity.Grid', function () {
 
+        function convertText(text) {
+            switch (typeof text) {
+                case 'string':
+                    return text;
+
+                case 'object':
+                    return text.en;
+
+                default:
+                    return text;
+            }
+        };
+
         var columns = [
             {
                 /*editor: {
@@ -25,7 +38,6 @@
                 fixed: false,
                 flex: 1,
                 text: "Name",
-                width: 80
             },
             {
                 editor: {
@@ -35,27 +47,25 @@
                 fixed: false,
                 flex: 1,
                 text: "Namespace",
-                width: 120
             },
             {
                 editor: {
                     allowBlank: true
                 },
-                dataIndex: "title",
+                dataIndex: "titleText",
                 fixed: false,
                 flex: 1,
                 text: "Title",
-                width: 120
+                //renderer: convertText
             },
             {
                 editor: {
                     allowBlank: true
                 },
-                dataIndex: "summary",
+                dataIndex: "summaryText",
                 fixed: false,
                 flex: 3,
-                text: "Summary",
-                width: 120
+                text: "Summary"
             }
         ];
 
@@ -124,10 +134,10 @@
             extend: 'Ext.grid.Panel',
             //alias: 'widget.entityGrid',
             requires: [
-                'Ext.form.field.Text',
-                'Ext.toolbar.TextItem',
+                'App.metadata.entity.Model',
                 'App.util.Adapter',
-                'App.metadata.entity.Model'
+                'Ext.form.field.Text',
+                'Ext.toolbar.TextItem'
             ],
 
             columns: {
@@ -140,38 +150,12 @@
              */
             initComponent: function (config) {
 
-                var scope = this.initialConfig.scope || this;
-
                 this.editing = Ext.create('Ext.grid.plugin.RowEditing', {
                     clicksToEdit: 2,
                     clicksToMoveEditor: 1,
                     autoCancel: true
                 });
-
-                var convertText = function (text) {
-                    switch (typeof text) {
-                        case 'string':
-                            return text;
-
-                        case 'object':
-                            return text.en;
-
-                        default:
-                            return text;
-                    }
-                };
-
-                Ext.define('App.metadata.entity.grid.store.Model', {
-                    extend: 'Ext.data.Model',
-                    fields: [
-                        { name: 'id' },
-                        { name: 'name' },
-                        { name: 'namespace' },
-                        { name: 'title', convert: convertText },
-                        { name: 'summary', convert: convertText }
-                    ]
-                });
-
+                
                 var store = new Ext.data.Store({
                     // destroy the store if the grid is destroyed
                     autoDestroy: true,
@@ -180,7 +164,7 @@
                     autoSync: false,
                     batchActions: true,
                     //buffered: true,
-                    model: 'App.metadata.entity.grid.store.Model',
+                    model: 'App.metadata.entity.Model',
                     proxy: proxy,
                     pageSize: 100,
                     listeners: {
@@ -292,8 +276,8 @@
             },
 
             onSelectionChange: function (selModel, selections) {
-                App.util.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
                 //this.down('#delete').setDisabled(selections.length === 0);
+                App.util.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
             },
 
             onSyncClick: function () {
