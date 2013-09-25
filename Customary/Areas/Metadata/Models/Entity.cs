@@ -9,7 +9,7 @@ namespace Custom.Areas.Metadata.Models
     using Custom.Presentation;
     using Ext = Custom.Presentation.Sencha.Ext;
 
-    public class Entity
+    public sealed class Entity
     {
         public static implicit operator Entity(EntityDescriptor descriptor)
         {
@@ -46,16 +46,23 @@ namespace Custom.Areas.Metadata.Models
             return entity.Store;
         }
 
+        public static implicit operator Raven.Json.Linq.RavenJObject(Entity entity)
+        {
+            return entity.JObject;
+        }
+
         private readonly EntityDescriptor _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
         private Ext.data.proxy.Proxy _proxy;
         private Ext.data.Store _store;
+        private Raven.Json.Linq.RavenJObject _jo;
 
         public Entity()
             : this(new EntityDescriptor())
         {
+            var data = new Newtonsoft.Json.Linq.JObject();
         }
 
         public Entity(EntityDescriptor descriptor)
@@ -91,6 +98,11 @@ namespace Custom.Areas.Metadata.Models
         public Ext.data.Store Store
         {
             get { return _store ?? (_store = _descriptor.ToStore()); }
+        }
+
+        public Raven.Json.Linq.RavenJObject JObject
+        {
+            get { return _jo ?? (_jo = _descriptor.ToJObject()); }
         }
 
         public enum Handlers

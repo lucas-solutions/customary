@@ -155,7 +155,9 @@
             },
 
             setSource: function (record) {
-                this.store.loadData(record.data);
+                if (typeof (record.associations) === 'function') {
+                    this.reconfigure(record.associations());
+                }
             },
 
             // Add button was clicked on the grid toolbar.

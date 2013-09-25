@@ -11,6 +11,7 @@ namespace Custom.Controllers
     using Custom.Models;
     using Custom.Presentation;
     using Custom.Results;
+    using Raven.Json.Linq;
     
     [Diagnostics(Category="Controller", Instance="Custom")]
     public abstract class CustomController : Controller
@@ -175,6 +176,45 @@ namespace Custom.Controllers
                 };
             }
             return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
+        }
+
+        /// <summary>
+        /// Fail
+        /// </summary>
+        /// <returns></returns>
+        protected virtual RavenResult Raven()
+        {
+            return Raven(false, null, null);
+        }
+
+        /// <summary>
+        /// Success
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected virtual RavenResult Raven(RavenJToken data)
+        {
+            return Raven(true, null, data);
+        }
+
+        /// <summary>
+        /// Fail
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        protected virtual RavenResult Raven(string message)
+        {
+            return Raven(false, message, null);
+        }
+
+        protected virtual RavenResult Raven(bool success, string message, RavenJToken data)
+        {
+            return new RavenResult
+            {
+                Success = success,
+                Message = message,
+                Data = data,
+            };
         }
 
         protected virtual ScriptFunction.Builder ScriptFunction()

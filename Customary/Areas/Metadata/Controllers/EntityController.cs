@@ -14,6 +14,7 @@ namespace Custom.Areas.Metadata.Controllers
     using Custom.Presentation;
     using Custom.Presentation.Sencha.Ext.data;
     using Ext = Custom.Presentation.Sencha.Ext;
+    using Raven.Json.Linq;
 
     public class EntityController : Custom.Controllers.CustomController
     {
@@ -210,12 +211,21 @@ namespace Custom.Areas.Metadata.Controllers
             if (sort != null)
                 source = source.Sort(sort);
 
-            return new ResultObject
+            var array = source.Select(o => o.ToJObject()).ToArray();
+
+            var data = new RavenJArray();
+
+            foreach (var item in array)
+                data.Add(item);
+
+            return Raven(data);
+
+            /*return new ResultObject
             {
                 Success = true,
                 Data = source,
                 Total = EntityRepository.Current.Count
-            };
+            };*/
         }
 
         //

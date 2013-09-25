@@ -128,7 +128,9 @@
             },
 
             setSource: function (record) {
-                this.reconfigure(record.members());
+                if (typeof (record.members) === 'function') {
+                    this.reconfigure(record.members());
+                }
             },
 
             // Add button was clicked on the grid toolbar.
