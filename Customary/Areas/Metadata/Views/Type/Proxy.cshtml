@@ -4,37 +4,18 @@
 @using Custom.Presentation
 @using Ext = Custom.Presentation.Sencha.Ext
 <script type="text/javascript">
-    Ext.define('App.metadata.entity.Proxy', function () {
-
-        var writer = Ext.create('Ext.data.writer.Json', {
-            root: 'data',
-            allowSingle: false, // force data to be array
-            //dateFormat: "",
-            writeAllFields: false,
-            writeRecordId: true,
-            getRecordData: function (record) {
-                return {
-                    'id': record.data.id,
-                    'name': record.data.name,
-                    'namespace': record.data.namespace,
-                    'title': record.data.title,
-                    'summary': record.data.summary,
-                    'culture': record.data.culture
-                };
-            }
-        });
-
+    Ext.define('App.metadata.type.Proxy', function () {
         return {
             extend: 'Ext.data.proxy.Ajax',
 
             // Use for ajax proxy, since all the create, update and detroy requests will be all POST
             // and for jsonp the api is the same, but the method is GET
-            type: 'ajax', // rest, jsonp or ajax. 
+            //type: 'ajax', // rest, jsonp or ajax. 
             api: {
-                create: '@Url.Absolute("/Metadata/Entity/Create")',
-                read: '@Url.Absolute("/Metadata/Entity/Read")',
-                update: '@Url.Absolute("/Metadata/Entity/Update")',
-                destroy: '@Url.Absolute("/Metadata/Entity/Destroy")'
+                create: '@Url.Absolute("/Metadata/Type/Create")',
+                read: '@Url.Absolute("/Metadata/Type/Read")',
+                update: '@Url.Absolute("/Metadata/Type/Update")',
+                destroy: '@Url.Absolute("/Metadata/Type/Destroy")'
             },
             //url: path,
             headers: {
@@ -53,7 +34,6 @@
             reader: {
                 type: "json",
                 root: "data",
-                //dateFormat: "",
                 totalProperty: 'total',
                 successProperty: 'success',
                 messageProperty: 'message'

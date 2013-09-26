@@ -229,6 +229,7 @@
     <Compile Include="Areas\Metadata\Controllers\MemberController.cs" />
     <Compile Include="Areas\Metadata\Controllers\PersistenceController.cs" />
     <Compile Include="Areas\Metadata\Controllers\PropertyController.cs" />
+    <Compile Include="Areas\Metadata\Controllers\TypeController.cs" />
     <Compile Include="Areas\Metadata\Controllers\ValidationController.cs" />
     <Compile Include="Areas\Metadata\Models\Association.cs" />
     <Compile Include="Areas\Metadata\Models\AssociationExtensions.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Areas\Metadata\Models\MemberExtensions.cs" />
     <Compile Include="Areas\Metadata\Models\Property.cs" />
     <Compile Include="Areas\Metadata\Models\PropertyExtensions.cs" />
+    <Compile Include="Areas\Metadata\Models\TypeModel.cs" />
     <Compile Include="Areas\Metadata\Models\Validation.cs" />
     <Compile Include="Areas\Metadata\Models\ValidationExtensions.cs" />
     <Compile Include="Areas\Navigation\Controllers\RouteController.cs" />
@@ -253,8 +255,9 @@
     <Compile Include="Areas\Globalization\GlobalizationAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\Models\Entity.cs" />
     <Compile Include="Binders\SortBinder.cs" />
-    <Compile Include="Controllers\UtilController.cs" />
+    <Compile Include="Controllers\CoreController.cs" />
     <Compile Include="Extensions\QuariableExtensions.cs" />
+    <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Models\ResultObject.cs" />
     <Compile Include="Models\Page.cs" />
@@ -706,6 +709,7 @@
     <Content Include="ExtTest.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Ext\ux\form\SearchField.js" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Host.cshtml" />
@@ -753,6 +757,10 @@
     <Content Include="Areas\Metadata\Views\Association\Form.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Grid.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Model.cshtml" />
+    <Content Include="Areas\Metadata\Views\Type\Field.cshtml" />
+    <Content Include="Areas\Metadata\Views\Type\Store.cshtml" />
+    <Content Include="Areas\Metadata\Views\Type\Proxy.cshtml" />
+    <Content Include="Areas\Metadata\Views\Type\Model.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3846,7 +3854,8 @@
     <Content Include="Views\Test\Logger.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Connection.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Model.cshtml" />
-    <Content Include="Views\Util\Adapter.cshtml" />
+    <Content Include="Views\Core\Adapter.cshtml" />
+    <Content Include="Views\Core\Text.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />

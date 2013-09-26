@@ -135,7 +135,7 @@
             //alias: 'widget.entityGrid',
             requires: [
                 'App.metadata.entity.Model',
-                'App.util.Adapter',
+                'App.core.Adapter',
                 'Ext.form.field.Text',
                 'Ext.toolbar.TextItem'
             ],
@@ -256,32 +256,32 @@
 
                 //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
 
-                App.util.Adapter.publish('App.metadata.entity.Grid.init', this);
+                App.core.Adapter.publish('App.metadata.entity.Grid.init', this);
             },
 
             onAddClick: function () {
-                App.util.Adapter.publish('App.metadata.entity.Grid.add');
+                App.core.Adapter.publish('App.metadata.entity.Grid.add');
             },
 
             onDeleteClick: function () {
-                App.util.Adapter.publish('App.metadata.entity.Grid.delete');
+                App.core.Adapter.publish('App.metadata.entity.Grid.delete');
             },
 
             onCommitClick: function () {
-                App.util.Adapter.publish('App.metadata.entity.Grid.commit');
+                App.core.Adapter.publish('App.metadata.entity.Grid.commit');
             },
 
             onSearchClick: function () {
-                App.util.Adapter.publish('App.metadata.entity.Grid.search');
+                App.core.Adapter.publish('App.metadata.entity.Grid.search');
             },
 
             onSelectionChange: function (selModel, selections) {
                 //this.down('#delete').setDisabled(selections.length === 0);
-                App.util.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
+                App.core.Adapter.publish('App.metadata.entity.Grid.selectionchange', selModel, selections);
             },
 
             onSyncClick: function () {
-                App.util.Adapter.publish('App.metadata.entity.Grid.sync');
+                App.core.Adapter.publish('App.metadata.entity.Grid.sync');
             }
         };
     });

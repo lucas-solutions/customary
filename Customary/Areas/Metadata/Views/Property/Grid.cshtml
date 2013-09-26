@@ -115,7 +115,7 @@
                 this.callParent();
                 //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
 
-                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                App.core.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
                     fn: function (selModel, selections) {
                         if (typeof selections === 'object' && selections.length === 1) {
                             this.setSource(selections[0]);
@@ -178,7 +178,7 @@
 
             onSelectionChange: function (selModel, selections) {
                 //this.down('#delete').setDisabled(selections.length === 0);
-                App.util.Adapter.publish('App.metadata.property.Grid.selectionchange', selModel, selections);
+                App.core.Adapter.publish('App.metadata.property.Grid.selectionchange', selModel, selections);
             }
         };
     });

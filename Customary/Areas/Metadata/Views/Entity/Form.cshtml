@@ -150,7 +150,7 @@
 
             requires: [
                 'Ext.form.field.Text',
-                'App.util.Adapter',
+                'App.core.Adapter',
                 'App.metadata.entity.Model'
             ],
 
@@ -191,19 +191,19 @@
 
                 this.callParent();
 
-                App.util.Adapter.subscribe('App.metadata.entity.Grid.init', {
+                App.core.Adapter.subscribe('App.metadata.entity.Grid.init', {
                     fn: function (grid) {
                         //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
                     },
                     scope: this
                 });
 
-                App.util.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                App.core.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
                     fn: this.onSelectionChange,
                     scope: this
                 });
 
-                App.util.Adapter.publish('App.metadata.entity.Form.init', this);
+                App.core.Adapter.publish('App.metadata.entity.Form.init', this);
             },
 
             onUpdate: function () {

@@ -1,0 +1,20 @@
+﻿@model Custom.Presentation.Sencha.Ext.data.Model
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.core.Text', {
+        extend: 'Ext.data.Model',
+        fields: [
+            { name: 'id' },
+            {
+                name: 'name',
+                convert: function (value, record) {
+                    return record.get('id');
+                }
+            },
+            { name: 'value' }
+        ]
+    });
+</script>

@@ -25,6 +25,11 @@
                         allowBlank: false,
                         fieldLabel: "Title",
                         name: "titleText"
+                    },
+                    {
+                        fieldLabel: "Multiple",
+                        xtype: 'checkbox',
+                        name: "multiple"
                     }
                 ]
             },
@@ -36,18 +41,17 @@
                 defaultType: 'textfield',
                 layout: 'anchor',
                 items: [
-                    {
-                        allowBlank: false,
+                    Ext.create('App.metadata.type.Field', {
                         fieldLabel: "Type",
                         name: "propertyType"
-                    },
+                    }),
                     {
-                        allowBlank: false,
-                        fieldLabel: "Type",
-                        name: "propertyType"
+                        fieldLabel: "Required",
+                        xtype: 'checkbox',
+                        name: "required"
                     }
                 ]
-            },
+            }/*,
             {
                 xtype: 'fieldset',
                 columnWidth: 1,
@@ -63,7 +67,7 @@
                         xtype: "textarea",
                     }
                 ]
-            }
+            }*/
         ];
 
         return {
@@ -110,19 +114,19 @@
 
                 this.callParent();
 
-                App.util.Adapter.subscribe('App.metadata.property.Grid.init', {
+                App.core.Adapter.subscribe('App.metadata.property.Grid.init', {
                     fn: function (grid) {
                         //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
                     },
                     scope: this
                 });
 
-                App.util.Adapter.subscribe('App.metadata.property.Grid.selectionchange', {
+                App.core.Adapter.subscribe('App.metadata.property.Grid.selectionchange', {
                     fn: this.onSelectionChange,
                     scope: this
                 });
 
-                App.util.Adapter.publish('App.metadata.property.Form.init', this);
+                App.core.Adapter.publish('App.metadata.property.Form.init', this);
             },
 
             onUpdate: function () {

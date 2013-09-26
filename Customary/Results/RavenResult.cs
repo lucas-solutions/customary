@@ -47,6 +47,7 @@ namespace Custom.Results
 
             using (var jsonWriter = new JsonTextWriter(response.Output))
             {
+                jsonWriter.Formatting = Formatting.Indented;
                 result.WriteTo(jsonWriter);
             }
         }

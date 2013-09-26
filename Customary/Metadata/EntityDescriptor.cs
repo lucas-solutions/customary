@@ -18,6 +18,11 @@ namespace Custom.Metadata
         public string Label { get; set; }
 
         /// <summary>
+        /// "Belongs to" type name
+        /// </summary>
+        public string Principal { get; set; }
+
+        /// <summary>
         /// Is masterdata? If not it is transactional data.
         /// </summary>
         public bool Masterdata { get; set; }

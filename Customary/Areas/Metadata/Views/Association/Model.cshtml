@@ -6,7 +6,7 @@
 <script type="text/javascript">
     Ext.define('App.metadata.association.Model', {
         extend: 'Ext.data.Model',
-        requires: ['App.util.Adapter'],
+        requires: ['App.core.Adapter'],
         belongsTo: 'App.metadata.entity.Model',
         fields: [
             { name: 'name' },
@@ -16,7 +16,7 @@
                 name: 'titleText',
                 persist: false,
                 convert: function (value, record) {
-                    return App.util.Adapter.text('title', value, record);
+                    return App.core.Adapter.text('title', value, record);
                 }
             },
             { name: 'summary' },
@@ -24,7 +24,7 @@
                 name: 'summaryText',
                 persist: false,
                 convert: function (value, record) {
-                    return App.util.Adapter.text('summary', value, record);
+                    return App.core.Adapter.text('summary', value, record);
                 }
             },
         ],

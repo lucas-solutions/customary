@@ -211,12 +211,7 @@ namespace Custom.Areas.Metadata.Controllers
             if (sort != null)
                 source = source.Sort(sort);
 
-            var array = source.Select(o => o.ToJObject()).ToArray();
-
-            var data = new RavenJArray();
-
-            foreach (var item in array)
-                data.Add(item);
+            var data = source.Select(o => o.ToJObject()).ToRavenJArray();
 
             return Raven(data);
 

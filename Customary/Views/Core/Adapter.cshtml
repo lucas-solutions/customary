@@ -1,5 +1,5 @@
 ﻿<script type="text/javascript">
-    Ext.define('App.util.Adapter', function () {
+    Ext.define('App.core.Adapter', function () {
 
         // copy properties from source to target using mapping
         function copy(source, target, mapping) {
@@ -157,7 +157,7 @@
                 if (typeof value !== 'string' || value.length === 0) {
                     var text = record.get(name);
                     if (typeof text === 'object') {
-                        var culture = App.util.Adapter.culture;
+                        var culture = App.core.Adapter.culture;
                         value = text[culture];
                     }
                 }

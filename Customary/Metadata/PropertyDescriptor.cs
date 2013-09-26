@@ -15,16 +15,19 @@ namespace Custom.Metadata
         public string Default { get; set; }
 
         /// <summary>
+        /// Value required. If Multiple, one is required.
+        /// </summary>
+        public bool Required { get; set; }
+
+        /// <summary>
+        /// Specifies that value is a collection of PropertyType
+        /// </summary>
+        public bool Multiple { get; set; }
+
+        /// <summary>
         /// Property type: primitive, enum, unit, text, complex or entity
         /// </summary>
         public string PropertyType { get; set; }
-
-        public string Dependant { get; set; }
-
-        /// <summary>
-        /// Belongs to
-        /// </summary>
-        public string Principal { get; set; }
 
         /// <summary>
         /// Column mapping and transformation for a given table name

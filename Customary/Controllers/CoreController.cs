@@ -6,9 +6,14 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    public class UtilController : CustomController
+    public class CoreController : CustomController
     {
         public ActionResult Adapter()
+        {
+            return ScriptView();
+        }
+
+        public ActionResult Text()
         {
             return ScriptView();
         }

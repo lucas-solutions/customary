@@ -9,7 +9,7 @@
         requires: [
             'App.metadata.association.Model',
             'App.metadata.property.Model',
-            'App.util.Adapter'
+            'App.core.Adapter'
         ],
         fields: [
             { name: 'id' },
@@ -20,7 +20,7 @@
                 name: 'titleText',
                 persist: false,
                 convert: function (value, record) {
-                    return App.util.Adapter.text('title', value, record);
+                    return App.core.Adapter.text('title', value, record);
                 }
             },
             //{ name: 'dep', type: 'auto' },
@@ -31,7 +31,7 @@
                 name: 'summaryText',
                 persist: false,
                 convert: function (value, record) {
-                    return App.util.Adapter.text('summary', value, record);
+                    return App.core.Adapter.text('summary', value, record);
                 }
             },
             { name: 'modifiedBy' },

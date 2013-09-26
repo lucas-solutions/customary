@@ -108,19 +108,19 @@
 
                 this.callParent();
 
-                App.util.Adapter.subscribe('App.association.property.Grid.init', {
+                App.core.Adapter.subscribe('App.association.property.Grid.init', {
                     fn: function (grid) {
                         //grid.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
                     },
                     scope: this
                 });
 
-                App.util.Adapter.subscribe('App.metadata.association.Grid.selectionchange', {
+                App.core.Adapter.subscribe('App.metadata.association.Grid.selectionchange', {
                     fn: this.onSelectionChange,
                     scope: this
                 });
 
-                App.util.Adapter.publish('App.metadata.association.Form.init', this);
+                App.core.Adapter.publish('App.metadata.association.Form.init', this);
             },
 
             onUpdate: function () {

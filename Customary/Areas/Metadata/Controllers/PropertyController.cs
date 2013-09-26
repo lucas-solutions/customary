@@ -265,5 +265,13 @@ namespace Custom.Areas.Metadata.Controllers
         {
             return ScriptView();
         }
+
+        //
+        // GET: /Metadata/Property/TypeField
+
+        public ActionResult TypeField()
+        {
+            return ScriptView();
+        }
     }
 }
