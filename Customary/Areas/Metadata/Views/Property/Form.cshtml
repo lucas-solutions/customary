@@ -6,111 +6,92 @@
 <script type="text/javascript">
     Ext.define('App.metadata.property.Form', function () {
 
-        var fields = [
-            {
-                xtype: 'fieldset',
-                columnWidth: 0.5,
-                border: false,
-                collapsible: false,
-                defaultType: 'textfield',
-                defaults: { anchor: '100%' },
-                layout: 'anchor',
-                items: [
-                    {
-                        allowBlank: false,
-                        fieldLabel: "Name",
-                        name: "name"
-                    },
-                    {
-                        allowBlank: false,
-                        fieldLabel: "Title",
-                        name: "titleText"
-                    },
-                    {
-                        fieldLabel: "Multiple",
-                        xtype: 'checkbox',
-                        name: "multiple"
-                    }
-                ]
-            },
-            {
-                xtype: 'fieldset',
-                columnWidth: 0.5,
-                border: false,
-                collapsible: false,
-                defaultType: 'textfield',
-                layout: 'anchor',
-                items: [
-                    Ext.create('App.metadata.type.Field', {
-                        fieldLabel: "Type",
-                        name: "propertyType"
-                    }),
-                    {
-                        fieldLabel: "Required",
-                        xtype: 'checkbox',
-                        name: "required"
-                    }
-                ]
-            }/*,
-            {
-                xtype: 'fieldset',
-                columnWidth: 1,
-                border: false,
-                collapsible: false,
-                defaultType: 'textfield',
-                defaults: { anchor: '100%' },
-                layout: 'anchor',
-                items: [
-                    {
-                        fieldLabel: "Summary",
-                        name: "summaryText",
-                        xtype: "textarea",
-                    }
-                ]
-            }*/
-        ];
-
         return {
             extend: 'Ext.form.Panel',
-            //alias: 'widget.writerform',
+            //alias: 'widget.propertyform',
 
             requires: ['Ext.form.field.Text'],
 
             initComponent: function () {
-
-                this.updateButton = Ext.create('Ext.Button', {
-                    iconCls: 'icon-save',
-                    text: 'Save',
-                    disabled: true,
-                    scope: this,
-                    handler: this.onUpdate
-                });
-
-                this.cancelButton = Ext.create('Ext.Button', {
-                    iconCls: 'icon-reset',
-                    text: 'Cancel',
-                    scope: this,
-                    handler: this.onCancel
-                });
 
                 Ext.apply(this,
                     {
                         frame: true,
                         //bodyStyle: 'padding:5px 5px 0',
                         layout: 'column',
-                        defaults: {
-                            bodyPadding: 4
+                        fieldDefaults: {
+                            anchor: '100%',
+                            labelAlign: 'right'
                         },
-                        items: fields,
-                        dockedItems: [
+                        items: [
                             {
-                                xtype: 'toolbar',
-                                dock: 'bottom',
-                                ui: 'footer',
-                                items: ['->', this.updateButton, this.cancelButton]
+                                xtype: 'fieldset',
+                                columnWidth: 0.5,
+                                border: false,
+                                bodyPadding: 0,
+                                collapsible: false,
+                                defaultType: 'textfield',
+                                defaults: { anchor: '100%' },
+                                layout: 'anchor',
+                                items: [
+                                    {
+                                        allowBlank: false,
+                                        fieldLabel: "Name",
+                                        name: "name"
+                                    },
+                                    Ext.create('App.metadata.type.Field', {
+                                        fieldLabel: "Type",
+                                        name: "propertyType"
+                                    }),
+                                    {
+                                        allowBlank: false,
+                                        fieldLabel: "Title",
+                                        name: "titleText"
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'fieldset',
+                                columnWidth: 0.5,
+                                border: false,
+                                collapsible: false,
+                                defaults: { anchor: '100%' },
+                                layout: 'anchor',
+                                vertical: true,
+                                items: [
+                                    {
+                                        xtype: 'checkbox',
+                                        boxLabel: "Required",
+                                        name: "required"
+                                    },
+                                    {
+                                        xtype: 'checkbox',
+                                        boxLabel: "Multiple",
+                                        name: "multiple"
+                                    },
+                                    {
+                                        xtype: 'checkbox',
+                                        boxLabel: "Reference",
+                                        name: "reference"
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'fieldset',
+                                columnWidth: 1,
+                                border: false,
+                                defaults: { anchor: '100%' },
+                                layout: 'anchor',
+                                items: [
+                                    {
+                                        fieldLabel: "Summary",
+                                        name: "summaryText",
+                                        xtype: "textarea"
+                                    }
+                                ]
                             }
-                        ]
-                    });
+                            ]
+                        });
 
                 this.callParent();
 
@@ -126,10 +107,20 @@
                     scope: this
                 });
 
+                App.core.Adapter.subscribe('App.metadata.entity.Panel.commit', {
+                    fn: this.onCommit,
+                    scope: this
+                });
+
+                App.core.Adapter.subscribe('App.metadata.entity.Panel.rollback', {
+                    fn: this.onRollback,
+                    scope: this
+                });
+
                 App.core.Adapter.publish('App.metadata.property.Form.init', this);
             },
 
-            onUpdate: function () {
+            onCommit: function () {
                 var form = this.getForm();
 
                 if (form.isDirty() && form.isValid() && !!this.record) {
@@ -137,9 +128,9 @@
                 }
             },
 
-            onCancel: function () {
+            onRollback: function () {
                 this.getForm().reset();
-                this.getForm().loadRecord(this.activeRecord);
+                this.getForm().loadRecord(this.record);
             },
 
             onSelectionChange: function (selModel, selections) {

@@ -5,8 +5,29 @@
 <script type="text/javascript">
     Ext.define('App.metadata.entity.Panel', function () {
 
+        var frameStyle = 'background-color:#dfe8f5;';
+
+        // The data store containing the list of states
+        var states = Ext.create('Ext.data.Store', {
+            fields: ['value', 'display'],
+            data: [
+                { "value": 1, "display": "New" },
+                { "value": 2, "display": "Typo" },
+                { "value": 3, "display": "Minor" },
+                { "value": 4, "display": "Mayor" },
+                { "value": 5, "display": "Revision" }
+                //...
+            ]
+        });
+
+        function updateRecord(form, record) {
+            if (form.isDirty() && form.isValid()) {
+                form.updateRecord(record);
+            }
+        }
+
         return {
-            extend: 'Ext.tab.Panel',
+            extend: 'Ext.panel.Panel',
             requires: [
                 //'App.metadata.association.Grid',
                 //'App.metadata.association.Panel',
@@ -17,67 +38,321 @@
                 //'App.metadata.validation.Panel',
                 'App.core.Adapter'
             ],
-
-            activeTab: 0,      // First tab active by default
+            frame: false,
+            border: false,
+            bodyStyle: frameStyle, // background color like frame
+            layout: 'border',
             initComponent: function () {
 
-                var items = [
-                    Ext.create('App.metadata.entity.Form', {
-                        title: 'General',
-                        //columnWidth: .5, 
-
-                        border: false,
-                        activeRecord: null,
-                        //iconCls: 'icon-user',
-                        frame: false,
-                        defaultType: 'textfield',
-                        bodyPadding: 5,
-
-                        fieldDefaults: {
-                            anchor: '100%',
-                            labelAlign: 'right'
+                this.headerPanel = Ext.create('Ext.form.Panel', {
+                    region: 'north',
+                    xtype: 'form',
+                    frame: false,
+                    bodyStyle: frameStyle, // background color like frame
+                    border: false,
+                    collapsible: false,
+                    defaultType: 'textfield',
+                    layout: 'column',
+                    height: 50,
+                    padding: '0 16 0 12',
+                    bodyPadding: '4',
+                    fieldDefaults: {
+                        anchor: '100%',
+                        labelAlign: 'right'
+                    },
+                    items: [
+                        {
+                            allowBlank: false,
+                            columnWidth: 0.5,
+                            fieldLabel: "Name",
+                            name: "name"
                         },
+                        {
+                            allowBlank: false,
+                            columnWidth: 0.5,
+                            fieldLabel: "Namespace",
+                            name: "namespace"
+                        }
+                    ]
+                });
 
-                        defaultAnchor: "100%"
-                    }),
-                    Ext.create('App.metadata.property.Panel', {
-                        title: 'Properties',
-                        layout: 'border'
-                    }),
-                    Ext.create('App.metadata.association.Panel', {
-                        title: "Associations",
-                        layout: 'border'
-                    }),
-                    {
-                        title: 'Validations',
-                        html: 'Extended field validations'
+                this.changePanel = Ext.create('Ext.panel.Panel', {
+                    region: 'south',
+                    title: 'Change status',
+                    layout: 'column',
+                    frame: true,
+                    fieldDefaults: {
+                        anchor: '100%',
+                        labelAlign: 'right'
                     },
-                    {
-                        title: 'Persistence',
-                        html: 'Storage and mapping parameters'
+                    items: [
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            defaults: { anchor: '100%' },
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Who",
+                                    format: "n/j/Y",
+                                    name: "modifiedBy",
+                                    readOnly: true,
+                                    xtype: "datefield",
+                                },
+                                {
+                                    //cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Why",
+                                    name: "modifiedFor",
+                                    //readOnly: true,
+                                    xtype: "combobox",
+                                    store: states,
+                                    queryMode: 'local',
+                                    displayField: 'display',
+                                    valueField: 'value',
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "When",
+                                    format: "n/j/Y",
+                                    name: "modifiedOn",
+                                    readOnly: true,
+                                    xtype: "datefield",
+                                },
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Where",
+                                    name: "modifiedAt",
+                                    readOnly: true,
+                                    xtype: "textfield",
+                                }
+                            ]
+                        },
+                    ]
+                });
+
+                this.generalPanel = Ext.create('Ext.form.Panel', {
+                    title: "General",
+                    frame: true,
+                    border: false,
+                    layout: 'column',
+                    fieldDefaults: {
+                        anchor: '100%',
+                        labelAlign: 'right'
                     },
-                    {
-                        title: 'Presentation',
-                        html: 'UI parameters'
-                    }
-                ];
+                    bodyPadding: 0,
+                    items: [
+                         {
+                             xtype: 'fieldset',
+                             columnWidth: 0.5,
+                             border: false,
+                             collapsible: false,
+                             defaultType: 'textfield',
+                             layout: 'anchor',
+                             items: [
+                                 {
+                                     allowBlank: false,
+                                     fieldLabel: "Title",
+                                     name: "titleText"
+                                 }
+                             ]
+                         },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Version",
+                                    name: "version",
+                                    readOnly: true,
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 1,
+                            border: false,
+                            defaults: { anchor: '100%' },
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    fieldLabel: "Summary",
+                                    name: "summaryText",
+                                    xtype: "textarea"
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                this.propertyPanel = Ext.create('App.metadata.property.Panel', {
+                    title: 'Properties',
+                    layout: 'border',
+                    frame: false,
+                    border: false
+                });
+
+                this.tabPanel = Ext.create('Ext.tab.Panel', {
+                    region: 'center',
+                    frame: false,
+                    bodyStyle: frameStyle, // background color like frame
+                    border: false,
+                    activeTab: 0,      // First tab active by default
+                    bodyPadding: '4 4 0 0',
+                    items: [
+                        this.generalPanel,
+                        this.propertyPanel,
+                        Ext.create('App.metadata.association.Panel', {
+                            title: "Associations",
+                            layout: 'border'
+                        }),
+                        {
+                            title: 'Validations',
+                            html: 'Extended field validations'
+                        },
+                        {
+                            title: 'Persistence',
+                            html: 'Storage and mapping parameters'
+                        },
+                        {
+                            title: 'Presentation',
+                            html: 'UI parameters'
+                        }
+                    ]
+                });
+
+                this.createButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-add',
+                    text: 'Create',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onCreateClick
+                });
+
+                this.destroyButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-delete',
+                    text: 'Destroy',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onDestroyClick
+                });
+
+                this.updateButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-save',
+                    text: 'Save',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onUpdateClick
+                });
+
+                this.cancelButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-reset',
+                    text: 'Cancel',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onCancelClick
+                });
 
                 Ext.apply(this, {
-                    frame: true,
+                    frame: false,
                     //bodyStyle: 'padding:5px 5px 0',
-
-                    items: items,
+                    items: [
+                        this.headerPanel,
+                        this.tabPanel/*,
+                        this.changePanel*/
+                    ],
                     dockedItems: [
                         {
                             xtype: 'toolbar',
                             dock: 'bottom',
                             ui: 'footer',
-                            items: ['->', this.updateButton, this.cancelButton]
+                            items: [this.createButton, this.destroyButton, '->', this.updateButton, this.cancelButton]
                         }
                     ]
                 });
 
                 this.callParent();
+
+                App.core.Adapter.subscribe('App.metadata.entity.Grid.selectionchange', {
+                    fn: this.onSelectionChange,
+                    scope: this
+                });
+
+                App.core.Adapter.publish('App.metadata.entity.Form.init', this);
+            },
+            loadRecord: function (record) {
+
+                var forms = [
+                    this.headerPanel.getForm(),
+                    this.generalPanel.getForm()
+                ];
+
+                var current = this.record;
+
+                if (typeof current === 'object') {
+                    Ext.each(forms, function (form) {
+                        updateRecord(form, current);
+                    });
+                }
+
+                Ext.each(forms, function (form) {
+                    form.reset();
+                });
+
+                this.record = null;
+
+                if (typeof record === 'object') {
+
+                    this.record = record;
+
+                    Ext.each(forms, function (form) {
+                        form.loadRecord(record);
+                    });
+
+                    this.updateButton.enable();
+
+                } else {
+
+                    this.updateButton.disable();
+
+                }
+            },
+            onUpdateClick: function () {
+                var form = this.getForm();
+
+                /*if (form.isValid()) {
+                    this.fireEvent('create', this, form.getValues());
+                    form.reset();
+                }*/
+            },
+            onCancelClick: function () {
+                this.getForm().reset();
+                this.getForm().loadRecord(this.activeRecord);
+            },
+            onSelectionChange: function (selModel, selections) {
+                if (typeof selections === 'object' && selections.length === 1) {
+                    this.loadRecord(selections[0]);
+                } else {
+                    this.loadRecord(null);
+                }
             }
         };
     });

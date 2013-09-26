@@ -16,20 +16,20 @@
 
                 Ext.apply(this, {
                     items: [
+                        Ext.create('App.metadata.property.Form', {
+                            title: "Edit",
+                            collapsed: true,
+                            header: false,
+                            frame: true,
+                            border: false,
+                            region: 'north',
+                            collapsible: true,
+                            split: true
+                        }),
                         Ext.create('App.metadata.property.Grid', {
                             header: false,
                             region: 'center',
-                            flex: 1,
                             split: true
-                        }),
-                        Ext.create('App.metadata.property.Form', {
-                            title: "Edit",
-                            header: false,
-                            region: 'south',
-                            flex: 1,
-                            collapsible: true,
-                            split: true,
-                            frame: true
                         })
                     ]
                 });

@@ -74,31 +74,6 @@
                         //frame: true,
                         columns: columns,
                         plugins: [this.editing],
-                        dockedItems: [
-                            {
-                                dock: 'bottom',
-                                ui: 'footer',
-                                frame: true,
-                                xtype: 'toolbar',
-                                items: [
-                                    {
-                                        iconCls: 'icon-add',
-                                        text: 'Add',
-                                        scope: this,
-                                        handler: this.onAddClick
-                                    },
-                                    {
-                                        iconCls: 'icon-delete',
-                                        text: 'Delete',
-                                        disabled: true,
-                                        itemId: 'delete',
-                                        scope: this,
-                                        handler: this.onDeleteClick,
-                                        disabled: true
-                                    }
-                                ]
-                            }
-                        ],
                         selModel: Ext.create("Ext.selection.RowModel", {
                                 selType: "rowmodel",
                                 listeners: {
