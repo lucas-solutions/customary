@@ -86,6 +86,14 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
+        // GET: /Metadata/Property/Editor/
+
+        public ActionResult Editor()
+        {
+            return ScriptView();
+        }
+
+        //
         // GET: /Metadata/Property/Delete/5
 
         public ActionResult Delete(int id)
@@ -109,22 +117,6 @@ namespace Custom.Areas.Metadata.Controllers
             {
                 return View();
             }
-        }
-
-        //
-        // GET: /Metadata/Property/Form/
-
-        public ActionResult Form()
-        {
-            return ScriptView();
-        }
-
-        //
-        // GET: /Metadata/Property/Grid/
-
-        public ActionResult Grid()
-        {
-            return ScriptView();
         }
 
         //
@@ -232,14 +224,6 @@ namespace Custom.Areas.Metadata.Controllers
             if (accept.Test(AcceptTypes.Html) || accept == AcceptTypes.Any)
             {
             }*/
-        }
-
-        //
-        // GET: /Metadata/Property/Panel/
-
-        public ActionResult Panel()
-        {
-            return ScriptView();
         }
 
         //

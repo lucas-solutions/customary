@@ -722,7 +722,7 @@
     <Content Include="Areas\Metadata\Views\Web.config" />
     <Content Include="Areas\Metadata\Views\Entity\Model.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Index.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Entity\Editor.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Store.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Form.cshtml" />
@@ -732,7 +732,7 @@
     <Content Include="Areas\Metadata\Views\Enum\Panel.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Store.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Grid.cshtml" />
+    <Content Include="Areas\Metadata\Views\Entity\Picker.cshtml" />
     <Content Include="Areas\Globalization\Views\Web.config" />
     <Content Include="Areas\Navigation\Views\Web.config" />
     <Content Include="Areas\Diagnostics\Views\Web.config" />
@@ -741,7 +741,7 @@
     <Content Include="Areas\Metadata\Views\Property\Grid.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Index.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Model.cshtml" />
-    <Content Include="Areas\Metadata\Views\Property\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Property\Editor.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Store.cshtml" />
     <Content Include="Areas\Metadata\Views\Member\Form.cshtml" />
@@ -752,7 +752,6 @@
     <Content Include="Areas\Metadata\Views\Member\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Member\Store.cshtml" />
     <Content Include="Areas\Metadata\Views\Entity\Copy of Grid.cshtml" />
-    <Content Include="Areas\Metadata\Views\Property\Copy of Grid.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Panel.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Form.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Grid.cshtml" />

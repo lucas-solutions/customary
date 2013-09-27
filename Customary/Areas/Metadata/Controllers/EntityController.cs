@@ -57,17 +57,9 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Form/
+        // GET: /Metadata/Property/Editor/
 
-        public ActionResult Form()
-        {
-            return ScriptView();
-        }
-
-        //
-        // GET: /Metadata/Entity/Grid/
-
-        public ActionResult Grid()
+        public ActionResult Editor()
         {
             return ScriptView();
         }
@@ -180,9 +172,9 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Panel/
+        // GET: /Metadata/Entity/Picker/
 
-        public ActionResult Panel()
+        public ActionResult Picker()
         {
             return ScriptView();
         }
@@ -237,6 +229,14 @@ namespace Custom.Areas.Metadata.Controllers
         public ActionResult Update()
         {
             return Json(null);
+        }
+
+        //
+        // GET: /Metadata/Entity/Viewer/
+
+        public ActionResult Viewer()
+        {
+            return ScriptView();
         }
     }
 }
