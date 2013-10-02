@@ -255,10 +255,18 @@
     <Compile Include="Areas\Globalization\GlobalizationAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\Models\Entity.cs" />
     <Compile Include="Binders\SortBinder.cs" />
+    <Compile Include="Configuration\CustomSesction.cs" />
     <Compile Include="Controllers\CoreController.cs" />
+    <Compile Include="Extensions\DocumentContextExtensions.cs" />
     <Compile Include="Extensions\QuariableExtensions.cs" />
     <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Indexes\MetadaTypeIndexCreationTask.cs" />
+    <Compile Include="Indexes\MetadataTypesByName.cs" />
+    <Compile Include="Metadata\EntityStore.cs" />
+    <Compile Include="Metadata\EntityStoreTypes.cs" />
+    <Compile Include="Models\Annotation.cs" />
+    <Compile Include="Models\RavenJTokenCallbackModel.cs" />
     <Compile Include="Models\ResultObject.cs" />
     <Compile Include="Models\Page.cs" />
     <Compile Include="Areas\Metadata\Controllers\EntityController.cs" />
@@ -565,8 +573,8 @@
     <Compile Include="Presentation\PageResult.cs" />
     <Compile Include="Presentation\PageTheme.cs" />
     <Compile Include="Presentation\PageView.cs" />
-    <Compile Include="Metadata\ColumnMapping.cs" />
-    <Compile Include="Metadata\ComplexDescriptor.cs" />
+    <Compile Include="Metadata\PropertyMapping.cs" />
+    <Compile Include="Metadata\ObjectDescriptor.cs" />
     <Compile Include="Metadata\EntityDescriptor.cs" />
     <Compile Include="Metadata\EnumDescriptor.cs" />
     <Compile Include="Metadata\EventDescriptor.cs" />
@@ -576,7 +584,6 @@
     <Compile Include="Metadata\MethodDescriptor.cs" />
     <Compile Include="Metadata\PrimitiveDescriptor.cs" />
     <Compile Include="Metadata\PropertyDescriptor.cs" />
-    <Compile Include="Metadata\TableMapping.cs" />
     <Compile Include="Metadata\UnitDescriptor.cs" />
     <Compile Include="Results\CustomResult.cs" />
     <Compile Include="Scripts.cs" />
@@ -710,6 +717,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Ext\ux\form\SearchField.js" />
+    <Content Include="Scripts\Ext\ux\form\TriggerTextArea.js" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Host.cshtml" />
@@ -760,6 +768,11 @@
     <Content Include="Areas\Metadata\Views\Type\Store.cshtml" />
     <Content Include="Areas\Metadata\Views\Type\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Type\Model.cshtml" />
+    <Content Include="App_Config\Custom.config" />
+    <Content Include="App_Config\ConnectionStrings.config" />
+    <Content Include="App_Config\AppSettings.config" />
+    <Content Include="App_Config\Log4Net.config" />
+    <Content Include="App_Config\DotNetOpenAuth.config" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3855,6 +3868,10 @@
     <Content Include="Views\Sencha\Ext\data\Model.cshtml" />
     <Content Include="Views\Core\Adapter.cshtml" />
     <Content Include="Views\Core\Text.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\SummaryField.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\TitleField.cshtml" />
+    <Content Include="Views\Core\TextField.cshtml" />
+    <Content Include="Views\Core\TextArea.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />

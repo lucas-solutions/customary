@@ -63,15 +63,14 @@
 
             var proxy = Ext.create('App.metadata.type.Proxy');
 
-            var store = Ext.create('Ext.data.Store', {
+            this.store = Ext.create('Ext.data.Store', {
                 extend: 'Ext.data.Store',
                 model: 'App.metadata.type.Model',
-                proxy: proxy,
+                proxy: Ext.create('App.metadata.type.Proxy'),
                 autoLoad: true
             });
 
             Ext.apply(this, {
-                store: store
             });
 
             this.callParent();

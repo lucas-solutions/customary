@@ -2,12 +2,12 @@
     Type: [
         {
             Name: "Language",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
             Identity: "ID",
             Label: "Title",
             Runtime: "Custom.Globalization.LanguageDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "ID",
                     PropertyType: "Boolean",
@@ -30,12 +30,12 @@
         },
         {
             Name: "Culture",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
             Identity: "ID",
             Label: "Title",
             Runtime: "Custom.Globalization.CultureDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "ID",
                     PropertyType: "Boolean"
@@ -56,12 +56,12 @@
         },
         {
             Name: "Measurement",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
             Identity: "ID",
             Label: "Title",
             Runtime: "Custom.Globalization.MeasurementDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "MeasurementType",
                     PropertyType: "MeasurementTypes"
@@ -78,7 +78,7 @@
         },
         {
             Name: "MeasurementTypes",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Enum",
             Runtime: "Custom.Globalization.MeasurementTypes",
             Members: [
@@ -106,11 +106,11 @@
         },
         {
             Name: "Currency",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
-            Extends: "Measurement",
+            Extends: "Custom.Globalization.Measurement",
             Runtime: "Custom.Globalization.CurrenctDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "Symbol",
                     PropertyType: "String"
@@ -127,11 +127,11 @@
         },
         {
             Name: "Region",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
             Label: "Title",
             Runtime: "Custom.Globalization.RegionDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 'en': "Region",
@@ -140,11 +140,11 @@
         },
         {
             Name: "Country",
-            Namespace: "Globalization",
+            Namespace: "Custom.Globalization",
             MemberType: "Entity",
-            Extends: "Region",
+            Extends: "Custom.Globalization.Region",
             Runtime: "Custom.Globalization.CountryDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "US",
                     Title: {

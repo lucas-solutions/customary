@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Metadata.Controllers
 {
-    public class MemberController : Controller
+    public class MemberController : Custom.Controllers.CustomController
     {
         //
         // GET: /Metadata/Member/
@@ -100,6 +100,22 @@ namespace Custom.Areas.Metadata.Controllers
             {
                 return View();
             }
+        }
+
+        //
+        // GET: /Metadata/Member/SummaryField
+
+        public ActionResult SummaryField()
+        {
+            return ScriptView();
+        }
+
+        //
+        // GET: /Metadata/Member/TitleField
+
+        public ActionResult TitleField()
+        {
+            return ScriptView();
         }
     }
 }

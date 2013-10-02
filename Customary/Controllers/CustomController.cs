@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -20,6 +21,7 @@ namespace Custom.Controllers
         private readonly string _redirectParam;
         private readonly Uri _redirectUri;
         private ControllerLog _log;
+        private RavenJObject _imputRavenJObject;
         private readonly CookieRepository _identification = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromMinutes(30));
         private readonly CookieRepository _customizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true);
         private readonly CookieRepository _globalizations = new CookieRepository(System.Web.HttpContext.Current, TimeSpan.FromDays(30), true, true, true);
@@ -81,6 +83,59 @@ namespace Custom.Controllers
         protected System.Web.Caching.Cache Cache
         {
             get { return System.Web.Hosting.HostingEnvironment.Cache; }
+        }
+
+        protected RavenJToken Data
+        {
+            get { return _imputRavenJObject != null ? _imputRavenJObject["data"] : null; }
+        }
+
+        /// <summary>
+        /// Gets the content of the incoming HTTP entity object.
+        /// </summary>
+        protected RavenJObject InputRavenJObject
+        {
+            get
+            {
+                if (string.Equals("GET", Request.HttpMethod, StringComparison.InvariantCultureIgnoreCase))
+                    return null;
+
+                if (_imputRavenJObject != null)
+                    return _imputRavenJObject;
+
+                var stream = this.Request.InputStream;
+
+                if (stream == null)
+                    return null;
+
+                if (!stream.CanRead)
+                    return null;
+
+                if (stream.CanSeek)
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                using (var reader = new StreamReader(stream))
+                {
+                    var json = reader.ReadToEnd();
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        json = json.Trim();
+
+                        if (json.StartsWith("{") && json.EndsWith("}"))
+                        {
+                            try
+                            {
+                                _imputRavenJObject = RavenJObject.Parse(json);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+
+                return _imputRavenJObject;
+            }
         }
 
         public SimpleInjector.Container Container
@@ -185,6 +240,16 @@ namespace Custom.Controllers
         protected virtual RavenResult Raven()
         {
             return Raven(false, null, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="?"></param>
+        /// <returns></returns>
+        protected virtual RavenResult Raven(bool success)
+        {
+            return Raven(success, null, null);
         }
 
         /// <summary>

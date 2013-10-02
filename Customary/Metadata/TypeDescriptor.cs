@@ -9,8 +9,7 @@ namespace Custom.Metadata
     {
         private Guid? _id;
         private string _name;
-        private List<MemberDescriptor> _members;
-
+        
         public Guid ID
         {
             get { return _id.HasValue ? _id.Value : (_id = Guid.NewGuid()).Value; }
@@ -27,12 +26,6 @@ namespace Custom.Metadata
         {
             get;
             set;
-        }
-
-        public List<MemberDescriptor> Members
-        {
-            get { return _members ?? (_members = new List<MemberDescriptor>()); }
-            set { _members = value; }
         }
     }
 }

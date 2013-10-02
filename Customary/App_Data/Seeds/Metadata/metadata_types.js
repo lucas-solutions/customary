@@ -87,11 +87,11 @@
         },
         {
             Name: "Member",
-            Namespace: "Metadata",
-            MemberType: "Entity",
+            Namespace: "Custom.Metadata",
+            MemberType: "Complex",
             Runtime: "Custom.Metadata.MemberDescriptor",
             Label: "Title",
-            Members: [
+            Properties: [
                 {
                     Name: "ID",
                     MemberType: "Property",
@@ -127,7 +127,7 @@
         },
         {
             Name: "MemberTypes",
-            Namespace: "Metadata",
+            Namespace: "Custom.Metadata",
             MemberType: "Enum",
             Runtime: "Custom.Metadata.MemberTypes",
             Members: [
@@ -182,7 +182,7 @@
         },
         {
             Name: "PropertyAttributes",
-            Namespace: "Metadata",
+            Namespace: "Custom.Metadata",
             MemberType: "Enum",
             Runtime: "Custom.Metadata.PropertyAttributes",
             Members: [
@@ -213,11 +213,11 @@
         },
         {
             Name: "Constant",
-            Namespace: "Metadata",
-            MemberType: "Entity",
-            Extends: "Member",
+            Namespace: "Custom.Metadata",
+            MemberType: "Complex",
+            Extend: "Custom.Metadata.Member",
             Runtime: "Custom.Metadata.ValueDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "Value",
                     MemberType: "Property",
@@ -231,11 +231,11 @@
         },
         {
             Name: "Property",
-            Namespace: "Metadata",
-            MemberType: "Entity",
-            Extends: "Member",
+            Namespace: "Custom.Metadata",
+            MemberType: "Complex",
+            Extend: "Custom.Metadata.Member",
             Runtime: "Custom.Metadata.PropertyDescriptor",
-            Members: [
+            Properties: [
                 {
                     Name: "Defatul",
                     MemberType: "Property",
@@ -254,11 +254,11 @@
         },
         {
             Name: "Method",
-            Namespace: "Metadata",
-            MemberType: "Entity",
-            Extends: "Member",
+            Namespace: "Custom.Metadata",
+            MemberType: "Complex",
+            Extend: "Custom.Metadata.Member",
             Runtime: "Custom.Metadata.MethodDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 en: "Method"
@@ -266,11 +266,11 @@
         },
         {
             Name: "Type",
-            Namespace: "Metadata",
+            Namespace: "Custom.Metadata",
             MemberType: "Entity",
-            Extends: "Member",
-            Runtime: "Custom.Metadata.MemberDescriptor",
-            Members: [
+            Extend: "Custom.Metadata.Member",
+            Runtime: "Custom.Metadata.TypeDescriptor",
+            Properties: [
                 {
                     Name: "Namespace",
                     MemberType: "Property",
@@ -289,11 +289,11 @@
         },
         {
             Name: "Primitive",
-            Namespace: "Metadata",
-            Extends: "Type",
+            Namespace: "Custom.Metadata",
+            Extend: "Custom.Metadata.Type",
             MemberType: "Entity",
             Runtime: "Custom.Metadata.PrimitiveDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 en: "Primitive"
@@ -301,11 +301,11 @@
         },
         {
             Name: "Enum",
-            Namespace: "Metadata",
-            Extends: "Type",
+            Namespace: "Custom.Metadata",
+            Extend: "Custom.Metadata.Type",
             MemberType: "Entity",
             Runtime: "Custom.Metadata.EnumDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 en: "Enum"
@@ -313,40 +313,40 @@
         },
         {
             Name: "Unit",
-            Namespace: "Metadata",
-            Extends: "Type",
+            Namespace: "Custom.Metadata",
+            Extend: "Type",
             MemberType: "Entity",
             Runtime: "Custom.Metadata.UnitDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 en: "Unit"
             }
         },
         {
-            Name: "Complex",
-            Namespace: "Metadata",
-            Extends: "Type",
+            Name: "Object",
+            Namespace: "Custom.Metadata",
+            Extend: "Custom.Metadata.Type",
             MemberType: "Entity",
-            Runtime: "Custom.Metadata.ComplexDescriptor",
-            Members: [
+            Runtime: "Custom.Metadata.ObjectDescriptor",
+            Properties: [
             ],
             Title: {
-                en: "Complex",
-                es: "Estructura"
+                en: "Object",
+                es: "Objeto"
             }
         },
         {
             Name: "Entity",
-            Namespace: "Metadata",
-            Extends: "Complex",
+            Namespace: "Custom.Metadata",
+            Extend: "Custom.Metadata.Object",
             MemberType: "Entity",
             Runtime: "Custom.Metadata.EntityDescriptor",
-            Members: [
+            Properties: [
             ],
             Title: {
                 en: "Entity",
-                es: "Entidad Relacional"
+                es: "Entidad"
             }
         },
     ]

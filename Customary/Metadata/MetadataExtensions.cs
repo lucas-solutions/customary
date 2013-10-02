@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Custom.Metadata
 {
     using Custom.Repositories;
     using Custom.Serialization;
-    using Newtonsoft.Json;
+    using Raven.Imports.Newtonsoft.Json;
+    using Raven.Imports.Newtonsoft.Json.Linq;
     using Raven.Json.Linq;
 
     public static class MetadataExtensions
@@ -30,9 +30,16 @@ namespace Custom.Metadata
                     var types = JsonConvert.DeserializeObject<List<MemberDescriptor>>(json, new MemberConverter());
                     foreach (var t in types)
                     {
+                        var descriptor = t as TypeDescriptor;
+                        descriptor.ID = Guid.NewGuid();
                         ctx.Session.Store(t);
                     }
                     ctx.Session.SaveChanges();
+
+                    foreach (var t in types)
+                    {
+                        RavenJObject metadata = ctx.Session.Advanced.GetMetadataFor(t);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -52,15 +59,34 @@ namespace Custom.Metadata
             return true;
         }
 
-        public static TypeDescriptor Describe(this Repositories.MetadataContext metadata, string name)
+        public static TypeDescriptor Describe(this Repositories.MetadataContext metadata, Guid id)
         {
-            var id = "Type/" + name;
-            var descriptor = System.Web.HttpContext.Current.Items[id] as TypeDescriptor;
+            var documentId = "Type/" + id.ToString("N");
+            var descriptor = System.Web.HttpContext.Current.Items[documentId] as TypeDescriptor;
             if (descriptor == null)
             {
-                descriptor = metadata.Session.Load<TypeDescriptor>(id);
-                System.Web.HttpContext.Current.Items[id] = descriptor;
+                descriptor = metadata.Session.Load<TypeDescriptor>(documentId);
+                System.Web.HttpContext.Current.Items[documentId] = descriptor;
             }
+            return descriptor;
+        }
+
+        public static TypeDescriptor Describe(this Repositories.MetadataContext context, string fullname)
+        {
+            var descriptor = System.Web.HttpContext.Current.Items[fullname] as TypeDescriptor;
+
+            if (descriptor != null)
+                return descriptor;
+
+            var result = context.QueryType(fullname).Results.FirstOrDefault();
+
+            if (result != null)
+            {
+                descriptor = result.Deserialize<TypeDescriptor>(new MemberConverter());
+            }
+
+            System.Web.HttpContext.Current.Items[fullname] = descriptor;
+
             return descriptor;
         }
 
@@ -108,6 +134,39 @@ namespace Custom.Metadata
             }
 
             return bo;
+        }
+
+        public static void Modify<T>(RavenJToken token, T entity, bool ignoreNull)
+        {
+            switch (token.Type)
+            {
+                case JTokenType.Object:
+                    var properties = typeof(T).GetProperties(
+                        System.Reflection.BindingFlags.Public |
+                        System.Reflection.BindingFlags.Instance);
+                    var source = (token as RavenJObject);
+                    foreach (var prop in properties)
+                    {
+                        RavenJToken value;
+                        if (source.TryGetValue(prop.Name, out value))
+                        {
+                            switch (value.Type)
+                            {
+                                case JTokenType.Object:
+                                    break;
+
+                                default:
+                                    if (!ignoreNull || value.Type != JTokenType.Null)
+                                    {
+                                        var val = Convert.ChangeType(value.ToString(), prop.PropertyType);
+                                        prop.SetValue(entity, val);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+            }
         }
 
         public static void RegisterIdConventions(this Repositories.MetadataContext metadata)

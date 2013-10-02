@@ -6,7 +6,7 @@ using System.Web;
 namespace Custom.Serialization
 {
     using Custom.Metadata;
-    using Newtonsoft.Json.Linq;
+    using Raven.Imports.Newtonsoft.Json.Linq;
 
     public class MemberConverter : JsonCreationConverter<MemberDescriptor>
     {
@@ -21,7 +21,7 @@ namespace Custom.Serialization
                     return new EnumDescriptor();
 
                 case MemberTypes.Complex:
-                    return new ComplexDescriptor();
+                    return new ObjectDescriptor();
 
                 case MemberTypes.Entity:
                     return new EntityDescriptor();
@@ -34,6 +34,9 @@ namespace Custom.Serialization
 
                 case MemberTypes.Event:
                     return new EventDescriptor();
+
+                case MemberTypes.Primitive:
+                    return new PrimitiveDescriptor();
 
                 default:
                     return new MemberDescriptor();

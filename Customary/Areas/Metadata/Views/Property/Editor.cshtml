@@ -11,22 +11,18 @@
             requires: [
                 'Ext.form.field.Text',
                 'Ext.grid.plugin.RowEditing',
-                'Ext.toolbar.TextItem'
+                'Ext.toolbar.TextItem',
+                'App.metadata.member.TitleField',
+                'App.metadata.member.SummaryField'
             ],
+            store: null,
+            parent: null,
+            record: null,
             initComponent: function (config) {
-
-                var dirtychange = {
-                    fn: function (form, dirty) {
-                        if (dirty === true) {
-                            this.updateButton.enable();
-                            this.cancelButton.enable();
-                        }
-                    },
-                    scope: this
-                };
 
                 this.formPanel = Ext.create('Ext.form.Panel', {
                     title: "Edit",
+                    disabled: true,
                     trackResetOnLoad: true,
                     collapsed: true,
                     header: false,
@@ -112,7 +108,10 @@
                         }
                     ],
                     listeners: {
-                        dirtychange: dirtychange
+                        dirtychange: {
+                            fn: this.onDirtyChange,
+                            scope: this
+                        }
                     }
                 });
 
@@ -126,6 +125,7 @@
                     header: false,
                     region: 'center',
                     split: true,
+                    disabled: true,
                     iconCls: 'icon-grid',
                     layout: 'fit',
                     plugins: [this.editing],
@@ -220,7 +220,7 @@
                     text: 'Cancel',
                     disabled: true,
                     scope: this,
-                    handler: this.reload
+                    handler: this.onCancelClick
                 });
 
                 this.deleteButton = Ext.create('Ext.Button', {
@@ -256,35 +256,58 @@
 
                 this.callParent();
 
+                App.core.Adapter.subscribe('App.metadata.Entity.commit', {
+                    fn: function () {
+                        this.store.commitChanges();
+                        this.reload();
+                    },
+                    scope: this
+                });
+
+                App.core.Adapter.subscribe('App.metadata.Entity.rollback', {
+                    fn: function () {
+                        this.store.rejectChanges();
+                        var record = this.record;
+                        this.reset();
+                        this.record = record;
+                        this.load(record);
+                    },
+                    scope: this
+                });
+
                 App.core.Adapter.subscribe('App.metadata.Entity.selectionchange', {
                     fn: function (selModel, selections) {
                         if (typeof selections === 'object' && selections.length === 1) {
                             this.reconfigure(selections[0]);
                         } else {
-                            this.reconfigure();
+                            //this.reconfigure();
                         }
                         this.reset();
                     },
                     scope: this
                 });
 
-                App.core.Adapter.subscribe('App.core.Viewport.cancel', {
-                    fn: function (button, viewport) {
-                        this.reset();
-                    },
-                    scope: this
-                });
-
-                App.core.Adapter.subscribe('App.core.Viewport.update', {
-                    fn: this.updateRecord,
-                    scope: this
-                });
-
                 App.core.Adapter.publish('App.metadata.Property.init', this);
             },
+            load: function (record) {
+                this.record = record;
 
-            // Add button was clicked on the grid toolbar.
+                this.formPanel.enable();
+                this.updateButton.disable();
+                this.cancelButton.disable();
+
+                var forms = [
+                    this.formPanel.getForm()
+                ];
+
+                Ext.each(forms, function (form) {
+                    form.loadRecord(record);
+                });
+
+                this.formPanel.enable();
+            },
             onAddClick: function () {
+                // Add button was clicked on the grid toolbar.
                 this.editing.cancelEdit();
 
                 // Create a model instance
@@ -299,9 +322,12 @@
                 this.store.insert(0, r);
                 this.editing.startEdit(0, 0);
             },
-
-            // Delete button was clicked.
+            onCancelClick: function () {
+                // Cancel button was clicked.
+                this.form.loadRecord(this.selected[0]);
+            },
             onDeleteClick: function () {
+                // Delete button was clicked.
                 this.editing.cancelEdit();
 
                 var view = this.getView();
@@ -320,56 +346,79 @@
                     sm.select(Math.min(index, count - 1));
                 }
             },
-
-            // Reset button was clicked.
-            onResetClick: function () {
-                this.form.loadRecord(this.selected[0]);
-            },
-
-            reconfigure: function (record) {
-                this.gridPanel.getSelectionModel().clearSelections(); // a must or you get an exception
-                if (typeof record == 'object' && typeof (record.members) === 'function') {
-                    this.gridPanel.reconfigure(record.members());
-                } else {
-                    this.gridPanel.reconfigure();
+            onDataChanged: function (store, eOpts) {
+                if (typeof this.parent === 'object' && typeof this.parent.store === 'object') {
+                    this.parent.store.fireEvent('datachanged', this.parent.store);
                 }
-            },
-
-            load: function (record) {
-                this.record = record;
-
-                this.updateButton.disable();
-                this.cancelButton.disable();
-
-                var forms = [
-                    this.formPanel.getForm()
-                ];
-
-                Ext.each(forms, function (form) {
-                    form.loadRecord(record);
-                });
-
-                this.formPanel.enable();
-            },
-            onAddClick: function () {
+                App.core.Adapter.publish('App.metadata.Property.datachanged', this.store);
+                App.core.Adapter.publish('App.metadata.Entity.datachanged', this.parent.store);
             },
             onDeleteClick: function () {
+            },
+            onDirtyChange: function (form, dirty) {
+                if (dirty === true) {
+                    this.updateButton.enable();
+                    this.cancelButton.enable();
+                }
+            },
+            onPropertyAdd: function (store, records, index, eOpts) {
+                // Called when a Model instance has been added to this Store.
+                if (this.parent != null && typeof this.parent === 'object' && typeof this.parent.store === 'object') {
+                    this.parent.store.fireEvent('datachanged', this.parent.store);
+                }
+            },
+            onPropertyRemove: function (store, record, index, isMove, eOpts) {
+                // Called when a Model instance has been removed from this Store.
+                if (this.parent != null && typeof this.parent === 'object' && typeof this.parent.store === 'object') {
+                    this.parent.store.fireEvent('datachanged', this.parent.store);
+                }
+            },
+            onPropertyUpdate: function (store, record, operation, modifiedFieldNames, eOpts) {
+                // Called when a Model instance has been updated.
+                if (this.parent != null && typeof this.parent === 'object' && typeof this.parent.store === 'object') {
+                    this.parent.store.fireEvent('datachanged', this.parent.store);
+                }
             },
             onUpdateClick: function () {
                 this.updateRecord();
             },
+            reconfigure: function (record) {
+                if (this.store != null && typeof this.store === 'object') {
+                    this.store.removeListener('datachanged', this.onDataChanged, this);
+                    this.store.removeListener('add', this.onPropertyAdd, this);
+                    this.store.removeListener('remove', this.onPropertyRemove, this);
+                    this.store.removeListener('update', this.onPropertyUpdate, this);
+                    this.parent = null;
+                    this.store = null;
+                }
+
+                this.gridPanel.getSelectionModel().clearSelections(); // a must or you get an exception
+
+                if (record != null && typeof record == 'object' && typeof record.store === 'object' && typeof (record.properties) === 'function') {
+                    this.parent = record;
+                    this.store = record.properties();
+                    this.store.on('datachanged', this.onDataChanged, this);
+                    this.store.on('add', this.onPropertyAdd, this);
+                    this.store.on('remove', this.onPropertyRemove, this);
+                    this.store.on('update', this.onPropertyUpdate, this);
+                    this.gridPanel.reconfigure(record.properties());
+                    this.gridPanel.enable();
+                } else {
+                    this.gridPanel.disable();
+                    this.gridPanel.reconfigure();
+                }
+            },
             reload: function () {
-                if (typeof this.record === 'object') {
+                if (this.record != null && typeof this.record === 'object') {
                     this.load(this.record);
                 } else {
                     this.reset();
                 }
             },
             reset: function () {
-                this.formPanel.disable();
-
                 this.record = null;
 
+                this.formPanel.disable();
                 this.updateButton.disable();
                 this.cancelButton.disable();
 

@@ -49,16 +49,8 @@ namespace Custom.Presentation.Sencha.Ext.data
                 {
                 });
 
-            entity.Members.ForEach(member =>
+            entity.Properties.ForEach(property =>
                 {
-                    // Only properties
-                    if (member.MemberType != MemberTypes.Property)
-                        return;
-
-                    var property = member as PropertyDescriptor;
-
-                    Debug.Assert(property != null);
-
                     var type = Global.Metadata.Describe(property.PropertyType);
 
                     if (type == null)

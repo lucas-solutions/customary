@@ -37,7 +37,13 @@ namespace Custom.Areas.Metadata.Controllers
 
         public ActionResult Create()
         {
-            return Json(null);
+            var annotations = new List<Annotation>();
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var record = Custom.Global.Metadata.Create(Data, descriptor, annotations);
+
+            Custom.Global.Metadata.Session.SaveChanges();
+
+            return Raven(true, string.Join("\n", annotations), record);
         }
 
         //
@@ -53,7 +59,13 @@ namespace Custom.Areas.Metadata.Controllers
 
         public ActionResult Destroy()
         {
-            return Json(null);
+            var annotations = new List<Annotation>();
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var record = Custom.Global.Metadata.Destroy(Data, descriptor, annotations);
+
+            Custom.Global.Metadata.Session.SaveChanges();
+
+            return Raven(true, string.Join("\n", annotations), record);
         }
 
         //
@@ -192,6 +204,14 @@ namespace Custom.Areas.Metadata.Controllers
         //[HttpGet, HttpOptions]
         public ActionResult Read(int? page, int? start, int? limit, IEnumerable<Sort> sort, string culture)
         {
+            var annotations = new List<Annotation>();
+
+            var entityDescriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+
+            var result = Global.Metadata.Read(entityDescriptor, string.Empty, start, limit, annotations);
+
+            return Raven(true, string.Join("\n", annotations), result.ToRavenJArray());
+
             var source = EntityRepository.Current.AsQueryable();
 
             if (start.HasValue)
@@ -228,7 +248,13 @@ namespace Custom.Areas.Metadata.Controllers
         [HttpPost]
         public ActionResult Update()
         {
-            return Json(null);
+            var annotations = new List<Annotation>();
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var record = Custom.Global.Metadata.Update(Data, descriptor, annotations);
+
+            Custom.Global.Metadata.Session.SaveChanges();
+
+            return Raven(true, string.Join("\n", annotations), record);
         }
 
         //

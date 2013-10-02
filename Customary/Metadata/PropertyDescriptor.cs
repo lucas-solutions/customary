@@ -32,6 +32,6 @@ namespace Custom.Metadata
         /// <summary>
         /// Column mapping and transformation for a given table name
         /// </summary>
-        public Dictionary<string, ColumnMapping> Mapping { get; set; }
+        public PropertyMapping Mapping { get; set; }
     }
 }

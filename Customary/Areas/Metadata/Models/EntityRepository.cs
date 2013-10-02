@@ -33,7 +33,7 @@ namespace Custom.Areas.Metadata.Models
                             { "en", "Business Object" },
                             { "es", "Objecto de negocio" }
                         },
-                        Members = new List<MemberDescriptor>
+                        Properties = new List<PropertyDescriptor>
                         {
                             #region - ID -
                             new PropertyDescriptor
@@ -91,7 +91,7 @@ namespace Custom.Areas.Metadata.Models
                             { "en", "Business Object property" },
                             { "es", "Propiedad de Objecto de negocio" }
                         },
-                        Members = new List<MemberDescriptor>
+                        Properties = new List<PropertyDescriptor>
                         {
                             #region - ID -
                             new PropertyDescriptor
@@ -149,7 +149,7 @@ namespace Custom.Areas.Metadata.Models
                             { "en", "Business Object" },
                             { "es", "Objecto de negocio" }
                         },
-                        Members = new List<MemberDescriptor>
+                        Properties = new List<PropertyDescriptor>
                         {
                             #region - ID -
                             new PropertyDescriptor
@@ -207,7 +207,7 @@ namespace Custom.Areas.Metadata.Models
                             { "en", "Business Object property" },
                             { "es", "Propiedad de Objecto de negocio" }
                         },
-                        Members = new List<MemberDescriptor>
+                        Properties = new List<PropertyDescriptor>
                         {
                             #region - ID -
                             new PropertyDescriptor

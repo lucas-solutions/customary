@@ -5,37 +5,30 @@ using System.Web;
 
 namespace Custom.Metadata
 {
-    public class EntityDescriptor : ComplexDescriptor
+    public class EntityDescriptor : ObjectDescriptor
     {
         /// <summary>
-        /// Name of the identity property
+        /// Is singleton?
         /// </summary>
-        public string Identity { get; set; }
-
-        /// <summary>
-        /// Name of the default text property
-        /// </summary>
-        public string Label { get; set; }
-
-        /// <summary>
-        /// "Belongs to" type name
-        /// </summary>
-        public string Principal { get; set; }
+        [Obsolete("Use Store.Type")]
+        public bool Singleton { get; set; }
 
         /// <summary>
         /// Is masterdata? If not it is transactional data.
         /// </summary>
+        [Obsolete("Use Store.Type")]
         public bool Masterdata { get; set; }
 
         /// <summary>
         /// Uses calls to stored procedure in to perform SELECT, INSERT, UPDATE or DELETE.
         /// If not set, SQL statements are used with ADO directly.
         /// </summary>
+        [Obsolete("Use Store.Type")]
         public bool Transactional { get; set; }
 
         /// <summary>
-        /// SQL mapping for a given table name.
+        /// Document name, table name, REST (Representational state transfer) service URL.
         /// </summary>
-        public Dictionary<string, TableMapping> Mapping { get; set; }
+        public EntityStore Store { get; set; }
     }
 }

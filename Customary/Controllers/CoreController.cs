@@ -17,5 +17,20 @@ namespace Custom.Controllers
         {
             return ScriptView();
         }
+        //
+        // GET: /Core/TextArea
+
+        public ActionResult TextArea()
+        {
+            return ScriptView();
+        }
+
+        //
+        // GET: /Core/TextField
+
+        public ActionResult TextField()
+        {
+            return ScriptView();
+        }
     }
 }
