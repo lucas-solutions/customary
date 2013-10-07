@@ -20,9 +20,7 @@ namespace Custom.Areas.Metadata.Models
                     #region - Entity -
                     new EntityDescriptor
                     {
-                        ID = Guid.NewGuid(),
                         Name = "Entity",
-                        Namespace = "Metadata",
                         Title = new TextObject
                         {
                             { "en", "Entity" },

@@ -53,9 +53,10 @@ namespace Custom.Presentation.Sencha.Ext.data
                 return (TBuilder)this;
             }
 
-            public TBuilder DefaultValue(string value)
+            public TBuilder DefaultValue(object value)
             {
-                ToModel().DefaultValue = value;
+                if (value != null)
+                ToModel().DefaultValue = value.ToString();
                 return (TBuilder)this;
             }
 

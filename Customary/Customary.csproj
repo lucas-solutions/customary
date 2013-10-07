@@ -225,15 +225,17 @@
     <Compile Include="Areas\Diagnostics\Controllers\LoggerController.cs" />
     <Compile Include="Areas\Diagnostics\DiagnosticsAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\Controllers\AssociationController.cs" />
+    <Compile Include="Areas\Metadata\Controllers\ComplexController.cs" />
     <Compile Include="Areas\Metadata\Controllers\HistoryController.cs" />
     <Compile Include="Areas\Metadata\Controllers\MemberController.cs" />
     <Compile Include="Areas\Metadata\Controllers\PersistenceController.cs" />
     <Compile Include="Areas\Metadata\Controllers\PropertyController.cs" />
+    <Compile Include="Areas\Metadata\Controllers\DirectoryController.cs" />
     <Compile Include="Areas\Metadata\Controllers\TypeController.cs" />
     <Compile Include="Areas\Metadata\Controllers\ValidationController.cs" />
+    <Compile Include="Areas\Metadata\Controllers\ValueController.cs" />
     <Compile Include="Areas\Metadata\Models\Association.cs" />
     <Compile Include="Areas\Metadata\Models\AssociationExtensions.cs" />
-    <Compile Include="Areas\Metadata\Models\EntityRepository.cs" />
     <Compile Include="Areas\Metadata\Models\EntityExtensions.cs" />
     <Compile Include="Areas\Metadata\Models\Enum.cs" />
     <Compile Include="Areas\Metadata\Models\EnumExtensions.cs" />
@@ -257,15 +259,19 @@
     <Compile Include="Binders\SortBinder.cs" />
     <Compile Include="Configuration\CustomSesction.cs" />
     <Compile Include="Controllers\CoreController.cs" />
+    <Compile Include="Extensions\DescriptorExtensions.cs" />
     <Compile Include="Extensions\DocumentContextExtensions.cs" />
+    <Compile Include="Extensions\DocumentSessionExtensions.cs" />
+    <Compile Include="Extensions\JsonDocumentExtensions.cs" />
     <Compile Include="Extensions\QuariableExtensions.cs" />
     <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Indexes\MetadaTypeIndexCreationTask.cs" />
     <Compile Include="Indexes\MetadataTypesByName.cs" />
-    <Compile Include="Metadata\EntityStore.cs" />
-    <Compile Include="Metadata\EntityStoreTypes.cs" />
+    <Compile Include="Metadata\Factory.cs" />
+    <Compile Include="Metadata\Directory.cs" />
     <Compile Include="Models\Annotation.cs" />
+    <Compile Include="Models\ProcecssResult.cs" />
     <Compile Include="Models\RavenJTokenCallbackModel.cs" />
     <Compile Include="Models\ResultObject.cs" />
     <Compile Include="Models\Page.cs" />
@@ -300,7 +306,6 @@
     <Compile Include="Extensions\JsonExtensions.cs" />
     <Compile Include="Models\ExtPageModel.cs" />
     <Compile Include="Diagnostics\Components\LogglyUtpCommunicator.cs" />
-    <Compile Include="Globalization\LanguageDescriptor.cs" />
     <Compile Include="Metadata\PropertyAttributes.cs" />
     <Compile Include="Models\Sort.cs" />
     <Compile Include="Models\SortDirection.cs" />
@@ -317,7 +322,8 @@
     <Compile Include="Presentation\ScriptLog.cs" />
     <Compile Include="Presentation\ScriptObject.Builder.cs" />
     <Compile Include="Presentation\ScriptObject.cs" />
-    <Compile Include="Presistence\Change.cs" />
+    <Compile Include="Persistence\Change.cs" />
+    <Compile Include="Extensions\DocumentStoreExtensions.cs" />
     <Compile Include="Results\RavenResult.cs" />
     <Compile Include="Results\ScriptResult.cs" />
     <Compile Include="Results\ScriptViewResult.cs" />
@@ -544,17 +550,11 @@
     <Compile Include="Navigation\PathLookup.cs" />
     <Compile Include="Metadata\MethodExtensions.cs" />
     <Compile Include="Metadata\PropertyExtensions.cs" />
-    <Compile Include="Metadata\TypeDescriptor.cs" />
     <Compile Include="Navigation\RequestExtensions.cs" />
     <Compile Include="Presentation\RazorExtensions.cs" />
     <Compile Include="Presentation\Utilities\Verify.cs" />
     <Compile Include="Repositories\DocumentContext.cs" />
     <Compile Include="Repositories\GlobalizationContext.cs" />
-    <Compile Include="Globalization\CountryDescriptor.cs" />
-    <Compile Include="Globalization\CurrencyDescriptor.cs" />
-    <Compile Include="Globalization\CultureDescriptor.cs" />
-    <Compile Include="Globalization\MeasurementDescriptor.cs" />
-    <Compile Include="Globalization\RegionDescriptor.cs" />
     <Compile Include="Repositories\MasterdataContext.cs" />
     <Compile Include="Repositories\MetadataContext.cs" />
     <Compile Include="Repositories\NavigationContext.cs" />
@@ -566,7 +566,6 @@
     <Compile Include="Navigation\PathDescriptor.cs" />
     <Compile Include="Navigation\PathExtensions.cs" />
     <Compile Include="Metadata\BusinessObject.cs" />
-    <Compile Include="Metadata\TextObject.cs" />
     <Compile Include="Presentation\PageFramework.cs" />
     <Compile Include="Presentation\PageLayout.cs" />
     <Compile Include="Presentation\PageMatrix.cs" />
@@ -574,17 +573,9 @@
     <Compile Include="Presentation\PageTheme.cs" />
     <Compile Include="Presentation\PageView.cs" />
     <Compile Include="Metadata\PropertyMapping.cs" />
-    <Compile Include="Metadata\ObjectDescriptor.cs" />
-    <Compile Include="Metadata\EntityDescriptor.cs" />
-    <Compile Include="Metadata\EnumDescriptor.cs" />
     <Compile Include="Metadata\EventDescriptor.cs" />
     <Compile Include="Metadata\MeasureDescriptor.cs" />
-    <Compile Include="Metadata\MemberDescriptor.cs" />
-    <Compile Include="Metadata\MemberTypes.cs" />
     <Compile Include="Metadata\MethodDescriptor.cs" />
-    <Compile Include="Metadata\PrimitiveDescriptor.cs" />
-    <Compile Include="Metadata\PropertyDescriptor.cs" />
-    <Compile Include="Metadata\UnitDescriptor.cs" />
     <Compile Include="Results\CustomResult.cs" />
     <Compile Include="Scripts.cs" />
     <Compile Include="Areas\User\UserAreaRegistration.cs" />
@@ -634,15 +625,12 @@
     <Compile Include="Pages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\JsonCreationConverter.cs" />
-    <Compile Include="Serialization\MemberContractResolver.cs" />
-    <Compile Include="Serialization\MemberConverter.cs" />
+    <Compile Include="Serialization\TypeContractResolver.cs" />
+    <Compile Include="Serialization\TypeConverter.cs" />
     <Compile Include="Utils\PathHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AngularTest.html" />
-    <Content Include="App_Data\Seeds\Metadata\globalization_types.js" />
-    <Content Include="App_Data\Seeds\Metadata\business_types.js" />
-    <Content Include="App_Data\Seeds\Metadata\metadata_types.js" />
     <Content Include="App_Data\Seeds\Globalization\Globalization.js" />
     <Content Include="App_Data\Seeds\Globalization\Country.js" />
     <Content Include="App_Data\Seeds\Globalization\Currency.js" />
@@ -729,18 +717,13 @@
     <Content Include="Views\Shared\_Page.cshtml" />
     <Content Include="Areas\Metadata\Views\Web.config" />
     <Content Include="Areas\Metadata\Views\Entity\Model.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Index.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Editor.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Store.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Proxy.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Form.cshtml" />
+    <Content Include="Areas\Metadata\Views\Shared\Index.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Form.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Model.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Page.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Panel.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Enum\Store.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Picker.cshtml" />
     <Content Include="Areas\Globalization\Views\Web.config" />
     <Content Include="Areas\Navigation\Views\Web.config" />
     <Content Include="Areas\Diagnostics\Views\Web.config" />
@@ -752,14 +735,6 @@
     <Content Include="Areas\Metadata\Views\Property\Editor.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Proxy.cshtml" />
     <Content Include="Areas\Metadata\Views\Property\Store.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Form.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Grid.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Index.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Model.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Panel.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Proxy.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\Store.cshtml" />
-    <Content Include="Areas\Metadata\Views\Entity\Copy of Grid.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Panel.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Form.cshtml" />
     <Content Include="Areas\Metadata\Views\Association\Grid.cshtml" />
@@ -773,6 +748,28 @@
     <Content Include="App_Config\AppSettings.config" />
     <Content Include="App_Config\Log4Net.config" />
     <Content Include="App_Config\DotNetOpenAuth.config" />
+    <Content Include="Areas\Metadata\Views\Directory\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Complex\Viewer.cshtml" />
+    <Content Include="Areas\Metadata\Views\Complex\Editor.cshtml" />
+    <Content Include="Areas\Metadata\Views\Complex\Picker.cshtml" />
+    <Content Include="Areas\Metadata\Views\Enum\Viewer.cshtml" />
+    <Content Include="Areas\Metadata\Views\Enum\Editor.cshtml" />
+    <Content Include="Areas\Metadata\Views\Enum\Picker.cshtml" />
+    <Content Include="Areas\Metadata\Views\Value\Viewer.cshtml" />
+    <Content Include="Areas\Metadata\Views\Value\Editor.cshtml" />
+    <Content Include="Areas\Metadata\Views\Value\Picker.cshtml" />
+    <Content Include="Areas\Metadata\Views\Request\Model.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Form.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Grid.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Index.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Model.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Proxy.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\Store.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\SummaryField.cshtml" />
+    <Content Include="Areas\Metadata\Views\Member\TitleField.cshtml" />
+    <Content Include="Areas\Metadata\Views\Entity\Panel.cshtml" />
+    <Content Include="Areas\Metadata\Views\Shared\Header.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3868,8 +3865,6 @@
     <Content Include="Views\Sencha\Ext\data\Model.cshtml" />
     <Content Include="Views\Core\Adapter.cshtml" />
     <Content Include="Views\Core\Text.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\SummaryField.cshtml" />
-    <Content Include="Areas\Metadata\Views\Member\TitleField.cshtml" />
     <Content Include="Views\Core\TextField.cshtml" />
     <Content Include="Views\Core\TextArea.cshtml" />
   </ItemGroup>
@@ -3879,6 +3874,7 @@
     <Folder Include="App_Data\Metadata\" />
     <Folder Include="App_Data\Navigation\" />
     <Folder Include="App_Data\Seeds\Masterdata\" />
+    <Folder Include="App_Data\Seeds\Metadata\" />
     <Folder Include="Areas\Automation\Models\" />
     <Folder Include="Areas\Automation\Views\Shared\" />
     <Folder Include="Areas\Diagnostics\Models\" />
@@ -3886,9 +3882,6 @@
     <Folder Include="Areas\Globalization\Models\" />
     <Folder Include="Areas\Globalization\Views\Shared\" />
     <Folder Include="Areas\Metadata\Views\History\" />
-    <Folder Include="Areas\Metadata\Views\Persistence\" />
-    <Folder Include="Areas\Metadata\Views\Presentation\" />
-    <Folder Include="Areas\Metadata\Views\Shared\" />
     <Folder Include="Areas\Metadata\Views\Validation\" />
     <Folder Include="Areas\Navigation\Models\" />
     <Folder Include="Areas\Navigation\Views\Shared\" />
@@ -3931,6 +3924,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Custom\Custom.csproj">
+      <Project>{22ca8244-790a-4e22-8122-604e63889589}</Project>
+      <Name>Custom</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

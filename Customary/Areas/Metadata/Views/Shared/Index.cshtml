@@ -1,0 +1,172 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+@{
+    if (Model is Entity)
+    {
+        //Html.Render((Ext.data.Model)Model);
+        //Html.Render((Ext.data.Store)Model);
+        //Html.Render((Ext.data.proxy.Proxy)Model);
+        //Html.Render((Ext.grid.Panel)Model);
+        //Html.Render((Ext.form.Panel)Model);
+
+        Html.Render(Entity.Handlers.OnClick);
+        Html.Render(Entity.Handlers.OnMouseMove);
+        Html.Render(Entity.Handlers.OnMouseUp);
+        
+    <script type="text/javascript">
+        Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
+        Ext.Loader.setPath('App', '@Url.Absolute("/App")');
+        Ext.Loader.setPath('Custom', '@Url.Absolute("/Custom")');
+        Ext.Loader.setPath('Business', '@Url.Absolute("/Business")');
+    </script>
+        
+    <script type="text/javascript">
+        Ext.onReady(function () {
+
+            var frameStyle = 'background-color:#dfe8f5;';
+
+            Ext.define('App.metadata.Viewport', {
+                extend: 'Ext.container.Viewport',
+                layout: 'border',
+                bodyStyle: frameStyle, // background color like frame
+                initComponent: function () {
+
+                    this.treePanel = Ext.create('Custom.Metadata.Directory.Panel', {
+                        header: false
+                    });
+
+                    this.entityPanel = Ext.create('Custom.Metadata.Entity.Panel', {
+                        header: false
+                    });
+
+                    this.centerPanel = Ext.create('Ext.panel.Panel', {
+                        region: 'center',
+                        bodyStyle: frameStyle, // background color like frame
+                        header: false,
+                        items: [this.entityPanel],
+                        flex: 5,
+                        border: false,
+                        layout: 'fit',
+                        title: 'Select Entity'
+                    });
+
+                    this.southPanel = Ext.create('Ext.panel.Panel', {
+                        region: 'south',
+                        title: 'Messages',
+                        collapsible: true,
+                        html: 'Information goes here',
+                        split: true,
+                        height: 100,
+                        minHeight: 100
+                    });
+
+                    this.westPanel = Ext.create('Ext.panel.Panel', {
+                        region: 'west',
+                        bodyStyle: frameStyle, // background color like frame
+                        flex: 1,
+                        border: false,
+                        collapsible: true,
+                        items: [this.treePanel],
+                        split: true,
+                        layout: 'fit',
+                        title: 'Index',
+                        header: false
+                    });
+
+                    Ext.apply(this, {
+                        items: [ 
+                            {
+                                region: 'north',
+                                xtype: 'container',
+                                bodyStyle: frameStyle, // background color like frame
+                                html: '@Html.Partial("Header")',
+                                autoHeight: true,
+                                border: false,
+                                margins: '0 0 5 0'
+                            },
+                            this.centerPanel,
+                            this.northPanel,
+                            this.westPanel
+                            //this.southPanel
+                        ]
+                    });
+
+                    this.callParent();
+
+                    App.core.Adapter.subscribe('App.metadata.tree.Panel.selectionchange', {
+                        fn: function (selModel, selections, type, id) {
+                            if (typeof type == 'string' && typeof id == 'string') {
+                                this.loadPanel(this.centerPanel, 'App.metadata.' + type + '.Picker', id);
+                                this.loadPanel(this.eastPanel, 'App.metadata.' + type + '.Editor', id);
+                            }
+                        },
+                        scope: this
+                    });
+
+                    App.core.Adapter.publish('App.metadata.Viewport.init', this);
+                },
+
+                loadPanel: function(container, name, id) {
+                    var item = Ext.create(name + '.' + id, {
+                        layout: 'fit'
+                    });
+                    container.update(item);
+                    container.doLayout();
+                }
+            });
+
+            Ext.create('App.metadata.Viewport');
+        });
+    </script>
+    }
+    else if (Model is Entity.Handlers)
+    {
+        switch ((Entity.Handlers)Model)
+        {
+            case Entity.Handlers.OnClick:
+                // 
+                //
+    <script type="text/javascript">
+        function onClick() {
+        }
+    </script>
+                break;
+
+            case Entity.Handlers.OnMouseMove:
+                //
+                //
+    <script type="text/javascript">
+        function onMouseMove() {
+        }
+    </script>
+                break;
+
+            case Entity.Handlers.OnMouseUp:
+                //
+                //
+    <script type="text/javascript">
+        function onMouseUp() {
+        }
+    </script>
+                break;
+        }
+    }
+    if (Model is Ext.data.Model)
+    {
+        var model = Model as Ext.data.Model;
+    <script type="text/javascript">
+        Ex.Define('App.metadata.entity.Model', @((model as Scriptable).Result())
+            );
+    </script>
+    }
+    else if (Model is Ext.data.Store)
+    {
+        var model = Model as Ext.data.Model;
+    <script type="text/javascript">
+        Ex.Define('App.metadata.entity.Model', @((model as Scriptable).Result())
+            );
+    </script>
+    }
+}

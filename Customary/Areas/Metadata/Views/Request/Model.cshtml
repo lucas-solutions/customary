@@ -1,0 +1,65 @@
+﻿@model Custom.Presentation.Sencha.Ext.data.Model
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.entity.Model', {
+        extend: 'Ext.data.Model',
+        requires: [
+            'App.metadata.association.Model',
+            'App.metadata.property.Model',
+            'App.core.Adapter'
+        ],
+        fields: [
+            { name: 'id' },
+            { name: 'Name' },
+            { name: 'Masterdata', type: 'bool' },
+            { name: 'Transactional', type: 'bool' },
+            { name: 'Title' },
+            {
+                name: 'titleText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.core.Adapter.text('Title', value, record);
+                }
+            },
+            //{ name: 'dep', type: 'auto' },
+            //{ name: 'dep_id', type: 'int', mapping: 'dep.dep_id' },
+            //{ name: 'dep_Name', type: 'string', mapping: 'dep.dep_Name' },
+            { name: 'Summary' },
+            {
+                name: 'summaryText',
+                persist: false,
+                convert: function (value, record) {
+                    return App.core.Adapter.text('Summary', value, record);
+                }
+            },
+            { name: 'modifiedBy' },
+            {
+                name: "modifiedOn",
+                type: "date",
+                dateFormat: "Y-m-d\\TH:i:s"
+            },
+            { name: "modifiedAt" },
+            { name: "modifiedFor" },
+            //{ name: 'properties' },
+            //{ name: 'associations' }
+        ],
+        // belongTo: http://extjs-tutorials.blogspot.ca/2012/05/extjs-belongsto-association-rules.html
+        hasMany: [
+            { model: 'App.metadata.property.Model', name: 'Properties' }/*,
+            { model: 'App.metadata.association.Model', name: 'associations' }*/
+        ]/*, carfull with validations. could conflix with detecting store changes
+        validations: [
+            {type: 'presence',  field: 'name'},
+            { type: 'length', field: 'name', min: 2 },
+            { type: 'presence', field: 'namespace' },
+            { type: 'length', field: 'namespace', min: 2 }
+            //{type: 'inclusion', field: 'gender',   list: ['Male', 'Female']},
+            //{type: 'exclusion', field: 'username', list: ['Admin', 'Operator']},
+            //{type: 'format',    field: 'username', matcher: /([a-z]+)[0-9]{2,3}/}
+        ],
+        proxy: 'App.metadata.entity.Proxy'*/
+    });
+</script>

@@ -6,6 +6,8 @@ using System.Web;
 
 namespace Custom.Presentation.Sencha.Ext.grid
 {
+    using Custom.Metadata;
+
     /// <summary>
     /// Grids are an excellent way of showing large amounts of tabular data on the client side. Essentially a supercharged <table>, GridPanel makes it easy to fetch, sort and filter large amounts of data.
     /// 
@@ -14,6 +16,24 @@ namespace Custom.Presentation.Sencha.Ext.grid
     [Ext("Ext.grid.Panel")]
     public partial class Panel : Ext.panel.Table
     {
+        public Panel()
+        {
+        }
+
+        public Panel(ComplexDescriptor descriptor)
+            : this((ObjectDescriptor)descriptor)
+        {
+        }
+
+        public Panel(EntityDescriptor descriptor)
+            : this((ObjectDescriptor)descriptor)
+        {
+        }
+
+        private Panel(ObjectDescriptor descriptor)
+        {
+        }
+
         /// <summary>
         /// Adds column line styling.
         /// </summary>

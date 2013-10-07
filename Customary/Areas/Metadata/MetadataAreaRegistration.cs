@@ -20,6 +20,36 @@ namespace Custom.Areas.Metadata
                 "App/Metadata/{controller}/{action}.js"
             );
 
+            // Ext JS route
+            context.MapRoute(
+                "Metadata_ext_id",
+                "App/Metadata/{controller}/{action}/{id}.js"
+            );
+
+            // Ext JS route
+            context.MapRoute(
+                "Metadata_custom_temp",
+                "App/Metadata/{controller}/{action}.js"
+            );
+
+            context.MapRoute(
+                "Business_Metadata",
+                "Business/Metadata/{controller}/{action}/{id}.js",
+                new { domain = "Business" }
+            );
+
+            context.MapRoute(
+                "Custom_Metadata_temp",
+                "Custom/Metadata/{controller}/{action}.js",
+                new { domain = "Custom" }
+            );
+
+            context.MapRoute(
+                "Custom_Metadata",
+                "Custom/Metadata/{controller}/{action}/{id}.js",
+                new { domain = "Custom" }
+            );
+
             context.MapRoute(
                 "Metadata_default",
                 "Metadata/{controller}/{action}/{id}",

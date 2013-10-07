@@ -80,7 +80,7 @@ namespace Custom
                 source[IdProperty] = idToken;
             }
 
-            var storeName = descriptor.StoreName();
+            var storeName = descriptor.GetStoreName();
             var documentId = string.Concat(storeName + '/', idValue);
 
             var record = new RavenJObject();
@@ -162,7 +162,7 @@ namespace Custom
                 source[IdProperty] = idToken;
             }
 
-            var storeName = descriptor.StoreName();
+            var storeName = descriptor.GetStoreName();
             var documentId = string.Concat(storeName + '/', idValue);
 
             var record = context.Session.Load<RavenJObject>(documentId);
@@ -178,11 +178,6 @@ namespace Custom
             }
 
             return record;
-        }
-
-        public static string Fullname(this TypeDescriptor descriptor)
-        {
-            return descriptor.Namespace + '.' + descriptor.Name;
         }
 
         public static bool IsArray(this RavenJToken token)
@@ -244,7 +239,7 @@ namespace Custom
             if (!string.IsNullOrWhiteSpace(query))
                 indexQuery.Query = query;
 
-            var tagName = descriptor.StoreName();
+            var tagName = descriptor.GetStoreName();
 
             indexQuery.Query = "Tag:" + tagName;
 
@@ -299,7 +294,7 @@ namespace Custom
             {
                 var idValue = idToken.Value<Guid>();
 
-                var storeName = descriptor.StoreName();
+                var storeName = descriptor.GetStoreName();
                 var documentId = string.Concat(storeName + '/', idValue);
 
                 record = context.Session.Load<RavenJObject>(documentId);
@@ -366,7 +361,7 @@ namespace Custom
                 if (propertyType == null)
                     continue;
 
-                if (property.Multiple)
+                if (property.Role == PropertyRoles.HasMany)
                 {
                     if (!sourceValue.IsArray())
                     {
@@ -381,7 +376,7 @@ namespace Custom
                         targetObject[property.Name] = targetValue;
                     }
                 }
-                else if (propertyType is PrimitiveDescriptor)
+                else if (propertyType is ValueDescriptor)
                 {
                     if (!sourceValue.IsPrimitive())
                     {
@@ -400,7 +395,7 @@ namespace Custom
                 {
                     if (!sourceValue.IsPrimitive())
                     {
-                        annotations.Add(LogCategories.Debug, string.Format("Primitive of type {2} expected for property {1}. Type: {0}", objectDescriptor.Name, property.Name, propertyType.Fullname()));
+                        annotations.Add(LogCategories.Debug, string.Format("Primitive of type {2} expected for property {1}. Type: {0}", objectDescriptor.Name, property.Name, propertyType.Name));
                         continue;
                     }
                     else
@@ -421,33 +416,35 @@ namespace Custom
             return targetObject;
         }
 
-
-
-        public static string StoreName(this EntityDescriptor descriptor)
+        public static string GetStoreName(this EntityDescriptor descriptor)
         {
             if (descriptor.Store != null && !string.IsNullOrWhiteSpace(descriptor.Store.Name))
                 return descriptor.Store.Name;
 
+            var firstName = descriptor.Name.Split('.').Last();
+
+            if (string.IsNullOrWhiteSpace(descriptor.Extend))
+                return firstName;
+
+            var familyName = GetFamilyName(descriptor);
+
+            if (string.IsNullOrEmpty(familyName))
+                return firstName;
+
+            return familyName + '/' + firstName;
+        }
+
+        public static string GetFamilyName(this EntityDescriptor descriptor)
+        {
             if (!string.IsNullOrWhiteSpace(descriptor.Extend))
             {
                 var parent = Global.Metadata.Describe(descriptor.Extend) as EntityDescriptor;
 
-                if (parent != null && parent.MemberType == MemberTypes.Entity)
-                    return StoreName(parent);
+                if (parent != null)
+                    return GetStoreName(parent);
             }
 
-            return descriptor.Name;
-        }
-
-        public static RavenJArray ToRavenJArray<T>(this IEnumerable<T> iterable)
-            where T : RavenJToken
-        {
-            var array = new RavenJArray();
-
-            foreach (var item in iterable)
-                array.Add(item);
-
-            return array;
+            return descriptor.Name.Split('.').Last();
         }
     }
 }

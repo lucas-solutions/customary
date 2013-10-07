@@ -27,7 +27,7 @@ namespace Custom.Repositories
             using (var stream = file.OpenRead())
             {
                 var root = RavenJObject.TryLoad(stream);
-                var converter = new MemberConverter();
+                var converter = new TypeConverter();
 
                 try
                 {

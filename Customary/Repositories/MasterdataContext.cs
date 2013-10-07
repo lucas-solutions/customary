@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Custom.Repositories
 {
+    using Custom.Metadata;
     using Raven.Client;
     using Raven.Client.Embedded;
 

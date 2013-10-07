@@ -6,6 +6,7 @@ namespace Custom.Metadata
 {
     using Custom.Repositories;
     using Custom.Serialization;
+    using Raven.Abstractions.Data;
     using Raven.Imports.Newtonsoft.Json;
     using Raven.Imports.Newtonsoft.Json.Linq;
     using Raven.Json.Linq;
@@ -22,16 +23,16 @@ namespace Custom.Metadata
             using (var stream = file.OpenRead())
             {
                 var root = RavenJObject.TryLoad(stream);
-                var converter = new MemberConverter();
+                var converter = new TypeConverter();
 
                 try
                 {
                     var json = root.Value<RavenJArray>("Type").ToString();
-                    var types = JsonConvert.DeserializeObject<List<MemberDescriptor>>(json, new MemberConverter());
+                    var types = JsonConvert.DeserializeObject<List<Descriptor>>(json, new TypeConverter());
                     foreach (var t in types)
                     {
                         var descriptor = t as TypeDescriptor;
-                        descriptor.ID = Guid.NewGuid();
+                        //descriptor.ID = Guid.NewGuid();
                         ctx.Session.Store(t);
                     }
                     ctx.Session.SaveChanges();
@@ -71,26 +72,50 @@ namespace Custom.Metadata
             return descriptor;
         }
 
-        public static TypeDescriptor Describe(this Repositories.MetadataContext context, string fullname)
+        public static T Describe<T>(this Repositories.MetadataContext context, string name)
+            where T : TypeDescriptor
         {
-            var descriptor = System.Web.HttpContext.Current.Items[fullname] as TypeDescriptor;
+            return Describe(context, name) as T;
+        }
+
+        public static TypeDescriptor Describe(this Repositories.MetadataContext context, string name)
+        {
+            var descriptor = System.Web.HttpContext.Current.Items[name] as TypeDescriptor;
 
             if (descriptor != null)
                 return descriptor;
 
-            var result = context.QueryType(fullname).Results.FirstOrDefault();
+            RavenJObject record = null;
 
-            if (result != null)
+            /*var indexQuery = new IndexQuery { Query = "Name:" + name };
+
+            var queryResult = context.Store.DatabaseCommands.Query(Indexes.MetadaTypeIndexCreationTask.Name, indexQuery, null);
+
+            var record = queryResult.Results.FirstOrDefault();*/
+
+            var documentResult = context.Store.DatabaseCommands.StartsWith("Type/", "Name:" + name, 0, 1);
+
+            try
             {
-                descriptor = result.Deserialize<TypeDescriptor>(new MemberConverter());
+                record = context.Session.Advanced.LuceneQuery<RavenJObject, Indexes.MetadaTypeIndexCreationTask>().Where("Name:" + name).FirstOrDefault();
+                var id = context.Session.Advanced.GetDocumentId(record);
+                record["id"] = id;
+            }
+            catch (Exception e)
+            {
+                var msg = e.Message;
             }
 
-            System.Web.HttpContext.Current.Items[fullname] = descriptor;
+            if (record != null)
+            {
+                descriptor = record.Deserialize<TypeDescriptor>(new TypeConverter());
+                System.Web.HttpContext.Current.Items[name] = descriptor;
+            }
 
             return descriptor;
         }
 
-        public static string CurrentValue(this TextObject text)
+        public static string CurrentValue(this Text text)
         {
             string value = text.Values.FirstOrDefault();
             var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
@@ -177,67 +202,6 @@ namespace Custom.Metadata
 
         public static void Validate(this BusinessObject bo)
         {
-        }
-
-        public static void AddOrUpdate(this MetadataContext ctx, TypeDescriptor type, Func<TypeDescriptor, TypeDescriptor> updateFactory)
-        {
-            var original = ctx.Session.Load<TypeDescriptor>(type.ID);
-            if (original != null)
-            {
-                if (updateFactory != null)
-                {
-                    type = updateFactory(original);
-                }
-                else
-                {
-                    // merge
-                }
-            }
-            ctx.Session.Store(original);
-            ctx.Session.SaveChanges();
-        }
-
-        public static bool TryAdd(this MetadataContext ctx, TypeDescriptor type)
-        {
-            var original = ctx.Session.Load<TypeDescriptor>(type.ID);
-            if (original != null)
-                return false;
-
-            ctx.Session.Store(type);
-
-            return true;
-        }
-
-        public static bool TryDescribe(this MetadataContext ctx, Guid id, out TypeDescriptor type)
-        {
-            type = ctx.Session.Load<TypeDescriptor>(id);
-            return type != null;
-        }
-
-        public static bool TryDescribe(this MetadataContext ctx, string name, string ns, out TypeDescriptor type)
-        {
-            type = ctx.Session.Query<TypeDescriptor>().FirstOrDefault(o => o.Name == name && o.Namespace == ns);
-            return type != null;
-        }
-
-        public static bool TryUpdate(this MetadataContext ctx, TypeDescriptor type)
-        {
-            return true;
-        }
-
-        public static bool TryRemove(this MetadataContext ctx, TypeDescriptor type)
-        {
-            return true;
-        }
-
-        public static bool TryRemove(this MetadataContext ctx, Guid id)
-        {
-            return true;
-        }
-
-        public static bool TryRemove(this MetadataContext ctx, string name, string ns)
-        {
-            return true;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Metadata
 {
-    public class EventDescriptor : MemberDescriptor
+    public class EventDescriptor : Descriptor
     {
     }
 }

@@ -15,6 +15,9 @@ namespace Custom
     
     public static partial class RavenExtensions
     {
+        // https://github.com/ravendb/ravendb/blob/master/Raven.Abstractions/Extensions/JsonExtensions.cs
+
+
         /// <summary>
         /// Deserialize a <param name="self"/> to an instance of<typeparam name="T"/>
         /// </summary>
@@ -53,7 +56,8 @@ namespace Custom
             return jsonSerializer;
         }
 
-        public static RavenJArray ToRavenJArray(this IEnumerable<RavenJObject> source)
+        public static RavenJArray ToRavenJArray<T>(this IEnumerable<T> source)
+            where T : RavenJToken
         {
             var result = new RavenJArray();
 
@@ -63,27 +67,7 @@ namespace Custom
             return result;
         }
 
-        public static RavenJArray ToRavenJArray(this IEnumerable<RavenJToken> source)
-        {
-            var result = new RavenJArray();
-
-            foreach (var item in source)
-                result.Add(item);
-
-            return result;
-        }
-
-        public static RavenJArray ToRavenJArray(this IEnumerable<RavenJValue> source)
-        {
-            var result = new RavenJArray();
-
-            foreach (var item in source)
-                result.Add(item);
-
-            return result;
-        }
-
-        public static RavenJObject ToJObject(this object source)
+        public static RavenJObject ToRavenJObject(this object source)
         {
             var serializer = new JsonSerializer
             {
@@ -132,6 +116,22 @@ namespace Custom
                 }
             }
             return target;
+        }
+
+        public static void Validate(this RavenJArray value, TypeDescriptor descriptor, List<Annotation> annotations)
+        {
+        }
+
+        public static void Validate(this RavenJObject value, ObjectDescriptor descriptor, List<Annotation> annotations)
+        {
+        }
+
+        public static void Validate(this RavenJToken value, TypeDescriptor descriptor, List<Annotation> annotations)
+        {
+        }
+
+        public static void Validate(this RavenJValue value, TypeDescriptor descriptor, List<Annotation> annotations)
+        {
         }
 
         /*private static string[] _readOnly = new[]

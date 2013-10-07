@@ -19,19 +19,6 @@ namespace Custom.Controllers
         {
             object data = null;
 
-            switch (entity.MemberType)
-            {
-                case MemberTypes.Entity:
-                    break;
-
-                case MemberTypes.Enum:
-                    break;
-
-                default:
-                    // error
-                    break;
-            }
-
             return Json(data);
         }
 

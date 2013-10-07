@@ -54,22 +54,9 @@ namespace Custom.Areas.Metadata.Controllers
                     typeof(System.UInt32),
                     typeof(System.UInt64),
                     typeof(System.UInt16),
-                }.Select(o => new TypeModel { ID = o.GUID, Name = o.Name, Namespace = o.Namespace }.ToJObject());
+                }.Select(o => new TypeModel { Name = o.Name, Namespace = o.Namespace }.ToRavenJObject());
 
-            var source = EntityRepository.Current.AsQueryable();
-
-            if (start.HasValue)
-                source = source.Skip(start.Value);
-
-            if (limit.HasValue)
-                source = source.Take(limit.Value);
-
-            if (sort != null)
-                source = source.Sort(sort);
-
-            var models = source.Select(o => new TypeModel { ID = o.ID, Name = o.Name, Namespace = o.Namespace/*, Title = o.Title, Summary = o.Summary*/ }.ToJObject());
-
-            var data = primitives.Union(models).ToRavenJArray();
+            var data = primitives.ToRavenJArray();
 
             return Raven(data);
         }

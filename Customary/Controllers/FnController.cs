@@ -20,7 +20,7 @@ namespace Custom.Controllers
 
             int key;
             Ext.container.Viewport.Events handler;
-            if (Enum.TryParse<Ext.container.Viewport.Events>(id, out handler))
+            if (System.Enum.TryParse<Ext.container.Viewport.Events>(id, out handler))
                 fn.Model(handler);
             else if (int.TryParse(id, out key))
                 fn.Model(key);

@@ -106,3 +106,5 @@ C:\Playground\Customary\Customary\obj\Debug\Customary.pdb
 C:\Playground\Customary\Customary\bin\log4net.dll
 C:\Playground\Customary\Customary\bin\log4net.xml
 C:\Playground\Customary\Customary\obj\Debug\Customary.csprojResolveAssemblyReference.cache
+C:\Playground\Customary\Customary\bin\Custom.dll
+C:\Playground\Customary\Customary\bin\Custom.pdb

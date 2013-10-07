@@ -27,7 +27,7 @@ namespace Custom.Areas.Metadata.Controllers
 
             var page = this.Page(entity);
 
-            page.Title = "Metadata - Entity";
+            page.Title = "Welcome to Customary Metadata";
 
             return page;
         }
@@ -71,9 +71,20 @@ namespace Custom.Areas.Metadata.Controllers
         //
         // GET: /Metadata/Property/Editor/
 
-        public ActionResult Editor()
+        public ActionResult Editor(string id)
         {
-            return ScriptView();
+            if (string.IsNullOrEmpty(id))
+                return ScriptView();
+
+            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
+
+            var storeName = descriptor.GetStoreName();
+
+            var model = new Presentation.Sencha.Ext.grid.Panel(descriptor);
+
+            var builder = model.ToBuilder();
+
+            return ScriptView("~/Areas/Metadata/Views/Shared/Editor.cshtml", model);
         }
 
         //
@@ -81,7 +92,12 @@ namespace Custom.Areas.Metadata.Controllers
 
         public ActionResult Model(string id)
         {
-            return ScriptView();
+            if (string.IsNullOrEmpty(id))
+                return ScriptView();
+
+            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
+
+            return ScriptView(descriptor);
 
             Guid identity;
 
@@ -184,19 +200,16 @@ namespace Custom.Areas.Metadata.Controllers
         }
 
         //
-        // GET: /Metadata/Entity/Picker/
+        // GET: /Metadata/Entity/Panel/
 
-        public ActionResult Picker()
+        public ActionResult Panel(string id)
         {
-            return ScriptView();
-        }
+            if (string.IsNullOrEmpty(id))
+                return ScriptView();
 
-        //
-        // GET: /Metadata/Entity/Proxy/
+            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
 
-        public ActionResult Proxy()
-        {
-            return ScriptView();
+            return ScriptView(descriptor);
         }
 
         //
@@ -206,33 +219,13 @@ namespace Custom.Areas.Metadata.Controllers
         {
             var annotations = new List<Annotation>();
 
-            var entityDescriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            //var entityDescriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
 
-            var result = Global.Metadata.Read(entityDescriptor, string.Empty, start, limit, annotations);
+            //var tagName = entityDescriptor.StoreName();
+
+            var result = Global.Metadata.Store.Read("Type/Entity", start ?? 0, limit ?? 400);
 
             return Raven(true, string.Join("\n", annotations), result.ToRavenJArray());
-
-            var source = EntityRepository.Current.AsQueryable();
-
-            if (start.HasValue)
-                source = source.Skip(start.Value);
-
-            if (limit.HasValue)
-                source = source.Take(limit.Value);
-
-            if (sort != null)
-                source = source.Sort(sort);
-
-            var data = source.Select(o => o.ToJObject()).ToRavenJArray();
-
-            return Raven(data);
-
-            /*return new ResultObject
-            {
-                Success = true,
-                Data = source,
-                Total = EntityRepository.Current.Count
-            };*/
         }
 
         //
@@ -255,14 +248,6 @@ namespace Custom.Areas.Metadata.Controllers
             Custom.Global.Metadata.Session.SaveChanges();
 
             return Raven(true, string.Join("\n", annotations), record);
-        }
-
-        //
-        // GET: /Metadata/Entity/Viewer/
-
-        public ActionResult Viewer()
-        {
-            return ScriptView();
         }
     }
 }

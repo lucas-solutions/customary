@@ -135,7 +135,7 @@
                                 allowBlank: false
                                 //vtype: 'email'
                             },
-                            dataIndex: "name",
+                            dataIndex: "Name",
                             fixed: false,
                             flex: 1,
                             text: "Name"
@@ -145,7 +145,7 @@
                                 allowBlank: false
                                 //vtype: 'email'
                             },
-                            dataIndex: 'propertyType',
+                            dataIndex: 'PropertyType',
                             fixed: false,
                             flex: 1,
                             text: "Type",
@@ -394,14 +394,14 @@
 
                 this.gridPanel.getSelectionModel().clearSelections(); // a must or you get an exception
 
-                if (record != null && typeof record == 'object' && typeof record.store === 'object' && typeof (record.properties) === 'function') {
+                if (record != null && typeof record == 'object' && typeof record.store === 'object' && typeof (record.Properties) === 'function') {
                     this.parent = record;
-                    this.store = record.properties();
+                    this.store = record.Properties();
                     this.store.on('datachanged', this.onDataChanged, this);
                     this.store.on('add', this.onPropertyAdd, this);
                     this.store.on('remove', this.onPropertyRemove, this);
                     this.store.on('update', this.onPropertyUpdate, this);
-                    this.gridPanel.reconfigure(record.properties());
+                    this.gridPanel.reconfigure(record.Properties());
                     this.gridPanel.enable();
                 } else {
                     this.gridPanel.disable();

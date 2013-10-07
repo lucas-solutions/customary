@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Custom.Metadata
 {
-    public class MethodDescriptor : MemberDescriptor
+    public class MethodDescriptor : Descriptor
     {
     }
 }

@@ -129,7 +129,7 @@ namespace Custom.Presentation
             return true;
         }
 
-        protected virtual bool RenderTextObject(TextObject value, List<string> lines)
+        protected virtual bool RenderTextObject(Text value, List<string> lines)
         {
             if (value == null)
                 return false;
@@ -158,7 +158,7 @@ namespace Custom.Presentation
             {
                 if (valueType.IsEnumDefined(value))
                 {
-                    var name = Enum.GetName(valueType, value);
+                    var name = System.Enum.GetName(valueType, value);
 
                     if (CamelCase)
                         name = name.CamelCase();
@@ -240,7 +240,7 @@ namespace Custom.Presentation
 
                 case TypeCode.Object:
 
-                    if (RenderTextObject(value as TextObject, lines))
+                    if (RenderTextObject(value as Text, lines))
                         return true;
 
                     if (RenderScriptable(value as IScriptable, lines))

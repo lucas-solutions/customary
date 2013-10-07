@@ -32,7 +32,7 @@ namespace Custom.Indexes
             var builder = new IndexDefinitionBuilder<TypeDescriptor>
             {
                 Map = docs => from doc in docs
-                              select new { doc.Name, doc.Namespace }
+                              select new { doc.Name }
             };
 
             var convention = new DocumentConvention
@@ -42,13 +42,6 @@ namespace Custom.Indexes
 
             //store.Conventions.RegisterIdConvention<Metadata.TypeDescriptor>(((dbname, commands, type) => "Type/" + commands.NextIdentityFor("Type")));
 
-            convention.RegisterIdConvention<Metadata.TypeDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.PrimitiveDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.ObjectDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.EnumDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.UnitDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.EntityDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-
             convention.FindTypeTagName = type => type.IsSubclassOf(typeof(Metadata.TypeDescriptor))
                 ? "Type"//DocumentConvention.DefaultTypeTagName(typeof(TypeDescriptor))
                 : DocumentConvention.DefaultTypeTagName(type);
@@ -56,11 +49,8 @@ namespace Custom.Indexes
             var definition = builder.ToIndexDefinition(convention);
 
             definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
-            definition.Indexes.Add("Namespace", FieldIndexing.NotAnalyzed);
             definition.Stores.Add("Name", FieldStorage.Yes);
-            definition.Stores.Add("Namespace", FieldStorage.Yes);
             definition.TermVectors.Add("Name", FieldTermVector.No);
-            definition.TermVectors.Add("Namespace", FieldTermVector.No);
 
             return definition;
         }

@@ -1,0 +1,436 @@
+﻿@model Custom.Presentation.Sencha.Ext.panel.Panel
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.enum.Picker', function () {
+
+        var frameStyle = 'background-color:#dfe8f5;';
+
+        function convertText(text) {
+            switch (typeof text) {
+                case 'string':
+                    return text;
+
+                case 'object':
+                    return text.en;
+
+                default:
+                    return text;
+            }
+        };
+
+        function isStoreModified(store) {
+            var modifiedRecords = store.getUpdatedRecords();
+            return typeof modifiedRecords === 'object' && modifiedRecords.length > 0;
+        };
+
+        Ext.data.writer.Json.override({
+            /*
+             * This function overrides the default implementation of json writer. Any hasMany relationships will be submitted
+             * as nested objects. When preparing the data, only children which have been newly created, modified or marked for
+             * deletion will be added. To do this, a depth first bottom -> up recursive technique was used.
+             */
+            getRecordData: function (record) {
+                //Setup variables
+                var me = this, i, association, childStore, data = record.data;
+
+                //Iterate over all the hasMany associations
+                for (i = 0; i < record.associations.length; i++) {
+                    association = record.associations.get(i);
+                    data[association.name] = null;
+                    childStore = record[association.storeName];
+
+                    if (childStore == null || typeof childStore !== 'object') {
+                        continue;
+                    }
+
+                    //Iterate over all the children in the current association
+                    childStore.each(function (childRecord) {
+
+                        if (!data[association.name]) {
+                            data[association.name] = [];
+                        }
+
+                        //Recursively get the record data for children (depth first)
+                        var childData = this.getRecordData.call(this, childRecord);
+
+                        /*
+                         * If the child was marked dirty or phantom it must be added. If there was data returned that was neither
+                         * dirty or phantom, this means that the depth first recursion has detected that it has a child which is
+                         * either dirty or phantom. For this child to be put into the prepared data, it's parents must be in place whether
+                         * they were modified or not.
+                         */
+                        if (childRecord.dirty | childRecord.phantom | (childData != null)) {
+                            data[association.name].push(childData);
+                            record.setDirty();
+                        }
+                    }, me);
+
+                    /*
+                     * Iterate over all the removed records and add them to the preparedData. Set a flag on them to show that
+                     * they are to be deleted
+                     */
+                    Ext.each(childStore.removed, function (removedChildRecord) {
+                        //Set a flag here to identify removed records
+                        removedChildRecord.set('forDeletion', true);
+                        var removedChildData = this.getRecordData.call(this, removedChildRecord);
+                        data[association.name].push(removedChildData);
+                        record.setDirty();
+                    }, me);
+                }
+
+                //Only return data if it was dirty, new or marked for deletion.
+                if (record.dirty | record.phantom | record.get('forDeletion')) {
+                    return data;
+                }
+            }
+        });
+
+        return {
+            extend: 'Ext.panel.Panel',
+            alias: 'widget.entitypicker',
+            requires: [
+                'App.metadata.entity.Model',
+                'App.core.Adapter',
+                'Ext.PagingToolbar',
+                'Ext.form.field.Text',
+                'Ext.toolbar.TextItem'
+            ],
+            layout: 'fit',
+            frame: false,
+            border: false,
+            margin: '2 0 0 0',
+            bodyPadding: '8 0 0 0',
+            bodyStyle: frameStyle, // background color like frame
+            initComponent: function (config) {
+
+                this.commitButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-save',
+                    text: 'Commit',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onCommitClick
+                });
+
+                this.createButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-add',
+                    text: 'Create',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onCreateClick
+                });
+
+                this.destroyButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-delete',
+                    text: 'Destroy',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onDestroyClick
+                });
+
+                this.rollbackButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-reset',
+                    text: 'Rollback',
+                    disabled: true,
+                    scope: this,
+                    handler: this.onRollbackClick
+                });
+
+                this.searchField = Ext.create('Ext.ux.form.SearchField', {
+                    disabled: true,
+                    scope: this,
+                    handler: this.onSearchClick
+                });
+
+                this.pagingToolbar = Ext.create('Ext.PagingToolbar', {
+                    store: this.store,   // same store GridPanel is using
+                    ui: 'footer',
+                    border: false,
+                    displayInfo: false,
+                    /*displayMsg: 'Displaying topics {0} - {1} of {2}',
+                            emptyMsg: "No topics to display",*/
+                });
+
+                this.refreshButton = this.pagingToolbar.items.get(10);
+
+                this.writer = Ext.create('Ext.data.writer.Json', {
+                    root: 'data',
+                    allowSingle: false, // force data to be array
+                    //dateFormat: "",
+                    writeAllFields: false,
+                    writeRecordId: true,
+                    getRecordData: function (record) {
+                        return {
+                            'id': record.data.id,
+                            'name': record.data.name,
+                            'namespace': record.data.namespace,
+                            'title': record.data.title,
+                            'summary': record.data.summary,
+                            'culture': record.data.culture
+                        };
+                    }
+                });
+
+                this.proxy = {
+                    // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                    // and for jsonp the api is the same, but the method is GET
+                    type: 'ajax', // rest, jsonp or ajax. 
+                    api: {
+                        create: '@Url.Absolute("/Metadata/Entity/Create")',
+                        read: '@Url.Absolute("/Metadata/Entity/Read")',
+                        update: '@Url.Absolute("/Metadata/Entity/Update")',
+                        destroy: '@Url.Absolute("/Metadata/Entity/Destroy")'
+                    },
+                    //url: path,
+                    autoLoad: true,
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    listeners: {
+                        exception: function (proxy, response, operation) {
+                            Ext.MessageBox.show({
+                                title: 'REMOTE EXCEPTION',
+                                msg: operation.getError(),
+                                icon: Ext.MessageBox.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
+                        }
+                    },
+                    reader: {
+                        type: "json",
+                        root: "data",
+                        idProperty: 'id',
+                        //dateFormat: "",
+                        totalProperty: 'total',
+                        successProperty: 'success',
+                        messageProperty: 'message'
+                    },
+                    writer: {
+                        type: 'json',
+                        root: 'data',
+                        allowSingle: false, // force data to be array
+                        //dateFormat: "",
+                        writeAllFields: true,
+                        writeRecordId: true
+                    }
+                };
+
+                this.store = Ext.create('Ext.data.Store', {
+                    // destroy the store if the grid is destroyed
+                    autoDestroy: true,
+                    autoLoad: true,
+                    //autoSave: true,
+                    autoSync: false,
+                    batchActions: true,
+                    //buffered: true,
+                    model: 'App.metadata.entity.Model',
+                    proxy: this.proxy,
+                    pageSize: 100,
+                    listeners: {
+                        add: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        datachanged: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        remove: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        update: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        write: function (proxy, operation) {
+                            if (operation.action == 'destroy') {
+                                //main.child('#form').setActiveRecord(null);
+                            }
+                            //Ext.example.msg(operation.action, operation.resultSet.message);
+                        }
+                    },
+                    sorters: [{
+                        property: 'Name',
+                        direction: 'ASC'
+                    }]
+                });
+
+                this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+                    clicksToEdit: 2,
+                    clicksToMoveEditor: 1,
+                    autoCancel: true
+                });
+
+                this.selModel = Ext.create("Ext.selection.RowModel", {
+                    selType: "rowmodel",
+                    listeners: {
+                        selectionchange: {
+                            fn: function (selModel, selections) {
+                                this.onSelectionChange(selModel, selections)
+                            },
+                            scope: this
+                        }
+                    }
+                });
+
+                this.gridPanel = Ext.create('Ext.grid.Panel', {
+                    store: this.store,
+                    iconCls: 'icon-grid',
+                    layout: 'fit',
+                    frame: false,
+                    border: true,
+                    header: false,
+                    plugins: [this.rowEditing],
+                    selModel: this.selModel,
+                    columns: {
+                        items: [
+                            {
+                                /*editor: {
+                                    // defaults to textfield if no xtype is supplied
+                                    allowBlank: true
+                                },*/
+                                sortable: false,
+                                width: 50,
+                                xtype: "rownumberer",
+                            },
+                            {
+                                editor: {
+                                    allowBlank: true
+                                    //vtype: 'email'
+                                },
+                                dataIndex: "Name",
+                                fixed: false,
+                                flex: 1,
+                                text: "Name",
+                            },
+                            {
+                                editor: {
+                                    allowBlank: true
+                                },
+                                dataIndex: "titleText",
+                                fixed: false,
+                                flex: 1,
+                                text: "Title",
+                                //renderer: convertText
+                            },
+                            {
+                                editor: {
+                                    allowBlank: true
+                                },
+                                dataIndex: "summaryText",
+                                fixed: false,
+                                flex: 3,
+                                text: "Summary"
+                            }
+                        ]
+                    },
+                    listeners: {
+                        beforeedit: {
+                            fn: function (editor, e) {
+                                return true;
+                            },
+                            scope: this
+                        },
+                        edit: {
+                            fn: function (editor, e) {
+                                // Fires after a row is edited. The edit event object has the following properties 
+                                // * grid - The grid this editor is on
+                                // * view - The grid view
+                                // * store - The grid store
+                                // * record - The record being edited
+                                // * row - The grid table row
+                                // * column - The grid Column defining the column that initiated the edit
+                                // * rowIdx - The row index that is being edited
+                                // * colIdx - The column index that initiated the edit
+                                //e.record.commit();
+                                this.onDataChanged(e.store);
+                                return true;
+                            },
+                            scope: this
+                        },
+                        validateedit: {
+                            fn: function (editor, e) {
+                                return true;
+                            },
+                            scope: this
+                        }
+                    },
+
+                });
+
+                Ext.apply(this,
+                    {
+                        items: [this.gridPanel],
+                        dockedItems: [
+                            {
+                                dock: 'top',
+                                ui: 'header',
+                                xtype: 'triggerfield',
+                                trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+                                trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+                                height: 18,
+                                hasSearch: false,
+                                scope: this,
+                                listConfig: {
+                                    loadingText: 'Searching...',
+                                    emptyText: 'No matching posts found.',
+                                    // Custom rendering template for each item
+                                    getInnerTpl: function () {
+                                        return '<b>{name} </b> ({namespace})';
+                                    }
+                                }
+                            },
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                items: [this.createButton, this.destroyButton, '->', this.pagingToolbar, '->', this.commitButton, this.rollbackButton]
+                            }
+                        ]
+                    });
+
+                this.callParent();
+
+                //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+
+                App.core.Adapter.publish('App.metadata.Entity.init', this);
+            },
+            onCommitClick: function () {
+                this.commitButton.disable();
+                this.rollbackButton.disable();
+                this.store.save();
+                this.refreshButton.enable();
+                App.core.Adapter.publish('App.metadata.Entity.commit');
+            },
+            onCreateClick: function () {
+            },
+            onDataChanged: function (store) {
+                this.dirty = true;
+                this.commitButton.enable();
+                this.rollbackButton.enable();
+                this.refreshButton.disable();
+                App.core.Adapter.publish('App.metadata.Entity.datachanged', this.store);
+            },
+            onDestroyClick: function () {
+            },
+            onRefreshClick: function () {
+            },
+            onRollbackClick: function () {
+                this.commitButton.disable();
+                this.rollbackButton.disable();
+                this.store.rejectChanges();
+                this.refreshButton.enable();
+                App.core.Adapter.publish('App.metadata.Entity.rollback');
+            },
+            onSelectionChange: function (selModel, selections) {
+                //this.down('#delete').setDisabled(selections.length === 0);
+                App.core.Adapter.publish('App.metadata.Entity.selectionchange', selModel, selections);
+            },
+            onSearchClick: function () {
+            }
+        };
+    });
+</script>

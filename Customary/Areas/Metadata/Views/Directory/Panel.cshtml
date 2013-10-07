@@ -1,0 +1,153 @@
+﻿@model Custom.Presentation.Sencha.Ext.data.Store
+@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('Custom.Metadata.Directory.Panel', function () {
+
+        var baseUrl = '@Url.Absolute("/Metadata/Directory/")';
+
+        function fullName(node) {
+            /// <param name="node" type="Ext.data.NodeInterface">
+            /// </param>
+            /// <returns type="String"></returns>
+            var name = [];
+            name.push(node.raw.text);
+            for (node = node.parentNode; node; node = node.parentNode) {
+                name.push(node.raw.text);
+            }
+            name.reverse();
+            return name.slice(1).join('-');
+        };
+
+        return {
+            extend: 'Ext.tree.Panel',
+            loadMask: true,
+            loadingText: "Loading",
+            initComponent: function (config) {
+
+                this.store = Ext.create('Ext.data.TreeStore', {
+                    id: 'Custom.Metadata.Directory.Store',
+                    autoLoad: true,
+                    //defaultRootId: '0',
+                    //defaultRootText: "text",
+                    //defaultRootProperty: 'children',
+                    folderSort: true,
+                    // not using model. direct proxy
+                    proxy: {
+                        // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                        // and for jsonp the api is the same, but the method is GET
+                        type: 'ajax', // rest, jsonp or ajax. 
+                        api: {
+                            read: baseUrl + '/Read/'
+                        },
+                        buildUrl: function (request) {
+                            switch (request.action) {
+                                case 'read':
+                                    return baseUrl + '/Read/' + fullName(request.operation.node);
+                                default:
+                                    return baseUrl;
+                            }
+                        },
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        listeners: {
+                            exception: function (proxy, response, operation) {
+                                Ext.MessageBox.show({
+                                    title: 'REMOTE EXCEPTION',
+                                    msg: operation.getError(),
+                                    icon: Ext.MessageBox.ERROR,
+                                    buttons: Ext.Msg.OK
+                                });
+                            }
+                        },
+                        reader: {
+                            type: "json",
+                            root: "data",
+                            totalProperty: 'total',
+                            successProperty: 'success',
+                            messageProperty: 'message'
+                        }
+                    },
+                    root: {
+                        text: "Root",
+                        expanded: true,
+                        loaded: false,
+                        }
+                });
+
+                /*this.loader = Ext.create('Ext.tree.TreeLoader', {
+                    url: this.url,
+                    requestMethod: 'get',
+                    baseParams: { cmd: 'get' },
+                    listeners: {
+                        beforeload: {
+                            scope: this,
+                            fn: function (loader, node) {
+                                loader.dataUrl = this.url + '/' + getPath(node);
+                                Ext.Ajax.defaultHeaders = {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json; charset=utf-8'
+                                };
+                            }
+                        }
+                    }
+                });*/
+
+                // setup loading mask if configured
+                /*if (true === this.loadMask) {
+                    this.loader.on({
+                        scope: this.el,
+                        beforeload: this.el.mask.createDelegate(this.el, [this.loadingText + '...']),
+                        load: this.el.unmask,
+                        loadexception: this.el.unmask
+                    });
+                }*/
+
+                this.refreshButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-refresh',
+                    text: 'Refresh',
+                    scope: this,
+                    handler: this.onRefreshClick
+                });
+
+                Ext.apply(this, {
+                    //model: Ext.create('App.metadata.tree.Model'),
+                    store: this.store,
+                    rootVisible: false,
+                    useArrows: true,
+                    listeners: {
+                        selectionchange: {
+                            fn: this.onSelectionChange,
+                            scope: this
+                        }
+                    },
+                    dockedItems: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                margin: '6 0 3 0',
+                                items: ['->', this.refreshButton]
+                            }
+                    ]
+                });
+
+                this.callParent();
+            },
+            onRefreshClick: function () {
+                this.store.load();
+                App.core.Adapter.publish('Custom.Metadata.Directory.selectionchange', this.selModel);
+            },
+            onSelectionChange: function (selModel, selections, opts) {
+                if (typeof selections == 'object' && selections.length > 0 && typeof selections[0].raw == 'object') {
+                    App.core.Adapter.publish('Custom.Metadata.Directory.selectionchange', selModel, selections, selections[0].raw.type, selections[0].raw.id);
+                } else {
+                    App.core.Adapter.publish('Custom.Metadata.Directory.selectionchange', selModel, selections);
+                }
+            }
+        };
+    });
+</script>

@@ -28,7 +28,7 @@ namespace Custom.Controllers
                 {
                     case "category":
                         LogCategories category;
-                        if (Enum.TryParse<Custom.Diagnostics.LogCategories>(value, out category))
+                        if (System.Enum.TryParse<Custom.Diagnostics.LogCategories>(value, out category))
                             base.Log.Category(category);
                         break;
 

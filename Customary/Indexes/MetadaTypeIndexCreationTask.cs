@@ -32,7 +32,7 @@ namespace Custom.Indexes
             var builder = new IndexDefinitionBuilder<TypeDescriptor>
             {
                 Map = docs => from doc in docs
-                              select new { doc.Name, doc.Namespace }
+                              select new { doc.Name }
             };
 
             var convention = new DocumentConvention
@@ -53,12 +53,20 @@ namespace Custom.Indexes
             var definition = builder.ToIndexDefinition(convention);
 
             definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
-            definition.Indexes.Add("Namespace", FieldIndexing.NotAnalyzed);
             definition.Stores.Add("Name", FieldStorage.Yes);
-            definition.Stores.Add("Namespace", FieldStorage.Yes);
             definition.TermVectors.Add("Name", FieldTermVector.No);
-            definition.TermVectors.Add("Namespace", FieldTermVector.No);
-
+            /*
+            IndexDefinition definition = new IndexDefinition
+            {
+                Map = "from doc in docs \r\nlet Tag = doc[\"@metadata\"][\"Raven-Entity-Name\"]\r\nselect new { Tag, Name = (DateTime)doc.Name };"
+            };
+            definition.Indexes.Add("Tag", FieldIndexing.NotAnalyzed);
+            definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
+            definition.Stores.Add("Tag", FieldStorage.No);
+            definition.Stores.Add("Name", FieldStorage.Yes);
+            definition.TermVectors.Add("Tag", FieldTermVector.No);
+            definition.TermVectors.Add("Name", FieldTermVector.No);
+            */
             return definition;
         }
     }

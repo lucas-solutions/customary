@@ -11,6 +11,7 @@ namespace Custom
 {
     using Custom.Diagnostics;
     using Custom.Metadata;
+    using Custom.Repositories;
 
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
@@ -46,7 +47,7 @@ namespace Custom
             var metadataSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Metadata")).GetFiles("*.js").ToArray();
             foreach (var file in metadataSeeds)
             {
-                Global.Metadata.Import(file.FullName);
+                Global.Metadata.Store.Import(new System.IO.FileInfo(file.FullName));
             }
 
             /*var globalizationSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Globalization")).GetFiles("*.js").ToArray();

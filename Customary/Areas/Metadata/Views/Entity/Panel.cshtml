@@ -1,0 +1,863 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+@{
+    var descriptor = Model as EntityDescriptor;
+}
+@if (descriptor != null)
+{
+    var id = descriptor.Id.ToString("N");
+    var masterPanel = new Ext.panel.Panel();
+    var gridPanel = new Ext.grid.Panel();
+    var tabPanel = new Ext.tab.Panel();
+    <script type="text/javascript">
+        Ext.define('App.metadata.entity.Panel.@id', function () {
+            var frameStyle = 'background-color:#dfe8f5;';
+
+            return {
+                extend: 'Ext.tab.Panel',
+                requires: [
+                    'Custom.Metadata.Entity.Model.@id'
+                ],
+                //
+                // Styling
+                bodyPadding: '8 0 0 0',
+                bodyStyle: frameStyle, // background color like frame
+                border: false,
+                frame: false,
+                layout: 'border',
+                margin: '2 0 0 0',
+
+                initComponent: function (config) {
+                }
+            };
+        });
+    </script>
+}
+else if (Model == null)
+{
+    <script type="text/javascript">
+        Ext.define('Custom.Metadata.Entity.Panel', function () {
+            var frameStyle = 'background-color:#dfe8f5;';
+
+            return {
+                extend: 'Ext.panel.Panel',
+                requires: [
+                    'Custom.Metadata.Entity.Model',
+                    'App.metadata.property.Editor',
+                    'App.core.Adapter',
+                    'App.metadata.member.TitleField',
+                    'App.metadata.member.SummaryField'
+                ],
+                layout: 'border',
+                frame: false,
+                border: false,
+                //margin: '0 0 0 0',
+                //bodyPadding: '0 0 0 0',
+                bodyStyle: frameStyle, // background color like frame
+                initComponent: function (config) {
+
+                    Ext.apply(this, {
+                        // user triggers. coz 'buttons' name is taken and will be overwritten
+                        triggers: {
+                            add: Ext.create('Ext.Button', {
+                                iconCls: 'icon-add',
+                                text: 'Add',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onAddClick
+                            }),
+
+                            cancel: Ext.create('Ext.Button', {
+                                iconCls: 'icon-cancel',
+                                text: 'Cancel',
+                                disabled: true,
+                                scope: this,
+                                handler: this.reload
+                            }),
+
+                            commit: Ext.create('Ext.Button', {
+                                iconCls: 'icon-save',
+                                text: 'Commit',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onCommitClick
+                            }),
+
+                            create: Ext.create('Ext.Button', {
+                                iconCls: 'icon-add',
+                                text: 'Create',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onCreateClick
+                            }),
+
+                            'delete': Ext.create('Ext.Button', {
+                                iconCls: 'icon-delete',
+                                text: 'Delete',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onDeleteClick
+                            }),
+
+                            destroy: Ext.create('Ext.Button', {
+                                iconCls: 'icon-delete',
+                                text: 'Destroy',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onDestroyClick
+                            }),
+
+                            rollback: Ext.create('Ext.Button', {
+                                iconCls: 'icon-reset',
+                                text: 'Rollback',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onRollbackClick
+                            }),
+
+                            update: Ext.create('Ext.Button', {
+                                iconCls: 'icon-update',
+                                text: 'Update',
+                                disabled: true,
+                                scope: this,
+                                handler: this.update
+                            })
+                        }
+                    });
+
+                    this.searchField = Ext.create('Ext.ux.form.SearchField', {
+                        disabled: true,
+                        scope: this,
+                        handler: this.onSearchClick
+                    });
+
+                    this.pagingToolbar = Ext.create('Ext.PagingToolbar', {
+                        store: this.store,   // same store GridPanel is using
+                        ui: 'footer',
+                        border: false,
+                        displayInfo: false,
+                        /*displayMsg: 'Displaying topics {0} - {1} of {2}',
+                                emptyMsg: "No topics to display",*/
+                    });
+
+                    this.triggers.refresh = this.pagingToolbar.items.get(10);
+
+                    this.forms = {
+
+                        general: Ext.create('Ext.form.Panel', {
+                            trackResetOnLoad: true,
+                            frame: true,
+                            border: false,
+                            disabled: true,
+                            layout: 'column',
+                            bodyPadding: '0',
+                            padding: '8 0',
+                            frame: false,
+                            bodyStyle: frameStyle, // background color like frame
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            fieldDefaults: {
+                                anchor: '100%',
+                                labelAlign: 'right'
+                            },
+                            items: [
+                                 {
+                                     xtype: 'fieldset',
+                                     columnWidth: 0.5,
+                                     border: false,
+                                     collapsible: false,
+                                     defaultType: 'textfield',
+                                     layout: 'anchor',
+                                     items: [
+                                         {
+                                             allowBlank: false,
+                                             columnWidth: 0.5,
+                                             fieldLabel: "Name",
+                                             name: "Name"
+                                         },
+                                         {
+                                             allowBlank: false,
+                                             columnWidth: 0.5,
+                                             fieldLabel: "Namespace",
+                                             name: "Namespace"
+                                         },
+                                         {
+                                             cls: 'x-item-disabled', // simulate disabled; submitted
+                                             fieldLabel: "Version",
+                                             name: "Version",
+                                             readOnly: true,
+                                         },
+                                         {
+                                             allowBlank: false,
+                                             fieldLabel: "Title",
+                                             name: "titleText"
+                                         }
+                                     ]
+                                 },
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 0.5,
+                                    border: false,
+                                    collapsible: false,
+                                    defaultType: 'textfield',
+                                    layout: 'anchor',
+                                    items: [
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Singleton",
+                                            name: 'singleton'
+                                        },
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Masterdata",
+                                            name: 'Masterdata'
+                                        },
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Transactional",
+                                            name: 'Transactinal'
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 1,
+                                    border: false,
+                                    defaults: { anchor: '100%' },
+                                    layout: 'anchor',
+                                    items: [
+                                        {
+                                            fieldLabel: "Summary",
+                                            name: "summaryText",
+                                            xtype: "textarea"
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 0.5,
+                                    border: false,
+                                    collapsible: false,
+                                    defaultType: 'textfield',
+                                    layout: 'anchor',
+                                    items: [
+                                        {
+                                            allowBlank: false,
+                                            columnWidth: 0.5,
+                                            xtype: 'combobox',
+                                            fieldLabel: "Identity",
+                                            name: "identity"
+                                        }
+                                    ]
+                                }
+                            ],
+                            listeners: {
+                                dirtychange: {
+                                    fn: function (form, dirty) {
+                                        this.dirty = dirty;
+                                        if (dirty === true) {
+                                            this.triggers.update.enable();
+                                            this.triggers.cancel.enable();
+                                        } else {
+                                            this.triggers.update.disable();
+                                            this.triggers.cancel.disable();
+                                        }
+                                    },
+                                    scope: this
+                                }
+                            }
+                        }),
+
+                        Properties: Ext.create('Ext.form.Panel', {
+                            region: 'north',
+                            collapsible: true,
+                            title: "Edit",
+                            disabled: true,
+                            trackResetOnLoad: true,
+                            collapsed: true,
+                            header: false,
+                            frame: true,
+                            border: false,
+                            split: true,
+                            frame: true,
+                            //bodyStyle: 'padding:5px 5px 0',
+                            layout: 'column',
+                            fieldDefaults: {
+                                anchor: '100%',
+                                labelAlign: 'right'
+                            },
+                            bodyPadding: 0,
+                            items: [
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 0.5,
+                                    border: false,
+                                    bodyPadding: 0,
+                                    collapsible: false,
+                                    defaultType: 'textfield',
+                                    defaults: { anchor: '100%' },
+                                    layout: 'anchor',
+                                    items: [
+                                        {
+                                            allowBlank: false,
+                                            fieldLabel: "Name",
+                                            name: "name"
+                                        },
+                                        Ext.create('App.metadata.type.Field', {
+                                            fieldLabel: "Type",
+                                            name: "propertyType"
+                                        }),
+                                        {
+                                            allowBlank: false,
+                                            fieldLabel: "Title",
+                                            name: "titleText"
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 0.5,
+                                    border: false,
+                                    collapsible: false,
+                                    defaults: { anchor: '100%' },
+                                    layout: 'anchor',
+                                    vertical: true,
+                                    items: [
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Required",
+                                            name: "required"
+                                        },
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Multiple",
+                                            name: "multiple"
+                                        },
+                                        {
+                                            xtype: 'checkbox',
+                                            boxLabel: "Reference",
+                                            name: "reference"
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'fieldset',
+                                    columnWidth: 1,
+                                    border: false,
+                                    defaults: { anchor: '100%' },
+                                    layout: 'anchor',
+                                    items: [
+                                        {
+                                            fieldLabel: "Summary",
+                                            name: "summaryText",
+                                            xtype: "textarea"
+                                        }
+                                    ]
+                                }
+                            ],
+                            listeners: {
+                                dirtychange: {
+                                    fn: this.onDirtyChange,
+                                    scope: this
+                                }
+                            }
+                        })
+                    };
+
+                    this.stores = {
+                        master: Ext.create('Ext.data.Store', {
+                            // destroy the store if the grid is destroyed
+                            autoDestroy: true,
+                            autoLoad: true,
+                            //autoSave: true,
+                            autoSync: false,
+                            batchActions: true,
+                            //buffered: true,
+                            model: 'Custom.Metadata.Entity.Model',
+                            pageSize: 100,
+                            listeners: {
+                                add: {
+                                    fn: this.onDataChanged,
+                                    scope: this
+                                },
+                                datachanged: {
+                                    fn: this.onDataChanged,
+                                    scope: this
+                                },
+                                remove: {
+                                    fn: this.onDataChanged,
+                                    scope: this
+                                },
+                                update: {
+                                    fn: this.onDataChanged,
+                                    scope: this
+                                },
+                                write: function (proxy, operation) {
+                                    if (operation.action == 'destroy') {
+                                        //master.child('#form').setActiveRecord(null);
+                                    }
+                                    //Ext.example.msg(operation.action, operation.resultSet.message);
+                                }
+                            },
+                            sorters: [{
+                                property: 'Name',
+                                direction: 'ASC'
+                            }]
+                        })
+                    };
+
+                    this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+                        clicksToEdit: 2,
+                        clicksToMoveEditor: 1,
+                        autoCancel: true
+                    });
+
+                    this.grids = {
+                        master: Ext.create('Ext.grid.Panel', {
+                            region: 'center',
+                            flex: 3,
+                            store: this.stores.master,
+                            iconCls: 'icon-grid',
+                            layout: 'fit',
+                            frame: false,
+                            border: true,
+                            header: false,
+                            title: 'Select',
+                            plugins: [this.rowEditing],
+                            selModel: Ext.create("Ext.selection.RowModel", {
+                                selType: "rowmodel",
+                                listeners: {
+                                    selectionchange: {
+                                        fn: function (selModel, selections) {
+                                            this.onSelectionChange(selModel, selections, "master")
+                                        },
+                                        scope: this
+                                    }
+                                }
+                            }),
+                            columns: {
+                                items: [
+                                    {
+                                        /*editor: {
+                                            // defaults to textfield if no xtype is supplied
+                                            allowBlank: true
+                                        },*/
+                                        sortable: false,
+                                        width: 50,
+                                        xtype: "rownumberer",
+                                    },
+                                    {
+                                        editor: {
+                                            allowBlank: true
+                                            //vtype: 'email'
+                                        },
+                                        dataIndex: "Name",
+                                        fixed: false,
+                                        flex: 1,
+                                        text: "Name",
+                                    },
+                                    {
+                                        editor: {
+                                            allowBlank: true
+                                        },
+                                        dataIndex: "titleText",
+                                        fixed: false,
+                                        flex: 1,
+                                        text: "Title",
+                                        //renderer: convertText
+                                    },
+                                    {
+                                        editor: {
+                                            allowBlank: true
+                                        },
+                                        dataIndex: "summaryText",
+                                        fixed: false,
+                                        flex: 3,
+                                        text: "Summary"
+                                    }
+                                ]
+                            },
+                            listeners: {
+                                beforeedit: {
+                                    fn: function (editor, e) {
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                edit: {
+                                    fn: function (editor, e) {
+                                        // Fires after a row is edited. The edit event object has the following properties 
+                                        // * grid - The grid this editor is on
+                                        // * view - The grid view
+                                        // * store - The grid store
+                                        // * record - The record being edited
+                                        // * row - The grid table row
+                                        // * column - The grid Column defining the column that initiated the edit
+                                        // * rowIdx - The row index that is being edited
+                                        // * colIdx - The column index that initiated the edit
+                                        //e.record.commit();
+                                        this.onDataChanged(e.store, "master");
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                validateedit: {
+                                    fn: function (editor, e) {
+                                        return true;
+                                    },
+                                    scope: this
+                                }
+                            },
+                            dockedItems: [
+                                    {
+                                        dock: 'top',
+                                        ui: 'header',
+                                        xtype: 'triggerfield',
+                                        trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+                                        trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+                                        height: 18,
+                                        margin: '0 0 11 0',
+                                        hasSearch: false,
+                                        scope: this,
+                                        listConfig: {
+                                            loadingText: 'Searching...',
+                                            emptyText: 'No matching posts found.',
+                                            // Custom rendering template for each item
+                                            getInnerTpl: function () {
+                                                return '<b>{name} </b> ({namespace})';
+                                            }
+                                        }
+                                    },
+                                    {
+                                        xtype: 'toolbar',
+                                        dock: 'bottom',
+                                        ui: 'footer',
+                                        items: [this.triggers.create, this.triggers.destroy, '->', this.pagingToolbar, '->', this.triggers.commit, this.triggers.rollback]
+                                    }
+                            ]
+                        }),
+
+                        Properties: Ext.create('Ext.grid.Panel', {
+                            header: false,
+                            region: 'center',
+                            split: true,
+                            disabled: true,
+                            iconCls: 'icon-grid',
+                            layout: 'fit',
+                            //plugins: [this.editing],
+                            columns: [
+                                {
+                                    editor: {
+                                        allowBlank: false
+                                        //vtype: 'email'
+                                    },
+                                    dataIndex: "Name",
+                                    fixed: false,
+                                    flex: 1,
+                                    text: "Name"
+                                },
+                                {
+                                    editor: {
+                                        allowBlank: false
+                                        //vtype: 'email'
+                                    },
+                                    dataIndex: 'PropertyType',
+                                    fixed: false,
+                                    flex: 1,
+                                    text: "Type",
+                                },
+                                {
+                                    editor: {
+                                        allowBlank: true
+                                    },
+                                    dataIndex: "titleText",
+                                    fixed: false,
+                                    flex: 1,
+                                    text: "Title"
+                                },
+                                {
+                                    editor: {
+                                        allowBlank: true
+                                    },
+                                    dataIndex: "summaryText",
+                                    fixed: false,
+                                    flex: 3,
+                                    text: "Summary"
+                                }
+                            ],
+                            selModel: Ext.create("Ext.selection.RowModel", {
+                                selType: "rowmodel",
+                                listeners: {
+                                    selectionchange: {
+                                        fn: function (selModel, selections) {
+                                            if (typeof selections === 'object' && selections.length === 1) {
+                                                this.load(selections[0]);
+                                            } else {
+                                                this.reset();
+                                            }
+
+                                            App.core.Adapter.publish('App.metadata.Property.selectionchange', selModel, selections);
+                                        },
+                                        scope: this
+                                    }
+                                }
+                            })/*,
+                    listeners: {
+                        reconfigure: {
+                            fn: function (grid, store, columns, oldStore, The, eOpts) {
+                                this.reset();
+                                try {
+                                    if (typeof store === 'object' && store.getCount() > 0) {
+                                        //this.gridPanel.getSelectionModel().deselectAll();
+                                        //this.gridPanel.getSelectionModel().select(0, true);
+                                    }
+                                }
+                                catch (e) {
+                                    if (console && console.error) {
+                                        console.error(e.message);
+                                    }
+                                }
+                            },
+                            scope: this
+                        }
+                    }*/
+                        })
+                    };
+
+                    this.tabs = {
+                        general: Ext.create('Ext.panel.Panel', {
+                            title: "General",
+                            layout: 'fit',
+                            items: [this.forms.general],
+                            bodyStyle: frameStyle, // background color like frame
+                            bodyPadding: '0'
+                        }),
+                        Properties: Ext.create('Ext.panel.Panel', {
+                            title: 'Properties',
+                            layout: 'border',
+                            frame: false,
+                            border: false,
+                            items: [this.forms.Properties, this.grids.Properties]
+                        })
+                    };
+
+                    this.tabPanel = Ext.create('Ext.tab.Panel', {
+                        region: 'east',
+                        flex: 2,
+                        frame: false,
+                        collapsible: true,
+                        border: false,
+                        split: true,
+                        header: false,
+                        // the header will be visible when collapsed, with the title in it.
+                        title: 'Edit',
+                        activeTab: 0,      // First tab active by default
+                        bodyPadding: '4 4 0 0',
+                        bodyStyle: frameStyle, // background color like frame
+                        items: [
+                            this.tabs.general,
+                            this.tabs.Properties
+                        ],
+                        dockedItems: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                margin: '6 0 3 0',
+                                items: [this.triggers.add, this.triggers.delete, '->', this.triggers.update, this.triggers.cancel]
+                            }
+                        ]
+                    });
+
+                    Ext.apply(this, {
+                        layout: 'border',
+                        border: false,
+                        frame: false,
+                        items: [this.grids.master, this.tabPanel],
+                    });
+
+                    this.callParent();
+
+                    //this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+
+                    App.core.Adapter.publish('Custom.Metadata.Entity.Panel', this);
+                },
+                onCancelClick: function () {
+                    this.triggers.update.disable();
+                    this.triggers.cancel.disable();
+                },
+                onCommitClick: function () {
+                    this.triggers.commit.disable();
+                    this.triggers.rollback.disable();
+                    this.store.save();
+                    this.triggers.refresh.enable();
+
+                    var record = this.record;
+                    this.reset();
+                    this.load(record);
+                },
+                onCreateClick: function () {
+                },
+                onDataChanged: function (store) {
+                    this.dirty = true;
+                    this.triggers.commit.enable();
+                    this.triggers.rollback.enable();
+                    this.triggers.refresh.disable();
+
+                    this.reload();
+                },
+                onDestroyClick: function () {
+                },
+                onRefreshClick: function () {
+                },
+                onRollbackClick: function () {
+                    this.triggers.commit.disable();
+                    this.triggers.rollback.disable();
+                    this.store.rejectChanges();
+                    this.triggers.refresh.enable();
+
+                    var record = this.record;
+                    this.reset();
+                    this.load(record);
+                },
+                onSelectionChange: function (selModel, selections) {
+                    //this.down('#delete').setDisabled(selections.length === 0);
+
+                    if (typeof selections === 'object' && selections.length === 1) {
+                        this.load(selections[0]);
+                        this.reconfigure("Properties", selections[0]);
+                    } else {
+                        this.reset();
+                    }
+                },
+                onSearchClick: function () {
+                },
+                onUpdateClick: function () {
+                    this.triggers.update.disable();
+                    this.triggers.cancel.disable();
+                },
+                load: function (record) {
+
+                    this.dirty = false;
+                    this.record = record;
+
+                    this.triggers.update.disable();
+                    this.triggers.cancel.disable();
+
+                    var forms = [
+                        this.forms.general.getForm()
+                    ];
+
+                    Ext.each(forms, function (form) {
+                        form.loadRecord(record);
+                    });
+
+                    this.forms.general.enable();
+                },
+                reconfigure: function (name, record) {
+
+                    var store = this.stores[name];
+                    var grid = this.grids[name];
+
+                    if (store != null && typeof store === 'object') {
+                        store.removeListener('datachanged', this.onDataChanged, this);
+                        store.removeListener('add', this.onPropertyAdd, this);
+                        store.removeListener('remove', this.onPropertyRemove, this);
+                        store.removeListener('update', this.onPropertyUpdate, this);
+
+                        delete this.stores[name];
+                    }
+
+                    if (record != null && typeof record == 'object' && typeof record.store === 'object' && typeof (record.Properties) === 'function') {
+
+                        var fn = record[name];
+
+                        if (fn !== null && typeof fn === 'function') {
+
+                            store = fn.apply(record);
+
+                            if (store != null && typeof store === 'object') {
+
+                                this.stores[name] = store;
+
+                                store.on('datachanged', this.onDataChanged, this);
+                                //store.on('add', this.onPropertyAdd, this);
+                                //store.on('remove', this.onPropertyRemove, this);
+                                //store.on('update', this.onPropertyUpdate, this);
+                            }
+
+                        }
+                    }
+
+                    if (grid != null && typeof grid === 'object') {
+                        grid.getSelectionModel().clearSelections(); // a must or you get an exception
+
+                        if (store != null && typeof store === 'object') {
+                            grid.reconfigure(store);
+                            grid.enable();
+                        } else {
+                            grid.disable();
+                            grid.reconfigure();
+                        }
+                    }
+                },
+                reload: function () {
+                    if (typeof this.record === 'object') {
+                        this.load(this.record);
+                    } else {
+                        this.reset();
+                    }
+                },
+                reset: function () {
+                    this.forms.general.disable();
+
+                    this.record = null;
+
+                    this.triggers.update.disable();
+                    this.triggers.cancel.disable();
+
+                    var forms = [
+                        this.forms.general.getForm()
+                    ];
+
+                    Ext.each(forms, function (form) {
+                        delete form._record;
+                        form.reset();
+                        form.checkDirty();
+
+                        Ext.batchLayouts(function () {
+                            form.getFields().each(function (c) {
+                                c.value = '';
+                                if (c.mixins && c.mixins.field && typeof c.mixins.field['initValue'] == 'function') {
+                                    c.mixins.field.initValue.apply(c);
+                                    c.wasDirty = false;
+                                }
+                                c.reset();
+                            });
+                        });
+                    });
+                },
+                update: function () {
+
+                    this.triggers.update.disable();
+                    this.triggers.cancel.disable();
+
+                    var forms = [
+                        this.forms.general.getForm()
+                    ];
+
+                    var record = this.record;
+
+                    Ext.each(forms, function (form) {
+                        if (form.isDirty() && form.isValid()) {
+                            form.updateRecord();
+                            form.loadRecord(record);
+                        }
+                    });
+                }
+            };
+        });
+    </script>
+}

@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customary", "Customary\Cust
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customary.Tests", "Customary.Tests\Customary.Tests.csproj", "{0916F3EF-3553-4151-8891-7E610F2317CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom", "Custom\Custom.csproj", "{22CA8244-790A-4E22-8122-604E63889589}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{0916F3EF-3553-4151-8891-7E610F2317CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0916F3EF-3553-4151-8891-7E610F2317CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0916F3EF-3553-4151-8891-7E610F2317CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22CA8244-790A-4E22-8122-604E63889589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22CA8244-790A-4E22-8122-604E63889589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22CA8244-790A-4E22-8122-604E63889589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22CA8244-790A-4E22-8122-604E63889589}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

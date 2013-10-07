@@ -33,7 +33,7 @@ namespace Custom.Presentation.Sencha.Ext.data
             var builder = new Model.Builder();
 
             builder
-                .Define(entity.Namespace + '.' + entity.Name)
+                .Define(entity.Name)
                 .Proxy(proxy =>
                 {
 
@@ -57,7 +57,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                     {
                     }
 
-                    switch (type.MemberType)
+                    /*switch (type.MemberType)
                     {
                         case MemberTypes.Primitive:
                             builder.Fields(collection => collection.Add(property.ToField()));
@@ -69,7 +69,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                             builder.Validations(collection => collection.Add(property.EnumValidations()));
                             break;
 
-                        case MemberTypes.Unit:
+                        case MemberTypes.Quantity:
                             builder.Fields(collection => collection.Add(property.ToField()));
                             builder.Validations(collection => collection.Add(property.EnumValidations()));
                             break;
@@ -81,7 +81,7 @@ namespace Custom.Presentation.Sencha.Ext.data
                         default:
                             Debug.Assert(false);
                             break;
-                    }
+                    }*/
                 });
 
             return builder.ToModel();

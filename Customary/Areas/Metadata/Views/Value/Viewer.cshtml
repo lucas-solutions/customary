@@ -1,0 +1,450 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Metadata
+@using Custom.Presentation
+@using Ext = Custom.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.define('App.metadata.value.Viewer', function () {
+
+        var frameStyle = 'background-color:#dfe8f5;';
+
+        // The data store containing the list of states
+        var states = Ext.create('Ext.data.Store', {
+            fields: ['value', 'display'],
+            data: [
+                { "value": 0, "display": "New" },
+                { "value": 1, "display": "Revision" },
+                { "value": 2, "display": "Minor" },
+                { "value": 3, "display": "Mayor" }
+            ]
+        });
+
+        return {
+            extend: 'Ext.tab.Panel',
+            requires: [
+                'App.metadata.property.Editor',
+                'App.core.Adapter',
+                'App.metadata.member.TitleField',
+                'App.metadata.member.SummaryField'
+            ],
+            frame: false,
+            border: false,
+            //bodyStyle: 'padding:5px 5px 0',
+            layout: 'fit',
+            activeTab: 0,      // First tab active by default
+            bodyStyle: frameStyle, // background color like frame
+            bodyPadding: '4 4 6 0',
+            initComponent: function () {
+
+                this.changePanel = Ext.create('Ext.panel.Panel', {
+                    region: 'south',
+                    title: 'Change status',
+                    layout: 'column',
+                    frame: true,
+                    fieldDefaults: {
+                        anchor: '100%',
+                        labelAlign: 'right'
+                    },
+                    items: [
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            defaults: { anchor: '100%' },
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Who",
+                                    format: "n/j/Y",
+                                    name: "modifiedBy",
+                                    readOnly: true,
+                                    xtype: "datefield",
+                                },
+                                {
+                                    //cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Why",
+                                    name: "modifiedFor",
+                                    //readOnly: true,
+                                    xtype: "combobox",
+                                    store: states,
+                                    queryMode: 'local',
+                                    displayField: 'display',
+                                    valueField: 'value',
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "When",
+                                    format: "n/j/Y",
+                                    name: "modifiedOn",
+                                    readOnly: true,
+                                    xtype: "datefield",
+                                },
+                                {
+                                    cls: 'x-item-disabled', // simulate disabled; submitted
+                                    fieldLabel: "Where",
+                                    name: "modifiedAt",
+                                    readOnly: true,
+                                    xtype: "textfield",
+                                }
+                            ]
+                        },
+                    ],
+                    listeners: {
+                        dirtychange: {
+                            fn: function (form, dirty) {
+                                if (dirty === true) {
+                                    this.updateButton.enable();
+                                    this.cancelButton.enable();
+                                }
+                            },
+                            scope: this
+                        }
+                    }
+                });
+
+                this.cancelButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-cancel',
+                    text: 'Cancel',
+                    disabled: true,
+                    scope: this,
+                    handler: this.reload
+                });
+
+                this.updateButton = Ext.create('Ext.Button', {
+                    iconCls: 'icon-update',
+                    text: 'Update',
+                    disabled: true,
+                    scope: this,
+                    handler: this.update
+                });
+
+                this.formPanel = Ext.create('Ext.form.Panel', {
+                    trackResetOnLoad: true,
+                    frame: true,
+                    border: false,
+                    disabled: true,
+                    layout: 'column',
+                    bodyPadding: '0',
+                    padding: '8 0',
+                    frame: false,
+                    bodyStyle: frameStyle, // background color like frame
+                    collapsible: false,
+                    defaultType: 'textfield',
+                    fieldDefaults: {
+                        anchor: '100%',
+                        labelAlign: 'right'
+                    },
+                    items: [
+                         {
+                             xtype: 'fieldset',
+                             columnWidth: 0.5,
+                             border: false,
+                             collapsible: false,
+                             defaultType: 'textfield',
+                             layout: 'anchor',
+                             items: [
+                                 {
+                                     allowBlank: false,
+                                     columnWidth: 0.5,
+                                     fieldLabel: "Name",
+                                     name: "Name"
+                                 },
+                                 {
+                                     allowBlank: false,
+                                     columnWidth: 0.5,
+                                     fieldLabel: "Namespace",
+                                     name: "Namespace"
+                                 },
+                                 {
+                                     cls: 'x-item-disabled', // simulate disabled; submitted
+                                     fieldLabel: "Version",
+                                     name: "Version",
+                                     readOnly: true,
+                                 },
+                                 {
+                                     allowBlank: false,
+                                     fieldLabel: "Title",
+                                     name: "titleText"
+                                 }
+                             ]
+                         },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    xtype: 'checkbox',
+                                    boxLabel: "Singleton",
+                                    name: 'singleton'
+                                },
+                                {
+                                    xtype: 'checkbox',
+                                    boxLabel: "Masterdata",
+                                    name: 'Masterdata'
+                                },
+                                {
+                                    xtype: 'checkbox',
+                                    boxLabel: "Transactional",
+                                    name: 'Transactinal'
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 1,
+                            border: false,
+                            defaults: { anchor: '100%' },
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    fieldLabel: "Summary",
+                                    name: "summaryText",
+                                    xtype: "textarea"
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            columnWidth: 0.5,
+                            border: false,
+                            collapsible: false,
+                            defaultType: 'textfield',
+                            layout: 'anchor',
+                            items: [
+                                {
+                                    allowBlank: false,
+                                    columnWidth: 0.5,
+                                    xtype: 'combobox',
+                                    fieldLabel: "Identity",
+                                    name: "identity"
+                                }
+                            ]
+                        }
+                    ],
+                    listeners: {
+                        dirtychange: {
+                            fn: function (form, dirty) {
+                                this.dirty = dirty;
+                                if (dirty === true) {
+                                    this.updateButton.enable();
+                                    this.cancelButton.enable();
+                                } else {
+                                    this.updateButton.disable();
+                                    this.cancelButton.disable();
+                                }
+                            },
+                            scope: this
+                        }
+                    }
+                });
+
+                this.generalPanel = Ext.create('Ext.panel.Panel', {
+                    title: "General",
+                    layout: 'fit',
+                    items: [this.formPanel],
+                    bodyStyle: frameStyle, // background color like frame
+                    bodyPadding: '0',
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'bottom',
+                            ui: 'footer',
+                            items: ['->', this.updateButton, this.cancelButton]
+                        }
+                    ]
+                });
+
+                this.propertyPanel = Ext.create('App.metadata.property.Editor', {
+                    title: 'Properties',
+                    layout: 'border',
+                    frame: false,
+                    border: false
+                });
+
+                Ext.apply(this, {
+                    items: [
+                        this.generalPanel,
+                        this.propertyPanel/*,
+                        Ext.create('App.metadata.association.Panel', {
+                            title: "Associations",
+                            layout: 'border'
+                        }),
+                        {
+                            title: 'Validations',
+                            html: 'Extended field validations'
+                        },
+                        {
+                            title: 'Persistence',
+                            html: 'Storage and mapping parameters'
+                        },
+                        {
+                            title: 'Presentation',
+                            html: 'UI parameters'
+                        }*/
+                    ]
+                });
+
+                this.callParent();
+
+                /*
+                // Init the singleton.  Any tag-based quick tips will start working.
+                Ext.tip.QuickTipManager.init();
+
+                // Apply a set of config properties to the singleton
+                Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+                    maxWidth: 200,
+                    minWidth: 100,
+                    showDelay: 50      // Show 50ms after entering target
+                });
+
+                // Manually register a quick tip for a specific element
+                Ext.tip.QuickTipManager.register({
+                    target: this.formPanel,
+                    title: 'My Tooltip',
+                    text: 'This tooltip was added in code',
+                    width: 100,
+                    dismissDelay: 10000 // Hide after 10 seconds hover
+                });*/
+
+                var tip = Ext.create('Ext.tip.ToolTip', {
+                    target: this.formPanel,
+                    html: 'Press this button to clear the form'
+                });
+
+                App.core.Adapter.subscribe('App.metadata.Entity.commit', {
+                    fn: function () {
+                        var record = this.record;
+                        this.reset();
+                        this.load(record);
+                    },
+                    scope: this
+                });
+
+                App.core.Adapter.subscribe('App.metadata.Entity.datachanged', {
+                    fn: function (store) {
+                        this.reload();
+                    },
+                    scope: this
+                });
+
+                App.core.Adapter.subscribe('App.metadata.Entity.rollback', {
+                    fn: function () {
+                        var record = this.record;
+                        this.reset();
+                        this.load(record);
+                    },
+                    scope: this
+                });
+
+                App.core.Adapter.subscribe('App.metadata.Entity.selectionchange', {
+                    fn: function (selModel, selections) {
+                        if (typeof selections === 'object' && selections.length === 1) {
+                            this.load(selections[0]);
+                        } else {
+                            this.reset();
+                        }
+                    },
+                    scope: this
+                });
+
+                App.core.Adapter.publish('App.metadata.Entity.init', this);
+            },
+            load: function (record) {
+
+                this.dirty = false;
+                this.record = record;
+
+                this.updateButton.disable();
+                this.cancelButton.disable();
+
+                var forms = [
+                    this.formPanel.getForm()
+                ];
+
+                Ext.each(forms, function (form) {
+                    form.loadRecord(record);
+                });
+
+                this.formPanel.enable();
+            },
+            onCancelClick: function () {
+                this.updateButton.disable();
+                this.cancelButton.disable();
+            },
+            onUpdateClick: function () {
+                this.updateButton.disable();
+                this.cancelButton.disable();
+            },
+            reload: function () {
+                if (typeof this.record === 'object') {
+                    this.load(this.record);
+                } else {
+                    this.reset();
+                }
+            },
+            reset: function () {
+                this.formPanel.disable();
+
+                this.record = null;
+
+                this.updateButton.disable();
+                this.cancelButton.disable();
+
+                var forms = [
+                    this.formPanel.getForm()
+                ];
+
+                Ext.each(forms, function (form) {
+                    delete form._record;
+                    form.reset();
+                    form.checkDirty();
+
+                    Ext.batchLayouts(function () {
+                        form.getFields().each(function (c) {
+                            c.value = '';
+                            if (c.mixins && c.mixins.field && typeof c.mixins.field['initValue'] == 'function') {
+                                c.mixins.field.initValue.apply(c);
+                                c.wasDirty = false;
+                            }
+                            c.reset();
+                        });
+                    });
+                });
+            },
+            update: function () {
+
+                this.updateButton.disable();
+                this.cancelButton.disable();
+
+                var forms = [
+                    this.formPanel.getForm()
+                ];
+
+                var record = this.record;
+
+                Ext.each(forms, function (form) {
+                    if (form.isDirty() && form.isValid()) {
+                        form.updateRecord();
+                        form.loadRecord(record);
+                    }
+                });
+            }
+        };
+    });
+</script>
