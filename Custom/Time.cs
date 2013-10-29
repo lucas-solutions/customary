@@ -2,7 +2,7 @@
 
 namespace Custom
 {
-    [Metadata.Enum("1a33840d-1727-4bc9-9024-eebac3a5692b")]
+    [Data.Metadata.Enum("1a33840d-1727-4bc9-9024-eebac3a5692b")]
     public sealed class Time : Measurement<Time>
     {
         static Time _default = Second;
@@ -34,22 +34,22 @@ namespace Custom
             return new Time { _seconds = (decimal)date.TimeOfDay.TotalSeconds };
         }
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Millisecond = new Time("Millisecond", 0.001M);
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Second = new Time("Second", 1M);
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Minute = new Time("Minute", 60 * Second);
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Hour = new Time("Hour", 60 * Minute);
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Day = new Time("Day", 24 * Hour);
 
-        [Metadata.Unit]
+        [Data.Metadata.Unit]
         public static readonly Time Week = new Time("Week", 7 * Day);
 
         private decimal _seconds;

@@ -34,7 +34,7 @@ namespace Custom.Models
 
             viewName = string.Concat("~", viewName);
 
-            _viewEngineResult = controller.ViewEngineCollection.FindPartialView(_controllerContext, (string)controller.RouteData.Values["action"]);
+            _viewEngineResult = controller.ViewEngineCollection.FindPartialView(_controllerContext, viewName/*(string)controller.RouteData.Values["action"]*/);
 
             controller.ViewData.Model = this;
 

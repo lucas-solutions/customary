@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Custom.Metadata;
+    using Custom.Data.Metadata;
 
-    public class EntityRepository : List<EntityDescriptor>
+    public class EntityRepository : List<EntityObject>
     {
         static EntityRepository _current;
 
@@ -18,20 +18,20 @@ namespace Custom.Areas.Metadata.Models
                 return _current ?? (_current = new EntityRepository
                 {
                     #region - Entity -
-                    new EntityDescriptor
+                    new EntityObject
                     {
                         Name = "Entity",
-                        Title = new TextObject
+                        Title = new Text
                         {
                             { "en", "Entity" },
                             { "es", "Entidad" }
                         },
-                        Summary = new TextObject
+                        Summary = new Text
                         {
                             { "en", "Business Object" },
                             { "es", "Objecto de negocio" }
                         },
-                        Properties = new List<PropertyDescriptor>
+                        Properties = new List<PropertyDefinition>
                         {
                             #region - ID -
                             new PropertyDescriptor

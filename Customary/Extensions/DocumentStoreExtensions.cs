@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Custom
 {
-    using Custom.Metadata;
+    using Custom.Data.Metadata;
     using Raven.Abstractions.Data;
     using Raven.Client;
     using Raven.Client.Indexes;
@@ -16,9 +16,13 @@ namespace Custom
     
     public static class DocumentStoreExtensions
     {
+        const string idProp = "id";
+        const string keyProp = "key";
+        const string dataProp = "data";
+
         #region - Create -
 
-        public static void Create(this IDocumentStore store, RavenJToken data, EntityDescriptor descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -32,18 +36,18 @@ namespace Custom
             }
         }
 
-        public static void Create(this IDocumentStore store, RavenJArray data, EntityDescriptor descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
         {
             Create(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Create(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDescriptor descriptor = null)
+        public static void Create(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
         {
             foreach (var record in package)
                 Create(store, record, descriptor);
         }
 
-        public static void Create(this IDocumentStore store, RavenJObject record, EntityDescriptor descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }
@@ -52,7 +56,7 @@ namespace Custom
 
         #region - Destroy -
 
-        public static void Destroy(this IDocumentStore store, RavenJToken data, EntityDescriptor descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -66,18 +70,18 @@ namespace Custom
             }
         }
 
-        public static void Destroy(this IDocumentStore store, RavenJArray data, EntityDescriptor descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
         {
             Destroy(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Destroy(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDescriptor descriptor = null)
+        public static void Destroy(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
         {
             foreach (var record in package)
                 Destroy(store, record, descriptor);
         }
 
-        public static void Destroy(this IDocumentStore store, RavenJObject record, EntityDescriptor descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }
@@ -86,12 +90,12 @@ namespace Custom
 
         #region - Import -
 
-        public static void Import(this IDocumentStore store, string fileName, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, string fileName, EntityDefinition descriptor = null)
         {
             Import(store, new FileInfo(fileName), descriptor);
         }
 
-        public static void Import(this IDocumentStore store, FileInfo file, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, FileInfo file, EntityDefinition descriptor = null)
         {
             RavenJObject record;
 
@@ -102,7 +106,7 @@ namespace Custom
 
             if (record != null)
             {
-                var data = record["data"];
+                var data = record[dataProp];
 
                 if (data != null && data.Type == JTokenType.Array)
                     Import(store, data as RavenJArray, descriptor);
@@ -111,7 +115,7 @@ namespace Custom
             }
         }
 
-        public static void Import(this IDocumentStore store, RavenJToken data, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -125,38 +129,36 @@ namespace Custom
             }
         }
 
-        public static void Import(this IDocumentStore store, RavenJArray data, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
         {
             Import(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Import(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
         {
             foreach (var record in package)
                 Import(store, record);
         }
 
-        public static bool Import(this IDocumentStore store, RavenJObject record, EntityDescriptor descriptor = null)
+        public static bool Import(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
         {
-            const string idProp = "id";
+            var keyToken = record[keyProp];
 
-            var idToken = record[idProp];
+            var key = keyToken.Value<string>();
 
-            var id = idToken.Value<string>();
-
-            if (string.IsNullOrWhiteSpace(id))
+            Guid id;
+            if (string.IsNullOrWhiteSpace(key) || !Guid.TryParse(key.Split('/').Last(), out id))
                 return false;
 
-            record.Remove(idProp);
+            record.Remove(keyProp);
+            //record.Add(idProp, new RavenJValue(id));
 
-            Import(store, record, id, descriptor);
-
-            //record.CreateSnapshot().Add(idProp, idToken);
+            Import(store, record, key, descriptor);
 
             return true;
         }
 
-        public static void Import(this IDocumentStore store, RavenJObject record, string key, EntityDescriptor descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJObject record, string key, EntityDefinition descriptor = null)
         {
             if (descriptor != null)
             {
@@ -199,11 +201,11 @@ namespace Custom
             return documents.Select(o => o.ToRavenJObject()).ToList();
         }
 
-        public static RavenJObject Read(this IDocumentStore store, string id)
+        public static RavenJObject Read(this IDocumentStore store, string key)
         {
             RavenJObject record = null;
 
-            var document = store.DatabaseCommands.Get(id);
+            var document = store.DatabaseCommands.Get(key);
 
             if (document != null)
             {
@@ -231,9 +233,12 @@ namespace Custom
                 var etag = metadata["@etag"];
                 var lastModified = metadata["Last-Modified"];
 
-                Debug.Assert(id == document.Key);
+                Debug.Assert(string.Equals(key, document.Key, StringComparison.OrdinalIgnoreCase));
 
-                record["id"] = id;
+                Guid id;
+                if (Guid.TryParse(key.Split('/').Last(), out id))
+                    record[keyProp] = new RavenJValue(id);
+
                 record["modifiedOn"] = lastModified;
             }
 
@@ -254,21 +259,21 @@ namespace Custom
                     continue;
                 }
 
-                var id = record.Value<string>("id");
+                var key = record.Value<string>(keyProp);
 
-                if (string.IsNullOrWhiteSpace(id))
+                if (string.IsNullOrWhiteSpace(key))
                 {
                     continue;
                 }
 
-                if (dictionary.ContainsKey(id))
+                if (dictionary.ContainsKey(key))
                 {
                     continue;
                 }
 
-                record.Remove("id");
+                record.Remove(keyProp);
 
-                dictionary.Add(id, record);
+                dictionary.Add(key, record);
 
                 index++;
             }
@@ -278,7 +283,7 @@ namespace Custom
 
         #region - Update -
 
-        public static void Update(this IDocumentStore store, RavenJToken data, EntityDescriptor descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -292,18 +297,18 @@ namespace Custom
             }
         }
 
-        public static void Update(this IDocumentStore store, RavenJArray data, EntityDescriptor descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
         {
             Update(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Update(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDescriptor descriptor = null)
+        public static void Update(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
         {
             foreach (var record in package)
                 Update(store, record, descriptor);
         }
 
-        public static void Update(this IDocumentStore store, RavenJObject record, EntityDescriptor descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }

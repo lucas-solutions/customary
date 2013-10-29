@@ -5,18 +5,18 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Custom.Metadata;
-    using Custom.Presentation;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Site.Presentation;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
 
     public class Member
     {
-        public static implicit operator Member(Descriptor descriptor)
+        public static implicit operator Member(DefinitionBase descriptor)
         {
             return new Member(descriptor);
         }
 
-        public static implicit operator Descriptor(Member member)
+        public static implicit operator DefinitionBase(Member member)
         {
             return member.Descriptor;
         }
@@ -46,7 +46,7 @@ namespace Custom.Areas.Metadata.Models
             return member.Store;
         }
 
-        private readonly Descriptor _descriptor;
+        private readonly DefinitionBase _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -54,16 +54,16 @@ namespace Custom.Areas.Metadata.Models
         private Ext.data.Store _store;
 
         public Member()
-            : this(new Descriptor())
+            : this(new DefinitionBase())
         {
         }
 
-        public Member(Descriptor descriptor)
+        public Member(DefinitionBase descriptor)
         {
-            _descriptor = descriptor ?? new Descriptor();
+            _descriptor = descriptor ?? new DefinitionBase();
         }
 
-        public Descriptor Descriptor
+        public DefinitionBase Descriptor
         {
             get { return _descriptor; }
         }

@@ -1,15 +1,15 @@
-﻿@model Custom.Metadata.EntityDescriptor
+﻿@model Custom.Data.Metadata.EntityObject
 @using Custom.Areas.Metadata.Models
-@using Custom.Metadata
-@using Custom.Presentation
-@using Ext = Custom.Presentation.Sencha.Ext
+@using Custom.Data.Metadata
+@using Custom.Site.Presentation
+@using Ext = Custom.Site.Presentation.Sencha.Ext
 @{
-    var descriptor = Model as EntityDescriptor;
+    var descriptor = Model as EntityObject;
 }
 @if (descriptor != null)
 {
     var id = descriptor.Id.ToString("N");
-    var model = new Custom.Presentation.Sencha.Ext.data.Model();
+    var model = new Custom.Site.Presentation.Sencha.Ext.data.Model();
     var builder = model.ToBuilder();
 
     var fields = model.Fields;
@@ -20,7 +20,7 @@
         var typeCategory = type.Split('.').First();
         var typeName = type.Split('.').Last();
 
-        var field = new Custom.Presentation.Sencha.Ext.data.Field();
+        var field = new Custom.Site.Presentation.Sencha.Ext.data.Field();
 
         if (string.Equals("System", typeCategory, StringComparison.CurrentCultureIgnoreCase))
         {

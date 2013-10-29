@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom
 {
-    [Metadata.Complex("e9b74aaf-034a-4fed-be5f-c2522af5daef")]
+    [Data.Metadata.Complex("e9b74aaf-034a-4fed-be5f-c2522af5daef")]
     public sealed class Region
     {
         public Guid id { get; set; }

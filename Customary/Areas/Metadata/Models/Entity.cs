@@ -5,18 +5,18 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Custom.Metadata;
-    using Custom.Presentation;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Site.Presentation;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
 
     public sealed class Entity
     {
-        public static implicit operator Entity(EntityDescriptor descriptor)
+        public static implicit operator Entity(EntityDefinition descriptor)
         {
             return new Entity(descriptor);
         }
 
-        public static implicit operator EntityDescriptor(Entity entity)
+        public static implicit operator EntityDefinition(Entity entity)
         {
             return entity.Descriptor;
         }
@@ -51,7 +51,7 @@ namespace Custom.Areas.Metadata.Models
             return entity.JObject;
         }
 
-        private readonly EntityDescriptor _descriptor;
+        private readonly EntityDefinition _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -60,17 +60,17 @@ namespace Custom.Areas.Metadata.Models
         private Raven.Json.Linq.RavenJObject _jo;
 
         public Entity()
-            : this(new EntityDescriptor())
+            : this(new EntityDefinition())
         {
             var data = new Newtonsoft.Json.Linq.JObject();
         }
 
-        public Entity(EntityDescriptor descriptor)
+        public Entity(EntityDefinition descriptor)
         {
-            _descriptor = descriptor ?? new EntityDescriptor();
+            _descriptor = descriptor ?? new EntityDefinition();
         }
 
-        public EntityDescriptor Descriptor
+        public EntityDefinition Descriptor
         {
             get { return _descriptor; }
         }

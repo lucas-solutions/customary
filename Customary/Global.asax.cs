@@ -10,8 +10,8 @@ using System.Web.Routing;
 namespace Custom
 {
     using Custom.Diagnostics;
-    using Custom.Metadata;
-    using Custom.Repositories;
+    using Custom.Data.Metadata;
+    using Custom.Data.Persistence;
 
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
@@ -42,7 +42,7 @@ namespace Custom
             /*perfCounterMgr.Create(Server.MapPath("~/bin"), "*.dll");
             Application[DiagnosticsManager.PerformanceCounterManagerApplicationKey] = perfCounterMgr;*/
 
-            ControllerBuilder.Current.SetControllerFactory(typeof(Navigation.ControllerFactory));
+            ControllerBuilder.Current.SetControllerFactory(typeof(Web.Mvc.ControllerFactory));
 
             var metadataSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Metadata")).GetFiles("*.js").ToArray();
             foreach (var file in metadataSeeds)

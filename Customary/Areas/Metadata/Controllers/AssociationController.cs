@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Metadata.Controllers
 {
-    public class AssociationController : Custom.Controllers.CustomController
+    public class AssociationController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Association/

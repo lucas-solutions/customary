@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    public class CoreController : CustomController
+    public class CoreController : Custom.Web.Mvc.CustomController
     {
         public ActionResult Adapter()
         {

@@ -2,7 +2,7 @@
 
 namespace Custom
 {
-    [Metadata.Value("8a8b8778-544e-4f72-b265-b4f43fb73ac1")]
+    [Data.Metadata.Value("8a8b8778-544e-4f72-b265-b4f43fb73ac1")]
     public class Date
     {
         public static implicit operator DateTime(Date date)

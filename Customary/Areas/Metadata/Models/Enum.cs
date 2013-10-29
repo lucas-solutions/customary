@@ -5,18 +5,18 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Custom.Metadata;
-    using Custom.Presentation;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Site.Presentation;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
 
     public class Enum
     {
-        public static implicit operator Enum(EnumDescriptor descriptor)
+        public static implicit operator Enum(EnumDefinition descriptor)
         {
             return new Enum(descriptor);
         }
 
-        public static implicit operator EnumDescriptor(Enum enumerable)
+        public static implicit operator EnumDefinition(Enum enumerable)
         {
             return enumerable.Descriptor;
         }
@@ -46,7 +46,7 @@ namespace Custom.Areas.Metadata.Models
             return enumerable.Store;
         }
 
-        private readonly EnumDescriptor _descriptor;
+        private readonly EnumDefinition _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -54,16 +54,16 @@ namespace Custom.Areas.Metadata.Models
         private Ext.data.Store _store;
 
         public Enum()
-            : this(new EnumDescriptor())
+            : this(new EnumDefinition())
         {
         }
 
-        public Enum(EnumDescriptor descriptor)
+        public Enum(EnumDefinition descriptor)
         {
-            _descriptor = descriptor ?? new EnumDescriptor();
+            _descriptor = descriptor ?? new EnumDefinition();
         }
 
-        public EnumDescriptor Descriptor
+        public EnumDefinition Descriptor
         {
             get { return _descriptor; }
         }

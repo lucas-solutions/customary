@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customary.Tests", "Customar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom", "Custom\Custom.csproj", "{22CA8244-790A-4E22-8122-604E63889589}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requirements", "Requirements", "{2E04A776-2FAE-4B9A-B9B8-42E08A478F59}"
+	ProjectSection(SolutionItems) = preProject
+		Avoid Ducplicate Content.txt = Avoid Ducplicate Content.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

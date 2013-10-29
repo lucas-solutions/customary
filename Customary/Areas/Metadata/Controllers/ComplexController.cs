@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Metadata.Controllers
 {
-    public class ComplexController : Custom.Controllers.CustomController
+    public class ComplexController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Complex/

@@ -9,7 +9,7 @@ namespace Custom.Controllers
     using Custom.Diagnostics;
     using Custom.Models;
 
-    public class TestController : CustomController
+    public class TestController : Custom.Web.Mvc.CustomController
     {
         public TestController()
             : base("returnTo")

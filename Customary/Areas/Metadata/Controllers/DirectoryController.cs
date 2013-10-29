@@ -10,7 +10,7 @@ namespace Custom.Areas.Metadata.Controllers
     /// <summary>
     /// Presents the left panel with a tree browsing the types
     /// </summary>
-    public class DirectoryController : Custom.Controllers.CustomController
+    public class DirectoryController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Directory/Panel
@@ -27,7 +27,8 @@ namespace Custom.Areas.Metadata.Controllers
         {
             var directory = Global.Metadata.Directory;
 
-            var match = string.IsNullOrEmpty(id) ? directory : directory.Match(id.Split('-').AsEnumerable().GetEnumerator());
+            Queue<string> surplus;
+            var match = string.IsNullOrEmpty(id) ? directory : directory.Match(id.Split('-').AsEnumerable().GetEnumerator(), out surplus);
 
             return match != null
                 ? Raven(true, null, match.ToRavenJObject(true)["children"])

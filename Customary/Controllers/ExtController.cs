@@ -6,16 +6,16 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    using Ext = Custom.Presentation.Sencha.Ext;
-    using Custom.Metadata;
-    using Custom.Presentation;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Site.Presentation;
 
     /// <summary>
     /// Sencha ExtJs Controller
     /// </summary>
-    public abstract class ExtController : CustomController
+    public abstract class ExtController : Custom.Web.Mvc.CustomController
     {
-        protected ActionResult Data(Guid? id, TypeDescriptor entity)
+        protected ActionResult Data(Guid? id, TypeDefinition entity)
         {
             object data = null;
 
@@ -41,7 +41,7 @@ namespace Custom.Controllers
             return Json(new object());
         }
 
-        protected ActionResult Model(EntityDescriptor entity)
+        protected ActionResult Model(EntityDefinition entity)
         {
             object model = null;
 

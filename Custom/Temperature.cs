@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Custom
 {
-    [Metadata.Enum("fa7ecaba-b191-4a2d-b2fc-4b5339857ecb")]
+    [Data.Metadata.Enum("fa7ecaba-b191-4a2d-b2fc-4b5339857ecb")]
     public sealed class Temperature : Measurement<Temperature>
     {
         static Temperature _default = Kelvin;
@@ -23,28 +23,28 @@ namespace Custom
             return temperature._kelvins;
         }
 
-        [Metadata.Unit(Suffix = "°C")]
+        [Data.Metadata.Unit(Suffix = "°C")]
         public static readonly Temperature Celsius = new Temperature("Celsius", Kelvin - 273.15M);
 
-        [Metadata.Unit(Suffix = "°F")]
+        [Data.Metadata.Unit(Suffix = "°F")]
         public static readonly Temperature Fahrenheit = new Temperature("Fahrenheit", Celsius * 9 / 5 + 32M);
 
-        [Metadata.Unit(Suffix = "K")]
+        [Data.Metadata.Unit(Suffix = "K")]
         public static readonly Temperature Kelvin = new Temperature("Kelvin", 1);
 
-        [Metadata.Unit(Suffix = "°R")]
+        [Data.Metadata.Unit(Suffix = "°R")]
         public static readonly Temperature Rankine = new Temperature("Rankine", Kelvin * 9 / 5);
 
-        [Metadata.Unit(Suffix = "°De")]
+        [Data.Metadata.Unit(Suffix = "°De")]
         public static readonly Temperature Delisle = new Temperature("Delisle", (100M - Celsius) * 3 / 2);
 
-        [Metadata.Unit(Suffix = "°N")]
+        [Data.Metadata.Unit(Suffix = "°N")]
         public static readonly Temperature Newton = new Temperature("Newton", Celsius * 33 / 100);
 
-        [Metadata.Unit(Name = "Réaumur", Suffix = "°Ré")]
+        [Data.Metadata.Unit(Name = "Réaumur", Suffix = "°Ré")]
         public static readonly Temperature Reaumur = new Temperature("Reaumur", Celsius * 4 / 5);
 
-        [Metadata.Unit(Name = "Rømer", Suffix = "°Rø")]
+        [Data.Metadata.Unit(Name = "Rømer", Suffix = "°Rø")]
         public static readonly Temperature Romer = new Temperature("Romer", Celsius * 21 / 40 + 7.5M);
 
         // I choose Keilvin because 0K is the absolute zero

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Areas.Metadata.Controllers
 {
-    public class ValueController : Custom.Controllers.CustomController
+    public class ValueController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Value/

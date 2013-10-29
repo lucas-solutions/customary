@@ -9,13 +9,13 @@ namespace Custom.Areas.Metadata.Controllers
     using Custom.Areas.Metadata.Models;
     using Custom.Controllers;
     using Custom.Models;
-    using Custom.Metadata;
-    using Custom.Navigation;
-    using Custom.Presentation;
-    using Custom.Presentation.Sencha.Ext.data;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Web.Mvc;
+    using Custom.Site.Presentation;
+    using Custom.Site.Presentation.Sencha.Ext.data;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
 
-    public class PropertyController : CustomController
+    public class PropertyController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Property/

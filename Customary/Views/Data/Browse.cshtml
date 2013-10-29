@@ -1,0 +1,111 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Data.Metadata
+@using Custom.Site.Presentation
+@using Ext = Custom.Site.Presentation.Sencha.Ext
+<script type="text/javascript">
+    Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
+    Ext.Loader.setPath('App', '@Url.Absolute("/App")');
+    Ext.Loader.setPath('Custom', '@Url.Absolute("/Custom")');
+    Ext.Loader.setPath('Business', '@Url.Absolute("/Business")');
+</script>
+
+<script type="text/javascript">
+
+    var frameStyle = 'background-color:#dfe8f5;';
+
+    Ext.define('Custom.data.Viewport', {
+        requires: [
+            'App.core.Adapter',
+            'Custom.data.Directory'
+        ],
+        extend: 'Ext.container.Viewport',
+        layout: 'border',
+        bodyStyle: frameStyle, // background color like frame
+        initComponent: function () {
+
+            var directory = Ext.create('Custom.data.Directory');
+
+            this.centerPanel = Ext.create('Ext.panel.Panel', {
+                region: 'center',
+                bodyStyle: frameStyle, // background color like frame
+                header: false,
+                items: [/*this.entityPanel*/],
+                flex: 5,
+                border: false,
+                layout: 'fit',
+                title: 'Select Entity'
+            });
+
+            this.southPanel = Ext.create('Ext.panel.Panel', {
+                region: 'south',
+                title: 'Messages',
+                collapsible: true,
+                html: 'Information goes here',
+                split: true,
+                height: 100,
+                minHeight: 100
+            });
+
+            this.westPanel = Ext.create('Ext.panel.Panel', {
+                region: 'west',
+                bodyStyle: frameStyle, // background color like frame
+                flex: 1,
+                border: false,
+                collapsible: true,
+                items: [directory.panel],
+                split: true,
+                layout: 'fit',
+                title: 'Directory',
+                header: false
+            });
+
+            Ext.apply(this, {
+                items: [
+                    {
+                        region: 'north',
+                        xtype: 'container',
+                        bodyStyle: frameStyle, // background color like frame
+                        html: '@Html.Partial("Header")',
+                    autoHeight: true,
+                    border: false,
+                    margins: '0 0 5 0'
+                },
+                            this.centerPanel,
+                            this.northPanel,
+                            this.westPanel
+                            //this.southPanel
+            ]
+        });
+
+            this.callParent();
+
+            App.core.Adapter.subscribe('Custom.data.Directory.selectionchange', {
+                fn: function (directory, selModel, selections) {
+                    if (directory.record !== null && typeof directory.record === 'object') {
+
+                    }
+                    else {
+
+                    }
+                },
+                scope: this
+            });
+
+            //App.core.Adapter.publish('App.data.Viewport.init', this);
+        },
+
+        loadPanel: function (container, name, id) {
+            var item = Ext.create(name + '.' + id, {
+                layout: 'fit'
+            });
+            container.update(item);
+            container.doLayout();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    Ext.onReady(function () {
+        Ext.create('Custom.data.Viewport');
+    });
+</script>

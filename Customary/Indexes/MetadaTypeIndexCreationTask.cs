@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Indexes
 {
-    using Custom.Metadata;
+    using Custom.Data.Metadata;
     using Raven.Abstractions.Indexing;
     using Raven.Client.Document;
     using Raven.Client.Indexes;
@@ -29,7 +29,7 @@ namespace Custom.Indexes
 
         public override IndexDefinition CreateIndexDefinition()
         {
-            var builder = new IndexDefinitionBuilder<TypeDescriptor>
+            var builder = new IndexDefinitionBuilder<TypeDefinition>
             {
                 Map = docs => from doc in docs
                               select new { doc.Name }

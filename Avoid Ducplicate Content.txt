@@ -1,0 +1,115 @@
+In Microsoft's new ASP.NET MVC framework it seems there are two things that could cause your content to be served up at multiple URLs (something which Google penalize for and will cause your PageRank to be split across them):
+
+Case-insensitive URLs
+Default URL
+You can set the default controller/action to serve up for requests to the root of your domain. Let's say we choose HomeController/Index. We end up with the following URLs serving up the same content:
+
+mydomain.com/
+mydomain.com/Home/Index
+Now if people start linking to both of these then PageRank would be split. Google would also consider it duplicate content and penalize one of them to avoid duplicates in their results.
+
+On top of this, the URLs are not case sensitive, so we actually get the same content for these URLs too:
+
+mydomain.com/Home/Index
+mydomain.com/home/index
+mydomain.com/Home/index
+mydomain.com/home/Index
+(the list goes on)
+So, the question... How do I avoid these penalties? I would like:
+
+All requests for the default action to be redirected (301 status) to the same url
+All URLs to be case sensitive
+
+
+Solution:
+
+namespace Custom.Web.Routing
+{
+    public class LowercaseRoute : System.Web.Routing.Route
+    {
+        public LowercaseRoute(string url, IRouteHandler routeHandler)
+            : base(url, routeHandler) { }
+        public LowercaseRoute(string url, RouteValueDictionary defaults, IRouteHandler routeHandler)
+            : base(url, defaults, routeHandler) { }
+        public LowercaseRoute(string url, RouteValueDictionary defaults, RouteValueDictionary constraints, IRouteHandler routeHandler)
+            : base(url, defaults, constraints, routeHandler) { }
+        public LowercaseRoute(string url, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens, IRouteHandler routeHandler)
+            : base(url, defaults, constraints, dataTokens, routeHandler) { }
+ 
+        public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
+        {
+            VirtualPathData path = base.GetVirtualPath(requestContext, values);
+ 
+            if (path != null)
+                path.VirtualPath = path.VirtualPath.ToLowerInvariant();
+ 
+            return path;
+        }
+    }
+ 
+    public static class RouteCollectionExtensions
+    {
+        public static void MapRouteLowercase(this RouteCollection routes, string name, string url, object defaults)
+        {
+            routes.MapRouteLowercase(name, url, defaults, null);
+        }
+ 
+        public static void MapRouteLowercase(this RouteCollection routes, string name, string url, object defaults, object constraints)
+        {
+            if (routes == null)
+                throw new ArgumentNullException("routes");
+ 
+            if (url == null)
+                throw new ArgumentNullException("url");
+ 
+            var route = new LowercaseRoute(url, new MvcRouteHandler())
+            {
+                Defaults = new RouteValueDictionary(defaults),
+                Constraints = new RouteValueDictionary(constraints)
+            };
+ 
+            if (String.IsNullOrEmpty(name))
+                routes.Add(route);
+            else
+                routes.Add(name, route);
+        }
+    }
+}
+
+Then a using reference in your Global.asax.cs
+
+            routes.MapRouteLowercase(
+                "Default", // Route name
+                "{controller}/{action}/{id}", // URL with parameters
+                new {controller = "Home", action = "index", id = ""} // Parameter defaults
+                );
+
+Convert any incoming URL’s to lowercase
+
+		protected void Application_BeginRequest(Object sender, EventArgs e)
+        {
+            // If upper case letters are found in the URL, redirect to lower case URL.
+            // Was receiving undesirable results here as my QueryString was also being converted to lowercase.
+            // You may want this, but I did not.
+            //if (Regex.IsMatch(HttpContext.Current.Request.Url.ToString(), @"[A-Z]") == true)
+            //{
+            //    string LowercaseURL = HttpContext.Current.Request.Url.ToString().ToLower();
+ 
+            //    Response.Clear();
+            //    Response.Status = "301 Moved Permanently";
+            //    Response.AddHeader("Location", LowercaseURL);
+            //    Response.End();
+            //}
+ 
+            // If upper case letters are found in the URL, redirect to lower case URL (keep querystring the same).
+            string lowercaseURL = (Request.Url.Scheme + "://" + HttpContext.Current.Request.Url.Authority + HttpContext.Current.Request.Url.AbsolutePath);
+            if (Regex.IsMatch(lowercaseURL, @"[A-Z]"))
+            {
+                lowercaseURL = lowercaseURL.ToLower() + HttpContext.Current.Request.Url.Query;
+ 
+                Response.Clear();
+                Response.Status = "301 Moved Permanently";
+                Response.AddHeader("Location", lowercaseURL);
+                Response.End();
+            }
+        }

@@ -6,37 +6,140 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    public class DataController : Controller
+    using Custom.Data.Metadata;
+    using Custom.Models;
+    using System.Web.Routing;
+
+    public class DataController : Custom.Web.Mvc.CustomController
     {
-        //
-        // GET: /Data/
+        #region - CRUD actions -
 
-        public ActionResult Index()
+        //
+        // GET: Data/{area}/{controller}/{id}/Read
+        // GET: Data/{controller}/{id}/Read
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public virtual ActionResult Read(Guid id, string store)
         {
-            return View();
+            if (Guid.Empty.Equals(id))
+            {
+            }
+            else
+            {
+            }
+
+            return Json(id, JsonRequestBehavior.AllowGet);
         }
 
         //
-        // GET: /Data/{type}/Details/{id}
+        // GET: Data/{area}/{controller}/{id}/Create
+        // GET: Data/{controller}/{id}/Create
 
-        public ActionResult Details(string type, int id)
+        [AcceptVerbs(HttpVerbs.Post)]
+        public virtual ActionResult Create(Guid id, string store)
         {
-            return View();
+            return Json(id);
         }
 
         //
-        // GET: /Data/{type}/Create
+        // GET: Data/{area}/{controller}/{id}/Update
+        // GET: Data/{controller}/{id}/Update
 
-        public ActionResult Create()
+        [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
+        public virtual ActionResult Update(Guid id, string store, bool patch)
         {
-            return View();
+            if (Guid.Empty.Equals(id))
+            {
+            }
+            else
+            {
+            }
+
+            return Json(id);
         }
 
         //
-        // POST: /Data/{type}/Create
+        // GET: Data/{area}/{controller}/{id}/Delete
+        // GET: Data/{controller}/{id}/Delete
+
+        [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
+        public virtual ActionResult Delete(Guid id, string store)
+        {
+            string root, discriminator, document, key;
+
+            if (RouteData.Route == RouteTable.Routes[Global.DataRouteName])
+            {
+                discriminator = null;
+                root = document = RouteData.Values["controller"] as string;
+            }
+            else if (RouteData.Route == RouteTable.Routes[Global.DataGroupRouteName])
+            {
+                root = RouteData.Values["area"] as string;
+                discriminator = RouteData.Values["controller"] as string;
+                document = string.Concat(root, '/', discriminator);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            key = string.Concat(document, '/', id);
+
+            Dictionary<string, string> _baseToStoreName = null;
+
+            if (string.IsNullOrEmpty(store))
+            {
+                _baseToStoreName.TryGetValue(document, out store);
+            }
+
+            if (string.IsNullOrEmpty(store) && !string.IsNullOrEmpty(discriminator))
+            {
+                _baseToStoreName.TryGetValue(root, out store);
+            }
+
+            if (string.IsNullOrEmpty(store))
+            {
+                throw new Exception();
+            }
+
+            var repo = Global.Repositories[store, root, discriminator];
+
+            return Json(new { success = true, message = string.Format("{0} deleted from store {1}.", key, store) }, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion - CRUD actions -
+
+        //
+        // GET: /Data/Browse
+
+        public ActionResult Browse()
+        {
+            var page = new Page(this, null);
+
+            page.Title = "Welcome to Customary Metadata";
+
+            return page;
+        }
+
+        #region - Service call dropplet -
+
+        //
+        // GET: /Data/Drop
+
+        public ActionResult Drop(string name, string id)
+        {
+            return PartialView();
+        }
+
+        #endregion - Service call dropplet -
+
+        #region - Service call process -
+
+        //
+        // POST: /Data/Invoke
 
         [HttpPost]
-        public ActionResult Create(string type, FormCollection collection)
+        public ActionResult Invoke(string name, FormCollection collection)
         {
             try
             {
@@ -50,56 +153,81 @@ namespace Custom.Controllers
             }
         }
 
-        //
-        // GET: /Data/{type}/Edit/{id}
+        #endregion - Service call process -
 
-        public ActionResult Edit(string type, int id)
+        #region - Entity edit dropplets -
+
+        //
+        // GET: /Data/Edit
+
+        public ActionResult Edit(string name, string id)
         {
-            return View();
+            return PartialView();
         }
 
         //
-        // POST: /Data/{type}/Edit/{id}
+        // GET: /Data/New
 
-        [HttpPost]
-        public ActionResult Edit(string type, int id, FormCollection collection)
+        public ActionResult New(string name)
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return PartialView();
         }
 
         //
-        // GET: /Data/{type}/Delete/{id}
+        // GET: /Data/View
 
-        public ActionResult Delete(string type, int id)
+        public ActionResult View(string name, string id)
         {
-            return View();
+            return PartialView();
+        }
+
+        #endregion - Entity edit dropplets -
+
+
+        //
+        // GET: /Data/Directory.js
+
+        public ActionResult Directory()
+        {
+            return ScriptView();
         }
 
         //
-        // POST: /Data/{type}/Delete/{id}
+        // GET: /Data/Factory.js
 
-        [HttpPost]
-        public ActionResult Delete(string type, int id, FormCollection collection)
+        public ActionResult Factory()
         {
-            try
-            {
-                // TODO: Add delete logic here
+            return File("~/Scripts/Data/Factory.js", "text/javascript");
+        }
 
-                return RedirectToAction("Index");
-            }
-            catch
+        //
+        // GET: /Data/Enum/{id}
+
+        public ActionResult Children(string id, string name, Directory directory)
+        {
+            Queue<string> surplus = null;
+
+            if (directory == null)
             {
-                return View();
+                directory = Global.Directory;
+
+                if (!string.IsNullOrEmpty(name))
+                    directory = directory.Match(id.Split('.').AsEnumerable().GetEnumerator(), out surplus);
+                else if (!string.IsNullOrEmpty(id))
+                    directory = directory.Match(id.Split('-').AsEnumerable().GetEnumerator(), out surplus);
             }
+
+            return directory != null && (surplus == null || surplus.Count > 0)
+                ? Raven(true, null, directory.ToRavenJObject(true)["children"])
+                : Raven(false, "Not found", null);
+        }
+
+        //
+        // GET: /Data/Schema.js
+
+        public ActionResult Schema()
+        {
+            return ScriptView();
         }
     }
 }

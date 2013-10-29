@@ -10,7 +10,7 @@ namespace Custom.Areas.Metadata.Controllers
     using Custom.Models;
     using Raven.Json.Linq;
 
-    public class TypeController : Custom.Controllers.CustomController
+    public class TypeController : Custom.Web.Mvc.CustomController
     {
         //
         // GET: /Metadata/Type/Field

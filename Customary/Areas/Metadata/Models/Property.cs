@@ -5,18 +5,18 @@ using System.Web;
 
 namespace Custom.Areas.Metadata.Models
 {
-    using Custom.Metadata;
-    using Custom.Presentation;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Site.Presentation;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
 
     public class Property
     {
-        public static implicit operator Property(PropertyDescriptor descriptor)
+        public static implicit operator Property(PropertyDefinition descriptor)
         {
             return new Property(descriptor);
         }
 
-        public static implicit operator PropertyDescriptor(Property property)
+        public static implicit operator PropertyDefinition(Property property)
         {
             return property.Descriptor;
         }
@@ -46,7 +46,7 @@ namespace Custom.Areas.Metadata.Models
             return property.Store;
         }
 
-        private readonly PropertyDescriptor _descriptor;
+        private readonly PropertyDefinition _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -54,16 +54,16 @@ namespace Custom.Areas.Metadata.Models
         private Ext.data.Store _store;
 
         public Property()
-            : this(new PropertyDescriptor())
+            : this(new PropertyDefinition())
         {
         }
 
-        public Property(PropertyDescriptor descriptor)
+        public Property(PropertyDefinition descriptor)
         {
-            _descriptor = descriptor ?? new PropertyDescriptor();
+            _descriptor = descriptor ?? new PropertyDefinition();
         }
 
-        public PropertyDescriptor Descriptor
+        public PropertyDefinition Descriptor
         {
             get { return _descriptor; }
         }

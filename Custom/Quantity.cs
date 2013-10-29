@@ -35,7 +35,7 @@ namespace Custom
         }
     }
 
-    [Metadata.Complex("c45b4941-a935-4c4d-97bd-f15c5a0f2cc4")]
+    [Data.Metadata.Complex("c45b4941-a935-4c4d-97bd-f15c5a0f2cc4")]
     public sealed class Quantity<TMeasurement> : Quantity
         where TMeasurement : Measurement<TMeasurement>
     {

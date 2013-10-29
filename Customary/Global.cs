@@ -1,22 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
+﻿
 namespace Custom
 {
+    using Custom.Data.Metadata;
+    using Custom.Data.Persistence;
     using Custom.Diagnostics;
-    using Custom.Repositories;
 
     public static class Global
     {
+        public const string StoreRouteName = "Store_Default";
+        public const string StoreDetailRouteName = "Store_Detail";
+        public const string DataGreedyRouteName = "Data_Greedy";
+        public const string DataGroupRouteName = "Data_Group";
+        public const string DataStoreRouteName = "Data_Repository";
+        public const string DataRouteName = "Data_Default";
+
         private static readonly object _lock = new object();
+        private static RavenJObjectCatalogManager _catalogs;
         private static SimpleInjector.Container _container;
+        private static Directory _directory;
         private static ILogger _logger;
-        private static Repositories.GlobalizationContext _globalization;
-        private static Repositories.MasterdataContext _masterdata;
-        private static Repositories.MetadataContext _metadata;
-        private static Repositories.NavigationContext _navigation;
+        private static GlobalizationContext _globalization;
+        private static MasterdataContext _masterdata;
+        private static MetadataContext _metadata;
+        private static NavigationContext _navigation;
+        private static RepositoryManager _repositories;
+
+        public static RavenJObjectCatalogManager Catalogs
+        {
+            get { return _catalogs ?? (_catalogs = new RavenJObjectCatalogManager()); }
+        }
 
         public static SimpleInjector.Container Container
         {
@@ -33,6 +45,28 @@ namespace Custom
                 }
 
                 return container;
+            }
+        }
+
+        public static Directory Directory
+        {
+            get
+            {
+                var directory = _directory;
+
+                if (directory == null)
+                {
+                    lock (_lock)
+                    {
+                        directory = _directory ?? (_directory = Data.Metadata.Directory.Load(Global.Metadata.Store));
+                    }
+                }
+
+                return directory;
+            }
+            set
+            {
+                _directory = value;
             }
         }
 
@@ -142,6 +176,24 @@ namespace Custom
                 }
 
                 return navigation;
+            }
+        }
+
+        public static Custom.Data.Persistence.RepositoryManager Repositories
+        {
+            get
+            {
+                var repositories = _repositories;
+
+                if (repositories == null)
+                {
+                    lock (_lock)
+                    {
+                        repositories = _repositories ?? (_repositories = new RepositoryManager());
+                    }
+                }
+
+                return repositories;
             }
         }
     }

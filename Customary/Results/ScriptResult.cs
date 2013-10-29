@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Custom.Results
 {
-    using Custom.Presentation;
+    using Custom.Site.Presentation;
     using System.IO;
 
     public abstract class ScriptResult : ActionResult, IScriptable

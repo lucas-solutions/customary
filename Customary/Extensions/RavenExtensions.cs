@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Custom
 {
-    using Custom.Metadata;
+    using Custom.Data.Metadata;
     using Custom.Models;
     using Raven.Abstractions;
     using Raven.Imports.Newtonsoft.Json;
@@ -80,7 +80,7 @@ namespace Custom
             return jo;
         }
 
-        public static RavenJArray Merge(this RavenJArray target, RavenJArray source, ObjectDescriptor descriptor)
+        public static RavenJArray Merge(this RavenJArray target, RavenJArray source, StructuralDefinition descriptor)
         {
             var idName = descriptor != null ? descriptor.Identity : null;
 
@@ -90,7 +90,7 @@ namespace Custom
             return target;
         }
 
-        public static RavenJObject Merge(this RavenJObject target, RavenJObject source, ObjectDescriptor descriptor)
+        public static RavenJObject Merge(this RavenJObject target, RavenJObject source, StructuralDefinition descriptor)
         {
             var idName = descriptor != null ? descriptor.Identity : null;
 
@@ -118,19 +118,19 @@ namespace Custom
             return target;
         }
 
-        public static void Validate(this RavenJArray value, TypeDescriptor descriptor, List<Annotation> annotations)
+        public static void Validate(this RavenJArray value, TypeDefinition descriptor, List<Annotation> annotations)
         {
         }
 
-        public static void Validate(this RavenJObject value, ObjectDescriptor descriptor, List<Annotation> annotations)
+        public static void Validate(this RavenJObject value, StructuralDefinition descriptor, List<Annotation> annotations)
         {
         }
 
-        public static void Validate(this RavenJToken value, TypeDescriptor descriptor, List<Annotation> annotations)
+        public static void Validate(this RavenJToken value, TypeDefinition descriptor, List<Annotation> annotations)
         {
         }
 
-        public static void Validate(this RavenJValue value, TypeDescriptor descriptor, List<Annotation> annotations)
+        public static void Validate(this RavenJValue value, TypeDefinition descriptor, List<Annotation> annotations)
         {
         }
 

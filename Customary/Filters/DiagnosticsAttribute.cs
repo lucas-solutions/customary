@@ -42,7 +42,7 @@ namespace Custom.Filters
 
         private ControllerLog Log(ControllerBase controller)
         {
-            var customController = controller as Custom.Controllers.CustomController;
+            var customController = controller as Custom.Web.Mvc.CustomController;
             if (customController != null)
             {
                 var log = customController.Log;

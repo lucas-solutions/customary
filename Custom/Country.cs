@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom
 {
-    [Metadata.Enum("c806e046-4603-432e-95f4-16f654fa2e1a")]
+    [Data.Metadata.Enum("c806e046-4603-432e-95f4-16f654fa2e1a")]
     public sealed class Country : Enum<Country, int>
     {
         static readonly Country[] _members = GetMembers();

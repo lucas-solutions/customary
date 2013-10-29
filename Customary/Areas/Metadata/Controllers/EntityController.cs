@@ -9,25 +9,23 @@ namespace Custom.Areas.Metadata.Controllers
     using Custom.Areas.Metadata.Models;
     using Custom.Controllers;
     using Custom.Models;
-    using Custom.Metadata;
-    using Custom.Navigation;
-    using Custom.Presentation;
-    using Custom.Presentation.Sencha.Ext.data;
-    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Data.Metadata;
+    using Custom.Web.Mvc;
+    using Custom.Site.Presentation;
+    using Custom.Site.Presentation.Sencha.Ext.data;
+    using Ext = Custom.Site.Presentation.Sencha.Ext;
     using Raven.Json.Linq;
 
-    public class EntityController : Custom.Controllers.CustomController
+    public class EntityController : Custom.Web.Mvc.CustomController
     {
         //
-        // GET: /Metadata/Entity
+        // GET: /Data/
 
         public ActionResult Index()
         {
-            var entity = new Entity();
+            var page = new Page(this, null);
 
-            var page = this.Page(entity);
-
-            page.Title = "Welcome to Customary Metadata";
+            page.Title = "Welcome to Customary Data";
 
             return page;
         }
@@ -38,7 +36,7 @@ namespace Custom.Areas.Metadata.Controllers
         public ActionResult Create()
         {
             var annotations = new List<Annotation>();
-            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityObject;
             var record = Custom.Global.Metadata.Create(Data, descriptor, annotations);
 
             Custom.Global.Metadata.Session.SaveChanges();
@@ -60,7 +58,7 @@ namespace Custom.Areas.Metadata.Controllers
         public ActionResult Destroy()
         {
             var annotations = new List<Annotation>();
-            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityObject;
             var record = Custom.Global.Metadata.Destroy(Data, descriptor, annotations);
 
             Custom.Global.Metadata.Session.SaveChanges();
@@ -76,11 +74,11 @@ namespace Custom.Areas.Metadata.Controllers
             if (string.IsNullOrEmpty(id))
                 return ScriptView();
 
-            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
+            var descriptor = Global.Metadata.Session.Load<EntityObject>("Type/Entity/" + id);
 
             var storeName = descriptor.GetStoreName();
 
-            var model = new Presentation.Sencha.Ext.grid.Panel(descriptor);
+            var model = new Site.Presentation.Sencha.Ext.grid.Panel(descriptor);
 
             var builder = model.ToBuilder();
 
@@ -95,7 +93,7 @@ namespace Custom.Areas.Metadata.Controllers
             if (string.IsNullOrEmpty(id))
                 return ScriptView();
 
-            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
+            var descriptor = Global.Metadata.Session.Load<EntityObject>("Type/Entity/" + id);
 
             return ScriptView(descriptor);
 
@@ -207,7 +205,7 @@ namespace Custom.Areas.Metadata.Controllers
             if (string.IsNullOrEmpty(id))
                 return ScriptView();
 
-            var descriptor = Global.Metadata.Session.Load<EntityDescriptor>("Type/Entity/" + id);
+            var descriptor = Global.Metadata.Session.Load<EntityObject>("Type/Entity/" + id);
 
             return ScriptView(descriptor);
         }
@@ -242,7 +240,7 @@ namespace Custom.Areas.Metadata.Controllers
         public ActionResult Update()
         {
             var annotations = new List<Annotation>();
-            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityDescriptor;
+            var descriptor = Global.Metadata.Describe("Custom.Metadata.Entity") as EntityObject;
             var record = Custom.Global.Metadata.Update(Data, descriptor, annotations);
 
             Custom.Global.Metadata.Session.SaveChanges();

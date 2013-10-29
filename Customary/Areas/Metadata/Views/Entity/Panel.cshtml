@@ -1,9 +1,9 @@
 ﻿@using Custom.Areas.Metadata.Models
-@using Custom.Metadata
-@using Custom.Presentation
-@using Ext = Custom.Presentation.Sencha.Ext
+@using Custom.Data.Metadata
+@using Custom.Site.Presentation
+@using Ext = Custom.Site.Presentation.Sencha.Ext
 @{
-    var descriptor = Model as EntityDescriptor;
+    var descriptor = Model as EntityObject;
 }
 @if (descriptor != null)
 {

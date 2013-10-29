@@ -1,0 +1,162 @@
+﻿<script type="text/javascript">
+    // Create model, grid and forms for data definitions
+
+    Ext.define('Custom.data.Schema', function () {
+
+        function fullName(node) {
+            /// <param name="node" type="Ext.data.NodeInterface">
+            /// </param>
+            /// <returns type="String"></returns>
+            var name = [];
+            name.push(node.raw.text);
+            for (node = node.parentNode; node; node = node.parentNode) {
+                name.push(node.raw.text);
+            }
+            name.reverse();
+            return name.slice(1).join('-');
+        };
+
+        return {
+
+            statics: {
+
+                createModel: function (type) {
+                },
+
+                createStore: function (directory) {
+
+                    return Ext.create('Ext.data.TreeStore', {
+                        id: 'Custom.data.Type.store',
+                        autoLoad: true,
+                        //defaultRootId: '0',
+                        //defaultRootText: "text",
+                        //defaultRootProperty: 'children',
+                        folderSort: true,
+                        // not using model. direct proxy
+                        proxy: {
+                            // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                            // and for jsonp the api is the same, but the method is GET
+                            type: 'ajax', // rest, jsonp or ajax. 
+                            api: {
+                                read: directory.baseUrl
+                            },
+                            buildUrl: function (request) {
+                                switch (request.action) {
+                                    case 'read':
+                                        return directory.baseUrl + '/' + fullName(request.operation.node);
+                                    default:
+                                        return directory.baseUrl;
+                                }
+                            },
+                            headers: {
+                                "Accept": "application/json"
+                            },
+                            listeners: {
+                                exception: function (proxy, response, operation) {
+                                    Ext.MessageBox.show({
+                                        title: 'REMOTE EXCEPTION',
+                                        msg: operation.getError(),
+                                        icon: Ext.MessageBox.ERROR,
+                                        buttons: Ext.Msg.OK
+                                    });
+                                }
+                            },
+                            reader: {
+                                type: "json",
+                                root: "data",
+                                totalProperty: 'total',
+                                successProperty: 'success',
+                                messageProperty: 'message'
+                            }
+                        },
+                        root: {
+                            text: "Root",
+                            expanded: true,
+                            loaded: false,
+                        }
+                    });
+                },
+
+                createTree: function (schema, config) {
+
+                    Ext.Object.merge(schema, {
+                        buttons: {
+                            refresh: Ext.create('Ext.Button', {
+                                iconCls: 'icon-refresh',
+                                text: 'Refresh',
+                                scope: this,
+                                handler: schema.onRefreshClick
+                            })
+                        }
+                    });
+
+                    return Ext.create('Ext.tree.Panel', Ext.Object.merge({
+                        header: false,
+                        store: schema.store,
+                        rootVisible: false,
+                        useArrows: true,
+                        listeners: {
+                            selectionchange: {
+                                fn: schema.onSourceChange,
+                                scope: schema
+                            }
+                        },
+                        dockedItems: [
+                            {
+                                xtype: 'toolbar',
+                                dock: 'bottom',
+                                ui: 'footer',
+                                margin: '6 0 3 0',
+                                items: ['->', schema.buttons.refresh]
+                            }
+                        ]
+                    }, config));
+                }
+            },
+
+            constructor: function () {
+                this.baseUrl = '@Url.Absolute("/Data/Type")';
+                this.store = Custom.data.Schema.createStore(this);
+                this.tree = Custom.data.Schema.createTree(this);
+            },
+
+            onRefreshClick: function () {
+                this.store.load();
+                App.core.Adapter.publish('Custom.data.Schema.tree.selectionchange', this.panel.selModel);
+            },
+
+            onSourceChange: function (selModel, selections, opts) {
+                if (typeof selections == 'object' && selections.length > 0 && typeof selections[0].raw == 'object') {
+                    var record = selections[0].raw;
+                    Ext.Ajax.request({
+                        method: 'GET',
+                        url: this.baseUrl + '/Details/',
+                        params: {
+                            id: 1
+                        },
+                        success: function (response, options) {
+                            var result = Ext.JSON.decode(response.responseText, true);
+
+                            if (result !== null && result.success === true && result.data !== null && typeof result.data === 'object') {
+                                var definition = result.data;
+
+                            }
+                        },
+                        failure: function (response, options) {
+                        },
+                        scope: this
+                    });
+
+                    // selections[0].raw.type
+
+                    //this.grid = Custom.data.Schema.createGrid(this);
+
+                    App.core.Adapter.publish('Custom.data.Schema.tree.selectionchange', selModel, selections, selections[0].raw.type, selections[0].raw.id);
+                } else {
+                    App.core.Adapter.publish('Custom.data.Schema.tree.selectionchange', selModel, selections);
+                }
+            }
+        };
+
+    });
+</script>

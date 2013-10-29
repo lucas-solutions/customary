@@ -8,6 +8,27 @@ namespace Custom.Utils
     public static class PathHelper
     {
         /// <summary>
+        /// Retrieves the subdomain from the specified URL.
+        ///</summary>
+        ///<param name="url">The URL from which to retrieve the subdomain.</param>
+        ///<returns>The subdomain if it exist, otherwise null.</returns>
+        public static string GetSubDomain(Uri url)
+        {
+            if (url.HostNameType == UriHostNameType.Dns)
+            {
+                string host = url.Host;
+                if (host.Split('.').Length > 2)
+                {
+                    int lastIndex = host.LastIndexOf(".");
+                    int index = host.LastIndexOf(".", lastIndex - 1);
+                    return host.Substring(0, index);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Tries to get the physiccal path from a relative or virutal path. If the path is absolute or it is an absolute url that can't be mapped to the current application url.
         /// </summary>
         /// <param name="path">path to test and convert to physical path</param>
