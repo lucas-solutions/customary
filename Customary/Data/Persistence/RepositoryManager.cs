@@ -6,13 +6,24 @@ using System.Web;
 
 namespace Custom.Data.Persistence
 {
+    using Custom.Data.Metadata;
+    using Custom.Data.Persistence.Repositories;
+
     public class RepositoryManager
     {
-        private readonly ConcurrentDictionary<string, IRavenJObjectCatalog> _stores;
-        
+        private ConcurrentDictionary<string, Func<DocumentContext>> _lazyDocumentContextMap;
+
         public RepositoryManager()
         {
-            _stores = new ConcurrentDictionary<string, IRavenJObjectCatalog>();
+            var knownDodumentContextMap = new Dictionary<string, Func<DocumentContext>>
+            {
+                { "Globalization", () => { return Global.Globalization; } },
+                { "Metadata", () => { return Global.Metadata; } },
+                { "Masterdata", () => { return Global.Masterdata; } },
+                { "Navigation", () => { return Global.Navigation; } }
+            };
+
+            _lazyDocumentContextMap = new ConcurrentDictionary<string, Func<DocumentContext>>(knownDodumentContextMap);
         }
 
         public IRavenJObjectRepository this[Guid id]
@@ -20,31 +31,70 @@ namespace Custom.Data.Persistence
             get { return ResolveRepository(id); }
         }
 
-        public IRavenJObjectRepository this[string catalog, string principal, string discriminator]
+        public IRavenJObjectRepository this[ModelDefinition definition]
         {
-            get
-            {
-                var store = ResolveStore(catalog);
-                return null;
-            }
-        }
-
-        public IRavenJObjectCatalog ResolveStore(string name)
-        {
-            IRavenJObjectCatalog store = null;
-
-            return store;
+            get { return ResolveRepository(definition); }
         }
 
         public IRavenJObjectRepository ResolveRepository(Guid id)
         {
-            var definitionKey = string.Concat("Type/Entity/", id);
+            var definitionKey = string.Concat("Type/Model/", id);
 
-            var definition = Global.Metadata.Session.Load<Custom.Data.Metadata.EntityDefinition>(definitionKey);
+            var definition = Global.Metadata.Session.Load<Custom.Data.Metadata.ModelDefinition>(definitionKey);
 
-            IRavenJObjectRepository repo = null;
+            return definition != null ? ResolveRepository(definition) : null;
+        }
 
-            return repo;
+        public IRavenJObjectRepository ResolveRepository(ModelDefinition definition)
+        {
+            var catalog = ResolveCatalog(definition);
+
+            if (definition.Singleton)
+            {
+                var context = ResolveDocumentContext(catalog.Name);
+                return new SingletonRepository(definition, context);
+            }
+
+            switch (catalog.Type)
+            {
+                case StoreTypes.Ajax:
+                    return new AjaxRepository();
+
+                case StoreTypes.Doument:
+                    {
+                        var context = ResolveDocumentContext(catalog.Name);
+                        return new DocumentRepository(catalog, definition, context);
+                    }
+
+                case StoreTypes.Procedure:
+                    return new ProcedureRepository();
+
+                case StoreTypes.Record:
+                    return new RecordRepository();
+
+                case StoreTypes.Restful:
+                    return new RestfulRepository();
+
+                default:
+                    return null;
+            }
+        }
+
+        public Catalog ResolveCatalog(ModelDefinition definition)
+        {
+            return null;
+        }
+
+        public DocumentContext ResolveDocumentContext(string name)
+        {
+            Func<DocumentContext> lazyContext;
+            if (!_lazyDocumentContextMap.TryGetValue(name, out lazyContext))
+            {
+                lazyContext = () => { return new EmbeddableDocumentContext(name); };
+
+            }
+
+            return lazyContext();
         }
     }
 }

@@ -129,12 +129,12 @@ namespace Custom.Data.Metadata
 
         public static BusinessObject Load(this Data.Persistence.MetadataContext metadata, string id, string type)
         {
-            var descriptor = Describe(metadata, type) as EntityDefinition;
+            var descriptor = Describe(metadata, type) as ModelDefinition;
 
             return Load(metadata, id, descriptor);
         }
 
-        public static BusinessObject Load(this Data.Persistence.MetadataContext metadata, string id, EntityDefinition descriptor)
+        public static BusinessObject Load(this Data.Persistence.MetadataContext metadata, string id, ModelDefinition descriptor)
         {
             if (descriptor == null)
                 throw new InvalidOperationException();

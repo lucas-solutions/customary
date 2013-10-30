@@ -19,7 +19,17 @@ namespace Custom.Data.Persistence
 
         private static IDocumentStore _store;
 
-        public abstract string ConnectionStringName { get; }
+        private readonly string _name;
+
+        protected DocumentContext(string name)
+        {
+            _name = name;
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
 
         public IDocumentSession Session
         {
@@ -56,7 +66,8 @@ namespace Custom.Data.Persistence
 
         protected virtual void InitializeDocumentStore(IDocumentStore store)
         {
-            //store.Conventions.IdentityPartsSeparator = "-";
+            //store.Conventions.IdentityPartsSeparator = "/";
+            store.Conventions.SaveEnumsAsIntegers = false;
 
             store.Initialize();
 

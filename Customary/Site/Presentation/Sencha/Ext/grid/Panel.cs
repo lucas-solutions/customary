@@ -20,17 +20,7 @@ namespace Custom.Site.Presentation.Sencha.Ext.grid
         {
         }
 
-        public Panel(ComplexDefinition descriptor)
-            : this((StructuralDefinition)descriptor)
-        {
-        }
-
-        public Panel(EntityDefinition descriptor)
-            : this((StructuralDefinition)descriptor)
-        {
-        }
-
-        private Panel(StructuralDefinition descriptor)
+        public Panel(ModelDefinition descriptor)
         {
         }
 

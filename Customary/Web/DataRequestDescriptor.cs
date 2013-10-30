@@ -7,6 +7,7 @@ using System.Web.Routing;
 
 namespace Custom.Web
 {
+    using Custom.Data;
     using Custom.Data.Metadata;
     using Custom.Data.Serialization;
 

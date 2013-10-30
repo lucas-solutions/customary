@@ -11,12 +11,12 @@ namespace Custom.Areas.Metadata.Models
 
     public sealed class Entity
     {
-        public static implicit operator Entity(EntityDefinition descriptor)
+        public static implicit operator Entity(ModelDefinition descriptor)
         {
             return new Entity(descriptor);
         }
 
-        public static implicit operator EntityDefinition(Entity entity)
+        public static implicit operator ModelDefinition(Entity entity)
         {
             return entity.Descriptor;
         }
@@ -51,7 +51,7 @@ namespace Custom.Areas.Metadata.Models
             return entity.JObject;
         }
 
-        private readonly EntityDefinition _descriptor;
+        private readonly ModelDefinition _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -60,17 +60,17 @@ namespace Custom.Areas.Metadata.Models
         private Raven.Json.Linq.RavenJObject _jo;
 
         public Entity()
-            : this(new EntityDefinition())
+            : this(new ModelDefinition())
         {
             var data = new Newtonsoft.Json.Linq.JObject();
         }
 
-        public Entity(EntityDefinition descriptor)
+        public Entity(ModelDefinition descriptor)
         {
-            _descriptor = descriptor ?? new EntityDefinition();
+            _descriptor = descriptor ?? new ModelDefinition();
         }
 
-        public EntityDefinition Descriptor
+        public ModelDefinition Descriptor
         {
             get { return _descriptor; }
         }

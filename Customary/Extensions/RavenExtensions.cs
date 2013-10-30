@@ -80,7 +80,7 @@ namespace Custom
             return jo;
         }
 
-        public static RavenJArray Merge(this RavenJArray target, RavenJArray source, StructuralDefinition descriptor)
+        public static RavenJArray Merge(this RavenJArray target, RavenJArray source, ModelDefinition descriptor)
         {
             var idName = descriptor != null ? descriptor.Identity : null;
 
@@ -90,7 +90,7 @@ namespace Custom
             return target;
         }
 
-        public static RavenJObject Merge(this RavenJObject target, RavenJObject source, StructuralDefinition descriptor)
+        public static RavenJObject Merge(this RavenJObject target, RavenJObject source, ModelDefinition descriptor)
         {
             var idName = descriptor != null ? descriptor.Identity : null;
 
@@ -122,7 +122,7 @@ namespace Custom
         {
         }
 
-        public static void Validate(this RavenJObject value, StructuralDefinition descriptor, List<Annotation> annotations)
+        public static void Validate(this RavenJObject value, ModelDefinition descriptor, List<Annotation> annotations)
         {
         }
 

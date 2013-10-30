@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom
 {
-    [Data.Metadata.Complex("02a99c95-05b6-4c1e-8ddc-b01bd4ff30f5")]
+    [Data.Metadata.Model("02a99c95-05b6-4c1e-8ddc-b01bd4ff30f5")]
     public sealed class Text : Dictionary<string, string>
     {   
     }

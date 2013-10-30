@@ -12,16 +12,16 @@ namespace Custom.Data.Persistence
     
     public class NavigationContext : DocumentContext
     {
-        public override string ConnectionStringName
+        public NavigationContext()
+            : base("Navigation")
         {
-            get { return "Navigation"; }
         }
 
         protected override IDocumentStore CreateDocumentStore()
         {
             return new EmbeddableDocumentStore
             {
-                ConnectionStringName = ConnectionStringName
+                ConnectionStringName = Name
             };
         }
     }

@@ -13,9 +13,22 @@ namespace Custom.Data.Persistence
     using Raven.Client.Embedded;
     using Raven.Json.Linq;
 
-    public class GlobalizationContext
+    public class GlobalizationContext : DocumentContext
     {
-        public string ConnectionStringName { get { return "Globalization"; } }
+        public GlobalizationContext()
+            : base("Globalization")
+        {
+        }
+
+        protected override IDocumentStore CreateDocumentStore()
+        {
+            var store = new EmbeddableDocumentStore
+            {
+                ConnectionStringName = Name
+            };
+
+            return store;
+        }
 
         public static bool Import(string fileName)
         {

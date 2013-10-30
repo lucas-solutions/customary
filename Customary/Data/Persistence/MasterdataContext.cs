@@ -11,16 +11,16 @@ namespace Custom.Data.Persistence
 
     public class MasterdataContext : DocumentContext
     {
-        public override string ConnectionStringName
+        public MasterdataContext()
+            : base("Masterdata")
         {
-            get { return "Masterdata"; }
         }
 
         protected override IDocumentStore CreateDocumentStore()
         {
             return new EmbeddableDocumentStore
             {
-                ConnectionStringName = ConnectionStringName
+                ConnectionStringName = Name
             };
         }
     }

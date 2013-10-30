@@ -22,7 +22,7 @@ namespace Custom
 
         #region - Create -
 
-        public static void Create(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJToken data, ModelDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -36,18 +36,18 @@ namespace Custom
             }
         }
 
-        public static void Create(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJArray data, ModelDefinition descriptor = null)
         {
             Create(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Create(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
+        public static void Create(this IDocumentStore store, IEnumerable<RavenJObject> package, ModelDefinition descriptor = null)
         {
             foreach (var record in package)
                 Create(store, record, descriptor);
         }
 
-        public static void Create(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
+        public static void Create(this IDocumentStore store, RavenJObject record, ModelDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }
@@ -56,7 +56,7 @@ namespace Custom
 
         #region - Destroy -
 
-        public static void Destroy(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJToken data, ModelDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -70,18 +70,18 @@ namespace Custom
             }
         }
 
-        public static void Destroy(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJArray data, ModelDefinition descriptor = null)
         {
             Destroy(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Destroy(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
+        public static void Destroy(this IDocumentStore store, IEnumerable<RavenJObject> package, ModelDefinition descriptor = null)
         {
             foreach (var record in package)
                 Destroy(store, record, descriptor);
         }
 
-        public static void Destroy(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
+        public static void Destroy(this IDocumentStore store, RavenJObject record, ModelDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }
@@ -90,12 +90,12 @@ namespace Custom
 
         #region - Import -
 
-        public static void Import(this IDocumentStore store, string fileName, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, string fileName, ModelDefinition descriptor = null)
         {
             Import(store, new FileInfo(fileName), descriptor);
         }
 
-        public static void Import(this IDocumentStore store, FileInfo file, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, FileInfo file, ModelDefinition descriptor = null)
         {
             RavenJObject record;
 
@@ -115,7 +115,7 @@ namespace Custom
             }
         }
 
-        public static void Import(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJToken data, ModelDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -129,18 +129,18 @@ namespace Custom
             }
         }
 
-        public static void Import(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJArray data, ModelDefinition descriptor = null)
         {
             Import(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Import(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, IEnumerable<RavenJObject> package, ModelDefinition descriptor = null)
         {
             foreach (var record in package)
                 Import(store, record);
         }
 
-        public static bool Import(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
+        public static bool Import(this IDocumentStore store, RavenJObject record, ModelDefinition descriptor = null)
         {
             var keyToken = record[keyProp];
 
@@ -158,7 +158,7 @@ namespace Custom
             return true;
         }
 
-        public static void Import(this IDocumentStore store, RavenJObject record, string key, EntityDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJObject record, string key, ModelDefinition descriptor = null)
         {
             if (descriptor != null)
             {
@@ -283,7 +283,7 @@ namespace Custom
 
         #region - Update -
 
-        public static void Update(this IDocumentStore store, RavenJToken data, EntityDefinition descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJToken data, ModelDefinition descriptor = null)
         {
             switch (data.Type)
             {
@@ -297,18 +297,18 @@ namespace Custom
             }
         }
 
-        public static void Update(this IDocumentStore store, RavenJArray data, EntityDefinition descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJArray data, ModelDefinition descriptor = null)
         {
             Update(store, data.Values().AsEnumerable().OfType<RavenJObject>(), descriptor);
         }
 
-        public static void Update(this IDocumentStore store, IEnumerable<RavenJObject> package, EntityDefinition descriptor = null)
+        public static void Update(this IDocumentStore store, IEnumerable<RavenJObject> package, ModelDefinition descriptor = null)
         {
             foreach (var record in package)
                 Update(store, record, descriptor);
         }
 
-        public static void Update(this IDocumentStore store, RavenJObject record, EntityDefinition descriptor = null)
+        public static void Update(this IDocumentStore store, RavenJObject record, ModelDefinition descriptor = null)
         {
             throw new NotImplementedException();
         }

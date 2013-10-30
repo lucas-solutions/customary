@@ -7,7 +7,9 @@ using System.Web.Routing;
 
 namespace Custom.Controllers
 {
-    public class StoreController : Controller
+    using Custom.Web.Mvc;
+
+    public class StoreController : CustomController
     {
         #region - CRUD actions -
 
@@ -15,20 +17,22 @@ namespace Custom.Controllers
         // GET: Data/{type}/Read/{id}
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public virtual ActionResult Read(Guid type, Guid id)
+        public virtual ActionResult Read(Guid type, Guid id, int? skip, int? take)
         {
-            var definitionKey = string.Concat("Type/Entity/", type);
+            var definitionKey = string.Concat("Type/Model/", type);
 
-            var definition = Global.Metadata.Session.Load<Custom.Data.Metadata.EntityDefinition>(definitionKey);
+            var definition = Global.Metadata.Session.Load<Custom.Data.Metadata.ModelDefinition>(definitionKey);
+
+            var repository = Global.Repositories[definition];
 
             if (Guid.Empty.Equals(id))
             {
+                return new RavenJObjectResult { Content = repository.Read(skip ?? 0, take ?? byte.MaxValue) };
             }
             else
             {
+                return new RavenJObjectResult { Content = repository.Read(id) };
             }
-
-            return Json(id, JsonRequestBehavior.AllowGet);
         }
 
         //

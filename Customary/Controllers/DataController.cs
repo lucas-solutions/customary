@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Custom.Controllers
 {
+    using Custom.Data;
     using Custom.Data.Metadata;
     using Custom.Models;
-    using System.Web.Routing;
-
+    
     public class DataController : Custom.Web.Mvc.CustomController
     {
         #region - CRUD actions -
@@ -101,8 +102,6 @@ namespace Custom.Controllers
             {
                 throw new Exception();
             }
-
-            var repo = Global.Repositories[store, root, discriminator];
 
             return Json(new { success = true, message = string.Format("{0} deleted from store {1}.", key, store) }, JsonRequestBehavior.AllowGet);
         }

@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace Custom.Data.Metadata
 {
-    public class UnitAttribute : MemberAttribute
+    public class UnitAttribute: TypeAttribute
     {
-        public string Prefix { get; set; }
-
-        public string Suffix { get; set; }
-
-        public string Symbol { get; set; }
-
-        public string Sign { get; set; }
-
-        public bool IsSuffix { get; set; }
+        public UnitAttribute(string id)
+            : base(id)
+        {
+        }
     }
 }

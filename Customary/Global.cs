@@ -1,6 +1,7 @@
 ﻿
 namespace Custom
 {
+    using Custom.Data;
     using Custom.Data.Metadata;
     using Custom.Data.Persistence;
     using Custom.Diagnostics;
@@ -15,7 +16,6 @@ namespace Custom
         public const string DataRouteName = "Data_Default";
 
         private static readonly object _lock = new object();
-        private static RavenJObjectCatalogManager _catalogs;
         private static SimpleInjector.Container _container;
         private static Directory _directory;
         private static ILogger _logger;
@@ -24,11 +24,6 @@ namespace Custom
         private static MetadataContext _metadata;
         private static NavigationContext _navigation;
         private static RepositoryManager _repositories;
-
-        public static RavenJObjectCatalogManager Catalogs
-        {
-            get { return _catalogs ?? (_catalogs = new RavenJObjectCatalogManager()); }
-        }
 
         public static SimpleInjector.Container Container
         {
@@ -58,7 +53,7 @@ namespace Custom
                 {
                     lock (_lock)
                     {
-                        directory = _directory ?? (_directory = Data.Metadata.Directory.Load(Global.Metadata.Store));
+                        directory = _directory ?? (_directory = Directory.Load(Global.Metadata.Store));
                     }
                 }
 
@@ -179,7 +174,7 @@ namespace Custom
             }
         }
 
-        public static Custom.Data.Persistence.RepositoryManager Repositories
+        public static RepositoryManager Repositories
         {
             get
             {

@@ -41,7 +41,7 @@ namespace Custom.Controllers
             return Json(new object());
         }
 
-        protected ActionResult Model(EntityDefinition entity)
+        protected ActionResult Model(ModelDefinition entity)
         {
             object model = null;
 

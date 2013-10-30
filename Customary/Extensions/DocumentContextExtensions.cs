@@ -29,7 +29,7 @@ namespace Custom
             return list;
         }
 
-        public static RavenJToken Create(this DocumentContext context, RavenJToken source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJToken Create(this DocumentContext context, RavenJToken source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             switch (source.Type)
             {
@@ -45,7 +45,7 @@ namespace Custom
             }
         }
 
-        public static RavenJArray Create(this DocumentContext context, RavenJArray source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJArray Create(this DocumentContext context, RavenJArray source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             var array = new RavenJArray();
 
@@ -67,7 +67,7 @@ namespace Custom
             return array;
         }
 
-        public static RavenJObject Create(this DocumentContext context, RavenJObject source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJObject Create(this DocumentContext context, RavenJObject source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             Guid idValue;
             RavenJToken idToken;
@@ -111,7 +111,7 @@ namespace Custom
             return targetValue;
         }
 
-        public static RavenJToken Destroy(this DocumentContext context, RavenJToken source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJToken Destroy(this DocumentContext context, RavenJToken source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             switch (source.Type)
             {
@@ -127,7 +127,7 @@ namespace Custom
             }
         }
 
-        public static RavenJArray Destroy(this DocumentContext context, RavenJArray source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJArray Destroy(this DocumentContext context, RavenJArray source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             var array = new RavenJArray();
 
@@ -149,7 +149,7 @@ namespace Custom
             return array;
         }
 
-        public static RavenJObject Destroy(this DocumentContext context, RavenJObject source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJObject Destroy(this DocumentContext context, RavenJObject source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             Guid idValue;
             RavenJToken idToken;
@@ -224,7 +224,7 @@ namespace Custom
             }
         }
 
-        public static List<RavenJObject> Read(this DocumentContext context, EntityDefinition descriptor, string query, int? start, int? limit, List<Annotation> annotations)
+        public static List<RavenJObject> Read(this DocumentContext context, ModelDefinition descriptor, string query, int? start, int? limit, List<Annotation> annotations)
         {
             // http://ravendb.net/docs/2.0/client-api/advanced/full-query-syntax?version=2.0
 
@@ -248,7 +248,7 @@ namespace Custom
             return result.Results;
         }
 
-        public static RavenJToken Update(this DocumentContext context, RavenJToken source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJToken Update(this DocumentContext context, RavenJToken source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             switch (source.Type)
             {
@@ -264,7 +264,7 @@ namespace Custom
             }
         }
 
-        public static RavenJArray Update(this DocumentContext context, RavenJArray source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJArray Update(this DocumentContext context, RavenJArray source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             var array = new RavenJArray();
 
@@ -286,7 +286,7 @@ namespace Custom
             return array;
         }
 
-        public static RavenJObject Update(this DocumentContext context, RavenJObject source, EntityDefinition descriptor, List<Annotation> annotations)
+        public static RavenJObject Update(this DocumentContext context, RavenJObject source, ModelDefinition descriptor, List<Annotation> annotations)
         {
             RavenJObject record = null;
             RavenJToken idToken;
@@ -339,7 +339,7 @@ namespace Custom
             return targetArray;
         }
 
-        public static RavenJObject UpdateObject(this RavenJObject targetObject, RavenJObject sourceObject, StructuralDefinition objectDescriptor, List<Annotation> annotations)
+        public static RavenJObject UpdateObject(this RavenJObject targetObject, RavenJObject sourceObject, ModelDefinition objectDescriptor, List<Annotation> annotations)
         {
             foreach (var property in objectDescriptor.Properties)
             {
@@ -391,7 +391,7 @@ namespace Custom
                             targetObject[property.Name] = targetValue;
                     }
                 }
-                else if (propertyType is EntityDefinition)
+                else if (propertyType is ModelDefinition)
                 {
                     if (!sourceValue.IsPrimitive())
                     {
@@ -406,7 +406,7 @@ namespace Custom
                             targetObject[property.Name] = targetValue;
                     }
                 }
-                else if (propertyType is StructuralDefinition)
+                else if (propertyType is ModelDefinition)
                 {
                     if (!sourceValue.IsObject())
                         continue;
@@ -416,10 +416,10 @@ namespace Custom
             return targetObject;
         }
 
-        public static string GetStoreName(this EntityDefinition descriptor)
+        public static string GetStoreName(this ModelDefinition descriptor)
         {
-            if (descriptor.Store != null && !string.IsNullOrWhiteSpace(descriptor.Store.Name))
-                return descriptor.Store.Name;
+            if (descriptor.Repository != null && !string.IsNullOrWhiteSpace(descriptor.Repository.Name))
+                return descriptor.Repository.Name;
 
             var firstName = descriptor.Name.Split('.').Last();
 
@@ -434,11 +434,11 @@ namespace Custom
             return familyName + '/' + firstName;
         }
 
-        public static string GetFamilyName(this EntityDefinition descriptor)
+        public static string GetFamilyName(this ModelDefinition descriptor)
         {
             if (!string.IsNullOrWhiteSpace(descriptor.Extend))
             {
-                var parent = Global.Metadata.Describe(descriptor.Extend) as EntityDefinition;
+                var parent = Global.Metadata.Describe(descriptor.Extend) as ModelDefinition;
 
                 if (parent != null)
                     return GetStoreName(parent);

@@ -22,22 +22,22 @@ namespace Custom
             return money._value;
         }
 
-        [Data.Metadata.Unit(Name = "", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "", IsSuffix = true)]
         public static readonly Money CRC = new Money("CRC", USD / 512);
 
-        [Data.Metadata.Unit(Name = "", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "", IsSuffix = true)]
         public static readonly Money CUC = new Money("CUC", USD);
 
-        [Data.Metadata.Unit(Name = "", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "", IsSuffix = true)]
         public static readonly Money CUP = new Money("CUP", CUC / 25);
 
-        [Data.Metadata.Unit(Name = "British pound", Sign = "£", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "British pound", Sign = "£", IsSuffix = true)]
         public static readonly Money GBP = new Money("GBP", 1);
 
-        [Data.Metadata.Unit(Name = "Euro", Sign = "$", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "Euro", Sign = "$", IsSuffix = true)]
         public static readonly Money EUR = new Money("EUR", USD);
 
-        [Data.Metadata.Unit(Name = "United States dollar", Sign = "€", IsSuffix = true)]
+        [Data.Metadata.Measurement(Name = "United States dollar", Sign = "€", IsSuffix = true)]
         public static readonly Money USD = new Money("USD", 1);
 
         private decimal _value;

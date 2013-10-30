@@ -18,9 +18,9 @@ namespace Custom.Data.Metadata
     public class BusinessObject
     {
         internal readonly RavenJObject _data;
-        internal readonly EntityDefinition _descriptor;
+        internal readonly ModelDefinition _descriptor;
 
-        internal BusinessObject(RavenJObject data, EntityDefinition descriptor)
+        internal BusinessObject(RavenJObject data, ModelDefinition descriptor)
         {
             _data = data;
             _descriptor = descriptor;

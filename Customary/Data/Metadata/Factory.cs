@@ -10,54 +10,54 @@ namespace Custom.Data.Metadata
     [Service]
     public static class Factory
     {
-        public static StructuralDefinition DescribeObject<TObject>()
+        public static ModelDefinition DescribeObject<TObject>()
             where TObject : class
         {
             return DescribeObject(typeof(TObject));
         }
 
-        public static StructuralDefinition DescribeObject(Type type)
+        public static ModelDefinition DescribeObject(Type type)
         {
-            var attribute = type.GetCustomAttribute<StructuralAttribute>(false);
+            var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
             if (attribute == null)
                 return DescribeComplex(type, null);
             
-            if (attribute is EntityAttribute)
-                return DescribeEntity(type, attribute as EntityAttribute);
+            if (attribute is ModelAttribute)
+                return DescribeEntity(type, attribute as ModelAttribute);
             
-            return DescribeComplex(type, attribute as ComplexAttribute);
+            return DescribeComplex(type, attribute as ModelAttribute);
         }
 
-        public static EntityDefinition DescribeEntity<TEntity>()
+        public static ModelDefinition DescribeEntity<TEntity>()
             where TEntity : class
         {
             return DescribeEntity(typeof(TEntity));
         }
 
-        public static EntityDefinition DescribeEntity(Type type)
+        public static ModelDefinition DescribeEntity(Type type)
         {
-            var attribute = type.GetCustomAttribute<EntityAttribute>(false);
+            var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
             return DescribeEntity(type, attribute);
         }
 
-        public static ComplexDefinition DescribeComplex<TComplex>()
+        public static ModelDefinition DescribeComplex<TComplex>()
             where TComplex : class
         {
             return DescribeComplex(typeof(TComplex));
         }
 
-        public static ComplexDefinition DescribeComplex(Type type)
+        public static ModelDefinition DescribeComplex(Type type)
         {
-            var attribute = type.GetCustomAttribute<ComplexAttribute>(false);
+            var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
             return DescribeComplex(type, attribute);
         }
 
-        public static ComplexDefinition DescribeComplex(Type type, ComplexAttribute attribute)
+        public static ModelDefinition DescribeComplex(Type type, ModelAttribute attribute)
         {
-            var descriptor = new ComplexDefinition();
+            var descriptor = new ModelDefinition();
             
             DescribeObject(descriptor, type);
 
@@ -90,12 +90,12 @@ namespace Custom.Data.Metadata
             return descriptor;
         }
 
-        private static EntityDefinition DescribeEntity(Type type, EntityAttribute attribute)
+        private static ModelDefinition DescribeEntity(Type type, ModelAttribute attribute)
         {
             if (type.IsGenericTypeDefinition)
                 throw new InvalidOperationException("An entity should not be generic definition");
 
-            var descriptor = new EntityDefinition();
+            var descriptor = new ModelDefinition();
 
             DescribeObject(descriptor, type);
 
@@ -109,12 +109,12 @@ namespace Custom.Data.Metadata
             return descriptor;
         }
 
-        private static void DescribeObject(StructuralDefinition descriptor, Type type)
+        private static void DescribeObject(ModelDefinition descriptor, Type type)
         {
             DescribeType(descriptor, type);
         }
 
-        private static void DescribeObject(StructuralDefinition descriptor, StructuralAttribute attribute)
+        private static void DescribeObject(ModelDefinition descriptor, ModelAttribute attribute)
         {
             DescribeType(descriptor, attribute);
         }
@@ -136,7 +136,7 @@ namespace Custom.Data.Metadata
                 descriptor.Name = attribute.Name.Trim();
         }
 
-        private static void DescribeObject(StructuralDefinition descriptor, PropertyInfo[] properties)
+        private static void DescribeObject(ModelDefinition descriptor, PropertyInfo[] properties)
         {
             for (int i = 0, count = properties.Length; i < count; i++)
             {

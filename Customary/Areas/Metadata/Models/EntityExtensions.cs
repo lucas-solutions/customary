@@ -16,42 +16,42 @@ namespace Custom.Areas.Metadata.Models
     
     public static class EntityExtensions
     {
-        public static Ext.form.Panel ToForm(this EntityDefinition descriptor)
+        public static Ext.form.Panel ToForm(this ModelDefinition descriptor)
         {
             var builder = new Ext.form.Panel.Builder();
 
             return builder;
         }
 
-        public static Ext.grid.Panel ToGrid(this EntityDefinition descriptor)
+        public static Ext.grid.Panel ToGrid(this ModelDefinition descriptor)
         {
             var builder = new Ext.grid.Panel.Builder();
 
             return builder;
         }
 
-        public static Ext.data.Model ToModel(this EntityDefinition descriptor)
+        public static Ext.data.Model ToModel(this ModelDefinition descriptor)
         {
             var builder = new Ext.data.Model.Builder();
 
             return builder;
         }
 
-        public static Ext.data.proxy.Proxy ToProxy(this EntityDefinition descriptor)
+        public static Ext.data.proxy.Proxy ToProxy(this ModelDefinition descriptor)
         {
             var builder = new Ext.data.proxy.Proxy.Builder();
 
             return builder;
         }
 
-        public static Ext.data.Store ToStore(this EntityDefinition descriptor)
+        public static Ext.data.Store ToStore(this ModelDefinition descriptor)
         {
             var builder = new Ext.data.Store.Builder();
 
             return builder;
         }
 
-        public static Raven.Json.Linq.RavenJObject ToJObject(this EntityDefinition descriptor)
+        public static Raven.Json.Linq.RavenJObject ToJObject(this ModelDefinition descriptor)
         {
             var serializer = new JsonSerializer
             {

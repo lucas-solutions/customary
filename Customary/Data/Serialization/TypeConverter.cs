@@ -29,14 +29,14 @@ namespace Custom.Data.Serialization
                     if (System.Enum.TryParse<MemberTypes>(typeName, out type))
                         switch (type)
                         {
-                            case MemberTypes.Complex:
-                                return new ComplexDefinition();
-
                             case MemberTypes.Enum:
                                 return new EnumDefinition();
 
-                            case MemberTypes.Entity:
-                                return new EntityDefinition();
+                            case MemberTypes.Model:
+                                return new ModelDefinition();
+
+                            case MemberTypes.Unit:
+                                break;
 
                             case MemberTypes.Value:
                                 return new ValueDefinition();

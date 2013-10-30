@@ -50,9 +50,9 @@ namespace Custom.Data.Metadata
         Enum = 0x9,
 
         /// <summary>
-        /// Quantity with Unit of Measurement.
+        /// Unit of Measurement.
         /// </summary>
-        Quantity = 0xA,
+        Unit = 0xA,
 
         /// <summary>
         /// Text is like an Unit, but instead of measure it is qualified by a culture.
@@ -60,13 +60,8 @@ namespace Custom.Data.Metadata
         Text = 0xB,
 
         /// <summary>
-        /// Structure embeded as value.
+        /// Model with properties.
         /// </summary>
-        Complex = 0xC,
-
-        /// <summary>
-        /// Structure with identity. Always referenced. Only entities can be referenced.
-        /// </summary>
-        Entity = 0xD
+        Model = 0xC
     }
 }

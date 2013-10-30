@@ -34,22 +34,22 @@ namespace Custom
             return new Time { _seconds = (decimal)date.TimeOfDay.TotalSeconds };
         }
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Millisecond = new Time("Millisecond", 0.001M);
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Second = new Time("Second", 1M);
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Minute = new Time("Minute", 60 * Second);
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Hour = new Time("Hour", 60 * Minute);
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Day = new Time("Day", 24 * Hour);
 
-        [Data.Metadata.Unit]
+        [Data.Metadata.Measurement]
         public static readonly Time Week = new Time("Week", 7 * Day);
 
         private decimal _seconds;

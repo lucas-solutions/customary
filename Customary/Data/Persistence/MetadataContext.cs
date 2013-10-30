@@ -13,21 +13,18 @@ namespace Custom.Data.Persistence
     public class MetadataContext : DocumentContext
     {
         private readonly object _lock = new object();
-        
 
-        public override string ConnectionStringName
+        public MetadataContext()
+            : base("Metadata")
         {
-            get { return "Metadata"; }
         }
 
         protected override IDocumentStore CreateDocumentStore()
         {
             var store = new EmbeddableDocumentStore
             {
-                ConnectionStringName = ConnectionStringName
+                ConnectionStringName = Name
             };
-
-            store.Conventions.SaveEnumsAsIntegers = true;
 
             return store;
         }

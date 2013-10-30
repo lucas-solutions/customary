@@ -28,7 +28,7 @@ namespace Custom.Site.Presentation.Sencha.Ext.data
             return builder.ToModel();
         }
 
-        public static Ext.data.Model ToModel(this EntityDefinition entity)
+        public static Ext.data.Model ToModel(this ModelDefinition entity)
         {
             var builder = new Model.Builder();
 
