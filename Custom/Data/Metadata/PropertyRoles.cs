@@ -6,7 +6,22 @@ using System.Threading.Tasks;
 
 namespace Custom.Data.Metadata
 {
-    public sealed class PropertyRoles : Enum<PropertyRoles, int>
+    public enum PropertyRoles
+    {
+        Optional,
+
+        Required,
+
+        Index,
+
+        Unique,
+
+        Identity,
+
+        HasMany
+    }
+
+    /*public sealed class PropertyRoles : Enum<PropertyRoles, int>
     {
         static readonly PropertyRoles[] _members;
 
@@ -52,5 +67,5 @@ namespace Custom.Data.Metadata
         {
             get { return _members; }
         }
-    }
+    }*/
 }

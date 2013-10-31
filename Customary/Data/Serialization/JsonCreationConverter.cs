@@ -13,14 +13,14 @@ namespace Custom.Data.Serialization
         /// <param name="objectType">type of object expected</param>
         /// <param name="jObject">contents of JSON object that will be deserialized</param>
         /// <returns></returns>
-        protected abstract T Create(Type objectType, JObject jObject);
+        protected abstract T Create(System.Type objectType, JObject jObject);
 
-        public override bool CanConvert(Type objectType)
+        public override bool CanConvert(System.Type objectType)
         {
             return typeof(T).IsAssignableFrom(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, System.Type objectType, object existingValue, JsonSerializer serializer)
         {
             // Load JObject from stream
             JObject jObject = JObject.Load(reader);

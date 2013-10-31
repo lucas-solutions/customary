@@ -10,7 +10,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Optional catalog. It would take it or the missing fields from the parent area.
         /// </summary>
-        public Catalog Catalog { get; set; }
+        public StoreInfo Catalog { get; set; }
 
         /// <summary>
         /// Name of the document or table.

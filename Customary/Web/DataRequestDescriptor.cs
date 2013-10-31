@@ -41,19 +41,14 @@ namespace Custom.Web
 
         protected override void Initialize()
         {
-            var directory = Global.Directory;
-
             var request = RequestContext.HttpContext.Request;
 
-            var path = request.Path;
+            var path = request.Path.Trim('/');
 
             Queue<string> surplus = null;
 
-            var match = string.IsNullOrEmpty(path) ? directory : directory.Match(path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).AsEnumerable().GetEnumerator(), out surplus);
+            var match = DataDictionary.Current.Match(path, out surplus);
 
-            if (match == null)
-                return;
-            
             var method = request.HttpMethod.ToUpperInvariant();
 
             Guid id;
@@ -155,21 +150,27 @@ namespace Custom.Web
             }
         }
 
-        private void Match(DataRequestVerb verb, Directory directory)
+        private void Match(DataRequestVerb verb, NameDescriptor descriptor)
         {
             ControllerType = typeof(Custom.Controllers.DataController);
             ControllerName = "Data";
             Action = verb;
-            
-            if (directory.Key != null)
+            Area = null;
+
+            RequestContext.RouteData.Values["controller"] = "Data";
+            RequestContext.RouteData.Values["area"] = null;
+            RequestContext.RouteData.Values["action"] = verb;
+
+            if (descriptor.Type == NodeKinds.Type)
             {
-                RequestContext.RouteData.Values["key"] = directory.Key;
-                RequestContext.RouteData.Values["id"] = directory.Id;
+                var typeDescriptor = descriptor as TypeDescriptor;
+                RequestContext.RouteData.Values["key"] = typeDescriptor.Key;
+                RequestContext.RouteData.Values["id"] = typeDescriptor.Id;
             }
 
-            RequestContext.RouteData.Values["name"] = directory.Name;
-            RequestContext.RouteData.Values["path"] = directory.Path;
-            RequestContext.RouteData.Values["directory"] = directory;
+            RequestContext.RouteData.Values["name"] = descriptor.Name;
+            RequestContext.RouteData.Values["path"] = descriptor.Path;
+            RequestContext.RouteData.Values["descriptor"] = descriptor;
         }
     }
 }

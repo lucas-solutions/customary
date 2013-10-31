@@ -142,9 +142,12 @@ namespace Custom
                {
                    id = new GuidConstraint()
                }
-           );
+            );
 
-            
+            routes.MapRoute(
+                name: "Greedy",
+                url: "{controller}/{area}/{*greedy}"
+            );
         }
     }
 }

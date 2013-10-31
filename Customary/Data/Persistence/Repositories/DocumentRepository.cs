@@ -15,7 +15,7 @@ namespace Custom.Data.Persistence.Repositories
         private readonly ModelDefinition[] _ancestors;
         private readonly string _keyPrefix;
 
-        public DocumentRepository(Catalog catalog, ModelDefinition definition, DocumentContext context)
+        public DocumentRepository(StoreInfo catalog, ModelDefinition definition, DocumentContext context)
         {
             _definition = definition;
             _context = context;

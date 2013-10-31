@@ -43,9 +43,10 @@
     <Compile Include="Country.cs" />
     <Compile Include="Culture.cs" />
     <Compile Include="Data\Metadata\AreaDefinition.cs" />
-    <Compile Include="Data\Metadata\Catalog.cs" />
+    <Compile Include="Data\Metadata\StoreInfo.cs" />
     <Compile Include="Data\Metadata\ServiceAttribute.cs" />
     <Compile Include="Data\Metadata\ServiceDefinition.cs" />
+    <Compile Include="Data\Metadata\StoreProviders.cs" />
     <Compile Include="Data\Metadata\UnitAttribute.cs" />
     <Compile Include="Data\Metadata\UnitDefinition.cs" />
     <Compile Include="Date.cs" />

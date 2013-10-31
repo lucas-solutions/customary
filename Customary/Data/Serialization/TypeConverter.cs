@@ -11,7 +11,7 @@ namespace Custom.Data.Serialization
 
     public class TypeConverter : JsonCreationConverter<TypeDefinition>
     {
-        protected override TypeDefinition Create(Type objectType, JObject jObject)
+        protected override TypeDefinition Create(System.Type objectType, JObject jObject)
         {
             var id = (jObject.Value<string>("id") ?? string.Empty).Split('/');
 

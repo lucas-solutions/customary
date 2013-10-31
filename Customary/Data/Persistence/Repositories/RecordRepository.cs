@@ -7,7 +7,7 @@ namespace Custom.Data.Persistence.Repositories
 {
     using Raven.Json.Linq;
 
-    public class RecordRepository : IRavenJObjectRepository
+    public class RecordRepository : AdoRepository, IRavenJObjectRepository
     {
         public RavenJObject Read(int skip, int take)
         {

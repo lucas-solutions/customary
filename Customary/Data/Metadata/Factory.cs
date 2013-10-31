@@ -16,7 +16,7 @@ namespace Custom.Data.Metadata
             return DescribeObject(typeof(TObject));
         }
 
-        public static ModelDefinition DescribeObject(Type type)
+        public static ModelDefinition DescribeObject(System.Type type)
         {
             var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
@@ -35,7 +35,7 @@ namespace Custom.Data.Metadata
             return DescribeEntity(typeof(TEntity));
         }
 
-        public static ModelDefinition DescribeEntity(Type type)
+        public static ModelDefinition DescribeEntity(System.Type type)
         {
             var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
@@ -48,14 +48,14 @@ namespace Custom.Data.Metadata
             return DescribeComplex(typeof(TComplex));
         }
 
-        public static ModelDefinition DescribeComplex(Type type)
+        public static ModelDefinition DescribeComplex(System.Type type)
         {
             var attribute = type.GetCustomAttribute<ModelAttribute>(false);
 
             return DescribeComplex(type, attribute);
         }
 
-        public static ModelDefinition DescribeComplex(Type type, ModelAttribute attribute)
+        public static ModelDefinition DescribeComplex(System.Type type, ModelAttribute attribute)
         {
             var descriptor = new ModelDefinition();
             
@@ -90,7 +90,7 @@ namespace Custom.Data.Metadata
             return descriptor;
         }
 
-        private static ModelDefinition DescribeEntity(Type type, ModelAttribute attribute)
+        private static ModelDefinition DescribeEntity(System.Type type, ModelAttribute attribute)
         {
             if (type.IsGenericTypeDefinition)
                 throw new InvalidOperationException("An entity should not be generic definition");
@@ -109,7 +109,7 @@ namespace Custom.Data.Metadata
             return descriptor;
         }
 
-        private static void DescribeObject(ModelDefinition descriptor, Type type)
+        private static void DescribeObject(ModelDefinition descriptor, System.Type type)
         {
             DescribeType(descriptor, type);
         }
@@ -119,7 +119,7 @@ namespace Custom.Data.Metadata
             DescribeType(descriptor, attribute);
         }
 
-        private static void DescribeType(TypeDefinition descriptor, Type type)
+        private static void DescribeType(TypeDefinition descriptor, System.Type type)
         {
             var name = type.Namespace + '.' + type.Name;
 
@@ -178,7 +178,7 @@ namespace Custom.Data.Metadata
             }
         }
 
-        public static string GetName(Type type)
+        public static string GetName(System.Type type)
         {
             return type.FullName;
         }

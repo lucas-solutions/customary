@@ -8,9 +8,19 @@ namespace Custom.Data.Metadata
     public enum StoreTypes
     {
         /// <summary>
-        /// Raven Document
+        /// A method in a class will be invoked
+        /// </summary>
+        Computable,
+
+        /// <summary>
+        /// Raven Document Store
         /// </summary>
         Doument,
+
+        /// <summary>
+        /// Raven Embeddable Document Store
+        /// </summary>
+        Embeddable,
 
         /// <summary>
         /// Relational database table record
@@ -20,7 +30,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Relational database stored procedure.
         /// </summary>
-        Procedure,
+        Procedural,
 
         /// <summary>
         /// Representational State Transfer (REST) JSON Service
@@ -28,7 +38,7 @@ namespace Custom.Data.Metadata
         Restful,
 
         /// <summary>
-        /// AJAX (GET and POST only) service. Each method has it's own enpoint
+        /// AJAX (GET and POST only) service. Each method has it's own endpoint
         /// </summary>
         Ajax,
     }

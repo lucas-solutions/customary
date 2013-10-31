@@ -259,21 +259,37 @@
     <Compile Include="Controllers\AreaController.cs" />
     <Compile Include="Controllers\CoreController.cs" />
     <Compile Include="Controllers\StoreController.cs" />
-    <Compile Include="Data\Area.cs" />
+    <Compile Include="Data\AreaDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataDictionary.cs" />
+    <Compile Include="Data\NodeKinds.cs" />
+    <Compile Include="Data\Persistence\Repositories\AdoRepository.cs" />
+    <Compile Include="Data\Persistence\Repositories\ComputableRepository.cs" />
+    <Compile Include="Data\TypeCategories.cs" />
     <Compile Include="Data\DocumentStoreExtensions.cs" />
+    <Compile Include="Data\EnumDescriptor.cs" />
+    <Compile Include="Data\ErrorDescriptor.cs" />
+    <Compile Include="Data\JsonContext.cs" />
+    <Compile Include="Data\ModelDescriptor.cs" />
     <Compile Include="Data\ModelExtensions.cs" />
     <Compile Include="Data\Metadata\ServiceExtensions.cs" />
-    <Compile Include="Data\Node.cs" />
+    <Compile Include="Data\NameDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\Persistence\IRavenJObjectRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\AjaxRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\DocumentRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\EmbeddableDocumentContext.cs" />
-    <Compile Include="Data\Persistence\Repositories\ProcedureRepository.cs" />
+    <Compile Include="Data\Persistence\EmbeddableDocumentContext.cs" />
+    <Compile Include="Data\Persistence\Repositories\ProceduralRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\RecordRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\RestfulRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\SingletonRepository.cs" />
     <Compile Include="Data\Persistence\RepositoryManager.cs" />
-    <Compile Include="Data\Type.cs" />
+    <Compile Include="Data\TypeDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\UnitDescriptor.cs" />
+    <Compile Include="Data\ValueDescriptor.cs" />
     <Compile Include="Extensions\DescriptorExtensions.cs" />
     <Compile Include="Extensions\DocumentContextExtensions.cs" />
     <Compile Include="Extensions\DocumentSessionExtensions.cs" />
@@ -292,7 +308,6 @@
     <Compile Include="Indexes\MetadaTypeIndexCreationTask.cs" />
     <Compile Include="Indexes\MetadataTypesByName.cs" />
     <Compile Include="Data\Metadata\Factory.cs" />
-    <Compile Include="Data\Directory.cs" />
     <Compile Include="Models\Annotation.cs" />
     <Compile Include="Models\ProcecssResult.cs" />
     <Compile Include="Models\RavenJTokenCallbackModel.cs" />

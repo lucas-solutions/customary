@@ -17,7 +17,7 @@ namespace Custom
 
         private static readonly object _lock = new object();
         private static SimpleInjector.Container _container;
-        private static Directory _directory;
+        //private static Directory _directory;
         private static ILogger _logger;
         private static GlobalizationContext _globalization;
         private static MasterdataContext _masterdata;
@@ -43,7 +43,7 @@ namespace Custom
             }
         }
 
-        public static Directory Directory
+        /*public static Directory Directory
         {
             get
             {
@@ -63,7 +63,7 @@ namespace Custom
             {
                 _directory = value;
             }
-        }
+        }*/
 
         public static ILogger Logger
         {
@@ -171,24 +171,6 @@ namespace Custom
                 }
 
                 return navigation;
-            }
-        }
-
-        public static RepositoryManager Repositories
-        {
-            get
-            {
-                var repositories = _repositories;
-
-                if (repositories == null)
-                {
-                    lock (_lock)
-                    {
-                        repositories = _repositories ?? (_repositories = new RepositoryManager());
-                    }
-                }
-
-                return repositories;
             }
         }
     }

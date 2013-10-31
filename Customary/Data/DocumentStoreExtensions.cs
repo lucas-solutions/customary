@@ -16,7 +16,7 @@ namespace Custom.Data
 
             var result = new List<JsonDocument>();
 
-            for (int start = 0, count = pageSize; count == pageSize; start = count)
+            for (int start = 0; true; )
             {
                 var documents = store.DatabaseCommands.StartsWith(keyPrefix, null, start, pageSize);
 
@@ -27,7 +27,10 @@ namespace Custom.Data
 
                 result.AddRange(documents);
 
-                count = documents.Length;
+                start += documents.Length;
+
+                if (documents.Length < pageSize)
+                    break;
             }
 
             if (comparison != null)

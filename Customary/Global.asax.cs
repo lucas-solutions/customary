@@ -50,6 +50,10 @@ namespace Custom
                 Global.Metadata.Store.Import(new System.IO.FileInfo(file.FullName));
             }
 
+            var dictionary = Data.DataDictionary.Current;
+
+            var descriptor = dictionary.Describe("Metadata");
+
             /*var globalizationSeeds = new System.IO.DirectoryInfo(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Globalization")).GetFiles("*.js").ToArray();
             foreach (var file in globalizationSeeds)
             {

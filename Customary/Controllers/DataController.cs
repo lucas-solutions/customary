@@ -202,22 +202,18 @@ namespace Custom.Controllers
         //
         // GET: /Data/Enum/{id}
 
-        public ActionResult Children(string id, string name, Directory directory)
+        public ActionResult Children(string id, string name, NameDescriptor descriptor)
         {
             Queue<string> surplus = null;
 
-            if (directory == null)
+            if (descriptor == null)
             {
-                directory = Global.Directory;
-
                 if (!string.IsNullOrEmpty(name))
-                    directory = directory.Match(id.Split('.').AsEnumerable().GetEnumerator(), out surplus);
-                else if (!string.IsNullOrEmpty(id))
-                    directory = directory.Match(id.Split('-').AsEnumerable().GetEnumerator(), out surplus);
+                    descriptor = DataDictionary.Current.Describe(name);
             }
 
-            return directory != null && (surplus == null || surplus.Count > 0)
-                ? Raven(true, null, directory.ToRavenJObject(true)["children"])
+            return descriptor != null && (surplus == null || surplus.Count > 0)
+                ? Raven(true, null, descriptor.ToRavenJObject(true)["children"])
                 : Raven(false, "Not found", null);
         }
 

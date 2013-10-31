@@ -90,7 +90,7 @@ namespace Custom.Data
             get
             {
                 RavenJObject value;
-                
+
                 if (_value != null && _value.TryGetTarget(out value))
                     return value;
 
@@ -140,32 +140,43 @@ namespace Custom.Data
 
         public static Directory Load(IDocumentStore store)
         {
-            Directory root;
-            var children = store.StartWith("Area/", Compare);
+            const int pageSize = 400;
 
-            var area = children.FirstOrDefault(o => string.IsNullOrEmpty(o.DataAsJson.Value<string>("Name")));
+            int area, type;
 
-            if (area == null)
-                root = new Directory { _children = new LinkedList<Directory>() };
-            else
+            var root = new Directory { _children = new LinkedList<Directory>() };
+
+            for (type = 0; ; )
             {
-                children.Remove(area);
+                var documents = store.DatabaseCommands.StartsWith("Type/", null, type, pageSize);
 
-                root = new Directory
-                {
-                    _key = area.Key,
-                    _document = new WeakReference<JsonDocument>(area),
-                    _children = new LinkedList<Directory>()
-                };
+                Array.Sort(documents, Compare);
+
+                for (var i = 0; i < documents.Length; i++)
+                    root.Merge(documents[i]);
+
+                type += documents.Length;
+
+                if (documents.Length < pageSize)
+                    break;
             }
 
-            children.AddRange(store.StartWith("Type/", Compare));
-
-            children.Sort(Compare);
-
-            root.Merge(children, 0);
-
             root.Freeze();
+
+            for (area = 0; ; )
+            {
+                var documents = store.DatabaseCommands.StartsWith("Area/", null, area, pageSize);
+
+                Array.Sort(documents, Compare);
+
+                for (var i = 0; i < documents.Length; i++)
+                    root.Patch(documents[i]);
+
+                area += documents.Length;
+
+                if (documents.Length < pageSize)
+                    break;
+            }
 
             return root;
         }
@@ -198,14 +209,6 @@ namespace Custom.Data
             }
 
             return this;
-        }
-
-        private ICollection<Directory> Merge(List<JsonDocument> documents, int start)
-        {
-            for (var i = start; i < documents.Count; i++)
-                Merge(documents[i]);
-
-            return _children;
         }
 
         private ICollection<Directory> Merge(JsonDocument document)
@@ -250,6 +253,40 @@ namespace Custom.Data
                 left.Add(item);
 
             return left;
+        }
+
+        public void Patch(JsonDocument document)
+        {
+            var name = document.DataAsJson.Value<string>("Name");
+
+            var iterator = name.Split('/').AsEnumerable<string>().GetEnumerator();
+
+            Patch(document, iterator);
+        }
+
+        private void Patch(JsonDocument document, IEnumerator<string> iterator)
+        {
+            if (!iterator.MoveNext())
+            {
+                _key = document.Key;
+
+                if (_document != null)
+                    _document.SetTarget(document);
+                else
+                    _document = new WeakReference<JsonDocument>(document);
+
+                _value = null;
+            }
+            
+            if (_children != null)
+            {
+                var child = _children.FirstOrDefault(o => string.Equals(o.Name, iterator.Current, StringComparison.OrdinalIgnoreCase));
+
+                if (child != null)
+                    child.Patch(document, iterator);
+            }
+
+            Merge(document);
         }
 
         private Directory Split(JsonDocument document)

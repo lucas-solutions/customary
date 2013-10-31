@@ -10,7 +10,7 @@ namespace Custom.Data.Serialization
 
     public class TypeContractResolver : DefaultContractResolver
     {
-        public override JsonContract ResolveContract(Type type)
+        public override JsonContract ResolveContract(System.Type type)
         {
             if (typeof(DefinitionBase).IsAssignableFrom(type))
             {

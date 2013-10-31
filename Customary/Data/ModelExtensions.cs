@@ -22,16 +22,9 @@ namespace Custom.Data
             if (string.IsNullOrEmpty(parentPath))
                 return null;
 
-            var parentDiretory = Global.Directory.MatchExact(parentPath);
+            var descriptor = DataDictionary.Current.Describe(definition.Extend) as ModelDescriptor;
 
-            var parentDocument = parentDiretory.Value;// Global.Metadata.Session.Load<RavenJObject>(parentDiretory.Key);
-
-            var parentKey = parentDocument.Value<string>("key");
-
-            if (parentKey.StartsWith("Type/Model/"))
-                parentDocument.Deserialize<ModelDefinition>();
-
-            return null;
+            return descriptor != null ? descriptor.Definition : null;
         }
 
         public static string GetBaseModelName(this ModelDefinition definition)

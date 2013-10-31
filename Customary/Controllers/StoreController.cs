@@ -7,10 +7,31 @@ using System.Web.Routing;
 
 namespace Custom.Controllers
 {
+    using Custom.Data;
+    using Custom.Data.Metadata;
     using Custom.Web.Mvc;
 
     public class StoreController : CustomController
     {
+
+        protected ModelDescriptor ResolveModel(Guid type)
+        {
+            var name = DataDictionary.Current[type];
+
+            if (name == null)
+            {
+                var definitionKey = string.Concat("Type/Model/", type);
+                var definition = Global.Metadata.Session.Load<ModelDefinition>(definitionKey);
+
+                name = definition.Name;
+            }
+
+            var descriptior = DataDictionary.Current.Describe(name) as ModelDescriptor;
+
+            return descriptior;
+        }
+             
+
         #region - CRUD actions -
 
         //
@@ -19,19 +40,25 @@ namespace Custom.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public virtual ActionResult Read(Guid type, Guid id, int? skip, int? take)
         {
-            var definitionKey = string.Concat("Type/Model/", type);
+            var descriptor = ResolveModel(type);
 
-            var definition = Global.Metadata.Session.Load<Custom.Data.Metadata.ModelDefinition>(definitionKey);
-
-            var repository = Global.Repositories[definition];
-
-            if (Guid.Empty.Equals(id))
-            {
-                return new RavenJObjectResult { Content = repository.Read(skip ?? 0, take ?? byte.MaxValue) };
-            }
+            if (descriptor == null)
+                return Json(new { success = false, message = string.Format("Could not resolve model {0}", type) }, JsonRequestBehavior.AllowGet);
             else
             {
-                return new RavenJObjectResult { Content = repository.Read(id) };
+                var repository = descriptor.Repository;
+
+                if (repository == null)
+                    return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, type) }, JsonRequestBehavior.AllowGet);
+
+                if (Guid.Empty.Equals(id))
+                {
+                    return new RavenJObjectResult { Content = descriptor.Repository.Read(skip ?? 0, take ?? byte.MaxValue) };
+                }
+                else
+                {
+                    return new RavenJObjectResult { Content = descriptor.Repository.Read(id) };
+                }
             }
         }
 
@@ -41,7 +68,19 @@ namespace Custom.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public virtual ActionResult Create(Guid type)
         {
-            return Json(type);
+            var descriptor = ResolveModel(type);
+
+            if (descriptor == null)
+                return Json(new { success = false, message = string.Format("Could not resolve model {0}", type) }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                var repository = descriptor.Repository;
+
+                if (repository == null)
+                    return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, type) }, JsonRequestBehavior.AllowGet);
+
+                return new RavenJObjectResult { Content = descriptor.Repository.Create(null) };
+            }
         }
 
         //
@@ -50,14 +89,19 @@ namespace Custom.Controllers
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
         public virtual ActionResult Update(Guid id, Guid type, bool patch)
         {
-            if (Guid.Empty.Equals(id))
-            {
-            }
+            var descriptor = ResolveModel(type);
+
+            if (descriptor == null)
+                return Json(new { success = false, message = string.Format("Could not resolve model {0}", type) }, JsonRequestBehavior.AllowGet);
             else
             {
-            }
+                var repository = descriptor.Repository;
 
-            return Json(id);
+                if (repository == null)
+                    return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, type) }, JsonRequestBehavior.AllowGet);
+
+                return new RavenJObjectResult { Content = descriptor.Repository.Update(id, null, patch) };
+            }
         }
 
         //
@@ -66,11 +110,19 @@ namespace Custom.Controllers
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
         public virtual ActionResult Delete(Guid type, Guid id)
         {
-            var repo = Global.Repositories[type];
+            var descriptor = ResolveModel(type);
 
-            var success = repo.Delete(id);
+            if (descriptor == null)
+                return Json(new { success = false, message = string.Format("Could not resolve model {0}", type) }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                var repository = descriptor.Repository;
 
-            return Json(new { success = true, message = string.Format("{0} deleted from store {1}.", id, type) }, JsonRequestBehavior.AllowGet);
+                if (repository == null)
+                    return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, type) }, JsonRequestBehavior.AllowGet);
+
+                return new RavenJObjectResult { Content = descriptor.Repository.Delete(id) };
+            }
         }
 
         #endregion - CRUD actions -

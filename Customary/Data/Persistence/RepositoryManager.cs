@@ -52,7 +52,7 @@ namespace Custom.Data.Persistence
             if (definition.Singleton)
             {
                 var context = ResolveDocumentContext(catalog.Name);
-                return new SingletonRepository(definition, context);
+                return null;
             }
 
             switch (catalog.Type)
@@ -66,8 +66,8 @@ namespace Custom.Data.Persistence
                         return new DocumentRepository(catalog, definition, context);
                     }
 
-                case StoreTypes.Procedure:
-                    return new ProcedureRepository();
+                case StoreTypes.Procedural:
+                    return new ProceduralRepository();
 
                 case StoreTypes.Record:
                     return new RecordRepository();
@@ -80,9 +80,16 @@ namespace Custom.Data.Persistence
             }
         }
 
-        public Catalog ResolveCatalog(ModelDefinition definition)
+        public StoreInfo ResolveCatalog(ModelDefinition definition)
         {
-            return null;
+            StoreInfo catalog = null;
+
+            if (definition.Repository != null)
+            {
+                catalog = definition.Repository.Catalog;
+            }
+
+            return catalog;
         }
 
         public DocumentContext ResolveDocumentContext(string name)
