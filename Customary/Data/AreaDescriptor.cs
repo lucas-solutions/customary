@@ -21,9 +21,19 @@ namespace Custom.Data
             _jsonContext = new JsonContext(jsonDocument);
         }
 
-        public StoreInfo Catalog
+        public StoreInfo Store
         {
             get { return null; }
+        }
+
+        public RavenJObject DataAsJson
+        {
+            get { return _jsonContext.DataAsJson; }
+        }
+
+        public AreaDefinition Definition
+        {
+            get { return _jsonContext.DataAsJson.Deserialize<AreaDefinition>(); }
         }
 
         public Guid Id

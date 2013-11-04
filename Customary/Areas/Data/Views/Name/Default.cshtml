@@ -1,0 +1,111 @@
+﻿@using Custom.Areas.Metadata.Models
+@using Custom.Data.Metadata
+@using Custom.Site.Presentation
+@using Ext = Custom.Site.Presentation.Sencha.Ext
+@{
+    Layout = "~/Areas/Data/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
+</script>
+
+<script type="text/javascript">
+
+    var frameStyle = 'background-color:#dfe8f5;';
+
+    Ext.define('Ext.custom.data.Viewport', {
+        requires: [
+            'Ext.custom.Adapter',
+            'Ext.custom.data.Directory'
+        ],
+        extend: 'Ext.container.Viewport',
+        layout: 'border',
+        bodyStyle: frameStyle, // background color like frame
+        initComponent: function () {
+
+            var directory = Ext.create('Ext.custom.data.Directory');
+
+            this.centerPanel = Ext.create('Ext.panel.Panel', {
+                region: 'center',
+                bodyStyle: frameStyle, // background color like frame
+                header: false,
+                items: [/*this.entityPanel*/],
+                flex: 5,
+                border: false,
+                layout: 'fit',
+                title: 'Select Entity'
+            });
+
+            this.southPanel = Ext.create('Ext.panel.Panel', {
+                region: 'south',
+                title: 'Messages',
+                collapsible: true,
+                html: 'Information goes here',
+                split: true,
+                height: 100,
+                minHeight: 100
+            });
+
+            this.westPanel = Ext.create('Ext.panel.Panel', {
+                region: 'west',
+                bodyStyle: frameStyle, // background color like frame
+                flex: 1,
+                border: false,
+                collapsible: true,
+                items: [directory.panel],
+                split: true,
+                layout: 'fit',
+                title: 'Directory',
+                header: false
+            });
+
+            Ext.apply(this, {
+                items: [
+                    {
+                        region: 'north',
+                        xtype: 'container',
+                        bodyStyle: frameStyle, // background color like frame
+                        html: '@Html.Partial("~/Areas/Data/Views/Name/Header.cshtml")',
+                    autoHeight: true,
+                    border: false,
+                    margins: '0 0 5 0'
+                },
+                            this.centerPanel,
+                            this.northPanel,
+                            this.westPanel
+                            //this.southPanel
+            ]
+        });
+
+            this.callParent();
+
+            Ext.custom.Adapter.subscribe('Ext.custom.data.Directory.selectionchange', {
+                fn: function (directory, selModel, selections) {
+                    if (directory.record !== null && typeof directory.record === 'object') {
+
+                    }
+                    else {
+
+                    }
+                },
+                scope: this
+            });
+
+            //Ext.custom.Adapter.publish('App.data.Viewport.init', this);
+        },
+
+        loadPanel: function (container, name, id) {
+            var item = Ext.create(name + '.' + id, {
+                layout: 'fit'
+            });
+            container.update(item);
+            container.doLayout();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    Ext.onReady(function () {
+        Ext.create('Ext.custom.data.Viewport');
+    });
+</script>

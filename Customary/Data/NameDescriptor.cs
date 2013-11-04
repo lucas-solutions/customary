@@ -11,8 +11,8 @@ namespace Custom.Data
 
     public class NameDescriptor : IComparable<NameDescriptor>
     {
-        protected const string nameKey = "Name";
-        protected const string idFormat = "N";
+        protected const string nameKey = "name";
+        protected const string idFormat = "D";
 
         protected string _name;
         protected List<NameDescriptor> _items;

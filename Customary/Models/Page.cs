@@ -26,13 +26,13 @@ namespace Custom.Models
             _controllerContext = controller.ControllerContext;
             _model = model;
 
-            var viewName = string.Format("/Views/{0}/{1}.cshtml", controller.RouteData.Values["controller"], controller.RouteData.Values["action"]);
-            var area = controller.RouteData.Values["area"];
+            var areaName = controller.RouteData.Values["area"];
+            var controllerName = controller.RouteData.Values["controller"];
+            var actionName = controller.RouteData.Values["action"];
 
-            if (area != null)
-                viewName = string.Concat("/", area, viewName);
-
-            viewName = string.Concat("~", viewName);
+            var viewName = areaName != null
+                ? string.Format("~/Areas/{0}/Views/{1}/{2}.cshtml", areaName, controllerName, actionName)
+                : string.Format("~/Views/{0}/{1}.cshtml", controllerName, actionName);
 
             _viewEngineResult = controller.ViewEngineCollection.FindPartialView(_controllerContext, viewName/*(string)controller.RouteData.Values["action"]*/);
 

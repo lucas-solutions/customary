@@ -8,6 +8,39 @@ namespace Custom
 
     public static class Global
     {
+        public static class Routes
+        {
+            public const string AreaSetRouteName = "Area_Set";
+            public const string AreaItemRouteName = "Area_Item";
+            public const string EnumSetRouteName = "Enum_Set";
+            public const string EnumItemRouteName = "Enum_Item";
+            public const string ModelSetRouteName = "Model_Set";
+            public const string ModelItemRouteName = "Model_Item";
+            public const string ModelItemInvokeRouteName = "Model_Item_Invoke";
+            public const string ModelItemEntityInvokeRouteName = "Model_Item_Entity_Invoke";
+            public const string ModelItemEntityItemRouteName = "Model_Item_Entity_Item";
+            public const string ModelItemEntitySetRouteName = "Model_Item_Entity_Set";
+            public const string StoreSetRouteName = "Store_Set";
+            public const string StoreItemRouteName = "Store_Item";
+            public const string TypeSetRouteName = "Type_Set";
+            public const string TypeItemRouteName = "Type_Item";
+            public const string ValueSetRouteName = "Value_Set";
+            public const string ValueItemRouteName = "Value_Item";
+
+            public const string DataNameMetadataRouteName = "Data_Name_Metadata";
+
+            public const string ExtRouteName = "Scripts_Ext";
+            public const string ExtAreaRouteName = "Scripts_Area_Ext";
+            public const string DataDomainRouteName = "Data_Domain";
+            public const string DataDirectoryRouteName = "Data_Directory";
+            public const string DataEntityRouteName = "Data_Entity_Item";
+            public const string DataEntityInvokeRouteName = "Data_Entity_Invoke";
+            public const string DataTypeRouteName = "Data_Type";
+            public const string DataTypeInvokeRouteName = "Data_Type_Invoke";
+
+            public const string DefaultPathRouteName = "Default_Path";
+        }
+
         public const string StoreRouteName = "Store_Default";
         public const string StoreDetailRouteName = "Store_Detail";
         public const string DataGreedyRouteName = "Data_Greedy";
@@ -17,13 +50,11 @@ namespace Custom
 
         private static readonly object _lock = new object();
         private static SimpleInjector.Container _container;
-        //private static Directory _directory;
         private static ILogger _logger;
         private static GlobalizationContext _globalization;
         private static MasterdataContext _masterdata;
         private static MetadataContext _metadata;
         private static NavigationContext _navigation;
-        private static RepositoryManager _repositories;
 
         public static SimpleInjector.Container Container
         {
@@ -42,28 +73,6 @@ namespace Custom
                 return container;
             }
         }
-
-        /*public static Directory Directory
-        {
-            get
-            {
-                var directory = _directory;
-
-                if (directory == null)
-                {
-                    lock (_lock)
-                    {
-                        directory = _directory ?? (_directory = Directory.Load(Global.Metadata.Store));
-                    }
-                }
-
-                return directory;
-            }
-            set
-            {
-                _directory = value;
-            }
-        }*/
 
         public static ILogger Logger
         {

@@ -31,7 +31,17 @@ namespace Custom.Results
             get
             {
                 if (string.IsNullOrEmpty(_viewName) && _controllerContext != null)
-                    _viewName = _controllerContext.RouteData.Values["action"] as string;
+                {
+                    var areaName = _controllerContext.RouteData.Values["area"];
+                    var controllerName = _controllerContext.RouteData.Values["controller"];
+                    var actionName = _controllerContext.RouteData.Values["action"];
+
+                    var viewName = areaName != null
+                        ? string.Format("~/Areas/{0}/Views/{1}/{2}.cshtml", areaName, controllerName, actionName)
+                        : string.Format("~/Views/{0}/{1}.cshtml", controllerName, actionName);
+
+                    _viewName = viewName;// _controllerContext.RouteData.Values["action"] as string;
+                }
 
                 return _viewName;
             }

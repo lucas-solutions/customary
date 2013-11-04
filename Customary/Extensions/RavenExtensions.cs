@@ -26,7 +26,7 @@ namespace Custom
         {
             try
             {
-                var serializer = CreateDefaultJsonSerializer();
+                var serializer = CreateDefaultJsonSerializer(new CamelCasePropertyNamesContractResolver());
 
                 if (converters != null)
                     foreach (var converter in converters)
@@ -106,7 +106,7 @@ namespace Custom
                         if (array != null)
                         {
                             var propDescriptor = descriptor.Properties.FirstOrDefault(o => string.Equals(o.Name, item.Key, StringComparison.InvariantCultureIgnoreCase));
-                            var propType = propDescriptor.PropertyType;
+                            var propType = propDescriptor.Type;
                             array.Merge((RavenJArray)item.Value, descriptor);
                         }
                         break;

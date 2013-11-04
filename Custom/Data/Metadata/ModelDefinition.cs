@@ -18,6 +18,12 @@ namespace Custom.Data.Metadata
             set;
         }
 
+        public bool Template
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Name of the identity property.
         /// </summary>
@@ -84,7 +90,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Document name, table name, REST (Representational state transfer) service URL.
         /// </summary>
-        public Repository Repository
+        public StoreInfo Store
         {
             get;
             set;

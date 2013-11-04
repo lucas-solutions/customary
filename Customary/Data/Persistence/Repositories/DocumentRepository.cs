@@ -10,27 +10,13 @@ namespace Custom.Data.Persistence.Repositories
 
     public class DocumentRepository : IRavenJObjectRepository
     {
-        private readonly ModelDefinition _definition;
+        private readonly ModelDescriptor _descriptor;
         private readonly DocumentContext _context;
-        private readonly ModelDefinition[] _ancestors;
-        private readonly string _keyPrefix;
 
-        public DocumentRepository(StoreInfo catalog, ModelDefinition definition, DocumentContext context)
+        public DocumentRepository(ModelDescriptor descriptor, DocumentContext context)
         {
-            _definition = definition;
+            _descriptor = descriptor;
             _context = context;
-
-            _keyPrefix = definition.GetModelName() + '/';
-
-            var ancestors = new List<ModelDefinition>();
-
-            for (var o = definition.GetParentDefinition(); o != null; o = o.GetParentDefinition())
-                ancestors.Add(o);
-
-            _ancestors = ancestors.ToArray();
-
-            if (ancestors.Count > 0)
-                _keyPrefix = _ancestors.Last().GetModelName() + '/' + _keyPrefix;
         }
 
         public DocumentContext Context
@@ -44,7 +30,7 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var data = _context.Session.Advanced.LoadStartingWith<RavenJObject>(_keyPrefix, null, skip, take);
+                var data = _context.Session.Advanced.LoadStartingWith<RavenJObject>(_descriptor.KeyPrefix, null, skip, take);
 
                 result["success"] = new RavenJValue(true);
                 result["data"] = new RavenJArray(data.AsEnumerable<RavenJToken>());
@@ -64,10 +50,19 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var data = _context.Session.Load<RavenJObject>(_keyPrefix + id.ToString("N"));
+                var key = _descriptor.KeyPrefix + id.ToString("D");
+                var data = _context.Session.Load<RavenJObject>(key);
 
-                result["success"] = new RavenJValue(true);
-                result["data"] = data;
+                if (data != null)
+                {
+                    result["success"] = new RavenJValue(true);
+                    result["data"] = data;
+                }
+                else
+                {
+                    result["success"] = new RavenJValue(false);
+                    result["message"] = string.Format("Document {0} not found at store {1}", key, _context.Name);
+                }
             }
             catch (Exception e)
             {
@@ -85,7 +80,7 @@ namespace Custom.Data.Persistence.Repositories
             try
             {
                 var id = Guid.NewGuid();
-                var key = _keyPrefix + id.ToString("N");
+                var key = _descriptor.KeyPrefix + id.ToString("D");
 
                 value["id"] = new RavenJValue(id);
 
@@ -109,7 +104,7 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var key = _keyPrefix + id.ToString("N");
+                var key = _descriptor.KeyPrefix + id.ToString("D");
 
                 if (patch)
                 {
@@ -119,7 +114,7 @@ namespace Custom.Data.Persistence.Repositories
 
                     if (patch)
                     {
-                        current.Merge(value, _definition);
+                        current.Merge(value, _descriptor.Definition);
                         _context.Session.Store(current, key);
                         value = current;
                     }
@@ -150,7 +145,7 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var key = _keyPrefix + id.ToString("N");
+                var key = _descriptor.KeyPrefix + id.ToString("D");
 
                 var current = _context.Session.Load<RavenJObject>(key);
 

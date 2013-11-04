@@ -44,10 +44,7 @@ namespace Custom.Web.Routing
             if (!Guid.TryParse(stringValue, out guidValue))
                 return false;
 
-            if (guidValue != Guid.Empty)
-                return true;
-
-            return _optional; 
+            return true; 
         }
     }
 }

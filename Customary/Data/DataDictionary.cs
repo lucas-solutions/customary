@@ -15,31 +15,15 @@ namespace Custom.Data
     {
         private readonly static object _lock = new object();
 
-        private readonly ConcurrentDictionary<Guid, string> _knownPaths;
-
         private static DataDictionary _singleton;
 
         private DataDictionary()
             : base(null, null)
         {
             _items = Load(Global.Metadata.Store);
-            _knownPaths = new ConcurrentDictionary<Guid, string>();
-
+            
             // "Raven/Replication/Destinations"
             //Global.Metadata.Store.Conventions.ReplicationInformerFactory = (string name) => { return null; };
-        }
-
-        public string this[Guid key]
-        {
-            get
-            {
-                string name;
-                return _knownPaths.TryGetValue(key, out name) ? name : null;
-            }
-            set
-            {
-                _knownPaths.AddOrUpdate(key, value, (id, name) => { return value; });
-            }
         }
 
         public static DataDictionary Current
@@ -67,6 +51,11 @@ namespace Custom.Data
 
         public NameDescriptor Describe(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return this;
+            }
+
             Queue<string> surplus;
 
             var descriptor = Match(this, name.Split('/').AsEnumerable().GetEnumerator(), out surplus);

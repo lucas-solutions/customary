@@ -15652,7 +15652,7 @@ Ext.define('Ext.XTemplateCompiler', {
  *
  *     var tpl = new Ext.XTemplate(
  *         '<p>Name: {name}</p>',
- *         '<p>Title: {title}</p>',
+ *         '<p>title: {title}</p>',
  *         '<p>Company: {company}</p>',
  *         '<p>Kids: ',
  *         '<tpl for="kids">',     
@@ -51527,7 +51527,7 @@ Ext.define('Ext.panel.Header', {
     },
 
     
-    setTitle: function(title) {
+    settitle: function(title) {
         var me = this,
             titleCmp = me.titleCmp;
 
@@ -53618,7 +53618,7 @@ Ext.define('Ext.panel.Panel', {
     },
 
     
-    setTitle: function(newTitle) {
+    settitle: function(newTitle) {
         var me = this,
             oldTitle = me.title,
             header = me.header,
@@ -61747,13 +61747,13 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     
-    setTitle: function (title) {
+    settitle: function (title) {
         this.title = title;
         this.drawLabel();
     },
 
     
-    drawTitle: function (maxWidth, maxHeight) {
+    drawtitle: function (maxWidth, maxHeight) {
         var me = this,
             position = me.position,
             surface = me.chart.surface,
@@ -61970,7 +61970,7 @@ Ext.define('Ext.chart.axis.Gauge', {
         }
     },
 
-    drawTitle: function() {
+    drawtitle: function() {
         var me = this,
             chart = me.chart,
             surface = chart.surface,
@@ -61995,7 +61995,7 @@ Ext.define('Ext.chart.axis.Gauge', {
     },
 
     
-    setTitle: function(title) {
+    settitle: function(title) {
         this.title = title;
         this.drawTitle();
     },
@@ -62830,7 +62830,7 @@ Ext.define('Ext.chart.series.Series', {
     },
 
     
-    setTitle: function(index, title) {
+    settitle: function(index, title) {
         var me = this,
             oldTitle = me.title;
 
@@ -88253,7 +88253,7 @@ Ext.define('Ext.form.Basic', {
 
     
     
-    waitTitle: 'Please Wait...',
+    waittitle: 'Please Wait...',
     
 
     
@@ -90137,7 +90137,7 @@ Ext.define('Ext.form.FieldSet', {
     },
 
     
-    setTitle: function(title) {
+    settitle: function(title) {
         var me = this,
             legend = me.legend,
             baseCls = me.baseCls;
@@ -97029,7 +97029,7 @@ Ext.define('Ext.picker.Date', {
     
     
     
-    ariaTitle: 'Date Picker: {0}',
+    ariatitle: 'Date Picker: {0}',
     
     
     

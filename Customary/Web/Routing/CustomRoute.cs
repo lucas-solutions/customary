@@ -7,7 +7,7 @@ using System.Web.Routing;
 
 namespace Custom.Web.Routing
 {
-    public class DataRoute : System.Web.Routing.RouteBase
+    public class CustomRoute : System.Web.Routing.RouteBase
     {
         public override RouteData GetRouteData(HttpContextBase httpContext)
         {

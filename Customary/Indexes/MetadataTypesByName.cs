@@ -48,9 +48,9 @@ namespace Custom.Indexes
 
             var definition = builder.ToIndexDefinition(convention);
 
-            definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
-            definition.Stores.Add("Name", FieldStorage.Yes);
-            definition.TermVectors.Add("Name", FieldTermVector.No);
+            definition.Indexes.Add("name", FieldIndexing.NotAnalyzed);
+            definition.Stores.Add("name", FieldStorage.Yes);
+            definition.TermVectors.Add("name", FieldTermVector.No);
 
             return definition;
         }

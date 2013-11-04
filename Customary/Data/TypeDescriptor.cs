@@ -27,6 +27,11 @@ namespace Custom.Data
             get;
         }
 
+        public RavenJObject DataAsJson
+        {
+            get { return _jsonContext.DataAsJson; }
+        }
+
         public Guid Id
         {
             get { return _id; }
@@ -68,7 +73,7 @@ namespace Custom.Data
 
         public TDefinition Definition
         {
-            get { return _definition ?? (_definition = Deserialize(_jsonContext.DataAsJson)); }
+            get { return /*_definition ?? (_definition = */Deserialize(_jsonContext.DataAsJson)/*)*/; }
         }
 
         protected virtual TDefinition Deserialize(RavenJObject dataAsJson)

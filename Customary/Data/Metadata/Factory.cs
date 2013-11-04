@@ -172,7 +172,7 @@ namespace Custom.Data.Metadata
                     propertyType = propertyType.GetGenericArguments().Single();
                 }
 
-                property.PropertyType = GetName(propertyType);
+                property.Type = GetName(propertyType);
 
                 descriptor.Properties.Add(property);
             }

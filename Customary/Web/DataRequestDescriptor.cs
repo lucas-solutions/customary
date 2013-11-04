@@ -152,7 +152,7 @@ namespace Custom.Web
 
         private void Match(DataRequestVerb verb, NameDescriptor descriptor)
         {
-            ControllerType = typeof(Custom.Controllers.DataController);
+            ControllerType = null;// typeof(Custom.Controllers.DataController);
             ControllerName = "Data";
             Action = verb;
             Area = null;

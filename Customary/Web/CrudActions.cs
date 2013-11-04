@@ -11,14 +11,24 @@ namespace Custom.Web
     {
         Default = 0,
 
-        Create = 1,
+        Select = 1,
 
-        Read = 2,
+        Insert = 2,
 
         Update = 3,
 
         Delete = 4,
 
-        Destroy = Delete
+        Invoke = 5,
+
+        Validate = 6,
+
+        Read = Select,
+
+        Create = Insert,
+
+        Destroy = Delete,
+
+        Call = Invoke
     }
 }

@@ -233,6 +233,37 @@ namespace Custom.Web.Mvc
             return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
         }
 
+        protected virtual RavenJObjectResult Success(RavenJToken data)
+        {
+            var content = new RavenJObject();
+
+            content["success"] = new RavenJValue(true);
+            content["data"] = data;
+
+            return new RavenJObjectResult { Content = content };
+        }
+
+        protected virtual RavenJObjectResult Failure(string message)
+        {
+            var content = new RavenJObject();
+
+            content["success"] = new RavenJValue(false);
+            content["message"] = new RavenJValue(message);
+
+            return new RavenJObjectResult { Content = content };
+        }
+
+        protected virtual RavenJObjectResult Failure(RavenJToken data, string message)
+        {
+            var content = new RavenJObject();
+
+            content["success"] = new RavenJValue(false);
+            content["message"] = new RavenJValue(message);
+            content["data"] = data;
+
+            return new RavenJObjectResult { Content = content };
+        }
+
         /// <summary>
         /// Fail
         /// </summary>

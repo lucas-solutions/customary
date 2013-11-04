@@ -10,9 +10,17 @@ namespace Custom.Data
 
     public class ErrorDescriptor : NameDescriptor
     {
+        private string _message;
+
         public ErrorDescriptor(string name, NameDescriptor parent, JsonDocument jsonDocument, string message)
             : base(name, parent)
         {
+            _message = message;
+        }
+
+        public string Message
+        {
+            get { return _message; }
         }
 
         public override NodeKinds Type

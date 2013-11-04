@@ -43,29 +43,29 @@ namespace Custom.Indexes
 
             //store.Conventions.RegisterIdConvention<Metadata.TypeDescriptor>(((dbname, commands, type) => "Type/" + commands.NextIdentityFor("Type")));
 
-            /*convention.RegisterIdConvention<Metadata.TypeDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.PrimitiveDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.ObjectDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.EnumDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.UnitDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));
-            convention.RegisterIdConvention<Metadata.EntityDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("N")));*/
+            /*convention.RegisterIdConvention<Metadata.TypeDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));
+            convention.RegisterIdConvention<Metadata.PrimitiveDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));
+            convention.RegisterIdConvention<Metadata.ObjectDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));
+            convention.RegisterIdConvention<Metadata.EnumDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));
+            convention.RegisterIdConvention<Metadata.UnitDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));
+            convention.RegisterIdConvention<Metadata.EntityDescriptor>(((dbname, commands, type) => "Type/" + type.ID.ToString("D")));*/
 
             var definition = builder.ToIndexDefinition(convention);
 
-            definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
-            definition.Stores.Add("Name", FieldStorage.Yes);
-            definition.TermVectors.Add("Name", FieldTermVector.No);
+            definition.Indexes.Add("name", FieldIndexing.NotAnalyzed);
+            definition.Stores.Add("name", FieldStorage.Yes);
+            definition.TermVectors.Add("name", FieldTermVector.No);
             /*
             IndexDefinition definition = new IndexDefinition
             {
                 Map = "from doc in docs \r\nlet Tag = doc[\"@metadata\"][\"Raven-Entity-Name\"]\r\nselect new { Tag, Name = (DateTime)doc.Name };"
             };
             definition.Indexes.Add("Tag", FieldIndexing.NotAnalyzed);
-            definition.Indexes.Add("Name", FieldIndexing.NotAnalyzed);
+            definition.Indexes.Add("name", FieldIndexing.NotAnalyzed);
             definition.Stores.Add("Tag", FieldStorage.No);
-            definition.Stores.Add("Name", FieldStorage.Yes);
+            definition.Stores.Add("name", FieldStorage.Yes);
             definition.TermVectors.Add("Tag", FieldTermVector.No);
-            definition.TermVectors.Add("Name", FieldTermVector.No);
+            definition.TermVectors.Add("name", FieldTermVector.No);
             */
             return definition;
         }

@@ -350,13 +350,13 @@ namespace Custom
 
                 var targetValue = targetObject.Value<RavenJToken>(property.Name);
 
-                if (string.IsNullOrWhiteSpace(property.PropertyType))
+                if (string.IsNullOrWhiteSpace(property.Type))
                 {
                     annotations.Add(LogCategories.Debug, string.Format("PropertyType for property {1} not defined. Type: {0}", objectDescriptor.Name, property.Name));
                     continue;
                 }
 
-                var propertyType = Global.Metadata.Describe(property.PropertyType);
+                var propertyType = Global.Metadata.Describe(property.Type);
 
                 if (propertyType == null)
                     continue;
@@ -380,7 +380,7 @@ namespace Custom
                 {
                     if (!sourceValue.IsPrimitive())
                     {
-                        annotations.Add(LogCategories.Debug, string.Format("Primitive of type {2} expected for property {1}. Type: {0}", objectDescriptor.Name, property.Name, property.PropertyType));
+                        annotations.Add(LogCategories.Debug, string.Format("Primitive of type {2} expected for property {1}. Type: {0}", objectDescriptor.Name, property.Name, property.Type));
                         continue;
                     }
                     else
@@ -418,8 +418,8 @@ namespace Custom
 
         public static string GetStoreName(this ModelDefinition descriptor)
         {
-            if (descriptor.Repository != null && !string.IsNullOrWhiteSpace(descriptor.Repository.Name))
-                return descriptor.Repository.Name;
+            if (descriptor.Store != null && !string.IsNullOrWhiteSpace(descriptor.Store.Name))
+                return descriptor.Store.Name;
 
             var firstName = descriptor.Name.Split('.').Last();
 

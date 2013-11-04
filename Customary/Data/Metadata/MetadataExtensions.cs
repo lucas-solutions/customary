@@ -62,7 +62,7 @@ namespace Custom.Data.Metadata
 
         public static TypeDefinition Describe(this Data.Persistence.MetadataContext metadata, Guid id)
         {
-            var documentId = "Type/" + id.ToString("N");
+            var documentId = "Type/" + id.ToString("D");
             var descriptor = System.Web.HttpContext.Current.Items[documentId] as TypeDefinition;
             if (descriptor == null)
             {

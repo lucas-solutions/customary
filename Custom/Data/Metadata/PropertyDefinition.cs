@@ -15,7 +15,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Property type: primitive, enum, unit, text, complex or entity
         /// </summary>
-        public string PropertyType { get; set; }
+        public string Type { get; set; }
 
         public PropertyRoles Role { get; set; }
 

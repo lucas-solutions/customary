@@ -51,7 +51,7 @@ namespace Custom.Site.Presentation.Sencha.Ext.data
 
             entity.Properties.ForEach(property =>
                 {
-                    var type = Global.Metadata.Describe(property.PropertyType);
+                    var type = Global.Metadata.Describe(property.Type);
 
                     if (type == null)
                     {

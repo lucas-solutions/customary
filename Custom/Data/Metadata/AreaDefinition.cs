@@ -8,7 +8,7 @@ namespace Custom.Data.Metadata
 {
     public class AreaDefinition : DefinitionBase
     {
-        public StoreInfo Catalog
+        public StoreInfo Store
         {
             get;
             set;

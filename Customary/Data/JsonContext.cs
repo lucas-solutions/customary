@@ -30,7 +30,11 @@ namespace Custom.Data
                 if (_dataAsJson != null && _dataAsJson.TryGetTarget(out dataAsJson))
                     return dataAsJson;
 
-                dataAsJson = Document.DataAsJson.CreateSnapshot() as RavenJObject;
+                dataAsJson = Document.DataAsJson;
+
+                dataAsJson.EnsureSnapshot(string.Empty);
+
+                dataAsJson = dataAsJson.CreateSnapshot() as RavenJObject;
 
                 if (_dataAsJson != null)
                     _dataAsJson.SetTarget(dataAsJson);
@@ -66,11 +70,11 @@ namespace Custom.Data
             get { return _key; }
         }
 
-        protected static int Compare(JsonDocument x, JsonDocument y)
+        public static int Compare(JsonDocument x, JsonDocument y)
         {
             int result;
 
-            result = string.Compare(x.DataAsJson.Value<string>("Name"), y.DataAsJson.Value<string>("Name"), true);
+            result = string.Compare(x.DataAsJson.Value<string>("name"), y.DataAsJson.Value<string>("name"), true);
 
             return result;
         }

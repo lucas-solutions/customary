@@ -55,7 +55,6 @@
     <Compile Include="Enum.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Data\Metadata\DefinitionAttribute.cs" />
-    <Compile Include="Data\Metadata\Repository.cs" />
     <Compile Include="Data\Metadata\StoreTypes.cs" />
     <Compile Include="Data\Metadata\EnumAttribute.cs" />
     <Compile Include="Data\Metadata\EnumDefinition.cs" />

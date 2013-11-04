@@ -222,6 +222,18 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Automation\AutomationAreaRegistration.cs" />
     <Compile Include="Areas\Automation\Controllers\SchedulerController.cs" />
+    <Compile Include="Areas\Data\Controllers\AreaController.cs" />
+    <Compile Include="Areas\Data\Controllers\DirectoryController.cs" />
+    <Compile Include="Areas\Data\Controllers\EntityController.cs" />
+    <Compile Include="Areas\Data\Controllers\EnumController.cs" />
+    <Compile Include="Areas\Data\Controllers\ExtController.cs" />
+    <Compile Include="Areas\Data\Controllers\ModelController.cs" />
+    <Compile Include="Areas\Data\Controllers\NameController.cs" />
+    <Compile Include="Areas\Data\Controllers\StoreController.cs" />
+    <Compile Include="Areas\Data\Controllers\TypeController.cs" />
+    <Compile Include="Areas\Data\Controllers\UnitController.cs" />
+    <Compile Include="Areas\Data\Controllers\ValueController.cs" />
+    <Compile Include="Areas\Data\DataAreaRegistration.cs" />
     <Compile Include="Areas\Diagnostics\Controllers\LoggerController.cs" />
     <Compile Include="Areas\Diagnostics\DiagnosticsAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\MetadataAreaRegistration.cs">
@@ -249,20 +261,18 @@
     <Compile Include="Areas\Globalization\Controllers\MeasureController.cs" />
     <Compile Include="Areas\Globalization\Controllers\RegionController.cs" />
     <Compile Include="Areas\Globalization\GlobalizationAreaRegistration.cs" />
-    <Compile Include="Areas\Type\Controllers\ComplexController.cs" />
-    <Compile Include="Areas\Type\Controllers\EntityController.cs" />
-    <Compile Include="Areas\Type\Controllers\ValueController.cs" />
     <Compile Include="Areas\Type\TypeAreaRegistration.cs" />
     <Compile Include="Binders\CrudBinder.cs" />
     <Compile Include="Binders\SortBinder.cs" />
     <Compile Include="Configuration\CustomSesction.cs" />
-    <Compile Include="Controllers\AreaController.cs" />
     <Compile Include="Controllers\CoreController.cs" />
-    <Compile Include="Controllers\StoreController.cs" />
+    <Compile Include="Controllers\ExtController.cs" />
+    <Compile Include="Controllers\PageController.cs" />
     <Compile Include="Data\AreaDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\DataDictionary.cs" />
+    <Compile Include="Data\ModelDictionary.cs" />
     <Compile Include="Data\NodeKinds.cs" />
     <Compile Include="Data\Persistence\Repositories\AdoRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\ComputableRepository.cs" />
@@ -284,7 +294,6 @@
     <Compile Include="Data\Persistence\Repositories\ProceduralRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\RecordRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\RestfulRepository.cs" />
-    <Compile Include="Data\Persistence\RepositoryManager.cs" />
     <Compile Include="Data\TypeDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -298,7 +307,14 @@
     <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Web\CrudActions.cs" />
+    <Compile Include="Web\Mvc\AreaHelpers.cs" />
+    <Compile Include="Web\Mvc\Html\LinkExtensions.cs" />
     <Compile Include="Web\Mvc\RavenJObjectResult.cs" />
+    <Compile Include="Web\Routing\CustomRouteSegment.cs" />
+    <Compile Include="Web\Routing\DomainData.cs" />
+    <Compile Include="Web\Routing\DomainRoute.cs" />
+    <Compile Include="Web\Routing\GreedyRoute.cs" />
+    <Compile Include="Web\Routing\GreedyRouteSegment.cs" />
     <Compile Include="Web\Routing\GuidConstraint.cs" />
     <Compile Include="Web\Http\ApiAssembliesResolver.cs" />
     <Compile Include="Web\Http\ApiControllerActivator.cs" />
@@ -317,7 +333,6 @@
     <Compile Include="Automation\Scheduler.cs" />
     <Compile Include="Configuration\ApplicationSettings.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
-    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\FnController.cs" />
     <Compile Include="Diagnostics\Appenders\ILogglyFormatter.cs" />
     <Compile Include="Diagnostics\Appenders\LogglyAppender.cs" />
@@ -573,7 +588,6 @@
     <Compile Include="Site\Presentation\Utilities\StringUtils.cs" />
     <Compile Include="Areas\User\Controllers\AccountController.cs" />
     <Compile Include="Areas\User\Controllers\ProfileController.cs" />
-    <Compile Include="Controllers\BusinessController.cs" />
     <Compile Include="Globalization\LocalizationExtensions.cs" />
     <Compile Include="Images\Masterdata\MasterdataExtensions.cs" />
     <Compile Include="Data\Metadata\MetadataExtensions.cs" />
@@ -623,7 +637,6 @@
     <Compile Include="Scripts.cs" />
     <Compile Include="Areas\User\UserAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\ExtController.cs" />
     <Compile Include="Web\Mvc\Cookie.cs" />
     <Compile Include="Web\Mvc\CookieRepository.cs" />
     <Compile Include="Web\Mvc\CustomController.cs" />
@@ -672,8 +685,11 @@
     <Compile Include="Data\Serialization\TypeConverter.cs" />
     <Compile Include="Utils\PathHelper.cs" />
     <Compile Include="Web\DataRequestVerb.cs" />
-    <Compile Include="Web\Routing\DataRoute.cs" />
+    <Compile Include="Web\Routing\CustomRoute.cs" />
     <Compile Include="Web\Routing\CrudConstraint.cs" />
+    <Compile Include="Web\Routing\RouteCollectionExtensions.cs" />
+    <Compile Include="Web\Routing\RouteUrl.cs" />
+    <Compile Include="Web\Routing\TypeCategoryConstraint.cs" />
     <Compile Include="Web\RssRequestDescriptor.cs" />
     <Compile Include="Web\SiteRequestDescriptor.cs" />
     <Compile Include="Web\ViewRequestDescriptor.cs" />
@@ -776,6 +792,11 @@
     <Content Include="App_Config\Log4Net.config" />
     <Content Include="App_Config\DotNetOpenAuth.config" />
     <Content Include="Areas\Type\Views\Web.config" />
+    <Content Include="Areas\Data\Views\Web.config" />
+    <Content Include="Areas\Data\Views\Name\Default.cshtml" />
+    <Content Include="Areas\Data\Views\Ext\Directory.cshtml" />
+    <Content Include="Areas\Data\Views\Name\Header.cshtml" />
+    <Content Include="Areas\Data\Views\Shared\_Layout.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3881,6 +3902,7 @@
     <Content Include="Views\Data\View.cshtml" />
     <Content Include="Views\Data\New.cshtml" />
     <Content Include="Views\Data\Drop.cshtml" />
+    <Content Include="Views\Ext\Adapter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />
@@ -3896,12 +3918,14 @@
     <Folder Include="App_Data\Seeds\System\" />
     <Folder Include="Areas\Automation\Models\" />
     <Folder Include="Areas\Automation\Views\Shared\" />
+    <Folder Include="Areas\Data\Models\" />
     <Folder Include="Areas\Diagnostics\Models\" />
     <Folder Include="Areas\Diagnostics\Views\Shared\" />
     <Folder Include="Areas\Globalization\Models\" />
     <Folder Include="Areas\Globalization\Views\Shared\" />
     <Folder Include="Areas\Navigation\Models\" />
     <Folder Include="Areas\Navigation\Views\Shared\" />
+    <Folder Include="Areas\Type\Controllers\" />
     <Folder Include="Areas\Type\Models\" />
     <Folder Include="Areas\Type\Views\Shared\" />
     <Folder Include="Areas\User\Models\" />
