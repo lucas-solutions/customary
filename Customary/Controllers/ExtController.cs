@@ -16,5 +16,12 @@ namespace Custom.Controllers
         {
             return ScriptView();
         }
+
+        // GET: Scripts/Ext/custom/Factory.js
+
+        public ActionResult Factory()
+        {
+            return ScriptView();
+        }
     }
 }

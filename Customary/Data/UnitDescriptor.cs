@@ -21,6 +21,14 @@ namespace Custom.Data
             get { return TypeCategories.Unit; }
         }
 
+        internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
+        {
+            var dataAsJson = stack.Peek();
+
+            dataAsJson["$name"] = _name;
+            dataAsJson["$type"] = "unit";
+        }
+
         public override RavenJObject ToRavenJObject(bool deep)
         {
             return base.ToRavenJObject(false);

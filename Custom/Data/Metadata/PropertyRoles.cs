@@ -18,7 +18,9 @@ namespace Custom.Data.Metadata
 
         Identity,
 
-        HasMany
+        HasMany,
+
+        BelongsTo
     }
 
     /*public sealed class PropertyRoles : Enum<PropertyRoles, int>

@@ -46,13 +46,22 @@ namespace Custom.Data
             get { return NodeKinds.Area; }
         }
 
+        internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
+        {
+            base.Metadata(stack, requires, types);
+
+            var dataAsJson = stack.Peek();
+
+            dataAsJson["$type"] = "area";
+        }
+
         public override RavenJObject ToRavenJObject(bool deep)
         {
             var result = new RavenJObject();
 
             result["id"] = new RavenJValue(Id);
             result["key"] = new RavenJValue(string.Format("{0}/{1}", Type, _id.ToString(idFormat)));
-            result["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type));
+            result["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type).ToLowerInvariant());
 
             result["text"] = new RavenJValue(Name);
 

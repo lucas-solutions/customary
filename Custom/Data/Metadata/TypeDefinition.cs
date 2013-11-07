@@ -16,10 +16,7 @@ namespace Custom.Data.Metadata
             set;
         }
 
-        /// <summary>
-        /// Name of object type it inherits or extends. Entities can extend object or entity types.
-        /// </summary>
-        public string Extend
+        public string BaseType
         {
             get;
             set;

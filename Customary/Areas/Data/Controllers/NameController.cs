@@ -25,7 +25,12 @@ namespace Custom.Areas.Data.Controllers
         //
         // GET: Data/{*name}/$metadata
 
-        [AcceptVerbs(HttpVerbs.Get)]
+        class MetadataRequestExtra
+        {
+            public string[] Requires { get; set; }
+        }
+
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Metadata(string name)
         {
             const string MissmatchError = "{0} is fully quialified by name. No need to provide id. Where you expecting a model?";
@@ -35,6 +40,8 @@ namespace Custom.Areas.Data.Controllers
             string message = null;
             RavenJObject data = null;
             var descriptor = DataDictionary.Current.Describe(name);
+            var extra = InputRavenJObject.Deserialize<MetadataRequestExtra>();
+            var requires = extra != null ? extra.Requires : new string [] { };
 
             if (descriptor == null)
             {
@@ -46,7 +53,7 @@ namespace Custom.Areas.Data.Controllers
                 switch (descriptor.Type)
                 {
                     case NodeKinds.Area:
-                        data = (descriptor as AreaDescriptor).DataAsJson;
+                        data = descriptor.Metadata(requires);
                         break;
 
                     case NodeKinds.Error:
@@ -57,7 +64,7 @@ namespace Custom.Areas.Data.Controllers
                         break;
 
                     case NodeKinds.Name:
-                        data = (descriptor as AreaDescriptor).DataAsJson;
+                        data = descriptor.Metadata(requires);
                         break;
 
                     case NodeKinds.Type:
@@ -67,19 +74,19 @@ namespace Custom.Areas.Data.Controllers
                             switch (type.Category)
                             {
                                 case TypeCategories.Enum:
-                                    data = type.DataAsJson;
+                                    data = descriptor.Metadata(requires);
                                     break;
 
                                 case TypeCategories.Model:
-                                    data = type.DataAsJson;
+                                    data = descriptor.Metadata(requires);
                                     break;
 
                                 case TypeCategories.Unit:
-                                    data = type.DataAsJson;
+                                    data = descriptor.Metadata(requires);
                                     break;
 
                                 case TypeCategories.Value:
-                                    data = type.DataAsJson;
+                                    data = descriptor.Metadata(requires);
                                     break;
                             }
                         }
@@ -123,7 +130,7 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Select(string name, Guid id)
         {
-            const string MissmatchError = "Only model type entities can be accessed this way ({0} found on this path). If you are looking for the metadata, use Data/{*name}/$metadata path instead.";
+            const string MissmatchError = "Only model type entities can be accessed this way ({0} found on this path). If you are looking for the metadata, use Data/[*name]/$metadata path instead.";
             const string UnexpectedError = "Unexpected error";
 
             string message = null;
@@ -159,7 +166,17 @@ namespace Custom.Areas.Data.Controllers
 
                     if (repository != null)
                     {
-                        data = repository.Read(id);
+                        if (model.Definition.Singleton)
+                        {
+                        }
+                        else if (Guid.Empty.Equals(id))
+                        {
+                            data = repository.Read(0, 100);
+                        }
+                        else
+                        {
+                            data = repository.Read(id);
+                        }
 
                         if (data != null)
                         {

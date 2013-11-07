@@ -1,0 +1,267 @@
+﻿<script type="text/javascript">
+    Ext.define('Ext.custom.Factory', function () {
+
+        function makeExtName(typeName) {
+            return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
+        }
+
+        function makeModelName(typeName) {
+            return makeExtName(typeName) + '.Model';
+        }
+
+        function makeGridName(typeName, viewName) {
+            return makeExtName(typeName) + '.' + viewName + '.Grid';
+        }
+
+        function makeFormName(typeName, viewName) {
+            return makeExtName(typeName) + '.' + viewName + '.Form';
+        }
+
+        var $metadata = {
+        };
+
+        // get the name spaces that are not clean (!dirty)
+        function requires(path) {
+
+            var segments = path.split('/');
+            var result = [];
+
+            var name = segments[0];
+            var path = name;
+            var $m = $metadata[name];
+
+            for (var i = 1; i < segments.length; i++) {
+
+                if ($m === null || typeof $m !== 'object') {
+                    result.push(path);
+                }
+                else if ($m.$type !== 'name' && $m.$type !== 'area') {
+                    break;
+                }
+                else if ($m.$dirty !== true) {
+                    result.push(path);
+                }
+
+                name = segments[i];
+                path = path + '/' + name;
+            }
+
+            return result;
+        }
+
+        return {
+            singleton: true,
+
+            requires: [
+                'Ext.custom.Adapter'
+            ],
+
+            constructor: function () {
+                this.baseUrl = 'http://data.customary.com';
+            },
+
+            findMetadata: function (typeName) {
+                var path = typeName.split('/');
+                var $m = $metadata;
+                for (var i = 0; i < path.length && $m !== null && typeof $m === 'object'; i++) {
+                    var name = path[i];
+                    $m = $m[name];
+                }
+                return $m;
+            },
+
+            mergeMetadata: function ($m) {
+                Ext.Object.merge($metadata, $m);
+            },
+
+            asyncMetadata: function (typeName, callback) {
+
+                var $m = this.findMetadata(typeName);
+
+                if ($m !== null && typeof $m === 'object') {
+                    callback($m);
+                }
+                else {
+
+                    var jsonData = {
+                        requires: requires(typeName)
+                    };
+
+                    Ext.Ajax.request({
+                        url: this.baseUrl + '/Data/' + typeName + '/$metadata',
+                        method: 'POST',
+                        jsonData: jsonData,
+                        /*params: {
+                            id: '00000000-0000-0000-0000-000000000001'
+                        },*/
+                        success: function (response, options) {
+                            var text = response.responseText;
+                            var json = Ext.JSON.decode(text, true);
+                            if (json == null || typeof json !== 'object') {
+                                alert(text);
+                            }
+                            else if (json.success === true && typeof json.data === 'object') {
+
+                                this.mergeMetadata(json.data);
+
+                                $m = this.findMetadata(typeName);
+
+                                if ($m !== null && typeof $m === 'object') {
+                                    callback.call(this, $m);
+                                }
+
+                            } else if (typeof json.message === 'string') {
+                                alert(json.message);
+                            }
+                        },
+                        failure: function (response, options) {
+                        },
+                        scope: this
+                    });
+                }
+            },
+
+            findModel: function (typeName) {
+
+                var modelName = makeModelName(typeName);
+
+                var model = Ext.ModelManager.getModel(modelName);
+
+                if (model === null || typeof model === 'undefined') {
+
+                    var $m = this.findMetadata(typeName);
+
+                    if ($m !== null && typeof $m === 'object') {
+
+                        model = this.defineModel(modelName, $m);
+                    }
+                }
+
+                return model;
+            },
+
+            defineModel: function (name, $m) {
+
+                var extend = 'Ext.data.Model';
+
+                if (typeof $m.$extend === 'string') {
+                    extend = makeModelName($m.$extend);
+                }
+
+                var config = {
+                    extend: extend,
+                    fields: [],
+                    validations: []
+                };
+
+                if ($m.$fields !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
+
+                    var types = Ext.data.Types; // allow shorthand type access
+
+                    for (var i = 0; i < $m.$fields.length; i++) {
+                        var $field = $m.$fields[i];
+                        var field = { name: $field.$name };
+
+                        switch ($field.$category) {
+
+                            case 'enum':
+                                field.type = types.STRING;
+                                var $source = this.findMetadata($field.$source);
+                                break;
+
+                            case 'model':
+                                var fieldModel = this.findModel($field.$model);
+                                field.type = fieldModel || types.STRING;
+                                break;
+
+                            case 'unit':
+                                field.type = types.STRING;
+                                var $measure = this.findMetadata($field.$measure);
+                                break;
+
+                            case 'value':
+
+                                switch ($field.$type) {
+
+                                    case 'boolean':
+                                        field.type = types.BOOLEAN;
+                                        break;
+
+                                    case 'string':
+                                        field.type = types.STRING;
+                                        break;
+
+                                    case 'integer':
+                                        field.type = types.INTEGER;
+                                        break;
+
+                                    case 'number':
+                                        field.type = types.NUMBER;
+                                        break;
+
+                                    case 'date':
+                                        field.type = types.DATE;
+                                        //field.dateFormat = '';
+                                        break;
+                                }
+
+                                break;
+                        }
+
+                        switch ($field.$role) {
+
+                            case 'Required':
+                                field.useNull = false;
+                                break;
+
+                            case 'Identity':
+                                field.useNull = false;
+                                break;
+
+                            case 'Unique':
+                                field.useNull = false;
+                                break;
+
+                            case 'HasMany':
+                                break;
+                        }
+
+                        config.fields.push(field);
+                    }
+                }
+
+                model = Ext.define(name, config);
+
+                return model;
+            },
+
+            asyncModel: function (typeName, callback) {
+
+                var modelName = makeModelName(typeName);
+
+                var model = Ext.ModelManager.getModel(modelName);
+
+                if (model !== null && typeof model === 'function') {
+                    callback(modelName, model);
+                    return;
+                }
+
+                this.asyncMetadata(typeName, function ($m) {
+
+                    model = this.defineModel(modelName, $m);
+
+                    callback(modelName, model);
+                });
+            },
+
+            asyncGrid: function (typeName, callback) {
+
+                var gridName = makeGridName(typeName, 'selector');
+
+                var grid = Ext.create(gridName, config);
+
+                return grid;
+            }
+        };
+    });
+</script>

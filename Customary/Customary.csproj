@@ -234,6 +234,7 @@
     <Compile Include="Areas\Data\Controllers\UnitController.cs" />
     <Compile Include="Areas\Data\Controllers\ValueController.cs" />
     <Compile Include="Areas\Data\DataAreaRegistration.cs" />
+    <Compile Include="Data\NameExtensions.cs" />
     <Compile Include="Areas\Diagnostics\Controllers\LoggerController.cs" />
     <Compile Include="Areas\Diagnostics\DiagnosticsAreaRegistration.cs" />
     <Compile Include="Areas\Metadata\MetadataAreaRegistration.cs">
@@ -3903,6 +3904,7 @@
     <Content Include="Views\Data\New.cshtml" />
     <Content Include="Views\Data\Drop.cshtml" />
     <Content Include="Views\Ext\Adapter.cshtml" />
+    <Content Include="Views\Ext\Factory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />

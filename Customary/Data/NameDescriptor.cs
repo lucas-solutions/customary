@@ -24,9 +24,79 @@ namespace Custom.Data
             _parent = parent;
         }
 
-        public virtual NodeKinds Type
+        public List<NameDescriptor> Items
         {
-            get { return NodeKinds.Name; }
+            get { return _items; }
+        }
+
+        public virtual RavenJObject Metadata(string[] requires)
+        {
+            var descriptors = new Stack<NameDescriptor>();
+
+            for (var name = this; name != null; name = name.Parent)
+            {
+                descriptors.Push(name);
+            }
+
+            var stack = new Stack<RavenJObject>();
+
+            var result = new RavenJObject();
+
+            for (var dataAsJson = result; descriptors.Count > 0; )
+            {
+                var node = descriptors.Pop();
+                var memberAsJson = new RavenJObject();
+
+                memberAsJson["$name"] = node._name;
+                memberAsJson["$type"] = System.Enum.GetName(typeof(NodeKinds), node.Type);
+                memberAsJson["$dirty"] = true;
+
+                dataAsJson[node._name] = memberAsJson;
+                dataAsJson = memberAsJson;
+
+                stack.Push(memberAsJson);
+            }
+
+            var types = new Dictionary<string, TypeDescriptor>();
+
+            Metadata(stack, requires, types);
+
+            return result;
+        }
+
+        internal protected virtual void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
+        {
+            var dataAsJson = stack.Peek();
+
+            dataAsJson["$name"] = _name;
+            dataAsJson["$type"] = "name";
+            dataAsJson["$dirty"] = false;
+
+            var items = _items;
+
+            if (items != null && items.Count > 0)
+            {
+                foreach (var item in items)
+                {
+                    switch (item.Type)
+                    {
+                        case NodeKinds.Type:
+                            {
+                                var typeName = item.Path;
+                                if (!types.ContainsKey(typeName))
+                                {
+                                    var type = item as TypeDescriptor;
+                                    types.Add(typeName, type);
+
+                                    stack.Push(new RavenJObject());
+                                    type.Metadata(stack, requires, types);
+                                    dataAsJson[item._name] = stack.Pop();
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         public string Name
@@ -58,6 +128,12 @@ namespace Custom.Data
                 return result;
             }
         }
+
+        public virtual NodeKinds Type
+        {
+            get { return NodeKinds.Name; }
+        }
+
 
         protected static int Compare(NameDescriptor x, NameDescriptor y)
         {

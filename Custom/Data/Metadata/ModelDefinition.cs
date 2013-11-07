@@ -18,12 +18,6 @@ namespace Custom.Data.Metadata
             set;
         }
 
-        public bool Template
-        {
-            get;
-            set;
-        }
-
         /// <summary>
         /// Name of the identity property.
         /// </summary>

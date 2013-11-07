@@ -107,6 +107,14 @@ namespace Custom.Web.Routing
 
                 if (string.Equals("$metadata", segment))
                 {
+                    var s = new GreedyRouteSegment
+                    {
+                        IsToken = false,
+                        IsGreedy = false,
+                        Name = "$metadata"
+                    };
+                    this.urlSegments.AddLast(s);
+
                     continue;
                 }
 

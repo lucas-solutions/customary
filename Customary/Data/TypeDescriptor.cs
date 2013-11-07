@@ -14,12 +14,17 @@ namespace Custom.Data
     {
         private readonly Guid _id;
         protected readonly JsonContext _jsonContext;
-
+        
         protected TypeDescriptor(Guid id, string name, NameDescriptor parent, JsonDocument jsonDocument)
             : base(name, parent)
         {
             _id = id;
             _jsonContext = new JsonContext(jsonDocument);
+        }
+
+        public abstract TypeDescriptor BaseType
+        {
+            get;
         }
 
         public abstract TypeCategories Category
@@ -54,7 +59,7 @@ namespace Custom.Data
             result["id"] = new RavenJValue(Id);
             result["key"] = new RavenJValue(string.Format("{0}/{1}/{2}", Type, Category, _id.ToString(idFormat)));
             result["leaf"] = new RavenJValue(true);
-            result["type"] = new RavenJValue(System.Enum.GetName(typeof(TypeCategories), Category));
+            result["type"] = new RavenJValue(System.Enum.GetName(typeof(TypeCategories), Category).ToLowerInvariant());
             result["text"] = new RavenJValue(Name);
 
             return result;
@@ -65,10 +70,45 @@ namespace Custom.Data
         where TDefinition : TypeDefinition
     {
         private TDefinition _definition;
+        private WeakReference<TypeDescriptor> _baseDescriptor;
+        private string _baseType;
 
         protected TypeDescriptor(Guid id, string name, NameDescriptor parent, JsonDocument jsonDocument)
             : base(id, name, parent, jsonDocument)
         {
+        }
+
+        public override TypeDescriptor BaseType
+        {
+            get
+            {
+                TypeDescriptor target;
+
+                if (_baseDescriptor != null && _baseDescriptor.TryGetTarget(out target))
+                    return target;
+
+                if (_baseType == null)
+                {
+                    var definition = Definition;
+
+                    if (definition == null)
+                        return null;
+
+                    _baseType = definition.BaseType ?? string.Empty;
+                }
+
+                if (_baseType == string.Empty)
+                    return null;
+
+                target = DataDictionary.Current.Describe(_baseType) as ModelDescriptor;
+
+                if (_baseDescriptor != null)
+                    _baseDescriptor.SetTarget(target);
+                else
+                    _baseDescriptor = new WeakReference<TypeDescriptor>(target);
+
+                return target;
+            }
         }
 
         public TDefinition Definition
