@@ -1,4 +1,4 @@
-﻿<script type="text/javascript">
+﻿<script type="text/javascript" id="J">
     Ext.define('Ext.custom.Adapter', function () {
 
         // copy properties from source to target using mapping
@@ -162,6 +162,63 @@
                     }
                 }
                 return value;
+            },
+
+            toString: function () {
+                var target = Customary.current.culture;
+                for (var i = 0; i < arguments.length; i++) {
+                    var text = arguments[i];
+                    var t = this.translate(text, target);
+                    if (typeof t === 'object' && t !== null) {
+                        return t.string;
+                    }
+                }
+            },
+
+            translate: function (text, target) {
+
+                target = target || Customary.current.culture;
+
+                if (typeof text === 'string') {
+                    return { string: text, target: target }
+                }
+                else if (typeof text === 'object' && text !== null) {
+
+                    var value = text[target];
+
+                    if (typeof value === 'string') {
+                        return { culture: target, string: value }
+                    } else {
+                        var keys = Object.keys(text);
+
+                        switch (keys.length) {
+                            case 0:
+                                break;
+
+                            case 1:
+                                var current = keys[0];
+                                return { culture: current, string: text[current], target: target }
+
+                            default:
+                                for (var i = 0; i < keys.length; i++) {
+                                    var current = keys[i];
+                                    if (target.startsWith(current)) {
+                                        return { culture: current, string: text[current], target: target }
+                                    }
+                                }
+
+                                for (var i = 0; i < keys.length; i++) {
+                                    var current = keys[i];
+                                    if (current.startsWith(target)) {
+                                        return { culture: current, string: text[current], target: target }
+                                    }
+                                }
+
+                                var current = keys[0];
+                                return { culture: current, string: text[current], target: target }
+                        }
+                    }
+                }
             },
 
             // publish an event

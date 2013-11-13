@@ -38,23 +38,25 @@ namespace Custom.Data
                 descriptors.Push(name);
             }
 
-            var stack = new Stack<RavenJObject>();
-
             var result = new RavenJObject();
 
-            for (var dataAsJson = result; descriptors.Count > 0; )
+            var stack = new Stack<RavenJObject>();
+
+            stack.Push(result);
+
+            for (var baseJObject = result; descriptors.Count > 0; )
             {
                 var node = descriptors.Pop();
-                var memberAsJson = new RavenJObject();
+                var childJObject = new RavenJObject();
 
-                memberAsJson["$name"] = node._name;
-                memberAsJson["$type"] = System.Enum.GetName(typeof(NodeKinds), node.Type);
-                memberAsJson["$dirty"] = true;
+                childJObject["$name"] = node._name;
+                childJObject["$type"] = System.Enum.GetName(typeof(NodeKinds), node.Type);
+                childJObject["$dirty"] = true;
 
-                dataAsJson[node._name] = memberAsJson;
-                dataAsJson = memberAsJson;
+                baseJObject[node._name] = childJObject;
+                baseJObject = childJObject;
 
-                stack.Push(memberAsJson);
+                stack.Push(childJObject);
             }
 
             var types = new Dictionary<string, TypeDescriptor>();

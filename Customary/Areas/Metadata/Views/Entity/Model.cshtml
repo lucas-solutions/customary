@@ -1,10 +1,11 @@
-﻿@model Custom.Data.Metadata.EntityObject
+﻿@model Custom.Data.Metadata.EventDescriptor
 @using Custom.Areas.Metadata.Models
+@using Custom.Data
 @using Custom.Data.Metadata
 @using Custom.Site.Presentation
 @using Ext = Custom.Site.Presentation.Sencha.Ext
 @{
-    var descriptor = Model as EntityObject;
+    var descriptor = Model as EntityDescriptor;
 }
 @if (descriptor != null)
 {

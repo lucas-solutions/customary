@@ -56,59 +56,96 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var dataAsJson = stack.Pop();
+            var modelJObject = stack.Pop();
 
-            dataAsJson["$name"] = _name;
-            dataAsJson["$type"] = "model";
-            dataAsJson.Remove("$dirty");
+            modelJObject["$name"] = _name;
+            modelJObject["$type"] = "model";
+            modelJObject.Remove("$dirty");
 
             var definition = Definition;
+
+            var baseName = definition.BaseType;
+
+            if (!string.IsNullOrEmpty(baseName))
+            {
+                modelJObject["$base"] = baseName;
+
+                if (!types.ContainsKey(baseName))
+                {
+                    var baseType = BaseType;
+
+                    types.Add(baseName, baseType);
+
+                    if (baseType != null)
+                    {
+                        stack.Push(new RavenJObject());
+                        baseType.Metadata(stack, requires, types);
+                        stack.Merge(stack.Pop(), baseName);
+                    }
+                }
+            }
+
+            modelJObject.SetCurrentThreadCultureText("$title", definition.Title);
+            modelJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
+
             var fields = new RavenJArray();
 
             foreach (var property in definition.Properties)
             {
-                var field = new RavenJObject();
+                var fieldJObject = new RavenJObject();
 
-                field["$name"] = property.Name;
+                fieldJObject["$name"] = property.Name;
 
-                TypeDescriptor type;
-                if (!types.TryGetValue(property.Type, out type))
+                fieldJObject.SetCurrentThreadCultureText("$title", property.Title);
+                fieldJObject.SetCurrentThreadCultureText("$summary", property.Summary);
+
+                TypeDescriptor propertyType;
+                if (!types.TryGetValue(property.Type, out propertyType))
                 {
-                    type = DataDictionary.Current.Describe(property.Type) as TypeDescriptor;
+                    propertyType = DataDictionary.Current.Describe(property.Type) as TypeDescriptor;
 
-                    if (type != null)
+                    if (propertyType != null)
                     {
-                        types.Add(property.Type, type);
+                        types.Add(property.Type, propertyType);
+
+                        stack.Push(new RavenJObject());
+                        propertyType.Metadata(stack, requires, types);
+                        stack.Merge(stack.Pop(), property.Type);
                     }
                 }
 
-                if (type != null)
+                if (propertyType == null)
                 {
-                    switch (type.Category)
+                    fieldJObject["$type"] = "string";
+                    fieldJObject["$category"] = "value";
+                }
+                else
+                {
+                    switch (propertyType.Category)
                     {
                         case TypeCategories.Enum:
-                            field["$type"] = "string";
-                            field["$category"] = "enum";
-                            field["$source"] = property.Type;
+                            fieldJObject["$type"] = "string";
+                            fieldJObject["$category"] = "enum";
+                            fieldJObject["$source"] = property.Type;
                             break;
 
                         case TypeCategories.Model:
-                            field["$type"] = "string";
-                            field["$category"] = "model";
-                            field["$model"] = property.Type;
+                            fieldJObject["$type"] = "string";
+                            fieldJObject["$category"] = "model";
+                            fieldJObject["$model"] = property.Type;
                             break;
 
                         case TypeCategories.Unit:
-                            field["$type"] = "string";
-                            field["$category"] = "unit";
-                            field["$measure"] = property.Type;
+                            fieldJObject["$type"] = "string";
+                            fieldJObject["$category"] = "unit";
+                            fieldJObject["$measure"] = property.Type;
                             break;
 
                         case TypeCategories.Value:
-                            field["$category"] = "value";
+                            fieldJObject["$category"] = "value";
 
                             TypeDescriptor primitive;
-                            for (primitive = type; primitive.BaseType != null; primitive = primitive.BaseType)
+                            for (primitive = propertyType; primitive.BaseType != null; primitive = primitive.BaseType)
                             {
                                 var key = primitive.Path;
                                 if (!types.ContainsKey(key))
@@ -127,44 +164,34 @@ namespace Custom.Data
                                 case "UInt32":
                                 case "UInt64":
                                 case "SByte":
-                                    field["$type"] = "integer";
+                                    fieldJObject["$type"] = "integer";
                                     break;
 
                                 case "Decimal":
                                 case "Double":
                                 case "Single":
-                                    field["$type"] = "number";
+                                    fieldJObject["$type"] = "number";
                                     break;
 
                                 case "Date":
                                 case "Time":
                                 case "DateTime":
                                 case "DateTimeOffset":
-                                    field["$type"] = "date";
+                                    fieldJObject["$type"] = "date";
+                                    break;
+
+                                case "Text":
+                                    fieldJObject["$type"] = "text";
                                     break;
 
                                 case "Char":
                                 case "String":
                                 default:
-                                    field["$type"] = "string";
+                                    fieldJObject["$type"] = "string";
                                     break;
                             }
 
-                            field["$validations"] = property.Type;
-
-                            if (!types.ContainsKey(property.Type))
-                            {
-                                var propertyType = DataDictionary.Current.Describe(property.Type) as TypeDescriptor;
-
-                                if (type != null)
-                                {
-                                    types.Add(property.Type, propertyType);
-
-                                    stack.Push(new RavenJObject());
-                                    propertyType.Metadata(stack, requires, types);
-                                    stack.Merge(stack.Pop(), property.Type);
-                                }
-                            }
+                            fieldJObject["$validations"] = property.Type;
 
                             break;
                     }
@@ -172,17 +199,17 @@ namespace Custom.Data
 
                 if (property.Default != null)
                 {
-                    field["$default"] = new RavenJValue(property.Default);
+                    fieldJObject["$default"] = new RavenJValue(property.Default);
                 }
 
-                field["$role"] = new RavenJValue(System.Enum.GetName(typeof(PropertyRoles), property.Role));
+                fieldJObject["$role"] = new RavenJValue(System.Enum.GetName(typeof(PropertyRoles), property.Role));
 
-                fields.Add(field);
+                fields.Add(fieldJObject);
             }
 
-            dataAsJson["$fields"] = fields;
+            modelJObject["$fields"] = fields;
 
-            stack.Push(dataAsJson);
+            stack.Push(modelJObject);
         }
 
         public StoreInfo Store
@@ -282,16 +309,24 @@ namespace Custom.Data
         {
             var valuePath = valueName.Split('/');
 
-            var segments = stack.ToList();
+            var segments = stack.Reverse().ToList();
 
             var parent = segments[0];
 
             for (var i = 0; i < valuePath.Length - 1; i++)
             {
-                if (string.Equals(valuePath[i], segments[i].Value<string>("$name"), StringComparison.OrdinalIgnoreCase))
+                if (segments.Count.Equals(i + 1) || !string.Equals(valuePath[i], segments[i + 1].Value<string>("$name"), StringComparison.OrdinalIgnoreCase))
                 {
+                    var name = valuePath[i];
+                    var segment = new RavenJObject();
+                    segment["$name"] = name;
+                    segments[i][name] = segment;
                 }
             }
+
+            var name2 = valuePath[valuePath.Length - 1];
+
+            segments[valuePath.Length - 1][name2] = value;
         }
     }
 }

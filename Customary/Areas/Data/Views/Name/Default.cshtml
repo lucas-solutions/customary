@@ -1,7 +1,5 @@
 ﻿@using Custom.Areas.Metadata.Models
 @using Custom.Data.Metadata
-@using Custom.Site.Presentation
-@using Ext = Custom.Site.Presentation.Sencha.Ext
 @{
     Layout = "~/Areas/Data/Views/Shared/_Layout.cshtml";
 }
@@ -10,103 +8,225 @@
 </script>
 
 <script type="text/javascript">
+    var frameStyle = 'background-color:#dfe8f5;';    
+</script>
 
-    var frameStyle = 'background-color:#dfe8f5;';
+<script type="text/javascript">
+    Ext.define('Customary.view.Directory', {
+        extend: 'Ext.custom.data.Directory'
+    });
+</script>
 
-    Ext.define('Ext.custom.data.Viewport', {
-        requires: [
-            'Ext.custom.Adapter',
-            'Ext.custom.Factory',
-            'Ext.custom.data.Directory'
-        ],
-        extend: 'Ext.container.Viewport',
-        layout: 'border',
-        bodyStyle: frameStyle, // background color like frame
-        initComponent: function () {
+<script type="text/javascript">
+    Ext.define('Customary.view.Index', {
+        extend: 'Ext.custom.data.Index'
+    });
+</script>
 
-            var directory = Ext.create('Ext.custom.data.Directory');
+<script type="text/javascript">
+    Ext.define('Customary.view.Drop', {
+        extend: 'Ext.custom.Droplet'
+    });
+</script>
 
-            this.centerPanel = Ext.create('Ext.panel.Panel', {
-                region: 'center',
-                bodyStyle: frameStyle, // background color like frame
-                header: false,
-                items: [/*this.entityPanel*/],
-                flex: 5,
-                border: false,
-                layout: 'fit',
-                title: 'Select Entity'
+<script type="text/javascript">
+    Ext.define('Customary.controller.Drops', {
+        extend: 'Ext.app.Controller',
+        //views: ['posts.List', 'posts.Edit'],
+
+        //the rest of the Controller here
+
+        init: function () {
+            this.control({
+                'viewport > panel': {
+                    render: this.onPanelRendered
+                }
             });
-
-            this.southPanel = Ext.create('Ext.panel.Panel', {
-                region: 'south',
-                title: 'Messages',
-                collapsible: true,
-                html: 'Information goes here',
-                split: true,
-                height: 100,
-                minHeight: 100
-            });
-
-            this.westPanel = Ext.create('Ext.panel.Panel', {
-                region: 'west',
-                bodyStyle: frameStyle, // background color like frame
-                flex: 1,
-                border: false,
-                collapsible: true,
-                items: [directory.panel],
-                split: true,
-                layout: 'fit',
-                title: 'Directory',
-                header: false
-            });
-
-            Ext.apply(this, {
-                items: [
-                    {
-                        region: 'north',
-                        xtype: 'container',
-                        bodyStyle: frameStyle, // background color like frame
-                        html: '@Html.Partial("~/Areas/Data/Views/Name/Header.cshtml")',
-                    autoHeight: true,
-                    border: false,
-                    margins: '0 0 5 0'
-                },
-                            this.centerPanel,
-                            this.northPanel,
-                            this.westPanel
-                            //this.southPanel
-            ]
-        });
-
-            this.callParent();
-
-            Ext.custom.Adapter.subscribe('Ext.custom.data.Directory.selectionchange', {
-                fn: function (directory, selModel, selections) {
-                    if (directory.record !== null && typeof directory.record === 'object') {
-
-                    }
-                    else {
-
-                    }
-                },
-                scope: this
-            });
-
-            //Ext.custom.Adapter.publish('App.data.Viewport.init', this);
         },
 
-        loadPanel: function (container, name, id) {
-            var item = Ext.create(name + '.' + id, {
-                layout: 'fit'
-            });
-            container.update(item);
-            container.doLayout();
+        onPanelRendered: function () {
+            console.log('The panel was rendered');
         }
     });
 </script>
 
 <script type="text/javascript">
-    Ext.onReady(function () {
-        Ext.create('Ext.custom.data.Viewport');
+    Ext.define('Custom.app.Application', function () {
+
+        var guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+        return {
+            name: 'Customary',
+            extend: 'Ext.app.Application',
+            requires: [
+                'Ext.container.Viewport',
+            ],
+            uses: [
+                'Ext.custom.Adapter',
+                'Ext.custom.Droplet',
+                'Ext.custom.Factory'
+                ],
+            culture: 'en',
+            dirty: false,
+            appFolder: '/Scripts/Ext/custom',
+            appProperty: 'current',
+            //models: ['Post', 'Comment'],
+            controllers: ['Drops'/*, 'Comments'*/],
+            launch: function () {
+
+                //Ext.create('Ext.custom.data.Viewport');
+
+                var directory = Ext.create('Ext.custom.data.Directory');
+
+                this.centerPanel = Ext.create('Ext.panel.Panel', {
+                    region: 'center',
+                    bodyStyle: frameStyle, // background color like frame
+                    header: false,
+                    items: [],
+                    flex: 5,
+                    border: false,
+                    layout: 'fit',
+                    title: 'Select Entity'
+                });
+
+                Ext.create('Ext.container.Viewport', {
+                    layout: 'border',
+                    bodyStyle: frameStyle, // background color like frame
+                    items: [
+                        {
+                            region: 'north',
+                            xtype: 'container',
+                            bodyStyle: frameStyle, // background color like frame
+                            html: '@Html.Partial("~/Areas/Data/Views/Name/Header.cshtml")',
+                            autoHeight: true,
+                            border: false,
+                            margins: '0 0 5 0'
+                        },
+                        {
+                            region: 'west',
+                            bodyStyle: frameStyle, // background color like frame
+                            flex: 1,
+                            border: false,
+                            collapsible: true,
+                            items: [
+                                directory.panel
+                            ],
+                            split: true,
+                            layout: 'fit',
+                            //title: 'Directory',
+                            header: false
+                        },
+                        this.centerPanel
+                    ]
+                });
+
+                Ext.custom.Adapter.subscribe('Ext.custom.data.Directory.selectionchange', {
+                    fn: function (record, directory, selModel, selections) {
+                        if (record !== null && typeof record === 'object') {
+
+                            var typeName;
+
+                            switch (record.type) {
+
+                                case 'area':
+                                    typeName = 'Metadata/Area';
+                                    break;
+
+                                case 'enum':
+                                    typeName = 'Metadata/Enum';
+                                    break;
+
+                                case 'model':
+                                    typeName = 'Metadata/Model';
+                                    break;
+
+                                case 'name':
+                                    /*typeName = 'Metadata/Name';*/
+                                    break;
+
+                                case 'store':
+                                    typeName = 'Metadata/Store';
+                                    break;
+
+                                case 'unit':
+                                    typeName = 'Metadata/Unit';
+                                    break;
+
+                                case 'value':
+                                    typeName = 'Metadata/Value';
+                                    break;
+                            }
+
+                            Ext.custom.Droplet.asyncCreate(typeName, false, function (droplet) {
+
+                                /*droplet.main.update({
+                                    layout: 'fit'
+                                });*/
+
+                                var config = droplet.configPanel();
+
+                                config.layout = 'fit';
+
+                                this.centerPanel.removeAll();
+                                this.centerPanel.add(config);
+                                this.centerPanel.doLayout();
+
+                                //droplet.asyncLoad(record.id);
+                            }, this);
+
+                        }
+                        else {
+
+                        }
+                    },
+                    scope: this
+                });
+
+                window.onbeforeunload = function () {
+                    if (Customary.current.dirty) {
+                        return "You have made changes on this page that you have not yet confirmed. If you navigate away from this page you will lose your unsaved changes";
+                    }
+                };
+
+                if (Ext.supports.History) { // <- this prevents the firing off of the event
+                    Ext.History.init()
+                    Ext.History.on('change', function () {
+
+                        var token = Ext.History.getToken();
+
+                        if (guidRegex.test(token)) {
+                            console.log('token accepted');
+                            this.onChange(token);
+                        }
+                        else {
+                            alert("Invalid token");
+                            this.onChange();
+                        }
+                    });
+
+                    Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
+                        Ext.History.add(id)
+                    });
+                }
+                else {
+                    Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
+                        this.onChange(id);
+                    });
+
+                    this.onChange();
+                }
+            },
+
+            onChange: function (id) {
+                if (typeof id === 'string') {
+                }
+                else {
+                }
+            }
+        }
     });
+</script>
+
+<script type="text/javascript">
+    Ext.application('Custom.app.Application');
 </script>

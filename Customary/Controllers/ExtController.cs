@@ -17,6 +17,13 @@ namespace Custom.Controllers
             return ScriptView();
         }
 
+        // GET: Scripts/Ext/custom/Droplet.js
+
+        public ActionResult Droplet()
+        {
+            return ScriptView();
+        }
+
         // GET: Scripts/Ext/custom/Factory.js
 
         public ActionResult Factory()

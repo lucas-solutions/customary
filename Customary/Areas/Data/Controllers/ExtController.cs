@@ -17,5 +17,13 @@ namespace Custom.Areas.Data.Controllers
         {
             return ScriptView();
         }
+
+        //
+        // GET: Ext/custom/data/Index.js
+
+        public ActionResult Index()
+        {
+            return ScriptView();
+        }
     }
 }

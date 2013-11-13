@@ -51,6 +51,24 @@ namespace Custom.Data.Metadata
         public string Principal { get; set; }
 
         /// <summary>
+        /// Edit mode: Form or Grid
+        /// </summary>
+        public string Edit
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// View mode: Form, Grid or Report
+        /// </summary>
+        public string View
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Comma separated list of head (column in a grid) properties
         /// </summary>
         public string Head

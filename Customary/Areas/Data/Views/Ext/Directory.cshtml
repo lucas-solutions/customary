@@ -7,7 +7,7 @@
             return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.') + '.Model';
         }
 
-        function name(node) {
+        function fullName(node) {
             /// <param name="node" type="Ext.data.NodeInterface">
             /// </param>
             /// <returns type="String"></returns>
@@ -240,7 +240,7 @@
                             buildUrl: function (request) {
                                 switch (request.action) {
                                     case 'read':
-                                        return directory.baseUrl + '/Data/Directory/' + name(request.operation.node);
+                                        return directory.baseUrl + '/Data/Directory/' + fullName(request.operation.node);
                                 }
                             },
                             headers: {
@@ -288,36 +288,11 @@
                 if (typeof selections == 'object' && selections.length > 0 && typeof selections[0].raw == 'object') {
                     this.record = Ext.Object.merge({}, selections[0].raw);
 
-                    var noteType = selections[0].raw.type;
-                    var nodeName = name(selections[0]);
+                    var id = selections[0].raw.id;
+                    var type = selections[0].raw.type;
+                    var name = fullName(selections[0]);
 
-                    switch (noteType) {
-
-                        case 'area':
-                            break;
-
-                        case 'enum':
-                            break;
-
-                        case 'model':
-                            Ext.custom.Factory.asyncModel(nodeName, function (modelName, model) {
-                                Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', model, this, selModel, selections);
-                            });
-                            break;
-
-                        case 'name':
-                            break;
-
-                        case 'unit':
-                            break;
-
-                        case 'value':
-                            break;
-                    }
-
-                    if (noteType === 'Model') {
-                        
-                    }
+                    Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', { name: name, type: type, id: id }, this, selModel, selections);
                 } else {
                     delete this.record;
                     Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', null, this, selModel, selections);

@@ -306,6 +306,7 @@
     <Compile Include="Extensions\JsonDocumentExtensions.cs" />
     <Compile Include="Extensions\QuariableExtensions.cs" />
     <Compile Include="Extensions\RavenExtensions.cs" />
+    <Compile Include="Extensions\TextExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Web\CrudActions.cs" />
     <Compile Include="Web\Mvc\AreaHelpers.cs" />
@@ -798,6 +799,7 @@
     <Content Include="Areas\Data\Views\Ext\Directory.cshtml" />
     <Content Include="Areas\Data\Views\Name\Header.cshtml" />
     <Content Include="Areas\Data\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Data\Views\Ext\Index.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3905,6 +3907,8 @@
     <Content Include="Views\Data\Drop.cshtml" />
     <Content Include="Views\Ext\Adapter.cshtml" />
     <Content Include="Views\Ext\Factory.cshtml" />
+    <Content Include="Views\Ext\Droplet.cshtml" />
+    <Content Include="Views\Ext\Application.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />
