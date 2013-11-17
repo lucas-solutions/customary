@@ -5,7 +5,18 @@ using System.Web;
 
 namespace Custom.Data.Metadata
 {
-    public class MemberDefinition : DefinitionBase
+    public class MemberDefinition : BaseDefinition
     {
+        public MemberUI UI
+        {
+            get;
+            set;
+        }
+
+        public int Value
+        {
+            get;
+            set;
+        }
     }
 }

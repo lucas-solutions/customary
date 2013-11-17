@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Custom.Data.Metadata
 {
-    public class AreaDefinition : DefinitionBase
+    public class AreaDefinition : BaseDefinition
     {
         public StoreInfo Store
         {

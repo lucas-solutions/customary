@@ -201,8 +201,13 @@ namespace Custom.Data
 
             var definition = descriptor.Definition;
 
-            for (var source = descriptor; descriptor != null; descriptor = descriptor.Extend)
+            for (var source = descriptor; descriptor != null; descriptor = descriptor.BaseType as ModelDescriptor)
             {
+                if (descriptor.Definition.Embeddable)
+                {
+                    break;
+                }
+
                 EntityType(x, source.Definition);
             }
 

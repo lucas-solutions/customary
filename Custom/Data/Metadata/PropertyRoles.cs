@@ -10,6 +10,8 @@ namespace Custom.Data.Metadata
     {
         Optional,
 
+        Embedded,
+
         Required,
 
         Index,

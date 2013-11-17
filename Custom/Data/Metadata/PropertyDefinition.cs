@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Data.Metadata
 {
-    public class PropertyDefinition : DefinitionBase
+    public class PropertyDefinition : BaseDefinition
     {
         /// <summary>
         /// Default value for primitives, enum, units, texts and even entities. And constants of course.

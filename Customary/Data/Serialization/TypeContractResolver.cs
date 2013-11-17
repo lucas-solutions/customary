@@ -12,9 +12,9 @@ namespace Custom.Data.Serialization
     {
         public override JsonContract ResolveContract(System.Type type)
         {
-            if (typeof(DefinitionBase).IsAssignableFrom(type))
+            if (typeof(BaseDefinition).IsAssignableFrom(type))
             {
-                return new JsonArrayContract(typeof(DefinitionBase))
+                return new JsonArrayContract(typeof(BaseDefinition))
                 {
                     ItemConverter = new TypeConverter()
                 };

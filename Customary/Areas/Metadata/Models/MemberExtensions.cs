@@ -11,35 +11,35 @@ namespace Custom.Areas.Metadata.Models
 
     public static class MemberExtensions
     {
-        public static Ext.form.Panel ToForm(this DefinitionBase descriptor)
+        public static Ext.form.Panel ToForm(this BaseDefinition descriptor)
         {
             var builder = new Ext.form.Panel.Builder();
 
             return builder;
         }
 
-        public static Ext.grid.Panel ToGrid(this DefinitionBase descriptor)
+        public static Ext.grid.Panel ToGrid(this BaseDefinition descriptor)
         {
             var builder = new Ext.grid.Panel.Builder();
 
             return builder;
         }
 
-        public static Ext.data.Model ToModel(this DefinitionBase descriptor)
+        public static Ext.data.Model ToModel(this BaseDefinition descriptor)
         {
             var builder = new Ext.data.Model.Builder();
 
             return builder;
         }
 
-        public static Ext.data.proxy.Proxy ToProxy(this DefinitionBase descriptor)
+        public static Ext.data.proxy.Proxy ToProxy(this BaseDefinition descriptor)
         {
             var builder = new Ext.data.proxy.Proxy.Builder();
 
             return builder;
         }
 
-        public static Ext.data.Store ToStore(this DefinitionBase descriptor)
+        public static Ext.data.Store ToStore(this BaseDefinition descriptor)
         {
             var builder = new Ext.data.Store.Builder();
 

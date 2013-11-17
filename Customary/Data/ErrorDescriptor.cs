@@ -30,7 +30,11 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            throw new NotImplementedException();
+            var result = new RavenJObject();
+
+            result["message"] = _message;
+
+            return result;
         }
     }
 }

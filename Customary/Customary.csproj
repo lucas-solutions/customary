@@ -775,6 +775,7 @@
     <Content Include="Scripts\Data\Factory.js" />
     <Content Include="Scripts\Ext\ux\form\SearchField.js" />
     <Content Include="Scripts\Ext\ux\form\TriggerTextArea.js" />
+    <Content Include="Scripts\Ext\ux\StatusBar.js" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Index.cshtml" />
     <Content Include="Areas\Navigation\Views\Route\Host.cshtml" />

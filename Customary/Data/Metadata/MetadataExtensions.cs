@@ -28,7 +28,7 @@ namespace Custom.Data.Metadata
                 try
                 {
                     var json = root.Value<RavenJArray>("Type").ToString();
-                    var types = JsonConvert.DeserializeObject<List<DefinitionBase>>(json, new TypeConverter());
+                    var types = JsonConvert.DeserializeObject<List<BaseDefinition>>(json, new TypeConverter());
                     foreach (var t in types)
                     {
                         var descriptor = t as TypeDefinition;

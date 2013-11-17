@@ -50,7 +50,8 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var key = _descriptor.KeyPrefix + id.ToString("D");
+                var keyPrefix = _descriptor.KeyPrefix;
+                var key = string.Concat(keyPrefix, id);
                 var data = _context.Session.Load<RavenJObject>(key);
 
                 if (data != null)
@@ -61,7 +62,7 @@ namespace Custom.Data.Persistence.Repositories
                 else
                 {
                     result["success"] = new RavenJValue(false);
-                    result["message"] = string.Format("Document {0} not found at store {1}", key, _context.Name);
+                    result["message"] = string.Format("Document with key \"{0}\" not found at store {1} (key prefix: \"{2}\", id: {3})", key, _context.Name, keyPrefix, id);
                 }
             }
             catch (Exception e)

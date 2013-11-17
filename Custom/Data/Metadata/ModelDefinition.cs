@@ -19,6 +19,24 @@ namespace Custom.Data.Metadata
         }
 
         /// <summary>
+        /// Is embedded. Not an entity, and specifies belongsTo
+        /// </summary>
+        public string BelongsTo
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Is embedded. Not an entity
+        /// </summary>
+        public bool Embeddable
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Name of the identity property.
         /// </summary>
         public string Identity
@@ -103,6 +121,12 @@ namespace Custom.Data.Metadata
         /// Document name, table name, REST (Representational state transfer) service URL.
         /// </summary>
         public StoreInfo Store
+        {
+            get;
+            set;
+        }
+
+        public ModelUI UI
         {
             get;
             set;

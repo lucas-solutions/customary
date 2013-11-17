@@ -26,7 +26,7 @@ namespace Custom
         {
             try
             {
-                var serializer = CreateDefaultJsonSerializer(new CamelCasePropertyNamesContractResolver());
+                var serializer = CreateDefaultJsonSerializer(/*new CamelCasePropertyNamesContractResolver()*/);
 
                 if (converters != null)
                     foreach (var converter in converters)

@@ -1,6 +1,8 @@
 ﻿<script type="text/javascript">
     Ext.define('Ext.custom.Factory', function () {
 
+        var _baseUrl = 'http://data.customary.com';
+
         function makeExtName(typeName) {
             return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
         }
@@ -19,6 +21,61 @@
 
         function makePanelName(typeName, componentName) {
             return makeExtName(typeName) + '.' + componentName + '.Panel';
+        }
+
+        function switchValues(value, separator, callback) {
+
+            var values = value.split(separator);
+
+            for (var i = 0; i < values.length; i++) {
+                var fn = callback[values[i]];
+                if (typeof fn === 'function') {
+                    fn();
+                }
+            }
+        }
+
+        function splitRole($role) {
+
+            var role = {
+                optional: true,
+                embedded: false,
+                identity: false,
+                required: false,
+                unique: false,
+                readOnly: false,
+                hasMany: false
+            };
+
+            switchValues($role, '|', {
+
+                'Embedded': function () {
+                    role.embedded = true;
+                },
+
+                'Identity': function () {
+                    role.identity = true;
+                },
+
+                'Required': function () {
+                    role.optional = false;
+                    role.required = true;
+                },
+
+                'Unique': function () {
+                    role.unique = true;
+                },
+
+                'Readonly': function () {
+                    role.readOnly = true;
+                },
+
+                'HasMany': function () {
+                    role.hasMany = true;
+                },
+            });
+
+            return role;
         }
 
         var $metadata = {
@@ -53,6 +110,111 @@
             return result;
         }
 
+        // copied fromDroplet
+        function collectFields($m, $fields) {
+
+            if ($m === null || typeof $m !== 'object') {
+                return $fields;
+            }
+
+            if (typeof $m.$base === 'string') {
+                collectFields(Ext.custom.Factory.findMetadata($m.$base), $fields);
+            }
+
+            if ($m !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
+                $fields.push.apply($fields, $m.$fields);
+            }
+
+            return $fields;
+        }
+
+        /**
+        * class Ext.data.writer.DeepJson This class is used to write
+         *        {link Ext.data.Model} data to the server in a JSON format.
+         * 
+         * It overrides the original Ext.data.writer.Json since the Json can not handle
+         * hasMany association, it can only transform the outside part into Json, the
+         * inside data will be omiited.
+         * 
+         * Yi Fang Reference:
+            *     http://www.sencha.com/forum/showthread.php?141957-Saving-objects-that-are-linked-hasMany-relation-with-a-single-Store/page3     23 Mar 2012 6:00 AM
+        *     http://www.sencha.com/forum/showthread.php?141957-Saving-objects-that-are-linked-hasMany-relation-with-a-single-Store/page5     13 Feb 2013 2:57 PM
+        *     
+        */
+        Ext.define('Ext.data.writer.DeepJson', {
+            extend: 'Ext.data.writer.Json',
+            getRecordData: function (record, operation) {
+                // Setup variables
+                var me = this, i, association, childStore, data;
+
+                data = me.callParent(arguments);
+
+                // Iterate over all the hasMany associations
+                for (i = 0; i < record.associations.length; i++) {
+                    association = record.associations.get(i);
+                    if (association.type == 'hasMany') {
+                        data[association.name] = null;
+                        childStore = record[association.storeName];
+
+                        // Iterate over all the children in the current
+                        // association
+                        childStore.each(function (childRecord) {
+
+                            if (!data[association.name]) {
+                                data[association.name] = [];
+                            }
+
+                            // Recursively get the record data for
+                            // children (depth first)
+                            var childData = this.getRecordData.call(
+                                    this, childRecord);
+
+                            /*
+                             * If the child was marked dirty or phantom
+                             * it must be added. If there was data
+                             * returned that was neither dirty or
+                             * phantom, this means that the depth first
+                             * recursion has detected that it has a
+                             * child which is either dirty or phantom.
+                             * For this child to be put into the
+                             * prepared data, it's parents must be in
+                             * place whether they were modified or not.
+                             */
+                            if (childRecord.dirty
+                                    || childRecord.phantom
+                                    || (childData != null)) {
+                                data[association.name].push(childData);
+                                record.setDirty();
+                            }
+                        }, me);
+
+                        /*
+                         * Iterate over all the removed records and add them to
+                         * the preparedData. Set a flag on them to show that
+                         * they are to be deleted
+                         */
+                        Ext.each(childStore.removed, function (
+                                        removedChildRecord) {
+                            // Set a flag here to identify removed
+                            // records
+                            removedChildRecord.set('forDeletion', true);
+                            var removedChildData = this.getRecordData
+                                    .call(this, removedChildRecord);
+                            data[association.name]
+                                    .push(removedChildData);
+                            record.setDirty();
+                        }, me);
+                    }
+                }
+
+                // Only return data if it was dirty, new or marked for deletion.
+                if (record.dirty || record.phantom || record.get('forDeletion')) {
+                    return data;
+                }
+                return null;
+            }
+        });
+
         return {
             singleton: true,
 
@@ -64,6 +226,8 @@
             constructor: function () {
                 this.baseUrl = 'http://data.customary.com';
             },
+
+            splitRole: splitRole,
 
             findMetadata: function (typeName) {
                 var path = typeName.split('/');
@@ -150,89 +314,233 @@
                 var extend = 'Ext.data.Model';
 
                 if (typeof $m.$extend === 'string') {
-                    extend = makeModelName($m.$extend);
+                    var extendModel = this.findModel($m.$extend);
+                    //extend = makeModelName($m.$extend);
                 }
 
                 var config = {
                     extend: extend,
                     fields: [],
+                    associations: [],
                     validations: []
                 };
 
-                if ($m.$fields !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
+                if (typeof $m.$belongsTo === 'string') {
+                    config['belongsTo'] = makeModelName($m.$belongsTo);
+                    /*var belongsTo = this.findModel($m.$belongsTo);
+                    if (belongsTo) {
+                        config['belongsTo'] = belongsTo.modelName;
+                    }*/
+                }
 
-                    var types = Ext.data.Types; // allow shorthand type access
+                var $fields = collectFields($m, []);
 
-                    for (var i = 0; i < $m.$fields.length; i++) {
-                        var $field = $m.$fields[i];
-                        var field = { name: $field.$name };
+                var types = Ext.data.Types; // allow shorthand type access
 
-                        switch ($field.$category) {
+                for (var i = 0; i < $fields.length; i++) {
+                    var $field = $fields[i];
+                    var role = splitRole($field.$role);
+                    var field = { name: $field.$name };
 
-                            case 'enum':
-                                field.type = types.STRING;
-                                var $source = this.findMetadata($field.$source);
-                                break;
-
-                            case 'model':
-                                var fieldModel = this.findModel($field.$model);
-                                field.type = fieldModel || types.STRING;
-                                break;
-
-                            case 'unit':
-                                field.type = types.STRING;
-                                var $measure = this.findMetadata($field.$measure);
-                                break;
-
-                            case 'value':
-
-                                switch ($field.$type) {
-
-                                    case 'boolean':
-                                        field.type = types.BOOLEAN;
-                                        break;
-
-                                    case 'string':
-                                        field.type = types.STRING;
-                                        break;
-
-                                    case 'integer':
-                                        field.type = types.INTEGER;
-                                        break;
-
-                                    case 'number':
-                                        field.type = types.NUMBER;
-                                        break;
-
-                                    case 'date':
-                                        field.type = types.DATE;
-                                        //field.dateFormat = '';
-                                        break;
-                                }
-
-                                break;
-                        }
-
-                        switch ($field.$role) {
-
-                            case 'Required':
-                                field.useNull = false;
-                                break;
-
-                            case 'Identity':
-                                field.useNull = false;
-                                break;
-
-                            case 'Unique':
-                                field.useNull = false;
-                                break;
-
-                            case 'HasMany':
-                                break;
-                        }
-
-                        config.fields.push(field);
+                    if (role.required) {
+                        field.useNull = false;
                     }
+
+                    switch ($field.$category) {
+
+                        case 'enum':
+                            field.type = types.STRING;
+                            var $source = this.findMetadata($field.$prototype);
+                            config.fields.push(field);
+                            break;
+
+                        case 'model':
+                            var $model = this.findMetadata($field.$prototype);
+
+                            if (typeof $model !== 'object' || $model === null) {
+                                break;
+                            }
+                            else if ($model.$embeddable) {
+
+                                var fieldModel = this.findModel($field.$prototype);
+
+                                if (typeof fieldModel !== 'function') {
+                                }
+                                else if (role.hasMany) {
+                                    config.associations.push({
+                                        type: 'hasMany',
+                                        model: fieldModel.modelName,
+                                        name: $field.$name
+                                    });
+                                }
+                                else {
+                                    //field.type = fieldModel.modelName;
+                                    //config.fields.push(field);
+                                    config.associations.push({
+                                        type: 'hasOne',
+                                        model: fieldModel.modelName,
+                                        name: $field.$name,
+                                        associationKey: $field.$name
+                                    });
+
+                                    if ($field.$prototype === 'Text') {
+                                        config.fields.push({
+                                            name: '$' + $field.$name,
+                                            mapping: $field.$name,
+                                            convert: function (v, record) {
+                                                return Ext.custom.Adapter.toString(v || "<null>");
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            else {
+                                field.type = types.STRING;
+                                config.fields.push(field);
+                            }
+                            break;
+
+                        case 'unit':
+                            field.type = types.STRING;
+                            var $prototype = this.findMetadata($field.$prototype);
+                            config.fields.push(field);
+                            break;
+
+                        case 'value':
+
+                            switch ($field.$type) {
+
+                                case 'boolean':
+                                    field.type = types.BOOLEAN;
+                                    break;
+
+                                case 'string':
+                                    field.type = types.STRING;
+                                    break;
+
+                                case 'integer':
+                                    field.type = types.INTEGER;
+                                    break;
+
+                                case 'number':
+                                    field.type = types.NUMBER;
+                                    break;
+
+                                case 'date':
+                                    field.type = types.DATE;
+                                    //field.dateFormat = '';
+                                    break;
+                            }
+
+                            /*if (typeof $field.$prototype === 'string') {
+                                var $prototype = this.findMetadata($field.$prototype);
+                                var $validations = $prototype.$validations;
+                                if (typeof $validations === 'object' && $validations != null) {
+                                    for (var i = 0; i < $validations.length; i++) {
+
+                                        var $validation = $validations[i];
+
+                                        var validation = { name: $field.$name, type: $validation.$type };
+
+                                        switch ($validation.$type) {
+                                            case 'presence':
+                                                break;
+
+                                            case 'length':
+                                                break;
+
+                                            case 'format':
+                                                break;
+
+                                            case 'inclusion':
+                                                break;
+
+                                            case 'exclusion':
+                                                break;
+
+                                            default:
+                                                continue;
+                                        }
+
+                                        config.validations.push(validation);
+                                    }
+                                }
+                            }*/
+
+                            config.fields.push(field);
+
+                            break;
+                    }
+                }
+
+                if ($m.$embedded == true) {
+                }
+                else {
+
+                    var proxy = {
+                        // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                        // and for jsonp the api is the same, but the method is GET
+                        type: 'ajax', // rest, jsonp or ajax.
+                        //url: url,
+                        /*api: {
+                            create: url + '/create',
+                            read: url + '/read',
+                            update: url + '/update',
+                            destroy: url + '/destroy'
+                        },*/
+                        buildUrl: function (request) {
+
+                            var url = _baseUrl + '/Data/' + $m.$name;
+
+                            if (typeof request.operation.id === 'string') {
+                                url += '/' + request.operation.id;
+                            }
+
+                            switch (request.operation.action) {
+                                case 'create':
+                                    return url + '/create';
+                                case 'read':
+                                    return url + '/read';
+                                case 'update':
+                                    return url + '/update';
+                                case 'destroy':
+                                    return url + '/destroy';
+                            }
+                        },
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        listeners: {
+                            exception: function (proxy, response, operation) {
+                                Ext.MessageBox.show({
+                                    title: 'REMOTE EXCEPTION',
+                                    msg: operation.getError(),
+                                    icon: Ext.MessageBox.ERROR,
+                                    buttons: Ext.Msg.OK
+                                });
+                            }
+                        },
+                        reader: {
+                            type: "json",
+                            root: "data",
+                            totalProperty: 'total',
+                            successProperty: 'success',
+                            messageProperty: 'message'
+                        },
+                        //writer: Ext.create('Ext.data.writer.DeepJson'),
+                        writer: {
+                            type: 'json',
+                            root: 'data',
+                            allowSingle: false, // force data to be array
+                            //dateFormat: "",
+                            writeAllFields: true,
+                            writeRecordId: true
+                        }
+                    };
+
+                    Ext.merge(config, {
+                        proxy: proxy
+                    });
                 }
 
                 model = Ext.define(name, config);

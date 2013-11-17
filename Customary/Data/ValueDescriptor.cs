@@ -23,10 +23,56 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var dataAsJson = stack.Peek();
+            var valueJObject = stack.Peek();
 
-            dataAsJson["$name"] = _name;
-            dataAsJson["$type"] = "value";
+            valueJObject["$name"] = _name;
+            valueJObject["$type"] = "value";
+
+            var definition = Definition;
+
+            valueJObject.SetCurrentThreadCultureText("$title", definition.Title);
+            valueJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
+
+            var validationsJArray = new RavenJArray();
+            valueJObject["$validations"] = validationsJArray;
+
+            var validations = definition.Validations;
+
+            if (validations != null)
+            {
+                foreach (var validation in validations)
+                {
+                    var validationJObject = new RavenJObject();
+                    
+                    validationJObject["$name"] = validation.Name;
+                    validationJObject["$type"] = validation.Name;
+
+                    if (validation.List != null)
+                    {
+                        validationJObject["$list"] = validation.List;
+                    }
+
+                    if (validation.Matcher != null)
+                    {
+                        validationJObject["$matcher"] = validation.Matcher;
+                    }
+
+                    if (validation.Max.HasValue)
+                    {
+                        validationJObject["$max"] = validation.Max.Value;
+                    }
+
+                    if (validation.Min.HasValue)
+                    {
+                        validationJObject["$min"] = validation.Min.Value;
+                    }
+
+                    validationJObject.SetCurrentThreadCultureText("$title", validation.Title);
+                    validationJObject.SetCurrentThreadCultureText("$summary", validation.Summary);
+                    
+                    validationsJArray.Add(validationJObject);
+                }
+            }
         }
 
         public override RavenJObject ToRavenJObject(bool deep)

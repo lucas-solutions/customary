@@ -14,5 +14,11 @@ namespace Custom.Data.Metadata
             get { return _members ?? (_members = new List<MemberDefinition>()); }
             set { _members = value; }
         }
+
+        public EnumUI UI
+        {
+            get;
+            set;
+        }
     }
 }

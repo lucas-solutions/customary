@@ -9,5 +9,11 @@ namespace Custom.Data.Metadata
     public class UnitDefinition : TypeDefinition
     {
         public Dictionary<string, double> Measurements { get; set; }
+
+        public UnitUI UI
+        {
+            get;
+            set;
+        }
     }
 }

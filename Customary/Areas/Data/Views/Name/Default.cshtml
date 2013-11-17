@@ -3,12 +3,20 @@
 @{
     Layout = "~/Areas/Data/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    .x-tab-bar-default-top {
+        background-color: #dfe8f5;
+        background-image: none; /*-webkit-linear-gradient(top,#dde8f5,#cbdbef);*/
+    }
+</style>
+
 <script type="text/javascript">
     Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
 </script>
 
 <script type="text/javascript">
-    var frameStyle = 'background-color:#dfe8f5;';    
+    var frameStyle = 'background-color:#dfe8f5;';
 </script>
 
 <script type="text/javascript">
@@ -65,7 +73,7 @@
                 'Ext.custom.Adapter',
                 'Ext.custom.Droplet',
                 'Ext.custom.Factory'
-                ],
+            ],
             culture: 'en',
             dirty: false,
             appFolder: '/Scripts/Ext/custom',
@@ -74,7 +82,13 @@
             controllers: ['Drops'/*, 'Comments'*/],
             launch: function () {
 
-                //Ext.create('Ext.custom.data.Viewport');
+                // Apply a set of config properties to the singleton
+                Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+                    //maxWidth: 600,
+                    //minWidth: 300,
+                    //mouseOffset: [50, 50],
+                    //showDelay: 50      // Show 50ms after entering target
+                });
 
                 var directory = Ext.create('Ext.custom.data.Directory');
 
@@ -87,6 +101,54 @@
                     border: false,
                     layout: 'fit',
                     title: 'Select Entity'
+                });
+
+                var statusBar = Ext.create('Ext.ux.StatusBar', {
+                    id: 'basic-statusbar',
+                    region: 'south',
+                    // defaults to use when the status is cleared:
+                    defaultText: 'Default status text',
+                    //defaultIconCls: 'default-icon',
+
+                    // values to set initially:
+                    text: 'Ready',
+                    iconCls: 'x-status-valid',
+
+                    // any standard Toolbar items:
+                    items: [
+                        {
+                            xtype: 'button',
+                            text: 'Show Warning & Clear',
+                            handler: function () {
+                                var sb = Ext.getCmp('basic-statusbar');
+                                sb.setStatus({
+                                    text: 'Oops!',
+                                    iconCls: 'x-status-error',
+                                    clear: true // auto-clear after a set interval
+                                });
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Show Busy',
+                            handler: function () {
+                                var sb = Ext.getCmp('basic-statusbar');
+                                // Set the status bar to show that something is processing:
+                                sb.showBusy();
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Clear status',
+                            handler: function () {
+                                var sb = Ext.getCmp('basic-statusbar');
+                                // once completed
+                                sb.clearStatus();
+                            }
+                        },
+                        '-',
+                        'Plain Text'
+                    ]
                 });
 
                 Ext.create('Ext.container.Viewport', {
@@ -103,20 +165,46 @@
                             margins: '0 0 5 0'
                         },
                         {
+                            activeTab: 0,
                             region: 'west',
                             bodyStyle: frameStyle, // background color like frame
-                            flex: 1,
+                            bodyBorder: false,
                             border: false,
                             collapsible: true,
+                            flex: 1,
+                            header: false,
                             items: [
-                                directory.panel
+                                directory.panel,
+                                {
+                                    title: 'Data',
+                                    xtype: 'panel'
+                                },
+                                {
+                                    title: 'Stores',
+                                    xtype: 'panel'
+                                }
                             ],
-                            split: true,
                             layout: 'fit',
-                            //title: 'Directory',
-                            header: false
+                            listeners: {
+                                add: {
+                                    fn: function (tabPanel, component, index, eOpts) {
+                                        if (typeof tabPanel.title !== 'string') {
+                                            tabPanel.setTitle(component.title);
+                                        }
+                                    },
+                                    scope: this
+                                },
+                                tabchange: {
+                                    fn: this.onViewTabChange,
+                                    scope: this
+                                }
+                            },
+                            margins: '0 0 0 5',
+                            split: true,
+                            xtype: 'tabpanel',
                         },
-                        this.centerPanel
+                        this.centerPanel,
+                        statusBar
                     ]
                 });
 
@@ -157,22 +245,23 @@
                                     break;
                             }
 
-                            Ext.custom.Droplet.asyncCreate(typeName, false, function (droplet) {
-
-                                /*droplet.main.update({
-                                    layout: 'fit'
-                                });*/
-
-                                var config = droplet.configPanel();
-
-                                config.layout = 'fit';
-
+                            if (typeof typeName !== 'string') {
                                 this.centerPanel.removeAll();
-                                this.centerPanel.add(config);
                                 this.centerPanel.doLayout();
+                            }
+                            else {
 
-                                //droplet.asyncLoad(record.id);
-                            }, this);
+                                Ext.custom.Droplet.asyncCreate(typeName, false, function (droplet) {
+
+                                    this.centerPanel.removeAll();
+                                    this.centerPanel.add(droplet.initComponent());
+                                    this.centerPanel.doLayout();
+
+                                    droplet.load(record.id);
+
+                                    //droplet.asyncLoad(record.id);
+                                }, this);
+                            }
 
                         }
                         else {
@@ -190,38 +279,46 @@
 
                 if (Ext.supports.History) { // <- this prevents the firing off of the event
                     Ext.History.init()
-                    Ext.History.on('change', function () {
-
-                        var token = Ext.History.getToken();
-
-                        if (guidRegex.test(token)) {
-                            console.log('token accepted');
-                            this.onChange(token);
-                        }
-                        else {
-                            alert("Invalid token");
-                            this.onChange();
-                        }
+                    Ext.History.on('change', this.onHistoryChange);
+                    Ext.custom.Adapter.subscribe('Customary.view.Directory.selectionchange', function (path) {
+                        Ext.History.add(path)
                     });
-
                     Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
-                        Ext.History.add(id)
+                        Ext.History.add(path + '/' + id)
                     });
                 }
                 else {
                     Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
-                        this.onChange(id);
+                        this.onHistoryChange();
                     });
 
-                    this.onChange();
+                    this.onHistoryChange();
                 }
             },
 
-            onChange: function (id) {
-                if (typeof id === 'string') {
+            onHistoryChange: function (id) {
+
+                var token = Ext.History.getToken();
+
+                var path = token.split('/');
+
+                if (typeof token === 'string') {
+
+                    if (guidRegex.test(token)) {
+                        console.log('token accepted');
+                        this.onHistoryChange(token);
+                    }
+                    else {
+                        alert("Invalid token");
+                        this.onHistoryChange();
+                    }
                 }
                 else {
                 }
+            },
+
+            onViewTabChange: function (tabPanel, newTab, oldTab, eOpts) {
+                tabPanel.setTitle(newTab.title);
             }
         }
     });

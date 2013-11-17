@@ -11,12 +11,12 @@ namespace Custom.Areas.Metadata.Models
 
     public class Member
     {
-        public static implicit operator Member(DefinitionBase descriptor)
+        public static implicit operator Member(BaseDefinition descriptor)
         {
             return new Member(descriptor);
         }
 
-        public static implicit operator DefinitionBase(Member member)
+        public static implicit operator BaseDefinition(Member member)
         {
             return member.Descriptor;
         }
@@ -46,7 +46,7 @@ namespace Custom.Areas.Metadata.Models
             return member.Store;
         }
 
-        private readonly DefinitionBase _descriptor;
+        private readonly BaseDefinition _descriptor;
         private Ext.form.Panel _form;
         private Ext.grid.Panel _grid;
         private Ext.data.Model _model;
@@ -54,16 +54,16 @@ namespace Custom.Areas.Metadata.Models
         private Ext.data.Store _store;
 
         public Member()
-            : this(new DefinitionBase())
+            : this(new BaseDefinition())
         {
         }
 
-        public Member(DefinitionBase descriptor)
+        public Member(BaseDefinition descriptor)
         {
-            _descriptor = descriptor ?? new DefinitionBase();
+            _descriptor = descriptor ?? new BaseDefinition();
         }
 
-        public DefinitionBase Descriptor
+        public BaseDefinition Descriptor
         {
             get { return _descriptor; }
         }

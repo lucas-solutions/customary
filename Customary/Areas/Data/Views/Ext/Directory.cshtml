@@ -54,7 +54,7 @@
 
             statics: {
 
-                createModel: function (name, metadata) {
+                /*createModel: function (name, metadata) {
 
                     var extend = 'Ext.data.Model';
 
@@ -185,7 +185,7 @@
                     var model = Ext.define(name, config);
 
                     return model;
-                },
+                },*/
 
                 createPanel: function (directory, config) {
 
@@ -201,6 +201,7 @@
                     });
 
                     return Ext.create('Ext.tree.Panel', Ext.Object.merge({
+                        title: 'Directory',
                         header: false,
                         store: directory.store,
                         rootVisible: false,

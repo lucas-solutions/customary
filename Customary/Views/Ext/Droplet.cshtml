@@ -25,6 +25,78 @@
             return makeExtName(typeName) + '.' + componentName + '.Panel';
         }
 
+        function formEventHandler(droplet, parent, component, index) {
+            component.on({
+                destroyable: true,
+                beforerender: function (component, eOpts) {
+                    // perform some visual configuration on the actual instances
+                    //cmp.headerCt.setHeight(25);
+                    console.log('beforerender ' + component.xtype);
+                },
+                change: function (field, newValue, oldValue, eOpts) {
+                    // Fires when the value of a field is changed via the setValue method.
+                    console.log('change ' + oldValue + ' to ' + newValue);
+                },
+                dirtychange: function (component, dirty, eOpts) {
+                    // Fires when the dirty state of the entire form changes.
+                    console.log('dirtychange ' + dirty);
+                    if (dirty) {
+                        droplet.isDirty(true);
+                    }
+                    else {
+                        droplet.isDirty();
+                    }
+                },
+                fielderrorchange: function (fieldAncestor, field, error, eOpts) {
+                    // Fires when the active error message is changed for any one of the Ext.form.Labelable instances within this container.
+                    console.log('fielderrorchange ' + field.xtype + ': ' + error);
+                },
+                fieldvaliditychange: function (fieldAncestor, field, valid, eOpts) {
+                    // Fires when the validity state of any one of the Ext.form.field.Field instances within this container changes.
+                    console.log('fieldvaliditychange ' + field.xtype + ': ' + valid);
+                },
+                validitychange: function (basicForm, valid, eOpts) {
+                    // Fires when the validity of the entire form changes.
+                    console.log('validitychange ' + basicForm.xtype + ': ' + valid);
+                }
+            });
+        };
+
+        function selectColumns($m, hash) {
+
+            if (typeof $m !== 'object' || $m === null) {
+                return;
+            }
+
+            if (typeof hash !== 'object' || hash === null) {
+                hash = {};
+            }
+
+            if (typeof $m.$base === 'string') {
+                selectColumns(Ext.custom.Factory.findMetadata($m.$base), hash);
+            }
+
+            if (typeof $m.$head === 'string') {
+                var head = $m.$head.split('|');
+                for (var i = 0; i < head.length; i++) {
+                    var name = head[i];
+                    hash[name] = true;
+                }
+            }
+
+            var columns = [];
+
+            var keys = Object.keys(hash);
+            for (var i = 0; i < keys.length; i++) {
+                var name = keys[i];
+                if (hash[name] === true) {
+                    columns.push(name);
+                }
+            }
+
+            return columns;
+        }
+
         function collectFields($m, $fields) {
 
             if ($m === null || typeof $m !== 'object') {
@@ -42,17 +114,7 @@
             return $fields;
         }
 
-        function switchValues(value, separator, callback) {
 
-            var values = value.split(separator);
-
-            for (var i = 0; i < values.length; i++) {
-                var fn = callback[values[i]];
-                if (typeof fn === 'function') {
-                    fn();
-                }
-            }
-        }
 
         function configCombobox($field, config) {
 
@@ -75,41 +137,176 @@
             return config;
         }
 
-        function hashFields($fields, handlers) {
+        function configGrid($fields, columns, config) {
 
-            var hash = {};
+            if (Object.prototype.toString.call(columns) === '[object Array]' && columns.length > 0) {
+                //if (typeof columns === 'object' && columns !== null && typeof columns.length === 'int' && columns.length > 0) {
+                var hash = {};
+                for (var i = 0; i < $fields.length; i++) {
+                    var $field = $fields[i];
+                    hash[$field.$name] = $field;
+                }
+                $fields = [];
+                for (var i = 0; i < columns.length; i++) {
+                    var $field = hash[columns[i]];
+                    if (typeof $field === 'object' && $field != null) {
+                        $fields.push($field);
+                    }
+                }
+            }
+
+            var items = [];
 
             for (var i = 0; i < $fields.length; i++) {
 
                 var $field = $fields[i];
+                var text = Ext.custom.Adapter.toString($field.$title, $field.$name);
+                var role = Ext.custom.Factory.splitRole($field.$role);
 
-                var handler = handlers[$field.$category];
-
-                if (typeof handler === 'function') {
-
-                    var title = Ext.custom.Adapter.toString($field.$title, $field.$name);
-                    var summary = Ext.custom.Adapter.toString($field.$summary);
-
-                    var config = handler($field, {
-                        name: $field.$name,
-                        title: title,
-                        tooltip: summary,
-                        readOnly: this.readOnly
-                    });
-
-                    hash[$field.$name] = config;
+                if ($field.$category === 'model') {
+                    switch ($field.$prototype) {
+                        case 'Text':
+                            items.push({
+                                dataIndex: '$' + $field.$name,
+                                flex: 2,
+                                header: text,
+                                /*renderer: function (value) {
+                                    return Ext.custom.Adapter.toString(value);
+                                },*/
+                                text: text
+                            });
+                            break;
+                    }
+                    continue;
                 }
+
+                var column = {
+                    editor: {
+                        xtype: 'textfield',
+                        allowBlank: !role.required
+                    },
+                    dataIndex: $field.$name,
+                    flex: 1,
+                    header: text,
+                    text: text
+                };
+
+                var editor = {};
+
+                switch ($field.$type) {
+
+                    case 'boolean':
+                        column.xtype = 'booleancolumn';
+                        break;
+
+                    case 'date':
+                        column.xtype = 'datecolumn';
+                        column.format = 'Y-m-d';
+                        break;
+
+                    case 'number':
+                        column.xtype = 'numbercolumn';
+                        //column.editor.format = '0.00';
+                        break;
+
+                    case 'string':
+                        column.editor.xtype = 'textfield';
+                        break;
+                }
+
+                switch ($field.$prototype) {
+                    case 'Boolean':
+                        Ext.merge(column, {
+                            editor: {
+                            }
+                        });
+                        break;
+
+                    case 'Email':
+                        editor = { vtype: 'email' };
+                        break;
+
+                    case 'Password':
+                        break;
+
+                    case 'Date':
+                        Ext.merge(column, {
+                            editor: {
+                                xtype: 'checkbox'
+                            }
+                        });
+                        break;
+                }
+
+                items.push(column);
             }
 
-            return hash;
+            var selModel = Ext.create("Ext.selection.RowModel", {
+                selType: "rowmodel",
+                listeners: {
+                    selectionchange: {
+                        fn: function (selModel, selections) {
+                            //this.onSelectionChange(selModel, selections, "master")
+                        },
+                        scope: this
+                    }
+                }
+            });
+
+            Ext.merge(config, {
+                selModel: selModel,
+                //plugins: [this.rowEditing],
+                columns: {
+                    items: items
+                },
+                xtype: 'grid'
+            });
+
+            return config;
         }
 
         function enumHandler($field, config) {
             return configCombobox($field, config);
         }
 
+        // Convenience function to check if the component has any dirty fields.
+        function isDirty(component) {
+
+            var result = false;
+
+            switch (component.xtype) {
+
+                case 'form':
+                    if (typeof component.isDirty === 'function') {
+                        result = component.isDirty();
+                    }
+                    break;
+
+                case 'grid':
+                case 'gridpanel':
+                    if (typeof component.getStore === 'function') {
+                        var store = component.getStore();
+                        if (typeof store === 'object' && store !== null) {
+                            result = Boolean(store.getModifiedRecords().length);
+                        }
+                    }
+                    break;
+
+                case 'tabpanel':
+                default:
+                    if (typeof component.items === 'object' && component.items !== null) {
+                        for (var i = 0; i < component.items.length; i++) {
+                            result = result || isDirty(component.items.getAt(i));
+                        }
+                    }
+                    break;
+            }
+
+            return result;
+        }
+
         function unitHandler($field, config) {
-            var $measure = factory.findMetadata($field.$measure);
+            var $prototype = factory.findMetadata($field.$prototype);
 
             var $field_d = Ext.merge({}, $field);
             var $field_m = Ext.merge({}, $field);
@@ -125,11 +322,11 @@
                 tooltip: config.tooltip,
                 layout: 'anchor',
                 items: [
-                    configValueField($field_d, {
+                    valueHandler($field_d, {
                         name: $field.$name + '_d',
                         readOnly: this.readOnly
                     }),
-                    configCombobox($field_m, {
+                    enumHandler($field_m, {
                         name: $field.$name + '_m',
                         readOnly: this.readOnly
                     })
@@ -191,289 +388,64 @@
                     break;
             }
 
-            switchValues($field.$role, '|', {
-
-                'Identity': function () {
-                    //field.allowBlank = false;
-
-                    config.readOnly = true;
-                },
-
-                'Required': function () {
-                    config.allowBlank = false;
-                },
-
-                'Unique': function () {
-                },
-
-                'HasMany': function () {
-                    //config.multiSelect = true;
-                },
-            });
+            var role = Ext.custom.Factory.splitRole($field.$role);
 
             return config;
         }
 
-        function modelHandler($field, config) {
+        function hashFields($fields, handlers) {
 
-            var $m = Ext.custom.Factory.findMetadata($field.$model);
-
-            if (typeof $m !== 'object' || $m === null) {
-                return;
-            }
-
-            var title = Ext.custom.Adapter.toString($field.$title, $field.$name);
-            var summary = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
-            var $fields = collectFields($m, []);
-
-            var hash = hashFields($fields, {
-                'enum': enumHandler,
-                'unit': unitHandler,
-                'value': valueHandler,
-                'model': modelHandler
-            });
-
-            var sections = {};
+            var hash = {};
 
             for (var i = 0; i < $fields.length; i++) {
 
                 var $field = $fields[i];
-                var config = hash[$field.$name];
 
-                if (typeof config === 'object' && config !== null) {
-                    switch ($field.$category) {
-                        case 'model':
-                            sections[$field.$name] = config;
-                            break;
-                        default:
-                            var section = '$';
-                            if (typeof $field.$section === 'object' && $field.$section !== null && typeof $field.$section.$name === 'string') {
-                                section = $field.$section.$name;
-                            }
-                            if (typeof sections[section] === 'undefined') {
-                                sections[section] = {
-                                    items: [],
-                                    xtype: 'form'
-                                };
-                            }
-                            sections[section].items.push(config);
-                            break;
-                    }
-                }
-            }
+                var handler = handlers[$field.$category];
 
-            var keys = Object.keys(sections);
+                if (typeof handler === 'function') {
 
-            switch (keys.length) {
-                case 0:
-                    return;
+                    var name = $field.$name;
+                    var title = Ext.custom.Adapter.toString($field.$title, name);
+                    var tooltip = Ext.custom.Adapter.toString($field.$summary);
 
-                case 1:
-                    return Ext.merge(sections[keys[0]], {
+                    var config = handler.call(this, $field, {
+                        name: name,
                         title: title,
-                        tooltip: summary
+                        tooltip: tooltip,
+                        readOnly: this.readOnly
                     });
 
-                default:
-                    var items = [];
-
-                    for (var i = 0; i < keys.length; i++) {
-                        var item = sections[keys[i]];
-                        switch (item.xtype) {
-                            case 'form':
-                                item.xtype = 'fieldset'
-                                break;
-                        }
-                        items.push(item);
-                    }
-
-                    return {
-                        frame: true,
-                        title: title,
-                        tooltip: summary,
-                        defaultType: 'textfield',
-                        items: items,
-                        xtype: 'form'
-                    };
-            }
-
-
-
-            var hasMany = false;
-
-            switchValues($field.$role, '|', {
-
-                'Identity': function () {
-                    // log error
-                },
-
-                'Required': function () {
-                },
-
-                'Unique': function () {
-                },
-
-                'HasMany': function () {
-                    hasMany = true;
-                },
-            });
-
-            if (hasMany) {
-
-                var form = Ext.merge({
-                    region: 'north',
-                    collapsible: true,
-                    title: "Edit",
-                    disabled: true,
-                    trackResetOnLoad: true,
-                    collapsed: true,
-                    header: false,
-                    frame: true,
-                    border: false,
-                    split: true,
-                    layout: 'column',
-                    fieldDefaults: {
-                        anchor: '100%',
-                        labelAlign: 'right'
-                    },
-                    bodyPadding: 0,
-                }, config);
-
-                var columns = {
-                    items: [
-                    ]
-                };
-
-                var store = Ext.create('', {
-                });
-
-                var selModel = Ext.create("Ext.selection.RowModel", {
-                    selType: "rowmodel",
-                    listeners: {
-                        selectionchange: {
-                            fn: function (selModel, selections) {
-                                //this.onSelectionChange(selModel, selections, "master")
-                            },
-                            scope: this
-                        }
-                    }
-                });
-
-                var listeners = {
-                    beforeedit: {
-                        fn: function (editor, e) {
-                            return true;
-                        },
-                        scope: this
-                    },
-                    edit: {
-                        fn: function (editor, e) {
-                            // Fires after a row is edited. The edit event object has the following properties 
-                            // * grid - The grid this editor is on
-                            // * view - The grid view
-                            // * store - The grid store
-                            // * record - The record being edited
-                            // * row - The grid table row
-                            // * column - The grid Column defining the column that initiated the edit
-                            // * rowIdx - The row index that is being edited
-                            // * colIdx - The column index that initiated the edit
-                            //e.record.commit();
-                            //this.onDataChanged(e.store, "master");
-                            return true;
-                        },
-                        scope: this
-                    },
-                    validateedit: {
-                        fn: function (editor, e) {
-                            return true;
-                        },
-                        scope: this
-                    }
-                };
-
-                var dockedItems = [
-                    {
-                        dock: 'top',
-                        ui: 'header',
-                        xtype: 'triggerfield',
-                        trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
-                        trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
-                        height: 18,
-                        margin: '0 0 11 0',
-                        hasSearch: false,
-                        scope: this,
-                        listConfig: {
-                            loadingText: 'Searching...',
-                            emptyText: 'No matching posts found.',
-                            // Custom rendering template for each item
-                            getInnerTpl: function () {
-                                return '<b>{name} </b> ({namespace})';
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'toolbar',
-                        dock: 'bottom',
-                        ui: 'footer',
-                        items: [/*this.triggers.create, this.triggers.destroy, '->', this.pagingToolbar, '->', this.triggers.commit, this.triggers.rollback*/]
-                    }
-                ];
-
-                var grid = {
-                    region: 'center',
-                    flex: 3,
-                    store: this.stores.master,
-                    iconCls: 'icon-grid',
-                    layout: 'fit',
-                    frame: false,
-                    border: true,
-                    store: store,
-                    header: false,
-                    title: 'Select',
-                    plugins: [this.rowEditing],
-                    selModel: selModel,
-                    columns: columns,
-                    listeners: listeners,
-                    dockedItems: dockedItems,
-                    xtype: 'grid'
+                    hash[name] = config;
                 }
-
-                Ext.merge(config, {
-                    layout: 'border',
-                    title: config.title,
-                    tooltip: config.tooltip,
-                    items: [
-                        form,
-                        grid
-                    ],
-                    xtype: 'panel'
-                });
-            }
-            else {
-                Ext.merge(config, {
-                    layout: 'fit',
-                    xtype: 'panel'
-                });
             }
 
-            return config;
+            return hash;
         }
 
-        function configDroplet($m) {
+        function splitFields($m, $fields, handlers) {
 
-            var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
-            var summary = Ext.custom.Adapter.toString($m.$summary);
-
-            var $fields = collectFields($m, []);
-
-            var hash = hashFields($fields, {
-                'enum': enumHandler,
-                'unit': unitHandler,
-                'value': valueHandler,
-                'model': modelHandler
-            });
+            var hash = hashFields.call(this, $fields, handlers);
 
             var sections = {};
+
+            var formPanelBasicConfig = {
+                columnWidth: .5,
+                defaultType: 'textfield',
+                defaults: {
+                    anchor: '100%',
+                    flex: 1
+                },
+                fieldDefaults: {
+                    msgTarget: 'title',
+                    labelAlign : 'right',
+                    labelWidth: 150
+
+                },
+                flex: 1,
+                items: [],
+                xtype: 'form'
+            };
 
             for (var i = 0; i < $fields.length; i++) {
 
@@ -481,75 +453,68 @@
                 var config = hash[$field.$name];
 
                 if (typeof config === 'object' && config !== null) {
-                    switch ($field.$category) {
-                        case 'model':
-                            sections[$field.$name] = config;
-                            break;
-                        default:
-                            var section = '$';
 
-                            if (typeof $field.$section === 'string') {
+                    if ($field.$category === 'model' && (typeof config.xtype !== 'string' || config.xtype == 'form' || config.xtype == 'tabpanel' || config.xtype == 'panel')) {
+                        sections[$field.$name] = config;
+                    }
+                    else {
+                        var title, summary, section = '$';
+                        
+                        if ($field.$category === 'model') {
+                            title = Ext.custom.Adapter.toString($field.$title, $field.$name);
+                            summary = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
+                        }
+                        else {
+                            title = Ext.custom.Adapter.toString($m.$title, $m.$name);
+                            summary = Ext.custom.Adapter.toString($m.$summary);
+                        }
 
-                                section = $field.$section;
-                                var $section = {};
+                        if (typeof $field.$section === 'string') {
 
-                                if (typeof $m.$sections === 'object' && $m.$sections !== null) {
-                                    for (var j = 0; i < $m.$sections.length; i++) {
-                                        if ($m.$sections[i].$name === section) {
-                                            $section = $m.$sections[i];
-                                            break;
-                                        }
+                            section = $field.$section;
+
+                            var $section = {
+                                $title: title,
+                                $summary: summary
+                            };
+
+                            if (typeof $m.$sections === 'object' && $m.$sections !== null) {
+                                for (var j = 0; i < $m.$sections.length; i++) {
+                                    if ($m.$sections[i].$name === section) {
+                                        $section = $m.$sections[i];
+                                        title = Ext.custom.Adapter.toString($section.$title, section);
+                                        summary = Ext.custom.Adapter.toString($section.$summary);
+                                        break;
                                     }
                                 }
-
-                                if (typeof sections[section] === 'undefined') {
-                                    sections[section] = {
-                                        title: Ext.custom.Adapter.toString($section.$title, section),
-                                        tooltip: Ext.custom.Adapter.toString($section.$summary),
-                                        items: [],
-                                        xtype: 'form'
-                                    };
-                                }
-                            }
-                            else {
-                                if (typeof sections[section] === 'undefined') {
-                                    sections[section] = {
-                                        title: title,
-                                        tooltip: summary,
-                                        items: [],
-                                        xtype: 'form'
-                                    };
-                                }
                             }
 
+                            if (typeof sections[section] === 'undefined') {
+                                sections[section] = Ext.merge(formPanelBasicConfig, {
+                                    title: title,
+                                    tooltip: summary
+                                });
+                            }
+                        }
+                        else {
 
-                            sections[section].items.push(config);
-                            break;
+                            if (typeof sections[section] === 'undefined') {
+                                sections[section] = Ext.merge(formPanelBasicConfig, {
+                                    title: title,
+                                    tooltip: summary
+                                });
+                            }
+                        }
+
+                        sections[section].items.push(config);
                     }
                 }
             }
 
-            var dockedItems = [
-                {
-                    xtype: 'toolbar',
-                    dock: 'bottom',
-                    ui: 'footer',
-                    margin: '6 0 3 0',
-                    items: ['->',
-                        {
-                            disabled: true,
-                            iconCls: 'icon-save',
-                            text: 'Save',
-                            xtype: 'button'
-                        },
-                        {
-                            disabled: true,
-                            iconCls: 'icon-cancel',
-                            text: 'Cancel',
-                            xtype: 'button'
-                        }]
-                }
-            ];
+            return sections;
+        }
+
+        function sectionsToView(sections) {
 
             var keys = Object.keys(sections);
 
@@ -559,30 +524,19 @@
 
                 case 1:
                     return Ext.merge(sections[keys[0]], {
-                        dockedItems: dockedItems
                     });
 
                 default:
                     var items = [];
 
                     for (var i = 0; i < keys.length; i++) {
-
-                        var tab = sections[keys[i]];
-
-                        Ext.merge(tab, {
+                        items.push(Ext.merge({
                             border: false,
                             frame: true,
                             margin: '0',
                             padding: '8',
-                            autoScroll: true,
-                            //layout: 'fit',
-                            /*tabConfig: {
-                                title: tab.title,
-                                tooltip: tab.tooltip
-                            }*/
-                        });
-
-                        items.push(tab);
+                            //autoScroll: true,
+                        }, sections[keys[i]]));
                     }
 
                     return {
@@ -592,18 +546,566 @@
                         bodyBorder: false,
                         border: false,
                         bodyStyle: frameStyle,
-                        title: title,
-                        tooltip: summary,
                         items: items,
-                        dockedItems: dockedItems,
                         xtype: 'tabpanel'
                     };
+            }
+        }
+
+        function modelHandler($field, config) {
+
+            var role = Ext.custom.Factory.splitRole($field.$role);
+
+            if (role.embedded == false && role.hasMany === false) {
+                // combobox with store
+
+                var store = Ext.create('Ext.data.Store', {
+                    fields: ['name', 'title', 'tooltip'],
+                    data: [
+                        { name: 'String', title: 'String', tooltip: 'String type' },
+                        { name: 'Int32', title: 'Integer 32bits', tooltip: 'Integer 32bits' },
+                        { name: 'Simple', title: 'Simple float point', tooltip: 'Simple float point decimal' },
+                        { name: 'Double', title: 'Dloble float point', tooltip: 'Simple float point decimal' }
+                    ],
+                    queryMode: 'local',
+                    displayField: 'title',
+                    valueField: 'name',
+                });
+
+                Ext.merge(config, {
+                    fieldLabel: Ext.custom.Adapter.toString(config.title, $field.$title, $field.$name),
+                    store: store,
+                    xtype: 'combobox'
+                });
+
+                return config;
+            }
+
+            var $m = Ext.custom.Factory.findMetadata($field.$prototype);
+
+            if (typeof $m !== 'object' || $m === null) {
+                return;
+            }
+
+            var $fields = collectFields($m, []);
+
+            Ext.merge(config, sectionsToView(splitFields($m, $fields, {
+                'enum': enumHandler,
+                'unit': unitHandler,
+                'value': valueHandler,
+                'model': modelHandler
+            })));
+
+            var title = Ext.custom.Adapter.toString($field.$title, $field.$name, $m.$title, $m.$name);
+            var tooltip = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
+
+            Ext.merge(config, {
+                title: title,
+                tooltip: tooltip,
+                tabConfig: {
+                    title: title,
+                    tooltip: tooltip
+                }
+            });
+
+            var modelName = makeModelName($field.$prototype);
+
+            var droplet = this;
+
+            if (role.hasMany) {
+
+                var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
+                var summary = Ext.custom.Adapter.toString($m.$summary, $field.$summary);
+                
+                return Ext.merge(config, {
+                    bodyPadding: '0',
+                    border: false,
+                    frame: false,
+                    iconCls: 'icon-grid',
+                    items: [
+                        // form panel (edit)
+                        Ext.merge({}, config, {
+                            $modelName: modelName,
+                            bodyPadding: '3 0 0 0',
+                            border: false,
+                            collapsed: true,
+                            collapsible: true,
+                            frame: false,
+                            header: true,
+                            listeners: {
+                                add: function (parent, component, index) {
+                                    return formEventHandler(droplet, parent, component, index);
+                                }
+                            },
+                            padding: '0',
+                            region: 'north',
+                            split: true,
+                            title: title,
+                            tooltip: summary,
+                            trackResetOnLoad: true
+                        }),
+
+                        // grid panel (selector)
+                        configGrid($fields, selectColumns($m), {
+                            $fieldName: $field.$name,
+                            $modelName: modelName,
+                            header: false,
+                            listeners: {
+                                beforeedit: {
+                                    fn: function (editor, e) {
+                                        // readonly?
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                edit: {
+                                    fn: function (editor, e) {
+                                        // Fires after a row is edited. The edit event object has the following properties 
+                                        // * grid - The grid this editor is on
+                                        // * view - The grid view
+                                        // * store - The grid store
+                                        // * record - The record being edited
+                                        // * row - The grid table row
+                                        // * column - The grid Column defining the column that initiated the edit
+                                        // * rowIdx - The row index that is being edited
+                                        // * colIdx - The column index that initiated the edit
+                                        //e.record.commit();
+                                        //this.onDataChanged(e.store, "master");
+
+                                        // Check if dirty. It will also refesh the visual status.
+                                        droplet.isDirty();
+
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                validateedit: {
+                                    fn: function (editor, e, eOpts) {
+
+                                        return true;
+
+                                        var me = this,
+                                            rowIdx = e.rowIdx, // row index
+                                            fieldName = e.field,
+                                            newVal = e.value,
+                                            storeRow = this.store.getAt(rowIdx);
+
+                                        // assuming valid input, proceed with the below    
+                                        storeRow.set(fieldName, newVal);
+
+                                        // if modified records > 0 then enable buttons
+                                        var enableButtons = Boolean(me.store.getModifiedRecords().length);
+
+                                        if (enableButtons) {
+                                            /* enable buttons */
+                                        } else { /* disable buttons */ }
+                                    },
+                                    scope: this
+                                },
+                                selectionchange: {
+                                    fn: function (selModel, selected, eOpts) {
+
+                                        var grid = selModel.view.up();
+
+                                        if (typeof grid !== 'object' || grid === null || typeof grid.getStore !== 'function') {
+                                            return;
+                                        }
+
+                                        var store = grid.getStore();
+
+                                        if (typeof store !== 'object' || store === null || typeof store.model !== 'function') {
+                                            return;
+                                        }
+
+                                        var record;
+
+                                        var panel = grid.up('panel');
+
+                                        if (typeof selected != 'object' || selected === null) {
+                                            findToolItem('remove', panel, 'disable');
+                                        }
+                                        else if (typeof selected.length === 'number') {
+                                            record = selected[0];
+                                            findToolItem('remove', panel, 'enable');
+                                        }
+                                        else {
+                                            record = selected;
+                                            findToolItem('remove', panel, 'enable');
+                                        }
+
+
+                                        var components = findFormComponents(panel, store.model.modelName);
+
+                                        var dirty = false;
+
+                                        for (var i = 0; i < components.length; i++) {
+
+                                            var component = components[i];
+
+                                            if (component != null && typeof component.getForm === 'function') {
+
+                                                var baseForm = component.getForm();
+
+                                                // Forces each field within the form panel to check if its value has changed.
+                                                component.checkChange();
+
+
+                                                if (component.isDirty()) {
+                                                    dirty = true;
+                                                    baseForm.updateRecord();
+                                                }
+
+                                                loadRecord(component, record);
+                                                baseForm.setValues(baseForm.getValues());
+                                                component.checkChange();
+                                            }
+                                        }
+
+                                        if (dirty) {
+                                            this.isDirty(dirty);
+                                        }
+                                        else {
+                                            this.isDirty();
+                                        }
+                                    },
+                                    scope: this
+                                }
+                            },
+                            plugins: [
+                                {
+                                    autoCancel: true,
+                                    clicksToEdit: 2,
+                                    clicksToMoveEditor: 1,
+                                    ptype: 'rowediting'
+                                }
+                            ],
+                            region: 'center',
+                            selModel: 'rowmodel',
+                            title: config.title,
+                            tooltip: config.tooltip,
+                            onAddClick: function () {
+                                console.log("Add");
+                                var store = this.getStore();
+                                var record = new store.model({});
+                                store.addSorted(record);
+                                this.getSelectionModel().select(record, false, true);
+                                var rowediting = this.getPlugin();
+                                if (typeof rowediting === 'object' && rowediting !== null) {
+                                    rowediting.startEdit(record, 0);
+                                }
+                            },
+                            onRemoveClick: function () {
+                                console.log("Remove");
+                            }
+                        })
+                    ],
+                    layout: 'border',
+                    listeners: {
+                        activate: {
+                            fn: function (component, eOpts) {
+                                var gridPanel = component.down('gridpanel');
+                                if (typeof gridPanel === 'object' && gridPanel != null) {
+                                    findToolItem('add', component, 'show').setHandler(gridPanel.onAddClick, gridPanel);
+                                    findToolItem('remove', component, 'show').setHandler(gridPanel.onRemoveClick, gridPanel);
+                                }
+                                return true;
+                            },
+                            scope: this
+                        },
+                        beforedeactivate: {
+                            fn: function (component, eOpts) {
+                                findToolItem('add', component, 'hide').setHandler(Ext.emptyFn);
+                                findToolItem('remove', component, 'hide').setHandler(Ext.emptyFn);
+                                return true;
+                            },
+                            scope: this
+                        }
+                    },
+                    padding: '0',
+                    title: config.title,
+                    tooltip: config.tooltip,
+                    xtype: 'panel',
+                });
+            }
+
+            Ext.merge(config, {
+                $fieldName: $field.$name,
+                $modelName: modelName,
+                listeners: {
+                    add: function (parent, component, index) {
+                        //return formEventHandler(droplet, parent, component, index);
+                    }
+                },
+            });
+
+            return config;
+        }
+
+        function configDropletComponent($m) {
+
+            var $fields = collectFields($m, []);
+
+            var config = sectionsToView(splitFields.call(this, $m, $fields, {
+                'enum': enumHandler,
+                'unit': unitHandler,
+                'value': valueHandler,
+                'model': modelHandler
+            }));
+
+            var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
+            var summary = Ext.custom.Adapter.toString($m.$summary);
+
+            Ext.merge(config, {
+                title: title,
+                tooltip: summary,
+                dockedItems: [
+                    {
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui: 'footer',
+                        items: [
+                            {
+                                $action: 'add',
+                                iconCls: 'icon-add',
+                                text: 'Add',
+                                disabled: false,
+                                scope: this,
+                                handler: this.onCreateClick,
+                                xtype: 'button'
+                            },
+                            {
+                                $action: 'remove',
+                                iconCls: 'icon-delete',
+                                text: 'Remove',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onDestroyClick,
+                                xtype: 'button'
+                            },
+                            '->',
+                            {
+                                $action: 'update',
+                                iconCls: 'icon-save',
+                                text: 'Save',
+                                tooltip: 'Accept changes by submitting data to the server.',
+                                disabled: true,
+                                scope: this,
+                                handler: this.onUpdateClick,
+                                xtype: 'button'
+                            },
+                            {
+                                $action: 'read',
+                                iconCls: 'icon-cancel',
+                                text: 'Reset/Refresh',
+                                tooltip: 'Reject changes by reloading data from the server.',
+                                disabled: false,
+                                scope: this,
+                                handler: this.onReadClick,
+                                xtype: 'button'
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            return config;
+        }
+
+        function resetDirty(component) {
+            var items = component.getForm().getFields().items;
+            for (var i = 0, len = items.length; i < len; i++) {
+                var c = items[i];
+                if (c.mixins && c.mixins.field && typeof c.mixins.field['initValue'] == 'function') {
+                    c.mixins.field.initValue.apply(c);
+                    c.wasDirty = false;
+                }
+            }
+        }
+
+        function loadRecord(component, record) {
+
+            if (typeof component !== 'object' || component === null) {
+                return;
+            }
+
+            var model, store = null, xtype = component.getXType();
+
+            if (typeof record !== 'object' || record === null) {
+                model = null;
+            }
+            else if (typeof component.$modelName !== 'string') {
+                model = record;
+            }
+            else if (component.$modelName === record.$className) {
+                model = record;
+            }
+            else if (typeof component.$fieldName !== 'string') {
+                // form for hasMany
+                model = null;
+            }
+            else {
+                var association = record.associations.getByKey(component.$fieldName);
+
+                if (association.associatedName === component.$modelName) {
+
+                    switch (association.type) {
+
+                        case 'belongsTo':
+                            break;
+
+                        case 'hasMany':
+                            store = record[component.$fieldName];
+                            if (typeof store !== 'object' || store == null) {
+                                record[component.$fieldName] = store = Ext.create('Ext.data.Store', {
+                                    autoDestroy: false,
+                                    autoLoad: false,
+                                    autoSave: false,
+                                    autoSync: false,
+                                    //batchActions: true,
+                                    //buffered: true,
+                                    model: association.associatedModel,
+                                    readOnly: false
+                                });
+                                store.loadRawData(record.raw[component.$fieldName] || []);
+
+                                //store.on('datachanged', this.onDataChanged, this);
+                                //store.on('add', this.onPropertyAdd, this);
+                                //store.on('remove', this.onPropertyRemove, this);
+                                //store.on('update', this.onPropertyUpdate, this);
+                            }
+                            break;
+
+                        case 'hasOne':
+                            model = record[component.$fieldName];
+                            if (typeof model !== 'object' || model == null) {
+                                record[component.$fieldName] = model = Ext.create(association.associatedName, record.raw[component.$fieldName] || {});
+                            }
+                            break;
+                    }
+                }
+            }
+
+            switch (component.xtype) {
+                case 'form':
+                    var form = component.getForm();
+                    if (typeof model === 'object' && model != null) {
+                        form.loadRecord(model);
+                        component.enable();
+                    }
+                    else {
+                        component.disable();
+                        delete form._model;
+                        form.reset();
+                    }
+                    resetDirty(component);
+                    form.checkDirty();
+                    break;
+
+                case 'grid':
+                case 'gridpanel':
+                    //var store = data.apply(record);
+                    component.getSelectionModel().clearSelections(); // a must or you get an exception
+                    if (typeof store === 'object' && store != null) {
+                        component.reconfigure(store);
+                        component.enable();
+                        //store.on('datachanged', this.onDataChanged, this);
+                        //store.on('add', this.onPropertyAdd, this);
+                        //store.on('remove', this.onPropertyRemove, this);
+                        //store.on('update', this.onPropertyUpdate, this);
+                    }
+                    else {
+                        component.disable();
+                        component.reconfigure();
+                    }
+                    break;
+
+                case 'tabpanel':
+                default:
+                    if (typeof component.items === 'object' && component.items !== null) {
+                        for (var i = 0; i < component.items.length; i++) {
+                            loadRecord(component.items.getAt(i), model);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        function apply(target, fn) {
+            if (typeof target == 'object' && target !== null) {
+                if (typeof fn === 'string' && typeof target[fn] === 'function') {
+                    var args = Array.prototype.slice.call(arguments, 2);
+                    target[fn].apply(target, args);
+                }
+            }
+            return target;
+        }
+
+        function findFormComponents(component, modelName) {
+
+            var result = [];
+
+            if (typeof component === 'object' && component !== null) {
+
+                if (typeof modelName !== 'string' || typeof component.$modelName !== 'string' || modelName === component.$modelName || typeof component.$fieldName === 'string') {
+                    switch (component.getXType()) {
+                        case 'form':
+                            result.push(component);
+
+                        case 'grid':
+                        case 'gridpanel':
+                            break;
+
+                        case 'tabpanel':
+                        default:
+                            if (typeof component.items === 'object' && component.items !== null) {
+                                for (var i = 0; i < component.items.length; i++) {
+                                    result.push.apply(result, findFormComponents(component.items.getAt(i), modelName));
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        function findToolItem(action, component, fn) {
+            for (; typeof component === 'object' && component !== null; component = component.up()) {
+                if (typeof component.getDockedItems === 'function') {
+                    var toolbars = component.getDockedItems();
+                    for (var i = 0; i < toolbars.length; i++) {
+                        var toolbar = toolbars[i];
+                        if (toolbar.xtype === 'toolbar') {
+                            for (var j = 0; j < toolbar.items.length; j++) {
+                                var item = toolbar.items.getAt(j);
+                                if (typeof item == 'object' && item !== null && item.$action === action) {
+                                    if (typeof fn === 'string' && typeof item[fn] === 'function') {
+                                        var args = Array.prototype.slice.call(arguments, 3);
+                                        item[fn].apply(item, args);
+                                    }
+                                    return item;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
         return {
 
             statics: {
+
+                asyncCreate: function (typeName, readonly, callback, scope) {
+
+                    Ext.custom.Factory.asyncMetadata(typeName, function ($m) {
+
+                        var droplet = Ext.custom.Droplet.create(typeName, readonly, $m);
+
+                        callback.call(scope, droplet);
+                    });
+                },
 
                 create: function (typeName, readonly, $m) {
 
@@ -621,15 +1123,10 @@
                     return droplet;
                 },
 
-                asyncCreate: function (typeName, readonly, callback, scope) {
+                // Convenience function to check if the form has any dirty fields. This is the same as calling this.getForm().isDirty().
+                isDirty: isDirty,
 
-                    Ext.custom.Factory.asyncMetadata(typeName, function ($m) {
 
-                        var droplet = Ext.custom.Droplet.create(typeName, readonly, $m);
-
-                        callback.call(scope, droplet);
-                    });
-                }
             },
 
             constructor: function (typeName, readOnly, $m, model) {
@@ -639,67 +1136,51 @@
                 this.readOnly = readOnly;
                 this.$m = $m;
                 this.model = model;
-
-                /*
-                this.triggers = {
-
-                    save: Ext.create('Ext.Button', {
-                        iconCls: 'icon-save',
-                        text: 'Save',
-                        disabled: true,
-                        scope: this,
-                        handler: this.onSaveClick
-                    }),
-
-                    reset: Ext.create('Ext.Button', {
-                        iconCls: 'icon-reset',
-                        text: 'Reset',
-                        disabled: true,
-                        scope: this,
-                        handler: this.onResetClick
-                    }),
-                };
-
-                switch (items.length) {
-                    case 0:
-                        this.main = Ext.create('Ext.panel.Panel', {
-                            items: [
-                                'Nothing to see'
-                            ]
-                        });
-                        break;
-
-                    case 1:
-                        this.main = Ext.create('Ext.panel.Panel', {
-                            items: items[0]
-                        });
-                        break;
-
-                    default:
-                        this.main = Ext.create('Ext.tab.Panel', {
-                            bodyPadding: '6 6 0 0',
-                            bodyStyle: frameStyle, // background color like frame
-                            border: false,
-                            frame: false,
-                            items: items,
-                            margin: '0 0 0 0',
-                            dockedItems: [
-                            {
-                                xtype: 'toolbar',
-                                dock: 'bottom',
-                                ui: 'footer',
-                                margin: '6 0 3 0',
-                                items: ['->', this.triggers.save, this.triggers.reset]
+                /* model has it's own store
+                this.store = Ext.create('Ext.data.Store', {
+                    // destroy the store if the grid is destroyed
+                    autoDestroy: true,
+                    autoLoad: true,
+                    //autoSave: true,
+                    autoSync: false,
+                    batchActions: true,
+                    //buffered: true,
+                    model: model,
+                    pageSize: 100,
+                    listeners: {
+                        add: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        datachanged: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        remove: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        update: {
+                            fn: this.onDataChanged,
+                            scope: this
+                        },
+                        write: function (proxy, operation) {
+                            if (operation.action == 'remove') {
+                                //master.child('#form').setActiveRecord(null);
                             }
-                            ]
-                        });
-                        break;
-                }*/
+                            //Ext.example.msg(operation.action, operation.resultSet.message);
+                        }
+                    },
+                    sorters: [{
+                        property: 'Name',
+                        direction: 'ASC'
+                    }]
+                });*/
             },
 
-            configPanel: function () {
-                return configDroplet(this.$m);
-            },
+            _record: null,
+
+            _component: null,
 
             asyncLoad: function (id, callcack) {
 
@@ -730,15 +1211,94 @@
 
             },
 
-            load: function (id, record) {
+            initComponent: function () {
+
+                var config = configDropletComponent.call(this, this.$m);
+
+                Ext.merge(config, {
+                    layout: 'fit'
+                });
+
+                this._component = Ext.widget(config);
+
+                return this._component;
+            },
+
+            // Convenience function to check if the form has any dirty fields. This is the same as calling this.getForm().isDirty().
+            isDirty: function (dirty) {
+
+                console.log('isDirty(' + dirty + ')');
+
+                if (typeof dirty !== 'boolean') {
+                    dirty = Ext.custom.Droplet.isDirty(this._component);
+                }
+
+                if (dirty) {
+                    findToolItem('update', this._component, 'enable');
+                }
+                else {
+                    findToolItem('update', this._component, 'disable');
+                }
+
+                return dirty;
+            },
+
+            load: function (id, callcack) {
+                this.model.load(id, {
+                    failure: function (record, operation) {
+                        //do something if the load failed
+                        //record is null
+                        loadRecord(this._component);
+                    },
+                    success: function (record, operation) {
+                        //do something if the load succeeded
+                        this._record = record;
+                        loadRecord(this._component, record);
+                    },
+                    callback: function (record, operation, success) {
+                        //do something whether the load succeeded or failed
+                        //if operation is unsuccessful, record is null
+                        if (typeof callcack === 'function') {
+                            callcack(record, operation, success);
+                        }
+                    },
+                    scope: this
+                });
             },
 
             onResetClick: function () {
             },
 
             onSaveClick: function () {
-            }
+            },
 
+            onRecordChanged: function (record) {
+
+                if (record != null && typeof record == 'object' && typeof record.store === 'object' && typeof (record.Properties) === 'function') {
+
+                    /*var fn = record[name];
+    
+                    if (fn !== null && typeof fn === 'function') {
+    
+                        store = fn.apply(record);
+    
+                        if (store != null && typeof store === 'object') {
+    
+                            store.on('datachanged', this.onDataChanged, this);
+                            //store.on('add', this.onPropertyAdd, this);
+                            //store.on('remove', this.onPropertyRemove, this);
+                            //store.on('update', this.onPropertyUpdate, this);
+                        }
+                    }*/
+                }
+            },
+
+            onDataChanged: function () {
+            },
+
+            reload: function () {
+                this.load(this._record);
+            },
         };
     });
 </script>

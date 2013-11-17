@@ -8,7 +8,7 @@ namespace Custom.Data.Metadata
     /// <summary>
     /// Type definition
     /// </summary>
-    public abstract class TypeDefinition : DefinitionBase
+    public abstract class TypeDefinition : BaseDefinition
     {
         public Guid Id
         {

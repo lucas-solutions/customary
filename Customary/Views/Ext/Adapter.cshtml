@@ -202,14 +202,14 @@
                             default:
                                 for (var i = 0; i < keys.length; i++) {
                                     var current = keys[i];
-                                    if (target.startsWith(current)) {
+                                    if (target.indexOf(current) == 0) {
                                         return { culture: current, string: text[current], target: target }
                                     }
                                 }
 
                                 for (var i = 0; i < keys.length; i++) {
                                     var current = keys[i];
-                                    if (current.startsWith(target)) {
+                                    if (current.indexOf(target) == 0) {
                                         return { culture: current, string: text[current], target: target }
                                     }
                                 }

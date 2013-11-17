@@ -19,6 +19,7 @@ namespace Custom.Areas.Data.Controllers
 
         public ActionResult Default(string name, Guid id)
         {
+            ViewBag.Title = "Data Dictionary";
             return View("~/Areas/Data/Views/Name/Default.cshtml");
         }
 
@@ -133,22 +134,21 @@ namespace Custom.Areas.Data.Controllers
             const string MissmatchError = "Only model type entities can be accessed this way ({0} found on this path). If you are looking for the metadata, use Data/[*name]/$metadata path instead.";
             const string UnexpectedError = "Unexpected error";
 
-            string message = null;
-            RavenJObject data = null;
+            RavenJObjectResult result = null;
 
             var descriptor = DataDictionary.Current.Describe(name);
 
             if (descriptor == null)
             {
-                message = "Name not Found";
+                result = Failure("Name not Found");
             }
             else if (descriptor.Type == NodeKinds.Error)
             {
-                message = (descriptor as ErrorDescriptor).Message;
+                result = Failure((descriptor as ErrorDescriptor).Message);
             }
             else if (descriptor.Type != NodeKinds.Type)
             {
-                message = string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type));
+                result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
             }
             else
             {
@@ -156,7 +156,7 @@ namespace Custom.Areas.Data.Controllers
 
                 if (TypeCategories.Model != type.Category)
                 {
-                    message = string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type));
+                    result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
                 }
                 else
                 {
@@ -168,44 +168,38 @@ namespace Custom.Areas.Data.Controllers
                     {
                         if (model.Definition.Singleton)
                         {
+                            result = new RavenJObjectResult { Content = repository.Read(Guid.Empty) };
                         }
                         else if (Guid.Empty.Equals(id))
                         {
-                            data = repository.Read(0, 100);
+                            result = new RavenJObjectResult { Content = repository.Read(0, 100) };
                         }
                         else
                         {
-                            data = repository.Read(id);
+                            result = new RavenJObjectResult { Content = repository.Read(id) };
                         }
-
-                        if (data != null)
-                        {
-                            return Success(data);
-                        }
-
-                        message = "Entity not found";
                     }
                     else
                     {
-                        message = "Could not resolve repository";
+                        result = Failure("Could not resolve repository");
                     }
                 }
             }
 
-            if (data == null)
-            {
-                data = new RavenJObject();
-            }
-
-            data["url"] = new RavenJValue((RouteData.Route as Route).Url);
+            result.Content["route"] = new RavenJValue((RouteData.Route as Route).Url);
 
             foreach (var item in RouteData.Values)
-                data[item.Key] = new RavenJValue(item.Value);
+            {
+                result.Content[item.Key] = new RavenJValue(item.Value);
+            }
 
-            data["name"] = new RavenJValue(name);
-            data["id"] = new RavenJValue(id);
+            result.Content["name"] = new RavenJValue(name);
+            if (!id.Equals(Guid.Empty))
+            {
+                result.Content["id"] = new RavenJValue(id);
+            }
 
-            return Failure(data, message);
+            return result;
         }
 
         //

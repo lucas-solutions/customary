@@ -26,15 +26,6 @@ namespace Custom.Data
             Dictionary[id] = Path;
         }
 
-        public ModelDescriptor Extend
-        {
-            get
-            {
-                var extend = BaseType as ModelDescriptor;
-                return extend != null && !extend.Definition.Singleton ? extend : null;
-            }
-        }
-
         public string KeyPrefix
         {
             get
@@ -42,13 +33,17 @@ namespace Custom.Data
                 if (_keyPrefix != null)
                     return _keyPrefix;
 
-                for (var model = Extend as ModelDescriptor; model != null; model = model.Extend)
-                    _keyPrefix = model._name + '/';
+                _keyPrefix = _name + '/';
 
-                if (_keyPrefix != null)
-                    _keyPrefix += _name + '/';
-                else
-                    _keyPrefix = _name + '/';
+                for (var baseModel = BaseType as ModelDescriptor as ModelDescriptor; baseModel != null; baseModel = baseModel.BaseType as ModelDescriptor)
+                {
+                    if (baseModel.Definition.Embeddable)
+                    {
+                        break;
+                    }
+
+                    _keyPrefix = baseModel._name + '/' + _name + '/';
+                }
 
                 return _keyPrefix;
             }
@@ -58,7 +53,7 @@ namespace Custom.Data
         {
             var modelJObject = stack.Pop();
 
-            modelJObject["$name"] = _name;
+            modelJObject["$name"] = this.Path;
             modelJObject["$type"] = "model";
             modelJObject.Remove("$dirty");
 
@@ -83,6 +78,16 @@ namespace Custom.Data
                         stack.Merge(stack.Pop(), baseName);
                     }
                 }
+            }
+
+            if (definition.Embeddable)
+            {
+                modelJObject["$embeddable"] = true;
+            }
+
+            if (!string.IsNullOrEmpty(definition.BelongsTo))
+            {
+                modelJObject["$belongsTo"] = definition.BelongsTo;
             }
 
             modelJObject.SetCurrentThreadCultureText("$title", definition.Title);
@@ -126,19 +131,19 @@ namespace Custom.Data
                         case TypeCategories.Enum:
                             fieldJObject["$type"] = "string";
                             fieldJObject["$category"] = "enum";
-                            fieldJObject["$source"] = property.Type;
+                            fieldJObject["$prototype"] = property.Type;
                             break;
 
                         case TypeCategories.Model:
                             fieldJObject["$type"] = "string";
                             fieldJObject["$category"] = "model";
-                            fieldJObject["$model"] = property.Type;
+                            fieldJObject["$prototype"] = property.Type;
                             break;
 
                         case TypeCategories.Unit:
                             fieldJObject["$type"] = "string";
                             fieldJObject["$category"] = "unit";
-                            fieldJObject["$measure"] = property.Type;
+                            fieldJObject["$prototype"] = property.Type;
                             break;
 
                         case TypeCategories.Value:
@@ -191,7 +196,7 @@ namespace Custom.Data
                                     break;
                             }
 
-                            fieldJObject["$validations"] = property.Type;
+                            fieldJObject["$prototype"] = property.Type;
 
                             break;
                     }
