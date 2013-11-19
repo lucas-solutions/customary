@@ -9,6 +9,7 @@ namespace Custom.Areas.Data.Controllers
     using Custom.Data;
     using Custom.Models;
     using Custom.Web.Mvc;
+    using Raven.Imports.Newtonsoft.Json.Linq;
     using Raven.Json.Linq;
     using System.Web.Routing;
 
@@ -42,7 +43,7 @@ namespace Custom.Areas.Data.Controllers
             RavenJObject data = null;
             var descriptor = DataDictionary.Current.Describe(name);
             var extra = InputRavenJObject.Deserialize<MetadataRequestExtra>();
-            var requires = extra != null ? extra.Requires : new string [] { };
+            var requires = extra != null ? extra.Requires : new string[] { };
 
             if (descriptor == null)
             {
@@ -242,16 +243,91 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
         public ActionResult Update(string name, Guid id, bool patch)
         {
-            var data = new RavenJObject();
-            data["url"] = new RavenJValue((RouteData.Route as Route).Url);
+            const string MissmatchError = "Only model type entities can be accessed this way ({0} found on this path). If you are looking for the metadata, use Data/[*name]/$metadata path instead.";
+            const string UnexpectedError = "Unexpected error";
+
+            RavenJObjectResult result = null;
+
+            var descriptor = DataDictionary.Current.Describe(name);
+
+            if (descriptor == null)
+            {
+                result = Failure("Name not Found");
+            }
+            else if (descriptor.Type == NodeKinds.Error)
+            {
+                result = Failure((descriptor as ErrorDescriptor).Message);
+            }
+            else if (descriptor.Type != NodeKinds.Type)
+            {
+                result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
+            }
+            else
+            {
+                var type = descriptor as TypeDescriptor;
+
+                if (TypeCategories.Model != type.Category)
+                {
+                    result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
+                }
+                else
+                {
+                    var model = type as ModelDescriptor;
+
+                    var repository = model.Repository;
+
+                    if (repository != null)
+                    {
+                        var body = this.InputRavenJObject;
+                        var data = body["data"];
+
+                        if (data != null)
+                        {
+                            switch (data.Type)
+                            {
+                                case JTokenType.Array:
+                                    result = new RavenJObjectResult { Content = repository.Update(data as RavenJArray, patch) };
+                                    break;
+
+                                case JTokenType.Object:
+                                    if (Guid.Empty.Equals(id))
+                                    {
+                                        result = new RavenJObjectResult { Content = repository.Update(data as RavenJObject, patch) };
+                                    }
+                                    else
+                                    {
+                                        result = new RavenJObjectResult { Content = repository.Update(id, data as RavenJObject, patch) };
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            result = Failure("Invalid request. 'data' property expected");
+                        }
+
+                    }
+                    else
+                    {
+                        result = Failure("Could not resolve repository");
+                    }
+                }
+            }
+
+            result.Content["route"] = new RavenJValue((RouteData.Route as Route).Url);
 
             foreach (var item in RouteData.Values)
-                data[item.Key] = new RavenJValue(item.Value);
+            {
+                result.Content[item.Key] = new RavenJValue(item.Value);
+            }
 
-            data["name"] = new RavenJValue(name);
-            data["id"] = new RavenJValue(id);
+            result.Content["name"] = new RavenJValue(name);
+            if (!id.Equals(Guid.Empty))
+            {
+                result.Content["id"] = new RavenJValue(id);
+            }
 
-            return Failure(data, "Not found");
+            return result;
         }
 
         // 

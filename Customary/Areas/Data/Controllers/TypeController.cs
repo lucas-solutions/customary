@@ -101,7 +101,7 @@ namespace Custom.Areas.Data.Controllers
                 if (repository == null)
                     return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, type) }, JsonRequestBehavior.AllowGet);
 
-                return new RavenJObjectResult { Content = descriptor.Repository.Create(null) };
+                return new RavenJObjectResult { Content = descriptor.Repository.Create(new RavenJObject()) };
             }
         }
 

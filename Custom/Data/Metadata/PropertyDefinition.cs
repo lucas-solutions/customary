@@ -13,6 +13,12 @@ namespace Custom.Data.Metadata
         public object Default { get; set; }
 
         /// <summary>
+        /// If the property is a collection (Role with HasMany), the IdProperty is the property in the Property Type that represents the identity of the item in the collection.
+        /// This is used for update and delete.
+        /// </summary>
+        public string IdProperty { get; set; }
+
+        /// <summary>
         /// Property type: primitive, enum, unit, text, complex or entity
         /// </summary>
         public string Type { get; set; }

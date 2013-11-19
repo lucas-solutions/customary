@@ -90,7 +90,7 @@ namespace Custom.Areas.Data.Controllers
                 if (repository == null)
                     return Json(new { success = false, message = string.Format("Could not resolve {0} repository", name) }, JsonRequestBehavior.AllowGet);
 
-                return new RavenJObjectResult { Content = descriptor.Repository.Create(null) };
+                return new RavenJObjectResult { Content = descriptor.Repository.Create(new RavenJObject()) };
             }
         }
 

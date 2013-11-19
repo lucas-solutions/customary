@@ -6,6 +6,8 @@ using System.Web;
 namespace Custom.Data.Persistence.Repositories
 {
     using Custom.Data.Metadata;
+    using Raven.Abstractions.Data;
+    using Raven.Imports.Newtonsoft.Json.Linq;
     using Raven.Json.Linq;
 
     public class DocumentRepository : IRavenJObjectRepository
@@ -31,6 +33,11 @@ namespace Custom.Data.Persistence.Repositories
             try
             {
                 var data = _context.Session.Advanced.LoadStartingWith<RavenJObject>(_descriptor.KeyPrefix, null, skip, take);
+
+                foreach (var entity in data)
+                {
+                    entity["Id"] = new RavenJValue(_context.Session.Advanced.GetDocumentId(entity));
+                }
 
                 result["success"] = new RavenJValue(true);
                 result["data"] = new RavenJArray(data.AsEnumerable<RavenJToken>());
@@ -58,6 +65,7 @@ namespace Custom.Data.Persistence.Repositories
                 {
                     result["success"] = new RavenJValue(true);
                     result["data"] = data;
+                    data["Id"] = new RavenJValue(id);
                 }
                 else
                 {
@@ -166,6 +174,264 @@ namespace Custom.Data.Persistence.Repositories
             {
                 result["success"] = new RavenJValue(false);
                 result["message"] = new RavenJValue(e.Message);
+            }
+
+            return result;
+        }
+
+
+        public RavenJObject Create(RavenJArray data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RavenJObject Update(RavenJObject entity, bool patch)
+        {
+            var idValue = entity.Value<string>("Id");
+
+            Guid id;
+            if (Guid.TryParse(idValue, out id))
+            {
+                return Update(id, entity, patch);
+            }
+
+            var result = new RavenJObject();
+
+            result["success"] = new RavenJValue(false);
+            result["message"] = "Id not included in URL nor in body";
+
+            return result;
+        }
+
+        public RavenJObject Update(RavenJArray data, bool patch)
+        {
+            var result = new RavenJObject();
+
+            var prefix = _descriptor.KeyPrefix;
+
+            for (int i = 0, count = data.Length; i < count; i++)
+            {
+                var value = data[i];
+
+                Guid id;
+
+                if (value.Type == JTokenType.Null)
+                {
+                    continue;
+                }
+
+                if (value.Type != JTokenType.Object)
+                {
+                    result["success"] = new RavenJValue(false);
+                    result["message"] = new RavenJValue(string.Format("Enty at position {0} is not an object", i));
+
+                }
+                else if (Guid.TryParse(value.Value<string>("Id"), out id))
+                {
+                    var key = prefix + id.ToString("D");
+                    var entity = value as RavenJObject;
+
+                    if (patch)
+                    {
+                        var current = _context.Session.Load<RavenJObject>(key);
+
+                        patch = current != null;
+
+                        if (patch)
+                        {
+                            Patch(key, current, entity, _descriptor.Definition);
+                            //current.Merge(entity, _descriptor.Definition);
+                            //_context.Session.Store(current, key);
+                            entity = current;
+                        }
+                    }
+
+                    if (!patch)
+                    {
+                        _context.Session.Store(entity, key);
+                    }
+
+                    result["success"] = new RavenJValue(true);
+                }
+                else
+                {
+                    result["success"] = new RavenJValue(false);
+                    result["message"] = new RavenJValue(string.Format("Enty at position {0} Id did not parse to an Guid ({1})", i, value.Value<string>("Id")));
+                }
+            }
+
+            return result;
+        }
+
+        private RavenJObject Patch(string key, RavenJObject target, RavenJObject source, ModelDefinition model)
+        {
+            RavenJObject result = null;
+
+            List<PatchRequest> patches = new List<PatchRequest>();
+
+            foreach (var entry in source)
+            {
+                var property = model.Properties.FirstOrDefault(o => o.Name == entry.Key);
+
+                if (property == null)
+                {
+                    // error: property not in metadata
+                    continue;
+                }
+
+                var nd = DataDictionary.Current.Describe(property.Type);
+
+                if (nd == null)
+                {
+                    // error: property type not defined
+                    continue;
+                }
+
+                if (nd.Type != NodeKinds.Type)
+                {
+                    // error: property type is not a type
+                    continue;
+                }
+
+                var td = nd as TypeDescriptor;
+
+                switch (td.Category)
+                {
+                    case TypeCategories.Enum:
+                        patches.Add(new PatchRequest
+                        {
+                            Type = PatchCommandType.Set,
+                            Name = property.Name,
+                            Value = entry.Value
+                        });
+                        break;
+
+                    case TypeCategories.Model:
+                        var md = td as ModelDescriptor;
+                        if (!PropertyRoles.HasMany.Equals(property.Role & PropertyRoles.HasMany))
+                        {
+                            patches.Add(new PatchRequest
+                            {
+                                Type = PatchCommandType.Modify,
+                                Name = property.Name,
+                                Value = entry.Value
+                            });
+                        }
+                        else if (entry.Value.Type == JTokenType.Array)
+                        {
+                            patches.Add(new PatchRequest
+                            {
+                                Type = PatchCommandType.Set,
+                                Name = property.Name,
+                                Value = source
+                            });
+                        }
+                        else if (entry.Value.Type == JTokenType.Object)
+                        {
+                            var dest = target.Value<RavenJArray>(entry.Key);
+                            if (dest != null)
+                            {
+                                Patch(dest, entry.Value as RavenJObject, property, patches);
+                            }
+                            else
+                            {
+                                var dictionary = entry.Value as RavenJObject;
+                                var array = new RavenJArray();
+                                foreach (var o in dictionary)
+                                {
+                                    array.Add(o.Value);
+                                }
+                                patches.Add(new PatchRequest
+                                {
+                                    Type = PatchCommandType.Set,
+                                    Name = property.Name,
+                                    Value = array
+                                });
+                            }
+                        }
+                        break;
+
+                    case TypeCategories.Unit:
+                        patches.Add(new PatchRequest
+                        {
+                            Type = PatchCommandType.Set,
+                            Name = property.Name,
+                            Value = entry.Value
+                        });
+                        break;
+
+                    case TypeCategories.Value:
+                        patches.Add(new PatchRequest
+                        {
+                            Type = PatchCommandType.Set,
+                            Name = property.Name,
+                            Value = entry.Value
+                        });
+                        break;
+
+                    default:
+                        // error: type category not defined
+                        break;
+                }
+            }
+
+            _context.Store.DatabaseCommands.Patch(key, patches.ToArray());
+
+            return result;
+        }
+
+        private RavenJArray Patch(RavenJArray target, RavenJObject source, PropertyDefinition property, List<PatchRequest> patch)
+        {
+            RavenJArray result = null;
+
+            var idProperty = property.IdProperty;
+            var dictionary = source as RavenJObject;
+
+            foreach (var entry in dictionary)
+            {
+                int? position = null;
+                for (int i = 0, count = target.Length; i < count; i++)
+                {
+                    var value = target[i].Value<RavenJValue>(idProperty);
+                    if (string.Equals(value.Value, entry.Key))
+                    {
+                        position = i;
+                        break;
+                    }
+                }
+
+                if (position.HasValue)
+                {
+                    patch.Add(new PatchRequest
+                    {
+                        Type = PatchCommandType.Remove,
+                        Name = property.Name,
+                        Position = position.Value
+                    });
+
+                    var merge = target[position.Value] as RavenJObject;
+
+                    foreach (var v in entry.Value as RavenJObject)
+                    {
+                        merge[v.Key] = v.Value;
+                    }
+
+                    patch.Add(new PatchRequest
+                    {
+                        Type = PatchCommandType.Add,
+                        Name = property.Name,
+                        Value = merge
+                    });
+                }
+                else
+                {
+                    patch.Add(new PatchRequest
+                    {
+                        Type = PatchCommandType.Add,
+                        Name = property.Name,
+                        Value = entry.Value
+                    });
+                }
             }
 
             return result;

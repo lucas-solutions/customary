@@ -15,7 +15,13 @@ namespace Custom.Data.Persistence
 
         RavenJObject Create(RavenJObject value);
 
-        RavenJObject Update(Guid id, RavenJObject value, bool patch);
+        RavenJObject Create(RavenJArray data);
+
+        RavenJObject Update(Guid id, RavenJObject entity, bool patch);
+
+        RavenJObject Update(RavenJObject entity, bool patch);
+
+        RavenJObject Update(RavenJArray data, bool patch);
 
         RavenJObject Delete(Guid id);
     }

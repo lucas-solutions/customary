@@ -278,7 +278,16 @@
 
                 case 'form':
                     if (typeof component.isDirty === 'function') {
+
+                        // Forces each field within the form panel to check if its value has changed.
+                        component.checkChange();
+
                         result = component.isDirty();
+
+                        if (result) {
+                            var baseForm = component.getForm();
+                            baseForm.updateRecord();
+                        }
                     }
                     break;
 
@@ -438,7 +447,7 @@
                 },
                 fieldDefaults: {
                     msgTarget: 'title',
-                    labelAlign : 'right',
+                    labelAlign: 'right',
                     labelWidth: 150
 
                 },
@@ -459,7 +468,7 @@
                     }
                     else {
                         var title, summary, section = '$';
-                        
+
                         if ($field.$category === 'model') {
                             title = Ext.custom.Adapter.toString($field.$title, $field.$name);
                             summary = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
@@ -554,8 +563,11 @@
 
         function modelHandler($field, config) {
 
+            var droplet = this;
+
             var role = Ext.custom.Factory.splitRole($field.$role);
 
+            // dummy code
             if (role.embedded == false && role.hasMany === false) {
                 // combobox with store
 
@@ -610,13 +622,11 @@
 
             var modelName = makeModelName($field.$prototype);
 
-            var droplet = this;
-
             if (role.hasMany) {
 
                 var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
                 var summary = Ext.custom.Adapter.toString($m.$summary, $field.$summary);
-                
+
                 return Ext.merge(config, {
                     bodyPadding: '0',
                     border: false,
@@ -833,9 +843,10 @@
                 $modelName: modelName,
                 listeners: {
                     add: function (parent, component, index) {
-                        //return formEventHandler(droplet, parent, component, index);
+                        return formEventHandler(droplet, parent, component, index);
                     }
                 },
+                trackResetOnLoad: true
             });
 
             return config;
@@ -908,6 +919,17 @@
                 ]
             });
 
+            var droplet = this;
+
+            Ext.merge(config.items[0], {
+                listeners: {
+                    add: function (parent, component, index) {
+                        return formEventHandler(droplet, parent, component, index);
+                    }
+                },
+                trackResetOnLoad: true
+            });
+
             return config;
         }
 
@@ -954,32 +976,16 @@
                             break;
 
                         case 'hasMany':
-                            store = record[component.$fieldName];
-                            if (typeof store !== 'object' || store == null) {
-                                record[component.$fieldName] = store = Ext.create('Ext.data.Store', {
-                                    autoDestroy: false,
-                                    autoLoad: false,
-                                    autoSave: false,
-                                    autoSync: false,
-                                    //batchActions: true,
-                                    //buffered: true,
-                                    model: association.associatedModel,
-                                    readOnly: false
-                                });
-                                store.loadRawData(record.raw[component.$fieldName] || []);
-
-                                //store.on('datachanged', this.onDataChanged, this);
-                                //store.on('add', this.onPropertyAdd, this);
-                                //store.on('remove', this.onPropertyRemove, this);
-                                //store.on('update', this.onPropertyUpdate, this);
-                            }
+                            store = record[association.storeName];
+                            //store.on('datachanged', this.onDataChanged, this);
+                            //store.on('add', this.onPropertyAdd, this);
+                            //store.on('remove', this.onPropertyRemove, this);
+                            //store.on('update', this.onPropertyUpdate, this);
                             break;
 
                         case 'hasOne':
-                            model = record[component.$fieldName];
-                            if (typeof model !== 'object' || model == null) {
-                                record[component.$fieldName] = model = Ext.create(association.associatedName, record.raw[component.$fieldName] || {});
-                            }
+                            model = record[association.instanceName];
+                            model.on
                             break;
                     }
                 }
@@ -1125,8 +1131,6 @@
 
                 // Convenience function to check if the form has any dirty fields. This is the same as calling this.getForm().isDirty().
                 isDirty: isDirty,
-
-
             },
 
             constructor: function (typeName, readOnly, $m, model) {
@@ -1269,7 +1273,9 @@
             onResetClick: function () {
             },
 
-            onSaveClick: function () {
+            onUpdateClick: function () {
+                Ext.custom.Droplet.isDirty(this._component);
+                this._record.save();
             },
 
             onRecordChanged: function (record) {

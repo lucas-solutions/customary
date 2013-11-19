@@ -138,6 +138,10 @@ namespace Custom.Data
                             fieldJObject["$type"] = "string";
                             fieldJObject["$category"] = "model";
                             fieldJObject["$prototype"] = property.Type;
+                            if (property.IdProperty != null)
+                            {
+                                fieldJObject["$id"] = property.IdProperty;
+                            }
                             break;
 
                         case TypeCategories.Unit:

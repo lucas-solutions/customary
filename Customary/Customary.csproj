@@ -275,8 +275,6 @@
     <Compile Include="Data\DataDictionary.cs" />
     <Compile Include="Data\ModelDictionary.cs" />
     <Compile Include="Data\NodeKinds.cs" />
-    <Compile Include="Data\Persistence\Repositories\AdoRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\ComputableRepository.cs" />
     <Compile Include="Data\TypeCategories.cs" />
     <Compile Include="Data\DocumentStoreExtensions.cs" />
     <Compile Include="Data\EnumDescriptor.cs" />
@@ -289,12 +287,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\Persistence\IRavenJObjectRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\AjaxRepository.cs" />
     <Compile Include="Data\Persistence\Repositories\DocumentRepository.cs" />
     <Compile Include="Data\Persistence\EmbeddableDocumentContext.cs" />
-    <Compile Include="Data\Persistence\Repositories\ProceduralRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\RecordRepository.cs" />
-    <Compile Include="Data\Persistence\Repositories\RestfulRepository.cs" />
     <Compile Include="Data\TypeDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
