@@ -794,7 +794,6 @@
     <Content Include="Areas\Data\Views\Ext\Directory.cshtml" />
     <Content Include="Areas\Data\Views\Name\Header.cshtml" />
     <Content Include="Areas\Data\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Data\Views\Ext\Index.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />

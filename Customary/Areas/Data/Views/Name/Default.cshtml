@@ -26,12 +26,6 @@
 </script>
 
 <script type="text/javascript">
-    Ext.define('Customary.view.Index', {
-        extend: 'Ext.custom.data.Index'
-    });
-</script>
-
-<script type="text/javascript">
     Ext.define('Customary.view.Drop', {
         extend: 'Ext.custom.Droplet'
     });
@@ -164,7 +158,7 @@
                             border: false,
                             margins: '0 0 5 0'
                         },
-                        {
+                        directory.initComponent({
                             activeTab: 0,
                             region: 'west',
                             bodyStyle: frameStyle, // background color like frame
@@ -173,20 +167,71 @@
                             collapsible: true,
                             flex: 1,
                             header: false,
-                            items: [
-                                directory.panel,
-                                {
-                                    title: 'Data',
-                                    xtype: 'panel'
-                                },
-                                {
-                                    title: 'Stores',
-                                    xtype: 'panel'
-                                }
-                            ],
                             layout: 'fit',
                             listeners: {
-                                add: {
+                                select: {
+                                    fn: function (directory, record, selModel, selections) {
+                                        if (record !== null && typeof record === 'object') {
+
+                                            var typeName;
+
+                                            switch (record.type) {
+
+                                                case 'area':
+                                                    typeName = 'Metadata/Area';
+                                                    break;
+
+                                                case 'enum':
+                                                    typeName = 'Metadata/Enum';
+                                                    break;
+
+                                                case 'model':
+                                                    typeName = 'Metadata/Model';
+                                                    break;
+
+                                                case 'name':
+                                                    //typeName = 'Metadata/Name';
+                                                    break;
+
+                                                case 'store':
+                                                    typeName = 'Metadata/Store';
+                                                    break;
+
+                                                case 'unit':
+                                                    typeName = 'Metadata/Unit';
+                                                    break;
+
+                                                case 'value':
+                                                    typeName = 'Metadata/Value';
+                                                    break;
+                                            }
+
+                                            if (typeof typeName !== 'string') {
+                                                this.centerPanel.removeAll();
+                                                this.centerPanel.doLayout();
+                                            }
+                                            else {
+
+                                                Ext.custom.Droplet.asyncCreate(typeName, false, function (droplet) {
+
+                                                    this.centerPanel.removeAll();
+                                                    this.centerPanel.add(droplet.initComponent());
+                                                    this.centerPanel.doLayout();
+
+                                                    droplet.load(record.id);
+
+                                                    //droplet.asyncLoad(record.id);
+                                                }, this);
+                                            }
+
+                                        }
+                                        else {
+
+                                        }
+                                    },
+                                    scope: this
+                                }
+                                /*add: {
                                     fn: function (tabPanel, component, index, eOpts) {
                                         if (typeof tabPanel.title !== 'string') {
                                             tabPanel.setTitle(component.title);
@@ -197,80 +242,15 @@
                                 tabchange: {
                                     fn: this.onViewTabChange,
                                     scope: this
-                                }
+                                }*/
                             },
                             margins: '0 0 0 5',
-                            split: true,
-                            xtype: 'tabpanel',
-                        },
+                            split: true
+                        }),
                         this.centerPanel,
                         statusBar
                     ]
                 });
-
-                Ext.custom.Adapter.subscribe('Ext.custom.data.Directory.selectionchange', {
-                    fn: function (record, directory, selModel, selections) {
-                        if (record !== null && typeof record === 'object') {
-
-                            var typeName;
-
-                            switch (record.type) {
-
-                                case 'area':
-                                    typeName = 'Metadata/Area';
-                                    break;
-
-                                case 'enum':
-                                    typeName = 'Metadata/Enum';
-                                    break;
-
-                                case 'model':
-                                    typeName = 'Metadata/Model';
-                                    break;
-
-                                case 'name':
-                                    /*typeName = 'Metadata/Name';*/
-                                    break;
-
-                                case 'store':
-                                    typeName = 'Metadata/Store';
-                                    break;
-
-                                case 'unit':
-                                    typeName = 'Metadata/Unit';
-                                    break;
-
-                                case 'value':
-                                    typeName = 'Metadata/Value';
-                                    break;
-                            }
-
-                            if (typeof typeName !== 'string') {
-                                this.centerPanel.removeAll();
-                                this.centerPanel.doLayout();
-                            }
-                            else {
-
-                                Ext.custom.Droplet.asyncCreate(typeName, false, function (droplet) {
-
-                                    this.centerPanel.removeAll();
-                                    this.centerPanel.add(droplet.initComponent());
-                                    this.centerPanel.doLayout();
-
-                                    droplet.load(record.id);
-
-                                    //droplet.asyncLoad(record.id);
-                                }, this);
-                            }
-
-                        }
-                        else {
-
-                        }
-                    },
-                    scope: this
-                });
-
                 window.onbeforeunload = function () {
                     if (Customary.current.dirty) {
                         return "You have made changes on this page that you have not yet confirmed. If you navigate away from this page you will lose your unsaved changes";
@@ -280,17 +260,17 @@
                 if (Ext.supports.History) { // <- this prevents the firing off of the event
                     Ext.History.init()
                     Ext.History.on('change', this.onHistoryChange);
-                    Ext.custom.Adapter.subscribe('Customary.view.Directory.selectionchange', function (path) {
+                    /*Ext.custom.Adapter.subscribe('Customary.view.Directory.selectionchange', function (path) {
                         Ext.History.add(path)
                     });
                     Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
                         Ext.History.add(path + '/' + id)
-                    });
+                    });*/
                 }
                 else {
-                    Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
+                    /*Ext.custom.Adapter.subscribe('Customary.view.Index.selectionchange', function (id) {
                         this.onHistoryChange();
-                    });
+                    });*/
 
                     this.onHistoryChange();
                 }
@@ -315,10 +295,6 @@
                 }
                 else {
                 }
-            },
-
-            onViewTabChange: function (tabPanel, newTab, oldTab, eOpts) {
-                tabPanel.setTitle(newTab.title);
             }
         }
     });

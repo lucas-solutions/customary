@@ -20,6 +20,58 @@
             return name.join('/');
         }
 
+        function createIndexStore(directory) {
+
+            return Ext.create('Ext.data.TreeStore', {
+                id: 'Ext.custom.data.Directory.Store',
+                autoLoad: true,
+                //defaultRootId: '0',
+                //defaultRootText: "text",
+                //defaultRootProperty: 'children',
+                folderSort: true,
+                // not using model. direct proxy
+                proxy: {
+                    // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                    // and for jsonp the api is the same, but the method is GET
+                    type: 'ajax', // rest, jsonp or ajax.
+                    buildUrl: function (request) {
+                        switch (request.action) {
+                            case 'read':
+                                return directory.baseUrl + '/Data/Directory/' + fullName(request.operation.node);
+                        }
+                    },
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    listeners: {
+                        exception: function (proxy, response, operation) {
+                            Ext.MessageBox.show({
+                                title: 'REMOTE EXCEPTION',
+                                msg: operation.getError(),
+                                icon: Ext.MessageBox.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
+                        }
+                    },
+                    reader: {
+                        type: "json",
+                        root: "data",
+                        totalProperty: 'total',
+                        successProperty: 'success',
+                        messageProperty: 'message'
+                    }
+                },
+                root: {
+                    text: "", // has to be empty
+                    expanded: true,
+                    loaded: false,
+                }
+            });
+        }
+
+        function createModelStore($m, model) {
+        }
+
         // Get a nice decimal place precision for the scientific notation number.
         // e.g. 1.23e-7 yields 7+2 places after the decimal point
         // e.g. 4.5678e-11 yields 11+4 places after the decimal point
@@ -45,6 +97,83 @@
         }
         //returns 0.000000123
 
+        function onCreateClick() {
+            this._component.fireEvent('select', this);
+        }
+
+        function onDestroyClick() {
+            this._component.fireEvent('select', this);
+        }
+
+        function onRefreshClick() {
+            this.indexStore.load();
+            //Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', this.panel.selModel);
+
+            this._component.fireEvent('select', this);
+        }
+
+        function onTabChange(tabPanel, newTab, oldTab, eOpts) {
+            tabPanel.setTitle(newTab.title);
+
+            this._component.fireEvent('select', this);
+        }
+
+        function onIndexSelectionChange(selModel, selections, opts) {
+            if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
+                this._indexRecord = Ext.Object.merge({}, selections[0].raw);
+
+                var id = selections[0].raw.id;
+                var type = selections[0].raw.type;
+                var name = fullName(selections[0]);
+
+                this._component.fireEvent('select', this, { name: name, type: type, id: id }, selModel, selections);
+            } else {
+                delete this._indexRecord;
+                this._component.fireEvent('select', this);
+            }
+        }
+
+        function onRecordSelectionChange(selModel, selections, opts) {
+            if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
+                this._component.fireEvent('select', this);
+            }
+            else {
+                this._component.fireEvent('select', this);
+            }
+        }
+
+        function onStoreSelectionChange(selModel, selections, opts) {
+            if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
+                this._component.fireEvent('select', this);
+            } else {
+                this._component.fireEvent('select', this);
+            }
+        }
+
+        // copy from droplet
+        function findToolItem(action, component, fn) {
+            for (; typeof component === 'object' && component !== null; component = component.up()) {
+                if (typeof component.getDockedItems === 'function') {
+                    var toolbars = component.getDockedItems();
+                    for (var i = 0; i < toolbars.length; i++) {
+                        var toolbar = toolbars[i];
+                        if (toolbar.xtype === 'toolbar') {
+                            for (var j = 0; j < toolbar.items.length; j++) {
+                                var item = toolbar.items.getAt(j);
+                                if (typeof item == 'object' && item !== null && item.$action === action) {
+                                    if (typeof fn === 'string' && typeof item[fn] === 'function') {
+                                        var args = Array.prototype.slice.call(arguments, 3);
+                                        item[fn].apply(item, args);
+                                    }
+                                    return item;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return {
 
             requires: [
@@ -54,140 +183,7 @@
 
             statics: {
 
-                /*createModel: function (name, metadata) {
-
-                    var extend = 'Ext.data.Model';
-
-                    if (typeof metadata.extend === 'string') {
-                        extend = makeModelName(metadata.extend);
-                    }
-
-                    var config = {
-                        extend: extend,
-                        fields: [],
-                        validations: []
-                    };
-
-                    if (metadata.properties !== null && typeof metadata.properties === 'object' && typeof metadata.properties.length === 'int') {
-
-                        var types = Ext.data.Types; // allow shorthand type access
-
-                        for (var i = 0; i < metadata.properties.length; i++) {
-                            var property = metadata.properties[i];
-                            var field = { name: property.name };
-                            if (typeof property.type !== 'undefined') {
-
-                                switch (property.type) {
-
-                                    case 'Boolean':
-                                        field.type = types.BOOLEAN;
-                                        break;
-
-                                    case 'String':
-                                        field.type = types.STRING;
-                                        break;
-
-                                    case 'Byte':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: 0, max: 255 });
-                                        break;
-
-                                    case 'Int16':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: -32768 , max: 32767 });
-                                        break;
-
-                                    case 'Int32':
-                                        config.validations.push({ type: 'length', field: field.name, min: -2147483648, max: 2147483647 });
-                                        field.type = types.INTEGER;
-                                        break;
-
-                                    case 'Int64':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: 0, max: 255 });
-                                        break;
-
-                                    case 'SByte':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: -127, max: 128 });
-                                        break;
-
-                                    case 'UInt16':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: 0, max: 65535 });
-                                        break;
-
-                                    case 'UInt32':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: 0, max: 4294967295 });
-                                        break;
-
-                                    case 'UInt64':
-                                        field.type = types.INTEGER;
-                                        config.validations.push({ type: 'length', field: field.name, min: 0, max: 18446744073709551615 });
-                                        break;
-
-                                    case 'Decimal':
-                                        field.type = types.NUMBER;
-                                        break;
-
-                                    case 'Double':
-                                        field.type = types.NUMBER;
-                                        break;
-
-                                    case 'Single':
-                                        field.type = types.NUMBER;
-                                        break;
-
-                                    case 'Email':
-                                        field.type = types.STRING;
-                                        break;
-
-                                    case 'Date':
-                                        field.type = types.DATE;
-                                        field.dateFormat = '';
-                                        break;
-
-                                    case 'Time':
-                                        field.type = types.DATE;
-                                        field.dateFormat = '';
-                                        break;
-
-                                    case 'DateTime':
-                                        field.type = types.DATE;
-                                        field.dateFormat = '';
-                                        break;
-
-                                    default:
-                                        field.type = makeModelName(property.type);
-                                        break;
-                                }
-
-                                switch (property.role) {
-                                    case 'Required':
-                                        field.useNull = false;
-                                        break;
-
-                                    case 'Identity':
-                                        field.useNull = false;
-                                        break;
-
-                                    case 'Unique':
-                                        field.useNull = false;
-                                        break;
-                                }
-                            }
-
-                            config.fields.push(field);
-                        }
-                    }
-
-                    var model = Ext.define(name, config);
-
-                    return model;
-                },*/
-
-                createPanel: function (directory, config) {
+                /*createPanel: function (directory, config) {
 
                     Ext.Object.merge(directory, {
                         buttons: {
@@ -201,14 +197,14 @@
                     });
 
                     return Ext.create('Ext.tree.Panel', Ext.Object.merge({
-                        title: 'Directory',
+                        title: 'Index',
                         header: false,
                         store: directory.store,
                         rootVisible: false,
                         useArrows: true,
                         listeners: {
                             selectionchange: {
-                                fn: directory.onSelectionChange,
+                                fn: directory.onIndexSelectionChange,
                                 scope: directory
                             }
                         },
@@ -222,82 +218,148 @@
                             }
                         ]
                     }, config));
-                },
-
-                createStore: function (directory) {
-
-                    return Ext.create('Ext.data.TreeStore', {
-                        id: 'Ext.custom.data.Directory.Store',
-                        autoLoad: true,
-                        //defaultRootId: '0',
-                        //defaultRootText: "text",
-                        //defaultRootProperty: 'children',
-                        folderSort: true,
-                        // not using model. direct proxy
-                        proxy: {
-                            // Use for ajax proxy, since all the create, update and detroy requests will be all POST
-                            // and for jsonp the api is the same, but the method is GET
-                            type: 'ajax', // rest, jsonp or ajax.
-                            buildUrl: function (request) {
-                                switch (request.action) {
-                                    case 'read':
-                                        return directory.baseUrl + '/Data/Directory/' + fullName(request.operation.node);
-                                }
-                            },
-                            headers: {
-                                "Accept": "application/json"
-                            },
-                            listeners: {
-                                exception: function (proxy, response, operation) {
-                                    Ext.MessageBox.show({
-                                        title: 'REMOTE EXCEPTION',
-                                        msg: operation.getError(),
-                                        icon: Ext.MessageBox.ERROR,
-                                        buttons: Ext.Msg.OK
-                                    });
-                                }
-                            },
-                            reader: {
-                                type: "json",
-                                root: "data",
-                                totalProperty: 'total',
-                                successProperty: 'success',
-                                messageProperty: 'message'
-                            }
-                        },
-                        root: {
-                            text: "", // has to be empty
-                            expanded: true,
-                            loaded: false,
-                        }
-                    });
-                }
+                },*/
             },
 
             constructor: function () {
                 this.baseUrl = 'http://data.customary.com';
-                this.store = Ext.custom.data.Directory.createStore(this);
-                this.panel = Ext.custom.data.Directory.createPanel(this);
+                this.indexStore = createIndexStore(this);
             },
 
-            onRefreshClick: function () {
-                this.store.load();
-                Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', this.panel.selModel);
-            },
+            initComponent: function (customConfig) {
 
-            onSelectionChange: function (selModel, selections, opts) {
-                if (typeof selections == 'object' && selections.length > 0 && typeof selections[0].raw == 'object') {
-                    this.record = Ext.Object.merge({}, selections[0].raw);
+                this._component = Ext.widget(Ext.merge({
+                    activeTab: 0,
+                    bodyStyle: frameStyle, // background color like frame
+                    bodyBorder: false,
+                    border: false,
+                    collapsible: true,
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'bottom',
+                            items: [
+                                {
+                                    $action: 'create',
+                                    disabled: false,
+                                    handler: onCreateClick,
+                                    hidden: true,
+                                    iconCls: 'icon-new',
+                                    scope: this,
+                                    text: 'New',
+                                    xtype: 'button'
+                                },
+                                {
+                                    $action: 'destroy',
+                                    disabled: true,
+                                    handler: onDestroyClick,
+                                    hidden: true,
+                                    iconCls: 'icon-delete',
+                                    scope: this,
+                                    text: 'Delete',
+                                    xtype: 'button'
+                                },
+                                '->',
+                                {
+                                    $action: 'refresh',
+                                    handler: onRefreshClick,
+                                    iconCls: 'icon-refresh',
+                                    scope: this,
+                                    text: 'Refresh',
+                                    xtype: 'button'
+                                }
+                                //directory.buttons.refresh
+                            ],
+                            margin: '6 0 3 0',
+                            ui: 'footer'
+                        }
+                    ],
+                    flex: 1,
+                    header: false,
+                    items: [
+                        {
+                            header: false,
+                            listeners: {
+                                selectionchange: {
+                                    fn: onIndexSelectionChange,
+                                    scope: this
+                                }
+                            },
+                            rootVisible: false,
+                            store: this.indexStore,
+                            title: 'Index',
+                            useArrows: true,
+                            xtype: 'treepanel'
+                        },
+                        {
+                            header: false,
+                            listeners: {
+                                activate: {
+                                    fn: function (component, eOpts) {
+                                        var gridPanel = component.down('gridpanel');
+                                        if (typeof gridPanel === 'object' && gridPanel != null) {
+                                            findToolItem('create', component, 'show').setHandler(gridPanel.onAddClick, gridPanel);
+                                            findToolItem('destroy', component, 'show').setHandler(gridPanel.onRemoveClick, gridPanel);
+                                        }
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                beforedeactivate: {
+                                    fn: function (component, eOpts) {
+                                        findToolItem('create', component, 'hide').setHandler(Ext.emptyFn);
+                                        findToolItem('destroy', component, 'hide').setHandler(Ext.emptyFn);
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                selectionchange: {
+                                    fn: onRecordSelectionChange,
+                                    scope: this
+                                }
+                            },
+                            columns: {
+                                items: []
+                            },
+                            title: 'Records',
+                            xtype: 'gridpanel'
+                        },
+                        {
+                            header: false,
+                            listeners: {
+                                selectionchange: {
+                                    fn: onStoreSelectionChange,
+                                    scope: this
+                                }
+                            },
+                            columns: {
+                                items: []
+                            },
+                            title: 'Stores',
+                            xtype: 'gridpanel'
+                        }
+                    ],
+                    layout: 'fit',
+                    listeners: {
+                        add: {
+                            fn: function (tabPanel, component, index, eOpts) {
+                                if (typeof tabPanel.title !== 'string') {
+                                    tabPanel.setTitle(component.title);
+                                }
+                            },
+                            scope: this
+                        },
+                        tabchange: {
+                            fn: onTabChange,
+                            scope: this
+                        }
+                    },
+                    margins: '0 0 0 5',
+                    split: true,
+                    xtype: 'tabpanel'
+                }, customConfig));
 
-                    var id = selections[0].raw.id;
-                    var type = selections[0].raw.type;
-                    var name = fullName(selections[0]);
-
-                    Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', { name: name, type: type, id: id }, this, selModel, selections);
-                } else {
-                    delete this.record;
-                    Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', null, this, selModel, selections);
-                }
+                return this._component;
             }
         };
 

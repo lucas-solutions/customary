@@ -877,41 +877,43 @@
                         items: [
                             {
                                 $action: 'add',
-                                iconCls: 'icon-add',
-                                text: 'Add',
                                 disabled: false,
-                                scope: this,
                                 handler: this.onCreateClick,
+                                hidden: true,
+                                iconCls: 'icon-add',
+                                scope: this,
+                                text: 'Add',
                                 xtype: 'button'
                             },
                             {
                                 $action: 'remove',
-                                iconCls: 'icon-delete',
-                                text: 'Remove',
                                 disabled: true,
-                                scope: this,
                                 handler: this.onDestroyClick,
+                                hidden: true,
+                                iconCls: 'icon-delete',
+                                scope: this,
+                                text: 'Remove',
                                 xtype: 'button'
                             },
                             '->',
                             {
                                 $action: 'update',
+                                disabled: true,
+                                handler: this.onUpdateClick,
                                 iconCls: 'icon-save',
+                                scope: this,
                                 text: 'Save',
                                 tooltip: 'Accept changes by submitting data to the server.',
-                                disabled: true,
-                                scope: this,
-                                handler: this.onUpdateClick,
                                 xtype: 'button'
                             },
                             {
                                 $action: 'read',
+                                disabled: false,
+                                handler: this.onReadClick,
                                 iconCls: 'icon-cancel',
+                                scope: this,
                                 text: 'Reset/Refresh',
                                 tooltip: 'Reject changes by reloading data from the server.',
-                                disabled: false,
-                                scope: this,
-                                handler: this.onReadClick,
                                 xtype: 'button'
                             }
                         ]
@@ -1248,6 +1250,7 @@
             },
 
             load: function (id, callcack) {
+                this._id = id;
                 this.model.load(id, {
                     failure: function (record, operation) {
                         //do something if the load failed
@@ -1271,6 +1274,7 @@
             },
 
             onResetClick: function () {
+                this.load(this._id);
             },
 
             onUpdateClick: function () {
@@ -1300,11 +1304,7 @@
             },
 
             onDataChanged: function () {
-            },
-
-            reload: function () {
-                this.load(this._record);
-            },
+            }
         };
     });
 </script>
