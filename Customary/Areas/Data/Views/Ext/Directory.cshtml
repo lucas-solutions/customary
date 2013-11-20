@@ -167,9 +167,10 @@
         function onIndexSelectionChange(selModel, selections, opts) {
             if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
 
+                var path = fullName(selections[0]);
                 var data = selections[0].raw;
                 var typeName = makeModelTypeName(data.type);
-
+                
                 this.typeName = typeName;
 
                 this._indexRecord = Ext.Object.merge({
@@ -177,8 +178,9 @@
                 },
                 data,
                 {
-                    name: fullName(selections[0])
+                    name: path,
                 });
+                Ext.History.add(path, false);
                 this._component.fireEvent('select', this, this._indexRecord, selModel, selections);
             } else {
                 delete this._indexRecord;
@@ -198,9 +200,17 @@
                     if (this._recordsModel === null || typeof this._recordsModel !== 'function') {
                         this._recordsModel = Custom.app.Application.defineModel(modelName, $m);
                     }
+                    
+                    var $fields = Custom.app.Application.collectFields($m, []);
 
-                    this._recordsStore = Ext.create('Ext.data.Store', {
-                        autoDestroy: false,
+                    // grid panel (selector)
+                    var config = Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
+                        $modelName: modelName
+                    });
+
+                    component.getSelectionModel().clearSelections(); // a must or you get an exception
+                    component.reconfigure(Ext.create('Ext.data.Store', {
+                        autoDestroy: false,// <- error if true
                         autoLoad: true,
                         batchActions: true,
                         /*listeners: {
@@ -235,19 +245,9 @@
                     property: 'Name',
                     direction: 'ASC'
                 }]*/
-                    });
+                    }), config.columns.items);
 
-                    var $fields = Custom.app.Application.collectFields($m, []);
-
-                    // grid panel (selector)
-                    var config = Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
-                        $modelName: modelName
-                    });
-
-                    component.getSelectionModel().clearSelections(); // a must or you get an exception
-                    component.reconfigure(null, config.columns.items);
-
-                    this._recordsStore.load({
+                    /*this._recordsStore.load({
                         scope: this,
                         callback: function (records, operation, success) {
                             // the operation object
@@ -256,7 +256,7 @@
 
                             component.reconfigure(this._recordsStore);
                         }
-                    });
+                    });*/
 
 
                 });
@@ -307,10 +307,31 @@
                     findToolItem('destroy', panel, 'enable');
                 }
 
-                var data = record.getData();
-                var id = data.Id.split('/');
+                var type, data = record.getData();
 
-                this._component.fireEvent('select', this, { id: id[id.length - 1], typeName: data.Name }, selModel, selections);
+                switch (this._indexRecord.type) {
+
+                    case "area":
+                        type = "Metadata/Area";
+                        break;
+
+                    case "model":
+                        type = record.raw.$type;
+                        break;
+
+                    case "unit":
+                        type = "Metadata/Unit";
+                        break;
+
+                    case "value":
+                        type = "Metadata/Value";
+                        break;
+
+                    default:
+                        this._component.fireEvent('select', this);
+                        return;
+                }
+                this._component.fireEvent('select', this, { id: data.Id, typeName: type }, selModel, selections);
             }
             else {
                 this._component.fireEvent('select', this);

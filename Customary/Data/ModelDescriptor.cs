@@ -53,6 +53,7 @@ namespace Custom.Data
         {
             var modelJObject = stack.Pop();
 
+            modelJObject["$"] = this.DataAsJson;
             modelJObject["$name"] = this.Path;
             modelJObject["$type"] = "model";
             modelJObject.Remove("$dirty");

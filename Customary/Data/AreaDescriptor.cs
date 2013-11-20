@@ -50,9 +50,9 @@ namespace Custom.Data
         {
             base.Metadata(stack, requires, types);
 
-            var dataAsJson = stack.Peek();
-
-            dataAsJson["$type"] = "area";
+            var areaJObject = stack.Peek();
+            areaJObject["$"] = this.DataAsJson;
+            areaJObject["$type"] = "area";
         }
 
         public override RavenJObject ToRavenJObject(bool deep)

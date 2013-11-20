@@ -70,7 +70,7 @@ namespace Custom.Data
         {
             var dataAsJson = stack.Peek();
 
-            dataAsJson["$name"] = _name;
+            dataAsJson["$name"] = this.Path;
             dataAsJson["$type"] = "name";
             dataAsJson["$dirty"] = false;
 

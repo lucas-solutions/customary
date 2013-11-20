@@ -13,18 +13,6 @@
             return makeExtName(typeName) + '.Model';
         }
 
-        function makeGridName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Grid';
-        }
-
-        function makeFormName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Form';
-        }
-
-        function makePanelName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Panel';
-        }
-
         function formEventHandler(droplet, parent, component, index) {
             component.on({
                 destroyable: true,

@@ -23,14 +23,15 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var dataAsJson = stack.Peek();
+            var enumJObject = stack.Peek();
 
-            dataAsJson["$name"] = _name;
-            dataAsJson["$type"] = "enum";
+            enumJObject["$"] = this.DataAsJson;
+            enumJObject["$name"] = this.Path;
+            enumJObject["$type"] = "enum";
 
             var data = DataAsJson;
 
-            dataAsJson["$members"] = DataAsJson["members"];
+            enumJObject["$members"] = DataAsJson["members"];
         }
 
         public override RavenJObject ToRavenJObject(bool deep)

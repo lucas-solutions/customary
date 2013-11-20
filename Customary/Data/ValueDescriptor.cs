@@ -24,8 +24,8 @@ namespace Custom.Data
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
             var valueJObject = stack.Peek();
-
-            valueJObject["$name"] = _name;
+            valueJObject["$"] = this.DataAsJson;
+            valueJObject["$name"] = this.Path;
             valueJObject["$type"] = "value";
 
             var definition = Definition;
