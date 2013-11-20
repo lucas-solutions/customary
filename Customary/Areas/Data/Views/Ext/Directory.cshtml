@@ -69,9 +69,6 @@
             });
         }
 
-        function createModelStore($m, model) {
-        }
-
         // Get a nice decimal place precision for the scientific notation number.
         // e.g. 1.23e-7 yields 7+2 places after the decimal point
         // e.g. 4.5678e-11 yields 11+4 places after the decimal point
@@ -114,28 +111,206 @@
 
         function onTabChange(tabPanel, newTab, oldTab, eOpts) {
             tabPanel.setTitle(newTab.title);
+        }
 
+        function onIndexActivate(component, eOpts) {
+            if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
+                var selModel = component.getSelectionModel();
+                var selected = selModel.selected;
+                this._component.fireEvent('select', this, this._indexRecord, selModel, selected);
+            }
+            return true;
+        }
+
+        function onIndexDeactivate(component, eOpts) {
             this._component.fireEvent('select', this);
+        }
+
+        function makeModelTypeName(indexType) {
+
+            var typeName;
+
+            switch (indexType) {
+
+                case 'area':
+                    typeName = 'Metadata/Area';
+                    break;
+
+                case 'enum':
+                    typeName = 'Metadata/Enum';
+                    break;
+
+                case 'model':
+                    typeName = 'Metadata/Model';
+                    break;
+
+                case 'name':
+                    //typeName = 'Metadata/Name';
+                    break;
+
+                case 'store':
+                    typeName = 'Metadata/Store';
+                    break;
+
+                case 'unit':
+                    typeName = 'Metadata/Unit';
+                    break;
+
+                case 'value':
+                    typeName = 'Metadata/Value';
+                    break;
+            }
+
+            return typeName;
         }
 
         function onIndexSelectionChange(selModel, selections, opts) {
             if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
-                this._indexRecord = Ext.Object.merge({}, selections[0].raw);
 
-                var id = selections[0].raw.id;
-                var type = selections[0].raw.type;
-                var name = fullName(selections[0]);
+                var data = selections[0].raw;
+                var typeName = makeModelTypeName(data.type);
 
-                this._component.fireEvent('select', this, { name: name, type: type, id: id }, selModel, selections);
+                this.typeName = typeName;
+
+                this._indexRecord = Ext.Object.merge({
+                    typeName: typeName
+                },
+                data,
+                {
+                    name: fullName(selections[0])
+                });
+                this._component.fireEvent('select', this, this._indexRecord, selModel, selections);
             } else {
                 delete this._indexRecord;
                 this._component.fireEvent('select', this);
             }
         }
 
+        function onRecordsActivate(component, eOpts) {
+            findToolItem('create', component, 'show').setHandler(component.onCreateClick, component);
+            findToolItem('destroy', component, 'show').setHandler(component.onDestroyClick, component);
+            if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
+                var typeName = this._indexRecord.name;
+                Custom.app.Application.asyncMetadata(typeName, function ($m) {
+                    var modelName = makeModelName(typeName);
+
+                    this._recordsModel = Ext.ModelManager.getModel(modelName);
+                    if (this._recordsModel === null || typeof this._recordsModel !== 'function') {
+                        this._recordsModel = Custom.app.Application.defineModel(modelName, $m);
+                    }
+
+                    this._recordsStore = Ext.create('Ext.data.Store', {
+                        autoDestroy: false,
+                        autoLoad: true,
+                        batchActions: true,
+                        /*listeners: {
+                            add: {
+                                fn: this.onDataChanged,
+                                scope: this
+                            },
+                            datachanged: {
+                                fn: this.onDataChanged,
+                                scope: this
+                            },
+                            remove: {
+                                fn: this.onDataChanged,
+                                scope: this
+                            },
+                            update: {
+                                fn: this.onDataChanged,
+                                scope: this
+                            },
+                            write: function (proxy, operation) {
+                                if (operation.action == 'destroy') {
+                                    //master.child('#form').setActiveRecord(null);
+                                }
+                                //Ext.example.msg(operation.action, operation.resultSet.message);
+                            }
+                        },*/
+                        //selModel: new Ext.selection.RowModel(),
+                        model: this._recordsModel,
+                        //proxy: this._recordsModel.getProxy( ),
+                        pageSize: 100/*,
+                sorters: [{
+                    property: 'Name',
+                    direction: 'ASC'
+                }]*/
+                    });
+
+                    var $fields = Custom.app.Application.collectFields($m, []);
+
+                    // grid panel (selector)
+                    var config = Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
+                        $modelName: modelName
+                    });
+
+                    component.getSelectionModel().clearSelections(); // a must or you get an exception
+                    component.reconfigure(null, config.columns.items);
+
+                    this._recordsStore.load({
+                        scope: this,
+                        callback: function (records, operation, success) {
+                            // the operation object
+                            // contains all of the details of the load operation
+                            console.log(records);
+
+                            component.reconfigure(this._recordsStore);
+                        }
+                    });
+
+
+                });
+            }
+
+            this._component.fireEvent('select', this);
+
+            return true;
+        }
+
+        function onRecordsDeactivate(component, eOpts) {
+            findToolItem('create', component, 'hide').setHandler(Ext.emptyFn);
+            findToolItem('destroy', component, 'hide').setHandler(Ext.emptyFn);
+
+            this._component.fireEvent('select', this);
+            return true;
+        }
+
         function onRecordSelectionChange(selModel, selections, opts) {
+
             if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
-                this._component.fireEvent('select', this);
+
+                var grid = selModel.view.up();
+
+                if (typeof grid !== 'object' || grid === null || typeof grid.getStore !== 'function') {
+                    return;
+                }
+
+                var store = grid.getStore();
+
+                if (typeof store !== 'object' || store === null || typeof store.model !== 'function') {
+                    return;
+                }
+
+                var record;
+
+                var panel = grid.up('panel');
+
+                if (typeof selections !== 'object' || selections === null) {
+                    findToolItem('destroy', panel, 'disable');
+                }
+                else if (typeof selections.length === 'number') {
+                    record = selections[0];
+                    findToolItem('destroy', panel, 'enable');
+                }
+                else {
+                    record = selected;
+                    findToolItem('destroy', panel, 'enable');
+                }
+
+                var data = record.getData();
+                var id = data.Id.split('/');
+
+                this._component.fireEvent('select', this, { id: id[id.length - 1], typeName: data.Name }, selModel, selections);
             }
             else {
                 this._component.fireEvent('select', this);
@@ -177,48 +352,10 @@
         return {
 
             requires: [
-                'Ext.custom.Adapter',
-                'Ext.custom.Factory'
+                'Ext.custom.Adapter'
             ],
 
             statics: {
-
-                /*createPanel: function (directory, config) {
-
-                    Ext.Object.merge(directory, {
-                        buttons: {
-                            refresh: Ext.create('Ext.Button', {
-                                iconCls: 'icon-refresh',
-                                text: 'Refresh',
-                                scope: directory,
-                                handler: directory.onRefreshClick
-                            })
-                        }
-                    });
-
-                    return Ext.create('Ext.tree.Panel', Ext.Object.merge({
-                        title: 'Index',
-                        header: false,
-                        store: directory.store,
-                        rootVisible: false,
-                        useArrows: true,
-                        listeners: {
-                            selectionchange: {
-                                fn: directory.onIndexSelectionChange,
-                                scope: directory
-                            }
-                        },
-                        dockedItems: [
-                            {
-                                xtype: 'toolbar',
-                                dock: 'bottom',
-                                ui: 'footer',
-                                margin: '6 0 3 0',
-                                items: ['->', directory.buttons.refresh]
-                            }
-                        ]
-                    }, config));
-                },*/
             },
 
             constructor: function () {
@@ -268,7 +405,6 @@
                                     text: 'Refresh',
                                     xtype: 'button'
                                 }
-                                //directory.buttons.refresh
                             ],
                             margin: '6 0 3 0',
                             ui: 'footer'
@@ -280,6 +416,14 @@
                         {
                             header: false,
                             listeners: {
+                                activate: {
+                                    fn: onIndexActivate,
+                                    scope: this
+                                },
+                                beforedeactivate: {
+                                    fn: onIndexDeactivate,
+                                    scope: this
+                                },
                                 selectionchange: {
                                     fn: onIndexSelectionChange,
                                     scope: this
@@ -292,23 +436,61 @@
                             xtype: 'treepanel'
                         },
                         {
+                            dockedItems: [
+                                {
+                                    dock: 'top',
+                                    ui: 'header',
+                                    xtype: 'triggerfield',
+                                    trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+                                    trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+                                    height: 18,
+                                    margin: '0 0 5 0',
+                                    hasSearch: false,
+                                    scope: this,
+                                    listConfig: {
+                                        loadingText: 'Searching...',
+                                        emptyText: 'No matching posts found.',
+                                        // Custom rendering template for each item
+                                        getInnerTpl: function () {
+                                            return '<b>{name} </b> ({namespace})';
+                                        }
+                                    }
+                                }
+                            ],
                             header: false,
                             listeners: {
                                 activate: {
-                                    fn: function (component, eOpts) {
-                                        var gridPanel = component.down('gridpanel');
-                                        if (typeof gridPanel === 'object' && gridPanel != null) {
-                                            findToolItem('create', component, 'show').setHandler(gridPanel.onAddClick, gridPanel);
-                                            findToolItem('destroy', component, 'show').setHandler(gridPanel.onRemoveClick, gridPanel);
-                                        }
+                                    fn: onRecordsActivate,
+                                    scope: this
+                                },
+                                beforeedit: {
+                                    fn: function (editor, e) {
+                                        // readonly?
                                         return true;
                                     },
                                     scope: this
                                 },
                                 beforedeactivate: {
-                                    fn: function (component, eOpts) {
-                                        findToolItem('create', component, 'hide').setHandler(Ext.emptyFn);
-                                        findToolItem('destroy', component, 'hide').setHandler(Ext.emptyFn);
+                                    fn: onRecordsDeactivate,
+                                    scope: this
+                                },
+                                edit: {
+                                    fn: function (editor, e) {
+                                        // Fires after a row is edited. The edit event object has the following properties 
+                                        // * grid - The grid this editor is on
+                                        // * view - The grid view
+                                        // * store - The grid store
+                                        // * record - The record being edited
+                                        // * row - The grid table row
+                                        // * column - The grid Column defining the column that initiated the edit
+                                        // * rowIdx - The row index that is being edited
+                                        // * colIdx - The column index that initiated the edit
+                                        //e.record.commit();
+                                        //this.onDataChanged(e.store, "master");
+
+                                        // Check if dirty. It will also refesh the visual status.
+                                        droplet.isDirty();
+
                                         return true;
                                     },
                                     scope: this
@@ -316,13 +498,71 @@
                                 selectionchange: {
                                     fn: onRecordSelectionChange,
                                     scope: this
+                                },
+                                validateedit: {
+                                    fn: function (editor, e, eOpts) {
+
+                                        return true;
+
+                                        var me = this,
+                                            rowIdx = e.rowIdx, // row index
+                                            fieldName = e.field,
+                                            newVal = e.value,
+                                            storeRow = this.store.getAt(rowIdx);
+
+                                        // assuming valid input, proceed with the below    
+                                        storeRow.set(fieldName, newVal);
+
+                                        // if modified records > 0 then enable buttons
+                                        var enableButtons = Boolean(me.store.getModifiedRecords().length);
+
+                                        if (enableButtons) {
+                                            // enable buttons
+                                        } else {
+                                            // disable buttons
+                                        }
+                                    },
+                                    scope: this
                                 }
                             },
                             columns: {
                                 items: []
                             },
+                            onCreateClick: function () {
+                                console.log("Create click");
+                                var store = this.getStore();
+                                var record = new store.model({});
+                                store.addSorted(record);
+                                this.getSelectionModel().select(record, false, true);
+                                var rowediting = this.getPlugin();
+                                if (typeof rowediting === 'object' && rowediting !== null) {
+                                    rowediting.startEdit(record, 0);
+                                }
+                            },
+                            onDestroyClick: function () {
+                                console.log("Destroy click");
+                            },
+                            /*plugins: [
+                                {
+                                    autoCancel: true,
+                                    clicksToEdit: 2,
+                                    clicksToMoveEditor: 1,
+                                    ptype: 'rowediting'
+                                }
+                            ],*/
+                            selModel: 'rowmodel',
+                            /*selModel: Ext.create("Ext.selection.RowModel", {
+                                selType: "rowmodel",
+                                listeners: {
+                                    selectionchange: {
+                                        fn: onRecordSelectionChange(selModel, selections),
+                                        scope: this
+                                    }
+                                }
+                            }),*/
                             title: 'Records',
-                            xtype: 'gridpanel'
+                            xtype: 'gridpanel',
+
                         },
                         {
                             header: false,

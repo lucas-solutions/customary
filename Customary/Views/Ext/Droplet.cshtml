@@ -62,63 +62,9 @@
             });
         };
 
-        function selectColumns($m, hash) {
-
-            if (typeof $m !== 'object' || $m === null) {
-                return;
-            }
-
-            if (typeof hash !== 'object' || hash === null) {
-                hash = {};
-            }
-
-            if (typeof $m.$base === 'string') {
-                selectColumns(Ext.custom.Factory.findMetadata($m.$base), hash);
-            }
-
-            if (typeof $m.$head === 'string') {
-                var head = $m.$head.split('|');
-                for (var i = 0; i < head.length; i++) {
-                    var name = head[i];
-                    hash[name] = true;
-                }
-            }
-
-            var columns = [];
-
-            var keys = Object.keys(hash);
-            for (var i = 0; i < keys.length; i++) {
-                var name = keys[i];
-                if (hash[name] === true) {
-                    columns.push(name);
-                }
-            }
-
-            return columns;
-        }
-
-        function collectFields($m, $fields) {
-
-            if ($m === null || typeof $m !== 'object') {
-                return $fields;
-            }
-
-            if (typeof $m.$base === 'string') {
-                collectFields(Ext.custom.Factory.findMetadata($m.$base), $fields);
-            }
-
-            if ($m !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
-                $fields.push.apply($fields, $m.$fields);
-            }
-
-            return $fields;
-        }
-
-
-
         function configCombobox($field, config) {
 
-            var $source = factory.findMetadata($field.$source);
+            var $source = Custom.app.Application.findMetadata($field.$source);
 
             var store = Ext.create('Ext.data.Store', {
                 fields: ['name', 'title', 'summary'],
@@ -132,134 +78,6 @@
                 fieldLabel: config.title,
                 store: store,
                 xtype: 'combobox'
-            });
-
-            return config;
-        }
-
-        function configGrid($fields, columns, config) {
-
-            if (Object.prototype.toString.call(columns) === '[object Array]' && columns.length > 0) {
-                //if (typeof columns === 'object' && columns !== null && typeof columns.length === 'int' && columns.length > 0) {
-                var hash = {};
-                for (var i = 0; i < $fields.length; i++) {
-                    var $field = $fields[i];
-                    hash[$field.$name] = $field;
-                }
-                $fields = [];
-                for (var i = 0; i < columns.length; i++) {
-                    var $field = hash[columns[i]];
-                    if (typeof $field === 'object' && $field != null) {
-                        $fields.push($field);
-                    }
-                }
-            }
-
-            var items = [];
-
-            for (var i = 0; i < $fields.length; i++) {
-
-                var $field = $fields[i];
-                var text = Ext.custom.Adapter.toString($field.$title, $field.$name);
-                var role = Ext.custom.Factory.splitRole($field.$role);
-
-                if ($field.$category === 'model') {
-                    switch ($field.$prototype) {
-                        case 'Text':
-                            items.push({
-                                dataIndex: '$' + $field.$name,
-                                flex: 2,
-                                header: text,
-                                /*renderer: function (value) {
-                                    return Ext.custom.Adapter.toString(value);
-                                },*/
-                                text: text
-                            });
-                            break;
-                    }
-                    continue;
-                }
-
-                var column = {
-                    editor: {
-                        xtype: 'textfield',
-                        allowBlank: !role.required
-                    },
-                    dataIndex: $field.$name,
-                    flex: 1,
-                    header: text,
-                    text: text
-                };
-
-                var editor = {};
-
-                switch ($field.$type) {
-
-                    case 'boolean':
-                        column.xtype = 'booleancolumn';
-                        break;
-
-                    case 'date':
-                        column.xtype = 'datecolumn';
-                        column.format = 'Y-m-d';
-                        break;
-
-                    case 'number':
-                        column.xtype = 'numbercolumn';
-                        //column.editor.format = '0.00';
-                        break;
-
-                    case 'string':
-                        column.editor.xtype = 'textfield';
-                        break;
-                }
-
-                switch ($field.$prototype) {
-                    case 'Boolean':
-                        Ext.merge(column, {
-                            editor: {
-                            }
-                        });
-                        break;
-
-                    case 'Email':
-                        editor = { vtype: 'email' };
-                        break;
-
-                    case 'Password':
-                        break;
-
-                    case 'Date':
-                        Ext.merge(column, {
-                            editor: {
-                                xtype: 'checkbox'
-                            }
-                        });
-                        break;
-                }
-
-                items.push(column);
-            }
-
-            var selModel = Ext.create("Ext.selection.RowModel", {
-                selType: "rowmodel",
-                listeners: {
-                    selectionchange: {
-                        fn: function (selModel, selections) {
-                            //this.onSelectionChange(selModel, selections, "master")
-                        },
-                        scope: this
-                    }
-                }
-            });
-
-            Ext.merge(config, {
-                selModel: selModel,
-                //plugins: [this.rowEditing],
-                columns: {
-                    items: items
-                },
-                xtype: 'grid'
             });
 
             return config;
@@ -315,7 +133,7 @@
         }
 
         function unitHandler($field, config) {
-            var $prototype = factory.findMetadata($field.$prototype);
+            var $prototype = Custom.app.Application.findMetadata($field.$prototype);
 
             var $field_d = Ext.merge({}, $field);
             var $field_m = Ext.merge({}, $field);
@@ -397,7 +215,7 @@
                     break;
             }
 
-            var role = Ext.custom.Factory.splitRole($field.$role);
+            var role = Custom.app.Application.splitRole($field.$role);
 
             return config;
         }
@@ -565,7 +383,7 @@
 
             var droplet = this;
 
-            var role = Ext.custom.Factory.splitRole($field.$role);
+            var role = Custom.app.Application.splitRole($field.$role);
 
             // dummy code
             if (role.embedded == false && role.hasMany === false) {
@@ -593,13 +411,13 @@
                 return config;
             }
 
-            var $m = Ext.custom.Factory.findMetadata($field.$prototype);
+            var $m = Custom.app.Application.findMetadata($field.$prototype);
 
             if (typeof $m !== 'object' || $m === null) {
                 return;
             }
 
-            var $fields = collectFields($m, []);
+            var $fields = Custom.app.Application.collectFields($m, []);
 
             Ext.merge(config, sectionsToView(splitFields($m, $fields, {
                 'enum': enumHandler,
@@ -656,7 +474,7 @@
                         }),
 
                         // grid panel (selector)
-                        configGrid($fields, selectColumns($m), {
+                        Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
                             $fieldName: $field.$name,
                             $modelName: modelName,
                             header: false,
@@ -854,7 +672,7 @@
 
         function configDropletComponent($m) {
 
-            var $fields = collectFields($m, []);
+            var $fields = Custom.app.Application.collectFields($m, []);
 
             var config = sectionsToView(splitFields.call(this, $m, $fields, {
                 'enum': enumHandler,
@@ -987,7 +805,6 @@
 
                         case 'hasOne':
                             model = record[association.instanceName];
-                            model.on
                             break;
                     }
                 }
@@ -1107,7 +924,7 @@
 
                 asyncCreate: function (typeName, readonly, callback, scope) {
 
-                    Ext.custom.Factory.asyncMetadata(typeName, function ($m) {
+                    Custom.app.Application.asyncMetadata(typeName, function ($m) {
 
                         var droplet = Ext.custom.Droplet.create(typeName, readonly, $m);
 
@@ -1123,7 +940,7 @@
 
                     if (model === null || typeof model !== 'function') {
 
-                        model = Ext.custom.Factory.defineModel(modelName, $m);
+                        model = Custom.app.Application.defineModel(modelName, $m);
                     }
 
                     var droplet = new Ext.custom.Droplet(typeName, readonly, $m, model);

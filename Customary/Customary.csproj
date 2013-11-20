@@ -3900,9 +3900,7 @@
     <Content Include="Views\Data\New.cshtml" />
     <Content Include="Views\Data\Drop.cshtml" />
     <Content Include="Views\Ext\Adapter.cshtml" />
-    <Content Include="Views\Ext\Factory.cshtml" />
     <Content Include="Views\Ext\Droplet.cshtml" />
-    <Content Include="Views\Ext\Application.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Globalization\" />
