@@ -346,6 +346,7 @@ namespace Custom.Data.Persistence.Repositories
                         else if (entry.Value.Type == JTokenType.Object)
                         {
                             var dest = target.Value<RavenJArray>(entry.Key);
+
                             if (dest != null)
                             {
                                 Patch(dest, entry.Value as RavenJObject, property, patches);
@@ -409,6 +410,10 @@ namespace Custom.Data.Persistence.Repositories
                 int? position = null;
                 for (int i = 0, count = target.Length; i < count; i++)
                 {
+                    if (target[i] == null || target[i].Type == JTokenType.Null)
+                    {
+                        continue;
+                    }
                     var value = target[i].Value<RavenJValue>(idProperty);
                     if (string.Equals(value.Value, entry.Key))
                     {
@@ -428,17 +433,29 @@ namespace Custom.Data.Persistence.Repositories
 
                     var merge = target[position.Value] as RavenJObject;
 
-                    foreach (var v in entry.Value as RavenJObject)
+                    switch (entry.Value.Type)
                     {
-                        merge[v.Key] = v.Value;
-                    }
+                        case JTokenType.Null:
+                            break;
 
-                    patch.Add(new PatchRequest
-                    {
-                        Type = PatchCommandType.Add,
-                        Name = property.Name,
-                        Value = merge
-                    });
+                        case JTokenType.Object:
+                            foreach (var v in entry.Value as RavenJObject)
+                            {
+                                merge[v.Key] = v.Value;
+                            }
+
+                            patch.Add(new PatchRequest
+                            {
+                                Type = PatchCommandType.Add,
+                                Name = property.Name,
+                                Value = merge
+                            });
+                            break;
+
+                        default:
+                            // error
+                            break;
+                    }
                 }
                 else
                 {

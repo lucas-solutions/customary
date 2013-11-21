@@ -56,11 +56,15 @@ namespace Custom.Data
         {
             var result = new RavenJObject();
 
+            var type = System.Enum.GetName(typeof(TypeCategories), Category);
+
             result["id"] = new RavenJValue(Id);
             result["key"] = new RavenJValue(string.Format("{0}/{1}/{2}", Type, Category, _id.ToString(idFormat)));
             result["leaf"] = new RavenJValue(true);
-            result["type"] = new RavenJValue(System.Enum.GetName(typeof(TypeCategories), Category).ToLowerInvariant());
+            result["type"] = new RavenJValue(type.ToLowerInvariant());
             result["text"] = new RavenJValue(Name);
+            result["cls"] = new RavenJValue("metadata" + type);
+            result["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
 
             return result;
         }

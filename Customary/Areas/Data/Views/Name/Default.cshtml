@@ -9,6 +9,43 @@
         background-color: #dfe8f5;
         background-image: none; /*-webkit-linear-gradient(top,#dde8f5,#cbdbef);*/
     }
+
+    /* Replaces default tree node yellow 
+       folder icon with an OSX style one */
+    /*#containerTreePanel .x-tree-icon-parent {
+        background-image: url("images/icon-fldr-default-closed.png");
+    }*/
+
+    /* This is the open state of the yellow
+       folder icon. */
+    /*#containerTreePanel .x-grid-tree-node-expanded .x-tree-icon-parent {
+        background-image: url("images/icon-fldr-default-closed.png");
+        padding-top: 1px;
+    }*/
+
+    /* Replaces the default tree node leaf
+       icon with Hub List list icon */
+    /*#containerTreePanel .x-tree-icon-leaf {
+        background-image: url("images/icon-sdbar-list.png");
+        width: 14px;
+    }*/
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-model {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-value {
+        background-image: url("@Url.Content("~/Images/Metadata/value.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-enum {
+        background-image: url("@Url.Content("~/Images/Metadata/enum.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-unit {
+        background-image: url("@Url.Content("~/Images/Metadata/unit.png")");
+    }
+
 </style>
 
 <script type="text/javascript">
@@ -695,7 +732,7 @@
             return result;
         }
 
-        
+
 
         function switchValues(value, separator, callback) {
 
@@ -930,95 +967,61 @@
             launch: function () {
 
                 // Apply a set of config properties to the singleton
-                Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+                /*Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
                     //maxWidth: 600,
                     //minWidth: 300,
                     //mouseOffset: [50, 50],
                     //showDelay: 50      // Show 50ms after entering target
-                });
+                });*/
 
                 var directory = Ext.create('Ext.custom.data.Directory');
 
                 this.centerPanel = Ext.create('Ext.panel.Panel', {
                     region: 'center',
                     bodyStyle: frameStyle, // background color like frame
-                    header: false,
+                    header: true,
                     items: [],
-                    flex: 5,
+                    flex: 4,
                     border: false,
                     layout: 'fit',
-                    title: 'Select Entity'
-                });
-
-                var statusBar = Ext.create('Ext.ux.StatusBar', {
-                    id: 'basic-statusbar',
-                    region: 'south',
-                    // defaults to use when the status is cleared:
-                    defaultText: 'Default status text',
-                    //defaultIconCls: 'default-icon',
-
-                    // values to set initially:
-                    text: 'Ready',
-                    iconCls: 'x-status-valid',
-
-                    // any standard Toolbar items:
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Show Warning & Clear',
-                            handler: function () {
-                                var sb = Ext.getCmp('basic-statusbar');
-                                sb.setStatus({
-                                    text: 'Oops!',
-                                    iconCls: 'x-status-error',
-                                    clear: true // auto-clear after a set interval
-                                });
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Show Busy',
-                            handler: function () {
-                                var sb = Ext.getCmp('basic-statusbar');
-                                // Set the status bar to show that something is processing:
-                                sb.showBusy();
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'Clear status',
-                            handler: function () {
-                                var sb = Ext.getCmp('basic-statusbar');
-                                // once completed
-                                sb.clearStatus();
-                            }
-                        },
-                        '-',
-                        'Plain Text'
-                    ]
+                    title: 'Empty View'
                 });
 
                 Ext.create('Ext.container.Viewport', {
                     layout: 'border',
                     bodyStyle: frameStyle, // background color like frame
                     items: [
-                        {
+                        /*{
                             region: 'north',
                             xtype: 'container',
                             bodyStyle: frameStyle, // background color like frame
-                            html: '@Html.Partial("~/Areas/Data/Views/Name/Header.cshtml")',
+                            html: 'Html.Partial("~/Areas/Data/Views/Name/Header.cshtml")',
                             autoHeight: true,
                             border: false,
                             margins: '0 0 5 0'
-                        },
+                        },*/
                         directory.initComponent({
                             activeTab: 0,
-                            region: 'west',
                             bodyStyle: frameStyle, // background color like frame
                             bodyBorder: false,
                             border: false,
                             collapsible: true,
-                            flex: 1,
+                            /*tbar: {
+                                xtype: 'toolbar',
+                                dock: 'top',
+                                layout: {
+                                    align: 'center'
+                                },
+                                items: [
+                                    {
+                                        text: 'Data Dictionary',
+                                        xtype: 'text'
+                                    }
+                                ],
+                                //margin: '6 0 3 0',
+                                //ui: 'header'
+                            },*/
+                            flex: 3,
                             header: false,
                             layout: 'fit',
                             listeners: {
@@ -1029,16 +1032,22 @@
                                             if (typeof record.typeName !== 'string') {
                                                 this.centerPanel.removeAll();
                                                 this.centerPanel.doLayout();
+                                                this.centerPanel.setTitle('Empty View');
                                             }
                                             else {
+                                                var title = record.typeName + '/' + record.id;
+                                                this.centerPanel.removeAll();
+                                                this.centerPanel.setTitle(title + ' (loading...)');
+                                                this.centerPanel.mask('Loading... Please wait', 'loading');
                                                 Ext.custom.Droplet.asyncCreate(record.typeName, false, function (droplet) {
-
-                                                    this.centerPanel.removeAll();
-                                                    this.centerPanel.add(droplet.initComponent());
+                                                    this.centerPanel.add(droplet.initComponent({
+                                                    }));
                                                     this.centerPanel.doLayout();
 
-                                                    droplet.load(record.id);
-
+                                                    droplet.load(record.id, function () {
+                                                        this.centerPanel.setTitle(title);
+                                                        this.centerPanel.unmask();
+                                                    }, this);
                                                     //droplet.asyncLoad(record.id);
                                                 }, this);
                                             }
@@ -1063,11 +1072,63 @@
                                     scope: this
                                 }*/
                             },
-                            margins: '0 0 0 5',
+                            margins: '26 0 0 5',
+                            region: 'west',
                             split: true
                         }),
                         this.centerPanel,
-                        statusBar
+                        {
+                            bodyStyle: frameStyle, // background color like frame
+                            bodyBorder: false,
+                            border: false,
+                            collapsible: true,
+                            flex: 1,
+                            header: false,
+                            items: [
+                            ],
+                            layout: 'fit',
+                            listeners: {
+                                added: {
+                                    fn: function (component, container, pos, eOpts) {
+                                        Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+                                            closable: true,
+                                            renderTo: component
+                                            //maxWidth: 600,
+                                            //minWidth: 300,
+                                            //mouseOffset: [50, 50],
+                                            //showDelay: 50      // Show 50ms after entering target
+                                        });
+                                        return true;
+                                    },
+                                    scope: this
+                                },
+                                boxready: {
+                                    fn: function (component, width, height, eOpts) {
+                                        console.log('boxready');
+                                        Ext.apply(Ext.tip.QuickTipManager.getQuickTip(), {
+                                            closable: true,
+                                            target: component.el,
+                                            trackMouse: true,
+                                            listeners: {              // Change content dynamically depending on which element triggered the show.
+                                                beforeshow: function updateTipBody(tip) {
+                                                    tip.update('Over company');// "' + view.getRecord(tip.triggerElement).get('company') + '"');
+                                                }
+                                            }
+                                            //maxWidth: 600,
+                                            //minWidth: 300,
+                                            //mouseOffset: [50, 50],
+                                            //showDelay: 50      // Show 50ms after entering target
+                                        });
+                                        return true;
+                                    },
+                                    scope: this
+                                }
+                            },
+                            region: 'east',
+                            split: true,
+                            title: 'Help',
+                            xtype: 'panel'
+                        }
                     ]
                 });
                 window.onbeforeunload = function () {

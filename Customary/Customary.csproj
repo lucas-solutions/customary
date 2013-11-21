@@ -122,6 +122,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.13\lib\net45\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
@@ -275,6 +276,7 @@
     <Compile Include="Data\DataDictionary.cs" />
     <Compile Include="Data\ModelDictionary.cs" />
     <Compile Include="Data\NodeKinds.cs" />
+    <Compile Include="Data\Persistence\DocumentArchive.cs" />
     <Compile Include="Data\TypeCategories.cs" />
     <Compile Include="Data\DocumentStoreExtensions.cs" />
     <Compile Include="Data\EnumDescriptor.cs" />
@@ -585,7 +587,7 @@
     <Compile Include="Areas\User\Controllers\AccountController.cs" />
     <Compile Include="Areas\User\Controllers\ProfileController.cs" />
     <Compile Include="Globalization\LocalizationExtensions.cs" />
-    <Compile Include="Images\Masterdata\MasterdataExtensions.cs" />
+    <Compile Include="Data\MasterdataExtensions.cs" />
     <Compile Include="Data\Metadata\MetadataExtensions.cs" />
     <Compile Include="Data\Serialization\StreamFormat.cs" />
     <Compile Include="Data\Serialization\StreamFormatExtensions.cs" />
@@ -765,6 +767,10 @@
     <Content Include="ExtTest.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Images\Metadata\enum.png" />
+    <Content Include="Images\Metadata\model.png" />
+    <Content Include="Images\Metadata\unit.png" />
+    <Content Include="Images\Metadata\value.png" />
     <Content Include="Scripts\Data\Directory.js" />
     <Content Include="Scripts\Data\Factory.js" />
     <Content Include="Scripts\Ext\ux\form\SearchField.js" />

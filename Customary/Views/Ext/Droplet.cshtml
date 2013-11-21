@@ -14,38 +14,59 @@
         }
 
         function formEventHandler(droplet, parent, component, index) {
+
+            var isDirty = droplet.isDirty || this.isDirty || Ext.emptyFn;
+
             component.on({
                 destroyable: true,
-                beforerender: function (component, eOpts) {
-                    // perform some visual configuration on the actual instances
-                    //cmp.headerCt.setHeight(25);
-                    console.log('beforerender ' + component.xtype);
+                beforerender: {
+                    fn: function (component, eOpts) {
+                        // perform some visual configuration on the actual instances
+                        //cmp.headerCt.setHeight(25);
+                        console.log('beforerender ' + component.xtype);
+                    },
+                    scope: this
                 },
-                change: function (field, newValue, oldValue, eOpts) {
-                    // Fires when the value of a field is changed via the setValue method.
-                    console.log('change ' + oldValue + ' to ' + newValue);
+                change: {
+                    fn: function (field, newValue, oldValue, eOpts) {
+                        // Fires when the value of a field is changed via the setValue method.
+                        console.log('change ' + oldValue + ' to ' + newValue);
+                    },
+                    scope: this,
                 },
-                dirtychange: function (component, dirty, eOpts) {
-                    // Fires when the dirty state of the entire form changes.
-                    console.log('dirtychange ' + dirty);
-                    if (dirty) {
-                        droplet.isDirty(true);
-                    }
-                    else {
-                        droplet.isDirty();
-                    }
+                dirtychange: {
+                    fn: function (component, dirty, eOpts) {
+                        // Fires when the dirty state of the entire form changes.
+                        console.log('dirtychange ' + dirty);
+                        if (dirty) {
+                            isDirty.call(droplet, true);
+                        }
+                        else {
+                            isDirty.call(droplet);
+                        }
+                    },
+                    scope: this
                 },
-                fielderrorchange: function (fieldAncestor, field, error, eOpts) {
-                    // Fires when the active error message is changed for any one of the Ext.form.Labelable instances within this container.
-                    console.log('fielderrorchange ' + field.xtype + ': ' + error);
+                fielderrorchange: {
+                    fn: function (fieldAncestor, field, error, eOpts) {
+                        // Fires when the active error message is changed for any one of the Ext.form.Labelable instances within this container.
+                        console.log('fielderrorchange ' + field.xtype + ': ' + error);
+                    },
+                    scope: this
                 },
-                fieldvaliditychange: function (fieldAncestor, field, valid, eOpts) {
-                    // Fires when the validity state of any one of the Ext.form.field.Field instances within this container changes.
-                    console.log('fieldvaliditychange ' + field.xtype + ': ' + valid);
+                fieldvaliditychange: {
+                    fn: function (fieldAncestor, field, valid, eOpts) {
+                        // Fires when the validity state of any one of the Ext.form.field.Field instances within this container changes.
+                        console.log('fieldvaliditychange ' + field.xtype + ': ' + valid);
+                    },
+                    scope: this
                 },
-                validitychange: function (basicForm, valid, eOpts) {
-                    // Fires when the validity of the entire form changes.
-                    console.log('validitychange ' + basicForm.xtype + ': ' + valid);
+                validitychange: {
+                    fn: function (basicForm, valid, eOpts) {
+                        // Fires when the validity of the entire form changes.
+                        console.log('validitychange ' + basicForm.xtype + ': ' + valid);
+                    },
+                    scope: this
                 }
             });
         };
@@ -357,7 +378,7 @@
                     return {
                         header: false,
                         activeTab: 0,
-                        bodyPadding: '4 6 0 0',
+                        bodyPadding: '0 0 0 0',
                         bodyBorder: false,
                         border: false,
                         bodyStyle: frameStyle,
@@ -449,8 +470,11 @@
                             frame: false,
                             header: true,
                             listeners: {
-                                add: function (parent, component, index) {
-                                    return formEventHandler(droplet, parent, component, index);
+                                add: {
+                                    fn: function (parent, component, index) {
+                                        return formEventHandler.call(this, droplet, parent, component, index);
+                                    },
+                                    scope: this
                                 }
                             },
                             padding: '0',
@@ -600,7 +624,6 @@
                             title: config.title,
                             tooltip: config.tooltip,
                             onAddClick: function () {
-                                console.log("Add");
                                 var store = this.getStore();
                                 var record = new store.model({});
                                 store.addSorted(record);
@@ -609,8 +632,14 @@
                                 if (typeof rowediting === 'object' && rowediting !== null) {
                                     rowediting.startEdit(record, 0);
                                 }
+                                droplet.isDirty(true);
+                                console.log("Add");
                             },
                             onRemoveClick: function () {
+                                var store = this.getStore();
+                                var selection = this.getView().getSelectionModel().getSelection()[0];
+                                store.remove(selection);
+                                droplet.isDirty(true);
                                 console.log("Remove");
                             }
                         })
@@ -648,8 +677,11 @@
                 $fieldName: $field.$name,
                 $modelName: modelName,
                 listeners: {
-                    add: function (parent, component, index) {
-                        return formEventHandler(droplet, parent, component, index);
+                    add: {
+                        fn: function (parent, component, index) {
+                            return formEventHandler.call(this, droplet, parent, component, index);
+                        },
+                        scope: this
                     }
                 },
                 trackResetOnLoad: true
@@ -731,8 +763,11 @@
 
             Ext.merge(config.items[0], {
                 listeners: {
-                    add: function (parent, component, index) {
-                        return formEventHandler(droplet, parent, component, index);
+                    add: {
+                        fn: function (parent, component, index) {
+                            return formEventHandler.call(this, droplet, parent, component, index);
+                        },
+                        scope: this
                     }
                 },
                 trackResetOnLoad: true
@@ -1022,13 +1057,14 @@
 
             },
 
-            initComponent: function () {
+            initComponent: function (customConfig) {
 
                 var config = configDropletComponent.call(this, this.$m);
 
                 Ext.merge(config, {
                     layout: 'fit'
-                });
+                },
+                customConfig);
 
                 this._component = Ext.widget(config);
 
@@ -1054,7 +1090,7 @@
                 return dirty;
             },
 
-            load: function (id, callcack) {
+            load: function (id, callcack, scope) {
                 this._id = id;
                 this.model.load(id, {
                     failure: function (record, operation) {
@@ -1071,7 +1107,7 @@
                         //do something whether the load succeeded or failed
                         //if operation is unsuccessful, record is null
                         if (typeof callcack === 'function') {
-                            callcack(record, operation, success);
+                            callcack.call(scope || this, record, operation, success);
                         }
                     },
                     scope: this

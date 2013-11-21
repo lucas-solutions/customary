@@ -170,7 +170,7 @@
                 var path = fullName(selections[0]);
                 var data = selections[0].raw;
                 var typeName = makeModelTypeName(data.type);
-                
+
                 this.typeName = typeName;
 
                 this._indexRecord = Ext.Object.merge({
@@ -200,7 +200,7 @@
                     if (this._recordsModel === null || typeof this._recordsModel !== 'function') {
                         this._recordsModel = Custom.app.Application.defineModel(modelName, $m);
                     }
-                    
+
                     var $fields = Custom.app.Application.collectFields($m, []);
 
                     // grid panel (selector)
@@ -516,6 +516,20 @@
                                     },
                                     scope: this
                                 },
+                                render: function (grid) {
+                                    var view = grid.getView();    // Capture the grid's view.
+                                    grid.tip = Ext.create('Ext.tip.ToolTip', {
+                                        target: view.el,          // The overall target element.
+                                        delegate: view.itemSelector, // Each grid row causes its own seperate show and hide.
+                                        trackMouse: true,         // Moving within the row should not hide the tip.
+                                        renderTo: Ext.getBody(),  // Render immediately so that tip.body can be referenced prior to the first show.
+                                        listeners: {              // Change content dynamically depending on which element triggered the show.
+                                            beforeshow: function updateTipBody(tip) {
+                                                tip.update('Over company ');
+                                            }
+                                        }
+                                    });
+                                },
                                 selectionchange: {
                                     fn: onRecordSelectionChange,
                                     scope: this
@@ -582,6 +596,7 @@
                                 }
                             }),*/
                             title: 'Records',
+                            tooltip: 'KK',
                             xtype: 'gridpanel',
 
                         },
