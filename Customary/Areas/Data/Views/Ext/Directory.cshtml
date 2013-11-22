@@ -2,11 +2,7 @@
     // Create model, grid and forms for data definitions
 
     Ext.define('Ext.custom.data.Directory', function () {
-
-        function makeModelName(typeName) {
-            return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.') + '.Model';
-        }
-
+        
         function fullName(node) {
             /// <param name="node" type="Ext.data.NodeInterface">
             /// </param>
@@ -37,7 +33,7 @@
                     buildUrl: function (request) {
                         switch (request.action) {
                             case 'read':
-                                return directory.baseUrl + '/Data/Directory/' + fullName(request.operation.node);
+                                return directory.baseUrl + '/Data/Directory/Index/' + fullName(request.operation.node);
                         }
                     },
                     headers: {
@@ -194,7 +190,7 @@
             if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
                 var typeName = this._indexRecord.name;
                 Custom.app.Application.asyncMetadata(typeName, function ($m) {
-                    var modelName = makeModelName(typeName);
+                    var modelName = Custom.app.Application.makeModelName(typeName);
 
                     this._recordsModel = Ext.ModelManager.getModel(modelName);
                     if (this._recordsModel === null || typeof this._recordsModel !== 'function') {

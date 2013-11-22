@@ -82,7 +82,7 @@ namespace Custom
 
         public static RavenJArray Merge(this RavenJArray target, RavenJArray source, ModelDefinition descriptor)
         {
-            var idName = descriptor != null ? descriptor.Identity : null;
+            var idName = descriptor != null ? descriptor.IdProperty : null;
 
             foreach (var value in source.Values())
             {
@@ -92,7 +92,7 @@ namespace Custom
 
         public static RavenJObject Merge(this RavenJObject target, RavenJObject source, ModelDefinition descriptor)
         {
-            var idName = descriptor != null ? descriptor.Identity : null;
+            var idName = descriptor != null ? descriptor.IdProperty : null;
 
             foreach (var item in source)
             {

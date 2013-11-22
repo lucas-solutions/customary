@@ -16,11 +16,21 @@ namespace Custom.Data.Persistence
 
     public class DocumentArchive
     {
-        public static void Export(IDocumentStore documentStore, Stream outputStream, CompressionLevel compressionLevel = CompressionLevel.Optimal, string password = null)
+        public static void Export(IDocumentStore documentStore, Stream outputStream, string password)
         {
             using (var zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create))
             {
                 var documentArchive = new DocumentArchive(documentStore, zipArchive, password);
+
+                documentArchive.Export(CompressionLevel.NoCompression);
+            }
+        }
+
+        public static void Export(IDocumentStore documentStore, Stream outputStream, CompressionLevel compressionLevel = CompressionLevel.Optimal)
+        {
+            using (var zipArchive = new ZipArchive(outputStream, ZipArchiveMode.Create))
+            {
+                var documentArchive = new DocumentArchive(documentStore, zipArchive, null);
 
                 documentArchive.Export(compressionLevel);
             }

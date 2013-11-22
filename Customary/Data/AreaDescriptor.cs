@@ -7,6 +7,7 @@ using System.Web;
 namespace Custom.Data
 {
     using Custom.Data.Metadata;
+    using Custom.Data.Persistence;
     using Raven.Json.Linq;
 
     public class AreaDescriptor : NameDescriptor
@@ -23,7 +24,12 @@ namespace Custom.Data
 
         public StoreInfo Store
         {
-            get { return null; }
+            get
+            {
+                StoreInfo store = null;
+
+                return store;
+            }
         }
 
         public RavenJObject DataAsJson

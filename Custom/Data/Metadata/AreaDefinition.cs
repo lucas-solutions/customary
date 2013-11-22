@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Custom.Data.Metadata
 {
+    using Custom.Data.Persistence;
+
     public class AreaDefinition : BaseDefinition
     {
-        public StoreInfo Store
+        public string Store
         {
             get;
             set;

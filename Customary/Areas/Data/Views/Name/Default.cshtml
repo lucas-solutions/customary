@@ -601,24 +601,129 @@
             return $fields;
         }
 
+        var isDigit = (function() {
+            var re = /^\d$/;
+            return function(c) {
+                return re.test(c);
+            }
+        }());
+
+        function javascriptDecode(str) {
+            var result = "";
+            for (var i = 0, count = str.length; i < count; i++) {
+                var c = str[i];
+                if (c !== '&') {
+                    result += c;
+                }
+                else if (count < i + 1) {
+                    // error;
+                }
+                else if (str[i + 1] !== '#') {
+                    // error;
+                }
+                else {
+                    var len = 0;
+                    for (; i + len + 1 < count && isDigit(str[i + len + 1]) ; len++);
+                    if (len > 0 && i + len + 1 < count && str[i + len + 1] === ';') {
+                        var code = str.substring(i + 2, len);
+                        result += String.fromCharCode(code);
+                        i += 2 + len;
+                    }
+                    else {
+                        // error;
+                    }
+                }
+            }
+            return result;
+        }
+
+        function javascriptEncode(str) {
+            var result = "";
+            for (var i = 0, count = str.length; i < count; i++) {
+                var c = str[i];
+                result += ("{}\"\'".indexOf(c) === -1) ? c : c.charCodeAt(0);
+            }
+            return result;
+        }
+
+        var JSONEX = {
+
+            stringify: function (obj) {
+                var jsonified = {}
+                // loop through object and write string and type to newly stored data structure
+                for (i in obj)
+                    jsonified[i] = {
+                        // some voodoo to determine the variable type
+                        type: Object.prototype.toString.call(obj[i]).split(/\W/)[2],
+                        value: obj[i].toString()
+                    }
+                return JSON.stringify(jsonified)
+            },
+
+            parse: function (json) {
+                objectified = {}
+                obj = JSON.parse(json)
+                // loop through object, and handle parsing of string according to type
+                for (i in obj)
+                    if (obj[i].type == "RegExp") {
+                        var m = obj[i].value.match(/\/(.*)\/([a-z]+)?/)
+                        objectified[i] = new RegExp(m[1], m[2]);
+                    } else if (obj[i].type == "String") {
+                        objectified[i] = obj[i].value
+                    } else if (obj[i].type == "Function") {
+                        // WARNING: this is more or less like using eval
+                        // All the usual caveats apply - including jailtime
+                        objectified[i] = new Function("return (" + obj[i].value + ")")();
+                    }
+                // ADD MORE TYPE HANDLERS HERE ...
+
+                return objectified
+
+            }
+        }
+
+        var myThing = {
+            regex: new RegExp("123", "g"),
+            text: "good",
+            func: function (x) {
+                return x * x
+            }
+        }
+
+        var myThing_json = JSONEX.stringify(myThing);
+        // "{"regex":{"type":"RegExp","value":"/123/g"},"text":{"type":"String","value":"good"},"func":{"type":"Function","value":"function (x) {\n    return x * x;\n}"}}"
+
+        var myThing_obj = JSONEX.parse(myThing_json);
+        // native object representing original object
+
+        // JSON Object (can be an imported file, of course)
+        // Store RegExp pattern as a string
+        // Double backslashes are required to put literal \ characters in the string
+        var jsonObject = { "regex": "^http:\\/\\/" };
+
+        function fun(url) {
+            var match, regexp;
+
+            // You can do:
+            match = url.match(new RegExp(jsonObject.regex, 'i'));
+            // Or (useful for capturing groups when doing global search):
+            regexp = new RegExp(jsonObject.regex, 'i');
+            match = regexp.exec(url);
+
+            // Logic to process match results
+            // ...
+            return match;
+        }
+
+        fun("http:\\google.com");
+
+
         function makeExtName(typeName) {
             return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
         }
 
         function makeModelName(typeName) {
             return makeExtName(typeName) + '.Model';
-        }
-
-        function makeGridName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Grid';
-        }
-
-        function makeFormName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Form';
-        }
-
-        function makePanelName(typeName, componentName) {
-            return makeExtName(typeName) + '.' + componentName + '.Panel';
         }
 
         function mergeMetadata($m) {
@@ -955,6 +1060,10 @@
                 defineModel: defineModel,
                 findMetadata: findMetadata,
                 findModel: findModel,
+                javascriptDecode: javascriptDecode,
+                javascriptEncode: javascriptEncode,
+                makeExtName: makeExtName,
+                makeModelName: makeModelName,
                 selectColumns: selectColumns,
                 splitRole: splitRole
             },

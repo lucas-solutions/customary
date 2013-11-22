@@ -5,18 +5,11 @@ using System.Web;
 
 namespace Custom.Data.Metadata
 {
+    using Custom.Data.Persistence;
+
     public sealed class ModelDefinition : TypeDefinition
     {
         private List<PropertyDefinition> _properties;
-
-        /// <summary>
-        /// Is abtract class
-        /// </summary>
-        public bool Abstract
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Is embedded. Not an entity, and specifies belongsTo
@@ -37,9 +30,25 @@ namespace Custom.Data.Metadata
         }
 
         /// <summary>
+        /// Can not be inheried. Only Final models can be instantiated.
+        /// Final models can not be Embeddable. They represent an entity or document.
+        /// There is no direct relationship between Embeddable and final.
+        /// For example:
+        /// * The Type model is not Embeddable, and it is not Final.
+        /// * The Model model is not Embeddable and it is Final.
+        /// * The Property model is Embeddable and it is Final.
+        /// * The Definition model is Embeddable but it is not Final.
+        /// </summary>
+        public bool Final
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Name of the identity property.
         /// </summary>
-        public string Identity
+        public string IdProperty
         {
             get;
             set;
@@ -48,7 +57,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Name of the display property
         /// </summary>
-        public string Display
+        public string DisplayProperty
         {
             get;
             set;
@@ -67,25 +76,7 @@ namespace Custom.Data.Metadata
         /// "Belongs to" type name
         /// </summary>
         public string Principal { get; set; }
-
-        /// <summary>
-        /// Edit mode: Form or Grid
-        /// </summary>
-        public string Edit
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// View mode: Form, Grid or Report
-        /// </summary>
-        public string View
-        {
-            get;
-            set;
-        }
-
+        
         /// <summary>
         /// Comma separated list of head (column in a grid) properties
         /// </summary>
@@ -120,7 +111,7 @@ namespace Custom.Data.Metadata
         /// <summary>
         /// Document name, table name, REST (Representational state transfer) service URL.
         /// </summary>
-        public StoreInfo Store
+        public string Store
         {
             get;
             set;

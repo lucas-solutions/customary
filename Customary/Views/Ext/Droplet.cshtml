@@ -5,14 +5,6 @@
 
         var _baseUrl = 'http://data.customary.com';
 
-        function makeExtName(typeName) {
-            return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
-        }
-
-        function makeModelName(typeName) {
-            return makeExtName(typeName) + '.Model';
-        }
-
         function formEventHandler(droplet, parent, component, index) {
 
             var isDirty = droplet.isDirty || this.isDirty || Ext.emptyFn;
@@ -73,7 +65,7 @@
 
         function configCombobox($field, config) {
 
-            var $source = Custom.app.Application.findMetadata($field.$source);
+            var $source = Custom.app.Application.findMetadata($field.$prototype);
 
             var store = Ext.create('Ext.data.Store', {
                 fields: ['name', 'title', 'summary'],
@@ -225,6 +217,10 @@
             }
 
             var role = Custom.app.Application.splitRole($field.$role);
+
+            if (role.readOnly) {
+                config.readOnly = true;
+            }
 
             return config;
         }
@@ -447,7 +443,7 @@
                 }
             });
 
-            var modelName = makeModelName($field.$prototype);
+            var modelName = Custom.app.Application.makeModelName($field.$prototype);
 
             if (role.hasMany) {
 
@@ -740,7 +736,7 @@
                                 handler: this.onUpdateClick,
                                 iconCls: 'icon-save',
                                 scope: this,
-                                text: 'Save',
+                                text: 'Submit',
                                 tooltip: 'Accept changes by submitting data to the server.',
                                 xtype: 'button'
                             },
@@ -750,7 +746,7 @@
                                 handler: this.onReadClick,
                                 iconCls: 'icon-cancel',
                                 scope: this,
-                                text: 'Reset/Refresh',
+                                text: 'Reset',
                                 tooltip: 'Reject changes by reloading data from the server.',
                                 xtype: 'button'
                             }
@@ -957,7 +953,7 @@
 
                 create: function (typeName, readonly, $m) {
 
-                    var modelName = makeModelName(typeName);
+                    var modelName = Custom.app.Application.makeModelName(typeName);
 
                     var model = Ext.ModelManager.getModel(modelName);
 
@@ -977,7 +973,7 @@
 
             constructor: function (typeName, readOnly, $m, model) {
 
-                this.name = makeExtName(typeName);
+                this.name = Custom.app.Application.makeExtName(typeName);
                 this.typeName = typeName;
                 this.readOnly = readOnly;
                 this.$m = $m;

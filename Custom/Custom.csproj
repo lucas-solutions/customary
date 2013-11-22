@@ -47,10 +47,11 @@
     <Compile Include="Data\Metadata\MemberUI.cs" />
     <Compile Include="Data\Metadata\ModelUI.cs" />
     <Compile Include="Data\Metadata\PropertyUI.cs" />
-    <Compile Include="Data\Metadata\StoreInfo.cs" />
-    <Compile Include="Data\Metadata\ServiceAttribute.cs" />
-    <Compile Include="Data\Metadata\ServiceDefinition.cs" />
-    <Compile Include="Data\Metadata\StoreProviders.cs" />
+    <Compile Include="Data\Persistence\AdoStoreInfo.cs" />
+    <Compile Include="Data\Persistence\EntityFrameworkStoreInfo.cs" />
+    <Compile Include="Data\Persistence\StoreInfo.cs" />
+    <Compile Include="Data\Persistence\DocumentStoreInfo.cs" />
+    <Compile Include="Data\Persistence\StoreProviders.cs" />
     <Compile Include="Data\Metadata\BaseUI.cs" />
     <Compile Include="Data\Metadata\UnitAttribute.cs" />
     <Compile Include="Data\Metadata\UnitDefinition.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Enum.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Data\Metadata\DefinitionAttribute.cs" />
-    <Compile Include="Data\Metadata\StoreTypes.cs" />
+    <Compile Include="Data\Persistence\StoreTypes.cs" />
     <Compile Include="Data\Metadata\EnumAttribute.cs" />
     <Compile Include="Data\Metadata\EnumDefinition.cs" />
     <Compile Include="Data\Metadata\MemberAttribute.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="Value.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\Persistence\" />
     <Folder Include="Data\Serialization\" />
     <Folder Include="Site\Navigation\" />
     <Folder Include="Site\Presentation\Evernote\" />

@@ -45,16 +45,16 @@ namespace Custom
             ControllerBuilder.Current.SetControllerFactory(typeof(Web.Mvc.ControllerFactory));
 
             var metadataDir = System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/Seeds/Metadata");
-            /*var metadataSeeds = new System.IO.DirectoryInfo(metadataDir).GetFiles("*.js").ToArray();
+            var metadataSeeds = new System.IO.DirectoryInfo(metadataDir).GetFiles("*.js").ToArray();
             foreach (var file in metadataSeeds)
             {
                 Global.Metadata.Store.Import(new System.IO.FileInfo(file.FullName));
-            }*/
+            }
 
-            using (var fileStream = System.IO.File.Open(metadataDir + "\\Metadata.zip", System.IO.FileMode.Open))
+            /*using (var fileStream = System.IO.File.Open(metadataDir + "\\Metadata.zip", System.IO.FileMode.Open))
             {
                 DocumentArchive.Import(Global.Metadata.Store, fileStream);
-            }
+            }*/
 
             var dictionary = Data.DataDictionary.Current;
 

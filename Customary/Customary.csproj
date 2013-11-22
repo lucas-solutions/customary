@@ -283,8 +283,6 @@
     <Compile Include="Data\ErrorDescriptor.cs" />
     <Compile Include="Data\JsonContext.cs" />
     <Compile Include="Data\ModelDescriptor.cs" />
-    <Compile Include="Data\ModelExtensions.cs" />
-    <Compile Include="Data\Metadata\ServiceExtensions.cs" />
     <Compile Include="Data\NameDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -321,7 +319,6 @@
     <Compile Include="Web\Http\ApiControllerTypeResolver.cs" />
     <Compile Include="Indexes\MetadaTypeIndexCreationTask.cs" />
     <Compile Include="Indexes\MetadataTypesByName.cs" />
-    <Compile Include="Data\Metadata\Factory.cs" />
     <Compile Include="Models\Annotation.cs" />
     <Compile Include="Models\ProcecssResult.cs" />
     <Compile Include="Models\RavenJTokenCallbackModel.cs" />
@@ -3909,6 +3906,7 @@
     <Content Include="Views\Ext\Droplet.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Business\" />
     <Folder Include="App_Data\Globalization\" />
     <Folder Include="App_Data\Masterdata\" />
     <Folder Include="App_Data\Metadata\" />

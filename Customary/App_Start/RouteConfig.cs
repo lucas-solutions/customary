@@ -385,16 +385,15 @@ namespace Custom
 
             // DirectoryController
 
-            #region Data/Directory/{*path}
+            #region Data/Directory/{action}/{*name}
 
             routes.MapRoute(
                 name: Global.Routes.DataDirectoryRouteName,
-                url: "Data/Directory/{*name}",
+                url: "Data/Directory/{action}/{*name}",
                 defaults: new
                 {
                     area = "Data",
-                    controller = "Directory",
-                    action = "Default"
+                    controller = "Directory"
                 }
             );
 

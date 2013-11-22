@@ -31,19 +31,21 @@ namespace Custom.Data
             get
             {
                 if (_keyPrefix != null)
-                    return _keyPrefix;
-
-                _keyPrefix = _name + '/';
-
-                for (var baseModel = BaseType as ModelDescriptor as ModelDescriptor; baseModel != null; baseModel = baseModel.BaseType as ModelDescriptor)
                 {
-                    if (baseModel.Definition.Embeddable)
-                    {
-                        break;
-                    }
-
-                    _keyPrefix = baseModel._name + '/' + _name + '/';
+                    return _keyPrefix;
                 }
+
+                var stack = new Stack<string>();
+
+                stack.Push(string.Empty);
+                stack.Push(_name);
+
+                for (var baseModel = BaseType as ModelDescriptor as ModelDescriptor; baseModel != null && !baseModel.Definition.Embeddable; baseModel = baseModel.BaseType as ModelDescriptor)
+                {
+                    stack.Push(baseModel._name);
+                }
+
+                _keyPrefix = string.Join("/", stack);
 
                 return _keyPrefix;
             }
@@ -166,6 +168,10 @@ namespace Custom.Data
 
                             switch (primitive.Name)
                             {
+                                case "Boolean":
+                                    fieldJObject["$type"] = "boolean";
+                                    break;
+
                                 case "Byte":
                                 case "Int16":
                                 case "Int32":
@@ -227,7 +233,9 @@ namespace Custom.Data
             get
             {
                 var stack = new Stack<StoreInfo>();
-                stack.Push(Definition.Store);
+                var storeName = Definition.Store;
+                StoreInfo store = null;
+                /*stack.Push(store);
                 for (var ancestor = Parent; ancestor != null; ancestor = ancestor.Parent)
                 {
                     switch (ancestor.Type)
@@ -267,7 +275,7 @@ namespace Custom.Data
                     {
                         store.Host = null;
                     }
-                }
+                }*/
 
                 return store;
             }
@@ -309,7 +317,19 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            return base.ToRavenJObject(false);
+            var result = new RavenJObject();
+
+            var type = System.Enum.GetName(typeof(TypeCategories), Category);
+
+            result["id"] = new RavenJValue(Id);
+            result["key"] = new RavenJValue(KeyPrefix + Id.ToString(idFormat));
+            result["leaf"] = new RavenJValue(true);
+            result["type"] = new RavenJValue(type.ToLowerInvariant());
+            result["text"] = new RavenJValue(Name);
+            result["cls"] = new RavenJValue("metadata" + type);
+            result["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
+
+            return result;
         }
     }
 
@@ -334,9 +354,26 @@ namespace Custom.Data
                 }
             }
 
-            var name2 = valuePath[valuePath.Length - 1];
+            /*for (var i = segments.Count; i < valuePath.Length) {
+                var segment = new RavenJObject();
+                segment["$name"] = valuePath[i];
+                segments.Add(segment);
+            }*/
 
-            segments[valuePath.Length - 1][name2] = value;
+            if (segments.Count == valuePath.Length - 1)
+            {
+                segments.Add(new RavenJObject());
+            }
+
+            try
+            {
+                var name2 = valuePath[valuePath.Length - 1];
+                segments[valuePath.Length - 1][name2] = value;
+            }
+            catch (Exception e)
+            {
+                var a = e.Message;
+            }
         }
     }
 }
