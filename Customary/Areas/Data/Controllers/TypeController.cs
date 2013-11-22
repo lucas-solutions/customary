@@ -12,7 +12,7 @@ namespace Custom.Areas.Data.Controllers
     using Custom.Web.Mvc;
     using Raven.Json.Linq;
 
-    public class TypeController : Controller
+    public class TypeController : NameController
     {
         // Data/Store/Metadata/Type/{category}/{id}/{action}
         // Data/Store/Metadata/Type/{category}/{action}
@@ -56,27 +56,9 @@ namespace Custom.Areas.Data.Controllers
             TypeCategories cat;
             System.Enum.TryParse<TypeCategories>(category, true, out cat);
 
-            var name = "Metadata/" + System.Enum.GetName(typeof(TypeCategories), category);
-            var descriptor = ResolveModel(name);
+            var name = "Metadata/" + System.Enum.GetName(typeof(TypeCategories), cat);
 
-            if (descriptor == null)
-                return Json(new { success = false, message = string.Format("Could not resolve model {0}", cat) }, JsonRequestBehavior.AllowGet);
-            else
-            {
-                var repository = descriptor.Repository;
-
-                if (repository == null)
-                    return Json(new { success = false, message = string.Format("Could not resolve model {0} (1) repository", descriptor.Path, cat) }, JsonRequestBehavior.AllowGet);
-
-                if (Guid.Empty.Equals(id))
-                {
-                    return new RavenJObjectResult { Content = descriptor.Repository.Read(skip ?? 0, take ?? byte.MaxValue) };
-                }
-                else
-                {
-                    return new RavenJObjectResult { Content = descriptor.Repository.Read(id) };
-                }
-            }
+            return base.Select(name, id);
         }
 
         //

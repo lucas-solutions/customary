@@ -12,7 +12,7 @@ namespace Custom.Areas.Data.Controllers
     using Custom.Web.Mvc;
     using Raven.Json.Linq;
 
-    public class AreaController : Controller
+    public class AreaController : NameController
     {
         private ModelDescriptor _model;
 

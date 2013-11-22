@@ -53,295 +53,6 @@ namespace Custom
 
             #endregion
 
-            // AreaController
-
-            #region Data/Store/Metadata/Area/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.AreaItemRouteName,
-                url: "Data/Store/Metadata/Area/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Area",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Area/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.AreaSetRouteName,
-                url: "Data/Store/Metadata/Area/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Area",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            // EnumController
-
-            #region Data/Store/Metadata/Type/Enum/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.EnumItemRouteName,
-                url: "Data/Store/Metadata/Type/Enum/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Enum",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Enum/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.EnumSetRouteName,
-                url: "Data/Store/Metadata/Type/Enum/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Enum",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            // EntityController
-
-            #region Data/Store/Metadata/Type/Model/{model}/Entities/{id}/Invoke/{fn}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelItemEntityInvokeRouteName,
-                url: "Data/Store/Metadata/Type/Model/{model}/Entities/{id}/Invoke/{fn}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Entity",
-                    action = "Invoke",
-                },
-                constraints: new
-                {
-                    model = new GuidConstraint(true),
-                    id = new GuidConstraint(true)
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Model/{model}/Entities/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelItemEntityItemRouteName,
-                url: "Data/Store/Metadata/Type/Model/{model}/Entities/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Entity",
-                    action = UrlParameter.Optional,
-                },
-                constraints: new
-                {
-                    model = new GuidConstraint(true),
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Model/{model}/Entities/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelItemEntitySetRouteName,
-                url: "Data/Store/Metadata/Type/Model/{model}/Entities/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Entity",
-                    action = UrlParameter.Optional,
-                },
-                constraints: new
-                {
-                    model = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            // ModelController
-
-            #region Data/Store/Metadata/Type/Model/{model}/Invoke/{fn}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelItemInvokeRouteName,
-                url: "Data/Store/Metadata/Type/Model/{model}/Invoke/{fn}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Model",
-                    action = "Invoke"
-                },
-                constraints: new
-                {
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Model/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelItemRouteName,
-                url: "Data/Store/Metadata/Type/Model/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Model",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Model/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ModelSetRouteName,
-                url: "Data/Store/Metadata/Type/Model/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Model",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            // ValueController
-
-            #region Data/Store/Metadata/Type/Value/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ValueItemRouteName,
-                url: "Data/Store/Metadata/Type/Value/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Value",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/Value/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.ValueSetRouteName,
-                url: "Data/Store/Metadata/Type/Value/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Value",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            // TypeController
-
-            #region Data/Store/Metadata/Type/{category}/{id}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.TypeItemRouteName,
-                url: "Data/Store/Metadata/Type/{category}/{id}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Type",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    category = new TypeCategoryConstraint(true),
-                    id = new GuidConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
-            #region Data/Store/Metadata/Type/{category}/{action}
-
-            routes.MapRoute(
-                name: Global.Routes.TypeSetRouteName,
-                url: "Data/Store/Metadata/Type/{category}/{action}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Type",
-                    action = UrlParameter.Optional
-                },
-                constraints: new
-                {
-                    category = new TypeCategoryConstraint(true),
-                    action = new CrudConstraint()
-                }
-            );
-
-            #endregion
-
             // StoreController
 
             #region Data/Store/{store}/{*keyPrefix}/{id}/{action}
@@ -399,6 +110,232 @@ namespace Custom
 
             #endregion
 
+            // AreaController
+            /*
+            #region Data/Metadata/Area/{id}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.AreaItemRouteName,
+                url: "Data/Metadata/Area/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Area",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Area/{action}
+            
+            routes.MapRoute(
+                name: Global.Routes.AreaSetRouteName,
+                url: "Data/Metadata/Area/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Area",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    action = new CrudConstraint()
+                }
+            );
+            
+            #endregion
+            */
+            // EnumController
+            /*
+            #region Data/Metadata/Type/Enum/{id}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.EnumItemRouteName,
+                url: "Data/Metadata/Type/Enum/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Enum",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Type/Enum/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.EnumSetRouteName,
+                url: "Data/Metadata/Type/Enum/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Enum",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+            */
+            // ModelController
+            /*
+            #region Data/Metadata/Type/Model/{model}/Invoke/{fn}
+
+            routes.MapRoute(
+                name: Global.Routes.ModelItemInvokeRouteName,
+                url: "Data/Metadata/Type/Model/{model}/Invoke/{fn}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Model",
+                    action = "Invoke"
+                },
+                constraints: new
+                {
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Type/Model/{id}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.ModelItemRouteName,
+                url: "Data/Metadata/Type/Model/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Model",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Type/Model/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.ModelSetRouteName,
+                url: "Data/Metadata/Type/Model/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Model",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+            */
+            // ValueController
+            /*
+            #region Data/Metadata/Type/Value/{id}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.ValueItemRouteName,
+                url: "Data/Metadata/Type/Value/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Value",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Type/Value/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.ValueSetRouteName,
+                url: "Data/Metadata/Type/Value/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Value",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+            */
+            // TypeController
+            /*
+            #region Data/Metadata/Type/{category}/{id}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.TypeItemRouteName,
+                url: "Data/Metadata/Type/{category}/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Type",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    category = new TypeCategoryConstraint(true),
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+
+            #region Data/Metadata/Type/{category}/{action}
+
+            routes.MapRoute(
+                name: Global.Routes.TypeSetRouteName,
+                url: "Data/Metadata/Type/{category}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Type",
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    category = new TypeCategoryConstraint(true),
+                    action = new CrudConstraint()
+                }
+            );
+
+            #endregion
+            */
             // NameController
 
             #region Data/{*name}/{id}/Invoke/{fn}
@@ -430,6 +367,27 @@ namespace Custom
                     area = "Data",
                     controller = "Name",
                     action = "Metadata"
+                }
+            );
+
+            #endregion
+
+            #region Data/{*name}/{id}/{property}/{index}/{action}
+
+            routes.MapGreedyRoute(
+                name: Global.Routes.DataPropertyRouteName,
+                url: "Data/{*name}/{id}/{action}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Name",
+                    index = UrlParameter.Optional,
+                    action = UrlParameter.Optional
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint(true),
+                    action = new CrudConstraint()
                 }
             );
 

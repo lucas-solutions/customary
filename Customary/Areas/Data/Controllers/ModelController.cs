@@ -8,7 +8,7 @@ namespace Custom.Areas.Data.Controllers
 {
     using Custom.Web.Mvc;
 
-    public sealed class ModelController : Controller
+    public sealed class ModelController : NameController
     {
         //
         // GET: Data/Store/Metadata/Type/Model
@@ -19,7 +19,7 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Select(Guid id)
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Select("Type/Model", id);
         }
 
         //
@@ -27,9 +27,9 @@ namespace Custom.Areas.Data.Controllers
         // POST: Data/Store/Metadata/Type/Model/{Insert|Create}
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Create(Guid id)
+        public ActionResult Create()
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Create("Type/Model");
         }
 
         //
@@ -42,7 +42,7 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
         public ActionResult Update(Guid id, bool patch)
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Update("Type/Model", id, patch);
         }
 
         //
@@ -51,9 +51,9 @@ namespace Custom.Areas.Data.Controllers
         // GET: Data/Store/Metadata/Type/Model/{id}/{Delete|Destroy}
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult Delete(Guid id)
+        public ActionResult Delete(Guid id, string property, string index)
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Delete("Type/Model", id, property, index);
         }
 
         // POST: Data/Store/Metadata/Type/Model/{id}/Validate
@@ -61,7 +61,7 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Validate(Guid id)
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Validate("Type/Model", id);
         }
 
         // GET: Data/Store/Metadata/Type/Model/Invoke/{fn}
@@ -72,7 +72,7 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Invoke(Guid id, string fn)
         {
-            return new RavenJObjectResult { Content = null };
+            return base.Invoke("Type/Model", id, fn);
         }
     }
 }

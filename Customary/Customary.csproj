@@ -225,7 +225,6 @@
     <Compile Include="Areas\Automation\Controllers\SchedulerController.cs" />
     <Compile Include="Areas\Data\Controllers\AreaController.cs" />
     <Compile Include="Areas\Data\Controllers\DirectoryController.cs" />
-    <Compile Include="Areas\Data\Controllers\EntityController.cs" />
     <Compile Include="Areas\Data\Controllers\EnumController.cs" />
     <Compile Include="Areas\Data\Controllers\ExtController.cs" />
     <Compile Include="Areas\Data\Controllers\ModelController.cs" />

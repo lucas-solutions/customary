@@ -34,6 +34,7 @@ namespace Custom
             public const string DataDomainRouteName = "Data_Domain";
             public const string DataDirectoryRouteName = "Data_Directory";
             public const string DataEntityRouteName = "Data_Entity_Item";
+            public const string DataPropertyRouteName = "Data_Property_Item";
             public const string DataEntityInvokeRouteName = "Data_Entity_Invoke";
             public const string DataTypeRouteName = "Data_Type";
             public const string DataTypeInvokeRouteName = "Data_Type_Invoke";

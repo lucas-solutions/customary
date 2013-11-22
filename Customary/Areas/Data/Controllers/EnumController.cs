@@ -8,7 +8,7 @@ namespace Custom.Areas.Data.Controllers
 {
     using Custom.Web.Mvc;
 
-    public sealed class EnumController : Controller
+    public sealed class EnumController : NameController
     {
         //
         // GET: Data/Store/Metadata/Type/Enum

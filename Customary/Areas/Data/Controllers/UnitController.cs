@@ -8,7 +8,7 @@ namespace Custom.Areas.Data.Controllers
 {
     using Custom.Web.Mvc;
 
-    public sealed class UnitController : Controller
+    public sealed class UnitController : NameController
     {
         //
         // GET: Data/Store/Metadata/Type/Unit

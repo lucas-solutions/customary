@@ -336,8 +336,14 @@ namespace Custom.Areas.Data.Controllers
         // POST: Data/{*name}/{id}/{Delete|Destroy}
         // GET: Data/{*name}/{id}/{Delete|Destroy}
 
+        // 
+        // DELETE: Data/{*name}/{id}/{property}/{index}
+        // DELETE: Data/{*name}/{id}/{property}/{index}/{Delete|Destroy}
+        // POST: Data/{*name}/{id}/{property}/{index}/{Delete|Destroy}
+        // GET: Data/{*name}/{id}/{property}/{index}/{Delete|Destroy}
+
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult Delete(string name, Guid id)
+        public ActionResult Delete(string name, Guid id, string property, string index)
         {
             var data = new RavenJObject();
             data["url"] = new RavenJValue((RouteData.Route as Route).Url);
@@ -352,9 +358,9 @@ namespace Custom.Areas.Data.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
-        public ActionResult Destroy(string name, Guid id)
+        public ActionResult Destroy(string name, Guid id, string property, string index)
         {
-            return Delete(name, id);
+            return Delete(name, id, property, index);
         }
 
         // POST: Data/{*name}/Validate
