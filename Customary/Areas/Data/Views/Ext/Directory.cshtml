@@ -189,18 +189,18 @@
             findToolItem('destroy', component, 'show').setHandler(component.onDestroyClick, component);
             if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
                 var typeName = this._indexRecord.name;
-                Custom.app.Application.asyncMetadata(typeName, function ($m) {
+                Custom.app.Application.asyncMetadata(typeName, function ($) {
                     var modelName = Custom.app.Application.makeModelName(typeName);
 
                     this._recordsModel = Ext.ModelManager.getModel(modelName);
                     if (this._recordsModel === null || typeof this._recordsModel !== 'function') {
-                        this._recordsModel = Custom.app.Application.defineModel(modelName, $m);
+                        this._recordsModel = Custom.app.Application.defineModel(modelName, $);
                     }
 
-                    var $fields = Custom.app.Application.collectFields($m, []);
+                    var properties = Custom.app.Application.collectProperties($, []);
 
                     // grid panel (selector)
-                    var config = Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
+                    var config = Custom.app.Application.configGrid(properties, Custom.app.Application.selectColumns($), {
                         $modelName: modelName
                     });
 

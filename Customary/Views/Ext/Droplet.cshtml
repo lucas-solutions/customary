@@ -63,13 +63,13 @@
             });
         };
 
-        function configCombobox($field, config) {
+        function configCombobox(property, config) {
 
-            var $source = Custom.app.Application.findMetadata($field.$prototype);
+            var $ = Custom.app.Application.findMetadata(property.Type);
 
             var store = Ext.create('Ext.data.Store', {
                 fields: ['name', 'title', 'summary'],
-                data: $source.$members,
+                data: $.Members,
                 queryMode: 'local',
                 displayField: 'title',
                 valueField: 'name',
@@ -84,8 +84,8 @@
             return config;
         }
 
-        function enumHandler($field, config) {
-            return configCombobox($field, config);
+        function enumHandler(property, config) {
+            return configCombobox(property, config);
         }
 
         // Convenience function to check if the component has any dirty fields.
@@ -133,11 +133,11 @@
             return result;
         }
 
-        function unitHandler($field, config) {
-            var $prototype = Custom.app.Application.findMetadata($field.$prototype);
+        function unitHandler(property, propertyType, config) {
+            var $prototype = Custom.app.Application.findMetadata(property.Type);
 
-            var $field_d = Ext.merge({}, $field);
-            var $field_m = Ext.merge({}, $field);
+            var property_d = Ext.merge({}, property);
+            var property_m = Ext.merge({}, property);
 
             return {
                 bodyPadding: 0,
@@ -150,12 +150,12 @@
                 tooltip: config.tooltip,
                 layout: 'anchor',
                 items: [
-                    valueHandler($field_d, {
-                        name: $field.$name + '_d',
+                    valueHandler(property_d, propertyType, {
+                        name: property.Name + '_d',
                         readOnly: this.readOnly
                     }),
-                    enumHandler($field_m, {
-                        name: $field.$name + '_m',
+                    enumHandler(property_m, propertyType, {
+                        name: property.Name + '_m',
                         readOnly: this.readOnly
                     })
                 ],
@@ -163,13 +163,15 @@
             };
         }
 
-        function valueHandler($field, config) {
+        function valueHandler(property, propertyType, config) {
 
             Ext.merge(config, {
                 fieldLabel: config.title
             });
 
-            switch ($field.$type) {
+            var fieldType = Custom.app.Application.toDataType(propertyType);
+
+            switch (fieldType) {
 
                 case 'boolean':
                     Ext.merge(config, {
@@ -193,8 +195,8 @@
                 case 'number':
                     Ext.merge(config, {
                         xtype: 'numberfield',
-                        decimalPrecision: $field.$precision || 2,
-                        decimalSeparator: $field.$separator || '.'
+                        decimalPrecision: property.Precision || 2,
+                        decimalSeparator: property.Separator || '.'
                     });
                     break;
 
@@ -216,7 +218,7 @@
                     break;
             }
 
-            var role = Custom.app.Application.splitRole($field.$role);
+            var role = Custom.app.Application.splitRole(property.Role);
 
             if (role.readOnly) {
                 config.readOnly = true;
@@ -225,23 +227,25 @@
             return config;
         }
 
-        function hashFields($fields, handlers) {
+        function hashFields(properties, handlers) {
 
             var hash = {};
 
-            for (var i = 0; i < $fields.length; i++) {
+            for (var i = 0; i < properties.length; i++) {
 
-                var $field = $fields[i];
+                var property = properties[i];
 
-                var handler = handlers[$field.$category];
+                var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
+
+                var handler = handlers[propertyType.$type];
 
                 if (typeof handler === 'function') {
 
-                    var name = $field.$name;
-                    var title = Ext.custom.Adapter.toString($field.$title, name);
-                    var tooltip = Ext.custom.Adapter.toString($field.$summary);
+                    var name = property.Name;
+                    var title = Ext.custom.Adapter.toString(property.Title, name);
+                    var tooltip = Ext.custom.Adapter.toString(property.Summary);
 
-                    var config = handler.call(this, $field, {
+                    var config = handler.call(this, property, propertyType, {
                         name: name,
                         title: title,
                         tooltip: tooltip,
@@ -255,9 +259,9 @@
             return hash;
         }
 
-        function splitFields($m, $fields, handlers) {
+        function splitFields($, properties, handlers) {
 
-            var hash = hashFields.call(this, $fields, handlers);
+            var hash = hashFields.call(this, properties, handlers);
 
             var sections = {};
 
@@ -279,43 +283,45 @@
                 xtype: 'form'
             };
 
-            for (var i = 0; i < $fields.length; i++) {
+            for (var i = 0; i < properties.length; i++) {
 
-                var $field = $fields[i];
-                var config = hash[$field.$name];
+                var property = properties[i];
+                var config = hash[property.Name];
 
                 if (typeof config === 'object' && config !== null) {
 
-                    if ($field.$category === 'model' && (typeof config.xtype !== 'string' || config.xtype == 'form' || config.xtype == 'tabpanel' || config.xtype == 'panel')) {
-                        sections[$field.$name] = config;
+                    var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
+
+                    if (propertyType.$type === 'model' && (typeof config.xtype !== 'string' || config.xtype == 'form' || config.xtype == 'tabpanel' || config.xtype == 'panel')) {
+                        sections[property.Name] = config;
                     }
                     else {
                         var title, summary, section = '$';
 
-                        if ($field.$category === 'model') {
-                            title = Ext.custom.Adapter.toString($field.$title, $field.$name);
-                            summary = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
+                        if (propertyType.$type === 'model') {
+                            title = Ext.custom.Adapter.toString(property.Title, property.Name);
+                            summary = Ext.custom.Adapter.toString(property.Summary, $.Summary);
                         }
                         else {
-                            title = Ext.custom.Adapter.toString($m.$title, $m.$name);
-                            summary = Ext.custom.Adapter.toString($m.$summary);
+                            title = Ext.custom.Adapter.toString($.Title, $.Name);
+                            summary = Ext.custom.Adapter.toString($.Summary);
                         }
 
-                        if (typeof $field.$section === 'string') {
+                        if (typeof property.section === 'string') {
 
-                            section = $field.$section;
+                            section = property.section;
 
-                            var $section = {
-                                $title: title,
-                                $summary: summary
+                            var section = {
+                                Title: title,
+                                Summary: summary
                             };
 
-                            if (typeof $m.$sections === 'object' && $m.$sections !== null) {
-                                for (var j = 0; i < $m.$sections.length; i++) {
-                                    if ($m.$sections[i].$name === section) {
-                                        $section = $m.$sections[i];
-                                        title = Ext.custom.Adapter.toString($section.$title, section);
-                                        summary = Ext.custom.Adapter.toString($section.$summary);
+                            if (typeof $.Sections === 'object' && $.Sections !== null) {
+                                for (var j = 0; i < $.Sections.length; i++) {
+                                    if ($.Sections[i].Name === section) {
+                                        section = $.Sections[i];
+                                        title = Ext.custom.Adapter.toString(section.Title, section);
+                                        summary = Ext.custom.Adapter.toString(section.Summary);
                                         break;
                                     }
                                 }
@@ -384,11 +390,11 @@
             }
         }
 
-        function modelHandler($field, config) {
+        function modelHandler(property, propertyType, config) {
 
             var droplet = this;
 
-            var role = Custom.app.Application.splitRole($field.$role);
+            var role = Custom.app.Application.splitRole(property.Role);
 
             // dummy code
             if (role.embedded == false && role.hasMany === false) {
@@ -408,7 +414,7 @@
                 });
 
                 Ext.merge(config, {
-                    fieldLabel: Ext.custom.Adapter.toString(config.title, $field.$title, $field.$name),
+                    fieldLabel: Ext.custom.Adapter.toString(config.title, property.Title, property.Name),
                     store: store,
                     xtype: 'combobox'
                 });
@@ -416,23 +422,23 @@
                 return config;
             }
 
-            var $m = Custom.app.Application.findMetadata($field.$prototype);
+            var $ = propertyType;
 
-            if (typeof $m !== 'object' || $m === null) {
+            if (typeof $ !== 'object' || $ === null) {
                 return;
             }
 
-            var $fields = Custom.app.Application.collectFields($m, []);
+            var properties = Custom.app.Application.collectProperties($, []);
 
-            Ext.merge(config, sectionsToView(splitFields($m, $fields, {
+            Ext.merge(config, sectionsToView(splitFields($, properties, {
                 'enum': enumHandler,
                 'unit': unitHandler,
                 'value': valueHandler,
                 'model': modelHandler
             })));
 
-            var title = Ext.custom.Adapter.toString($field.$title, $field.$name, $m.$title, $m.$name);
-            var tooltip = Ext.custom.Adapter.toString($field.$summary, $m.$summary);
+            var title = Ext.custom.Adapter.toString(property.Title, property.Name, $.Title, $.Name);
+            var tooltip = Ext.custom.Adapter.toString(property.Summary, $.Summary);
 
             Ext.merge(config, {
                 title: title,
@@ -443,12 +449,12 @@
                 }
             });
 
-            var modelName = Custom.app.Application.makeModelName($field.$prototype);
+            var modelName = Custom.app.Application.makeModelName(property.Type);
 
             if (role.hasMany) {
 
-                var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
-                var summary = Ext.custom.Adapter.toString($m.$summary, $field.$summary);
+                var title = Ext.custom.Adapter.toString($.Title, $.Name);
+                var summary = Ext.custom.Adapter.toString($.Summary, property.Summary);
 
                 return Ext.merge(config, {
                     bodyPadding: '0',
@@ -482,8 +488,8 @@
                         }),
 
                         // grid panel (selector)
-                        Custom.app.Application.configGrid($fields, Custom.app.Application.selectColumns($m), {
-                            $fieldName: $field.$name,
+                        Custom.app.Application.configGrid(properties, Custom.app.Application.selectColumns($), {
+                            propertyName: property.Name,
                             $modelName: modelName,
                             header: false,
                             listeners: {
@@ -670,7 +676,7 @@
             }
 
             Ext.merge(config, {
-                $fieldName: $field.$name,
+                propertyName: property.Name,
                 $modelName: modelName,
                 listeners: {
                     add: {
@@ -686,19 +692,19 @@
             return config;
         }
 
-        function configDropletComponent($m) {
+        function configDropletComponent($) {
 
-            var $fields = Custom.app.Application.collectFields($m, []);
+            var properties = Custom.app.Application.collectProperties($, []);
 
-            var config = sectionsToView(splitFields.call(this, $m, $fields, {
+            var config = sectionsToView(splitFields.call(this, $, properties, {
                 'enum': enumHandler,
                 'unit': unitHandler,
                 'value': valueHandler,
                 'model': modelHandler
             }));
 
-            var title = Ext.custom.Adapter.toString($m.$title, $m.$name);
-            var summary = Ext.custom.Adapter.toString($m.$summary);
+            var title = Ext.custom.Adapter.toString($.Title, $.Name);
+            var summary = Ext.custom.Adapter.toString($.Summary);
 
             Ext.merge(config, {
                 title: title,
@@ -800,12 +806,12 @@
             else if (component.$modelName === record.$className) {
                 model = record;
             }
-            else if (typeof component.$fieldName !== 'string') {
+            else if (typeof component.propertyName !== 'string') {
                 // form for hasMany
                 model = null;
             }
             else {
-                var association = record.associations.getByKey(component.$fieldName);
+                var association = record.associations.getByKey(component.propertyName);
 
                 if (association.associatedName === component.$modelName) {
 
@@ -890,7 +896,7 @@
 
             if (typeof component === 'object' && component !== null) {
 
-                if (typeof modelName !== 'string' || typeof component.$modelName !== 'string' || modelName === component.$modelName || typeof component.$fieldName === 'string') {
+                if (typeof modelName !== 'string' || typeof component.$modelName !== 'string' || modelName === component.$modelName || typeof component.propertyName === 'string') {
                     switch (component.getXType()) {
                         case 'form':
                             result.push(component);
@@ -943,15 +949,15 @@
 
                 asyncCreate: function (typeName, readonly, callback, scope) {
 
-                    Custom.app.Application.asyncMetadata(typeName, function ($m) {
+                    Custom.app.Application.asyncMetadata(typeName, function ($) {
 
-                        var droplet = Ext.custom.Droplet.create(typeName, readonly, $m);
+                        var droplet = Ext.custom.Droplet.create(typeName, readonly, $);
 
                         callback.call(scope, droplet);
                     });
                 },
 
-                create: function (typeName, readonly, $m) {
+                create: function (typeName, readonly, $) {
 
                     var modelName = Custom.app.Application.makeModelName(typeName);
 
@@ -959,10 +965,10 @@
 
                     if (model === null || typeof model !== 'function') {
 
-                        model = Custom.app.Application.defineModel(modelName, $m);
+                        model = Custom.app.Application.defineModel(modelName, $);
                     }
 
-                    var droplet = new Ext.custom.Droplet(typeName, readonly, $m, model);
+                    var droplet = new Ext.custom.Droplet(typeName, readonly, $, model);
 
                     return droplet;
                 },
@@ -971,12 +977,12 @@
                 isDirty: isDirty,
             },
 
-            constructor: function (typeName, readOnly, $m, model) {
+            constructor: function (typeName, readOnly, $, model) {
 
                 this.name = Custom.app.Application.makeExtName(typeName);
                 this.typeName = typeName;
                 this.readOnly = readOnly;
-                this.$m = $m;
+                this.$ = $;
                 this.model = model;
                 /* model has it's own store
                 this.store = Ext.create('Ext.data.Store', {
@@ -1055,7 +1061,7 @@
 
             initComponent: function (customConfig) {
 
-                var config = configDropletComponent.call(this, this.$m);
+                var config = configDropletComponent.call(this, this.$);
 
                 Ext.merge(config, {
                     layout: 'fit'

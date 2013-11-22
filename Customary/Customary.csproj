@@ -779,6 +779,9 @@
     <Content Include="Areas\User\Views\Web.config" />
     <Content Include="Areas\Navigation\Views\Route\NavigationModel.cshtml" />
     <Content Include="Views\Dashboard\Status.cshtml" />
+    <Content Include="Views\Ext\Adapter.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Shared\_Ext.cshtml" />
     <Content Include="Views\Shared\_Page.cshtml" />
     <Content Include="Areas\Globalization\Views\Web.config" />
@@ -3901,7 +3904,6 @@
     <Content Include="Views\Data\View.cshtml" />
     <Content Include="Views\Data\New.cshtml" />
     <Content Include="Views\Data\Drop.cshtml" />
-    <Content Include="Views\Ext\Adapter.cshtml" />
     <Content Include="Views\Ext\Droplet.cshtml" />
   </ItemGroup>
   <ItemGroup>

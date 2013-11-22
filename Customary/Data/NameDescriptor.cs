@@ -31,30 +31,29 @@ namespace Custom.Data
 
         public virtual RavenJObject Metadata(string[] requires)
         {
-            var descriptors = new Stack<NameDescriptor>();
+            var names = new Stack<NameDescriptor>();
 
             for (var name = this; name != null; name = name.Parent)
             {
-                descriptors.Push(name);
+                names.Push(name);
             }
 
-            var result = new RavenJObject();
+            var resultJObject = new RavenJObject();
 
             var stack = new Stack<RavenJObject>();
 
-            stack.Push(result);
+            stack.Push(resultJObject);
 
-            for (var baseJObject = result; descriptors.Count > 0; )
+            for (var nameJObject = resultJObject; names.Count > 0; )
             {
-                var node = descriptors.Pop();
+                var name = names.Pop();
                 var childJObject = new RavenJObject();
 
-                childJObject["$name"] = node._name;
-                childJObject["$type"] = System.Enum.GetName(typeof(NodeKinds), node.Type);
+                //childJObject["$type"] = System.Enum.GetName(typeof(NodeKinds), node.Type).ToLower();
                 childJObject["$dirty"] = true;
 
-                baseJObject[node._name] = childJObject;
-                baseJObject = childJObject;
+                nameJObject[name._name] = childJObject;
+                nameJObject = childJObject;
 
                 stack.Push(childJObject);
             }
@@ -63,16 +62,15 @@ namespace Custom.Data
 
             Metadata(stack, requires, types);
 
-            return result;
+            return resultJObject;
         }
 
         internal protected virtual void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var dataAsJson = stack.Peek();
+            var nameJObject = stack.Peek();
 
-            dataAsJson["$name"] = this.Path;
-            dataAsJson["$type"] = "name";
-            dataAsJson["$dirty"] = false;
+            nameJObject["$type"] = "name";
+            nameJObject["$dirty"] = true;
 
             var items = _items;
 
@@ -92,7 +90,7 @@ namespace Custom.Data
 
                                     stack.Push(new RavenJObject());
                                     type.Metadata(stack, requires, types);
-                                    dataAsJson[item._name] = stack.Pop();
+                                    nameJObject[item._name] = stack.Pop();
                                 }
                             }
                             break;

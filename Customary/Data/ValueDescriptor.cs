@@ -23,18 +23,20 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var valueJObject = stack.Peek();
-            valueJObject["$"] = this.DataAsJson;
-            valueJObject["$name"] = this.Path;
+            var valueJObject = this.DataAsJson;
             valueJObject["$type"] = "value";
 
+            var nameJObject = stack.Peek();
+            nameJObject.Remove("$dirty");
+            nameJObject["$"] = valueJObject;
+            
             var definition = Definition;
 
-            valueJObject.SetCurrentThreadCultureText("$title", definition.Title);
-            valueJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
+            //valueJObject.SetCurrentThreadCultureText("$title", definition.Title);
+            //valueJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
 
-            var validationsJArray = new RavenJArray();
-            valueJObject["$validations"] = validationsJArray;
+            //var validationsJArray = new RavenJArray();
+            //valueJObject["$validations"] = validationsJArray;
 
             var validations = definition.Validations;
 
@@ -42,35 +44,35 @@ namespace Custom.Data
             {
                 foreach (var validation in validations)
                 {
-                    var validationJObject = new RavenJObject();
+                    //var validationJObject = new RavenJObject();
                     
-                    validationJObject["$name"] = validation.Name;
-                    validationJObject["$type"] = validation.Name;
+                    //validationJObject["$name"] = validation.Name;
+                    //validationJObject["$type"] = validation.Name;
 
-                    if (validation.List != null)
-                    {
-                        validationJObject["$list"] = validation.List;
-                    }
+                    //if (validation.List != null)
+                    //{
+                    //    validationJObject["$list"] = validation.List;
+                    //}
 
-                    if (validation.Matcher != null)
-                    {
-                        validationJObject["$matcher"] = validation.Matcher;
-                    }
+                    //if (validation.Matcher != null)
+                    //{
+                    //    validationJObject["$matcher"] = validation.Matcher;
+                    //}
 
-                    if (validation.Max.HasValue)
-                    {
-                        validationJObject["$max"] = validation.Max.Value;
-                    }
+                    //if (validation.Max.HasValue)
+                    //{
+                    //    validationJObject["$max"] = validation.Max.Value;
+                    //}
 
-                    if (validation.Min.HasValue)
-                    {
-                        validationJObject["$min"] = validation.Min.Value;
-                    }
+                    //if (validation.Min.HasValue)
+                    //{
+                    //    validationJObject["$min"] = validation.Min.Value;
+                    //}
 
-                    validationJObject.SetCurrentThreadCultureText("$title", validation.Title);
-                    validationJObject.SetCurrentThreadCultureText("$summary", validation.Summary);
+                    //validationJObject.SetCurrentThreadCultureText("$title", validation.Title);
+                    //validationJObject.SetCurrentThreadCultureText("$summary", validation.Summary);
                     
-                    validationsJArray.Add(validationJObject);
+                    //validationsJArray.Add(validationJObject);
                 }
             }
         }

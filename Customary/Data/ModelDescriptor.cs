@@ -53,12 +53,12 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var modelJObject = stack.Pop();
-
-            modelJObject["$"] = this.DataAsJson;
-            modelJObject["$name"] = this.Path;
+            var modelJObject = this.DataAsJson;
             modelJObject["$type"] = "model";
-            modelJObject.Remove("$dirty");
+
+            var nameJObject = stack.Pop();
+            nameJObject.Remove("$dirty");
+            nameJObject["$"] = modelJObject;
 
             var definition = Definition;
 
@@ -66,7 +66,7 @@ namespace Custom.Data
 
             if (!string.IsNullOrEmpty(baseName))
             {
-                modelJObject["$base"] = baseName;
+                nameJObject["$base"] = baseName;
 
                 if (!types.ContainsKey(baseName))
                 {
@@ -78,34 +78,34 @@ namespace Custom.Data
                     {
                         stack.Push(new RavenJObject());
                         baseType.Metadata(stack, requires, types);
-                        stack.Merge(stack.Pop(), baseName);
+                        stack.Merge(baseName, stack.Pop());
                     }
                 }
             }
 
             if (definition.Embeddable)
             {
-                modelJObject["$embeddable"] = true;
+                //namespaceJObject["$embeddable"] = true;
             }
 
             if (!string.IsNullOrEmpty(definition.BelongsTo))
             {
-                modelJObject["$belongsTo"] = definition.BelongsTo;
+                //namespaceJObject["$belongsTo"] = definition.BelongsTo;
             }
 
-            modelJObject.SetCurrentThreadCultureText("$title", definition.Title);
-            modelJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
+            //namespaceJObject.SetCurrentThreadCultureText("$title", definition.Title);
+            //namespaceJObject.SetCurrentThreadCultureText("$summary", definition.Summary);
 
             var fields = new RavenJArray();
 
             foreach (var property in definition.Properties)
             {
-                var fieldJObject = new RavenJObject();
+                //var fieldJObject = new RavenJObject();
 
-                fieldJObject["$name"] = property.Name;
+                //fieldJObject["$name"] = property.Name;
 
-                fieldJObject.SetCurrentThreadCultureText("$title", property.Title);
-                fieldJObject.SetCurrentThreadCultureText("$summary", property.Summary);
+                //fieldJObject.SetCurrentThreadCultureText("$title", property.Title);
+                //fieldJObject.SetCurrentThreadCultureText("$summary", property.Summary);
 
                 TypeDescriptor propertyType;
                 if (!types.TryGetValue(property.Type, out propertyType))
@@ -118,43 +118,43 @@ namespace Custom.Data
 
                         stack.Push(new RavenJObject());
                         propertyType.Metadata(stack, requires, types);
-                        stack.Merge(stack.Pop(), property.Type);
+                        stack.Merge(property.Type, stack.Pop());
                     }
                 }
 
                 if (propertyType == null)
                 {
-                    fieldJObject["$type"] = "string";
-                    fieldJObject["$category"] = "value";
+                    //fieldJObject["$type"] = "string";
+                    //fieldJObject["$category"] = "value";
                 }
                 else
                 {
                     switch (propertyType.Category)
                     {
                         case TypeCategories.Enum:
-                            fieldJObject["$type"] = "string";
-                            fieldJObject["$category"] = "enum";
-                            fieldJObject["$prototype"] = property.Type;
+                            //fieldJObject["$type"] = "string";
+                            //fieldJObject["$category"] = "enum";
+                            //fieldJObject["$prototype"] = property.Type;
                             break;
 
                         case TypeCategories.Model:
-                            fieldJObject["$type"] = "string";
-                            fieldJObject["$category"] = "model";
-                            fieldJObject["$prototype"] = property.Type;
-                            if (property.IdProperty != null)
-                            {
-                                fieldJObject["$id"] = property.IdProperty;
-                            }
+                            //fieldJObject["$type"] = "string";
+                            //fieldJObject["$category"] = "model";
+                            //fieldJObject["$prototype"] = property.Type;
+                            //if (property.IdProperty != null)
+                            //{
+                            //    fieldJObject["$id"] = property.IdProperty;
+                            //}
                             break;
 
                         case TypeCategories.Unit:
-                            fieldJObject["$type"] = "string";
-                            fieldJObject["$category"] = "unit";
-                            fieldJObject["$prototype"] = property.Type;
+                            //fieldJObject["$type"] = "string";
+                            //fieldJObject["$category"] = "unit";
+                            //fieldJObject["$prototype"] = property.Type;
                             break;
 
                         case TypeCategories.Value:
-                            fieldJObject["$category"] = "value";
+                            //fieldJObject["$category"] = "value";
 
                             TypeDescriptor primitive;
                             for (primitive = propertyType; primitive.BaseType != null; primitive = primitive.BaseType)
@@ -169,7 +169,7 @@ namespace Custom.Data
                             switch (primitive.Name)
                             {
                                 case "Boolean":
-                                    fieldJObject["$type"] = "boolean";
+                                    //fieldJObject["$type"] = "boolean";
                                     break;
 
                                 case "Byte":
@@ -180,34 +180,34 @@ namespace Custom.Data
                                 case "UInt32":
                                 case "UInt64":
                                 case "SByte":
-                                    fieldJObject["$type"] = "integer";
+                                    //fieldJObject["$type"] = "integer";
                                     break;
 
                                 case "Decimal":
                                 case "Double":
                                 case "Single":
-                                    fieldJObject["$type"] = "number";
+                                    //fieldJObject["$type"] = "number";
                                     break;
 
                                 case "Date":
                                 case "Time":
                                 case "DateTime":
                                 case "DateTimeOffset":
-                                    fieldJObject["$type"] = "date";
+                                    //fieldJObject["$type"] = "date";
                                     break;
 
                                 case "Text":
-                                    fieldJObject["$type"] = "text";
+                                    //fieldJObject["$type"] = "text";
                                     break;
 
                                 case "Char":
                                 case "String":
                                 default:
-                                    fieldJObject["$type"] = "string";
+                                    //fieldJObject["$type"] = "string";
                                     break;
                             }
 
-                            fieldJObject["$prototype"] = property.Type;
+                            //fieldJObject["$prototype"] = property.Type;
 
                             break;
                     }
@@ -215,17 +215,17 @@ namespace Custom.Data
 
                 if (property.Default != null)
                 {
-                    fieldJObject["$default"] = new RavenJValue(property.Default);
+                    //fieldJObject["$default"] = new RavenJValue(property.Default);
                 }
 
-                fieldJObject["$role"] = new RavenJValue(System.Enum.GetName(typeof(PropertyRoles), property.Role));
+                //fieldJObject["$role"] = new RavenJValue(System.Enum.GetName(typeof(PropertyRoles), property.Role));
 
-                fields.Add(fieldJObject);
+                //fields.Add(fieldJObject);
             }
 
-            modelJObject["$fields"] = fields;
+            //modelJObject["$fields"] = fields;
 
-            stack.Push(modelJObject);
+            stack.Push(nameJObject);
         }
 
         public StoreInfo Store
@@ -335,45 +335,34 @@ namespace Custom.Data
 
     public static class RavenJObjectStackExtensions
     {
-        public static void Merge(this Stack<RavenJObject> stack, RavenJObject value, string valueName)
+        public static string Key(this RavenJObject nameJObject, string name)
         {
-            var valuePath = valueName.Split('/');
+            return nameJObject.Keys.FirstOrDefault(key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase));
+        }
 
-            var segments = stack.Reverse().ToList();
+        public static void Merge(this Stack<RavenJObject> stack, string name, RavenJObject value)
+        {
+            var valuePath = name.Split('/');
 
-            var parent = segments[0];
-
+            var currentJObject = stack.Last();
+            
             for (var i = 0; i < valuePath.Length - 1; i++)
             {
-                if (segments.Count.Equals(i + 1) || !string.Equals(valuePath[i], segments[i + 1].Value<string>("$name"), StringComparison.OrdinalIgnoreCase))
+                var nextName = valuePath[i];
+
+                var nextJObject = currentJObject.Value<RavenJObject>(nextName);
+
+                if (nextJObject == null)
                 {
-                    var name = valuePath[i];
-                    var segment = new RavenJObject();
-                    segment["$name"] = name;
-                    segments[i][name] = segment;
+                    nextJObject = new RavenJObject();
+                    nextJObject["$dirty"] = true;
+                    currentJObject[nextName] = nextJObject;
                 }
+
+                currentJObject = nextJObject;
             }
 
-            /*for (var i = segments.Count; i < valuePath.Length) {
-                var segment = new RavenJObject();
-                segment["$name"] = valuePath[i];
-                segments.Add(segment);
-            }*/
-
-            if (segments.Count == valuePath.Length - 1)
-            {
-                segments.Add(new RavenJObject());
-            }
-
-            try
-            {
-                var name2 = valuePath[valuePath.Length - 1];
-                segments[valuePath.Length - 1][name2] = value;
-            }
-            catch (Exception e)
-            {
-                var a = e.Message;
-            }
+            currentJObject[valuePath[valuePath.Length - 1]] = value;
         }
     }
 }

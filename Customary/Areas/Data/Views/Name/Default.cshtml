@@ -96,15 +96,15 @@
 
         var guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-        var $metadata = {
+        var metadata = {
         };
 
         function asyncMetadata(typeName, callback) {
 
-            var $m = Custom.app.Application.findMetadata(typeName);
+            var $ = Custom.app.Application.findMetadata(typeName);
 
-            if ($m !== null && typeof $m === 'object') {
-                callback($m);
+            if ($ !== null && typeof $ === 'object') {
+                callback($);
             }
             else {
 
@@ -129,10 +129,10 @@
 
                             mergeMetadata(json.data);
 
-                            $m = Custom.app.Application.findMetadata(typeName);
+                            $ = Custom.app.Application.findMetadata(typeName);
 
-                            if ($m !== null && typeof $m === 'object') {
-                                callback.call(this, $m);
+                            if ($ !== null && typeof $ === 'object') {
+                                callback.call(this, $);
                             }
 
                         } else if (typeof json.message === 'string') {
@@ -157,62 +157,62 @@
                 return;
             }
 
-            this.asyncMetadata(typeName, function ($m) {
+            this.asyncMetadata(typeName, function ($) {
 
-                model = Custom.app.Application.defineModel(modelName, $m);
+                model = Custom.app.Application.defineModel(modelName, $);
 
                 callback(modelName, model);
             });
         }
 
-        function collectFields($m, $fields) {
+        function collectProperties($, properties) {
 
-            if ($m === null || typeof $m !== 'object') {
-                return $fields;
+            if ($ === null || typeof $ !== 'object') {
+                return properties;
             }
 
-            if (typeof $m.$base === 'string') {
-                collectFields(Custom.app.Application.findMetadata($m.$base), $fields);
+            if (typeof $.BaseType === 'string') {
+                collectProperties(Custom.app.Application.findMetadata($.BaseType), properties);
             }
 
-            if ($m !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
-                $fields.push.apply($fields, $m.$fields);
+            if ($ !== null && typeof $.Properties === 'object' && $.Properties.length > 0) {
+                properties.push.apply(properties, $.Properties);
             }
 
-            return $fields;
+            return properties;
         }
 
-        function configGrid($fields, columns, config) {
+        function configGrid(properties, columns, config) {
 
             if (Object.prototype.toString.call(columns) === '[object Array]' && columns.length > 0) {
                 //if (typeof columns === 'object' && columns !== null && typeof columns.length === 'int' && columns.length > 0) {
                 var hash = {};
-                for (var i = 0; i < $fields.length; i++) {
-                    var $field = $fields[i];
-                    hash[$field.$name] = $field;
+                for (var i = 0; i < properties.length; i++) {
+                    var property = properties[i];
+                    hash[property.Name] = property;
                 }
-                $fields = [];
+                properties = [];
                 for (var i = 0; i < columns.length; i++) {
-                    var $field = hash[columns[i]];
-                    if (typeof $field === 'object' && $field != null) {
-                        $fields.push($field);
+                    var property = hash[columns[i]];
+                    if (typeof property === 'object' && property != null) {
+                        properties.push(property);
                     }
                 }
             }
 
             var items = [];
 
-            for (var i = 0; i < $fields.length; i++) {
+            for (var i = 0; i < properties.length; i++) {
 
-                var $field = $fields[i];
-                var text = Ext.custom.Adapter.toString($field.$title, $field.$name);
-                var role = Custom.app.Application.splitRole($field.$role);
+                var property = properties[i];
+                var text = Ext.custom.Adapter.toString(property.Title, property.Name);
+                var role = Custom.app.Application.splitRole(property.Role);
 
-                if ($field.$category === 'model') {
-                    switch ($field.$prototype) {
+                if (property.$type === 'model') {
+                    switch (property.Type) {
                         case 'Text':
                             items.push({
-                                dataIndex: '$' + $field.$name,
+                                dataIndex: '$' + property.Name,
                                 flex: 2,
                                 header: text,
                                 /*renderer: function (value) {
@@ -230,7 +230,7 @@
                         xtype: 'textfield',
                         allowBlank: !role.required
                     },
-                    dataIndex: $field.$name,
+                    dataIndex: property.Name,
                     flex: 1,
                     header: text,
                     text: text
@@ -238,7 +238,7 @@
 
                 var editor = {};
 
-                switch ($field.$type) {
+                switch (property.$type) {
 
                     case 'boolean':
                         column.xtype = 'booleancolumn';
@@ -259,7 +259,7 @@
                         break;
                 }
 
-                switch ($field.$prototype) {
+                switch (property.Type) {
                     case 'Boolean':
                         Ext.merge(column, {
                             editor: {
@@ -310,13 +310,13 @@
             return config;
         }
 
-        function defineModel(name, $m) {
+        function defineModel(name, $) {
 
             var extend = 'Ext.data.Model';
 
-            if (typeof $m.$extend === 'string') {
-                var extendModel = this.findModel($m.$extend);
-                //extend = makeModelName($m.$extend);
+            if (typeof $.BaseType === 'string') {
+                var extendModel = this.findModel($.BaseType);
+                //extend = makeModelName($.BaseType);
             }
 
             var config = {
@@ -327,69 +327,70 @@
                 validations: []
             };
 
-            if (typeof $m.$belongsTo === 'string') {
-                config['belongsTo'] = makeModelName($m.$belongsTo);
-                /*var belongsTo = this.findModel($m.$belongsTo);
+            if (typeof $.BelongsTo === 'string') {
+                config['belongsTo'] = makeModelName($.BelongsTo);
+                /*var belongsTo = this.findModel($.BelongsTo);
                 if (belongsTo) {
                     config['belongsTo'] = belongsTo.modelName;
                 }*/
             }
 
-            var $fields = Custom.app.Application.collectFields($m, []);
+            var properties = Custom.app.Application.collectProperties($, []);
 
             var types = Ext.data.Types; // allow shorthand type access
 
-            for (var i = 0; i < $fields.length; i++) {
-                var $field = $fields[i];
-                var role = splitRole($field.$role);
-                var field = { name: $field.$name };
+            for (var i = 0; i < properties.length; i++) {
+                var property = properties[i];
+                var role = splitRole(property.Role);
+                var field = { name: property.Name };
 
                 if (role.required) {
                     field.useNull = false;
                 }
 
-                switch ($field.$category) {
+                var propertyType = Custom.app.Application.findMetadata(property.Type);
+
+                if (typeof propertyType !== 'object' || propertyType === null) {
+                    break;
+                }
+
+                switch (propertyType.$type) {
 
                     case 'enum':
                         field.type = types.STRING;
-                        var $source = Custom.app.Application.findMetadata($field.$prototype);
                         config.fields.push(field);
                         break;
 
                     case 'model':
-                        var $model = Custom.app.Application.findMetadata($field.$prototype);
 
-                        if (typeof $model !== 'object' || $model === null) {
-                            break;
-                        }
-                        else if ($model.$embeddable) {
+                        if (propertyType.Embeddable) {
 
-                            var fieldModel = this.findModel($field.$prototype);
+                            var propertyModel = this.findModel(property.Type);
 
-                            if (typeof fieldModel !== 'function') {
+                            if (typeof propertyModel !== 'function') {
                             }
                             else if (role.hasMany) {
                                 config.associations.push({
                                     type: 'hasMany',
-                                    model: fieldModel.modelName,
-                                    name: $field.$name
+                                    model: propertyModel.modelName,
+                                    name: property.Name
                                 });
                             }
                             else {
-                                //field.type = fieldModel.modelName;
+                                //field.type = propertyModel.modelName;
                                 //config.fields.push(field);
                                 config.associations.push({
                                     type: 'hasOne',
-                                    model: fieldModel.modelName,
-                                    name: $field.$name,
-                                    associationKey: $field.$name
+                                    model: propertyModel.modelName,
+                                    name: property.Name,
+                                    associationKey: property.Name
                                 });
 
-                                if ($field.$prototype === 'Text') {
+                                if (property.Type === 'Text') {
                                     config.fields.push({
-                                        name: '$' + $field.$name,
+                                        name: '$' + property.Name,
                                         persist: false,
-                                        mapping: $field.$name,
+                                        mapping: property.Name,
                                         convert: function (v, record) {
                                             return Ext.custom.Adapter.toString(v || "<null>");
                                         }
@@ -405,45 +406,21 @@
 
                     case 'unit':
                         field.type = types.STRING;
-                        var $prototype = Custom.app.Application.findMetadata($field.$prototype);
                         config.fields.push(field);
                         break;
 
                     case 'value':
+                        field.type = toDataType(propertyType);
 
-                        switch ($field.$type) {
-
-                            case 'boolean':
-                                field.type = types.BOOLEAN;
-                                break;
-
-                            case 'string':
-                                field.type = types.STRING;
-                                break;
-
-                            case 'integer':
-                                field.type = types.INTEGER;
-                                break;
-
-                            case 'number':
-                                field.type = types.NUMBER;
-                                break;
-
-                            case 'date':
-                                field.type = types.DATE;
-                                //field.dateFormat = '';
-                                break;
-                        }
-
-                        /*if (typeof $field.$prototype === 'string') {
-                            var $prototype = Custom.app.Application.findMetadata($field.$prototype);
-                            var $validations = $prototype.$validations;
+                        /*if (typeof property.Type === 'string') {
+                            var $prototype = Custom.app.Application.findMetadata(property.Type);
+                            var $validations = Type.$validations;
                             if (typeof $validations === 'object' && $validations != null) {
                                 for (var i = 0; i < $validations.length; i++) {
 
                                     var $validation = $validations[i];
 
-                                    var validation = { name: $field.$name, type: $validation.$type };
+                                    var validation = { name: property.Name, type: $validation.$type };
 
                                     switch ($validation.$type) {
                                         case 'presence':
@@ -476,7 +453,7 @@
                 }
             }
 
-            if ($m.$embedded == true) {
+            if ($.Embedded == true) {
             }
             else {
 
@@ -493,7 +470,7 @@
                     },*/
                     buildUrl: function (request) {
 
-                        var url = _baseUrl + '/Data/' + $m.$name;
+                        var url = _baseUrl + '/Data/' + $.Name;
 
                         if (typeof request.operation.id === 'string') {
                             url += '/' + request.operation.id;
@@ -531,7 +508,7 @@
                         messageProperty: 'message'
                     },
                     writer: Ext.create('Ext.data.writer.DeepPureJson', {
-                        $m: $m,
+                        $: $,
                         type: 'json',
                         root: 'data',
                         allowSingle: false, // force data to be array
@@ -552,13 +529,20 @@
         }
 
         function findMetadata(typeName) {
-            var path = typeName.split('/');
-            var $m = $metadata;
-            for (var i = 0; i < path.length && $m !== null && typeof $m === 'object'; i++) {
-                var name = path[i];
-                $m = $m[name];
+
+            if (typeof typeName !== 'string') {
+                return;
             }
-            return $m;
+
+            var path = typeName.split('/');
+            var namespace = metadata;
+            for (var i = 0; i < path.length && typeof namespace === 'object' && namespace !== null; i++) {
+                var name = path[i];
+                namespace = namespace[name];
+            }
+            if (typeof namespace === 'object' && namespace !== null) {
+                return namespace.$;
+            }
         }
 
         function findModel(typeName) {
@@ -569,41 +553,41 @@
 
             if (model === null || typeof model === 'undefined') {
 
-                var $m = Custom.app.Application.findMetadata(typeName);
+                var $ = Custom.app.Application.findMetadata(typeName);
 
-                if ($m !== null && typeof $m === 'object') {
+                if ($ !== null && typeof $ === 'object') {
 
-                    model = Custom.app.Application.defineModel(modelName, $m);
+                    model = Custom.app.Application.defineModel(modelName, $);
                 }
             }
 
             return model;
         }
 
-        function hashFields($m, $fields) {
+        function hashFields($, properties) {
 
-            if ($m === null || typeof $m !== 'object') {
-                return $fields;
+            if ($ === null || typeof $ !== 'object') {
+                return properties;
             }
 
-            if (typeof $m.$base === 'string') {
-                hashFields(Custom.app.Application.findMetadata($m.$base), $fields);
+            if (typeof $.BaseType === 'string') {
+                hashFields(Custom.app.Application.findMetadata($.BaseType), properties);
             }
 
-            if ($m !== null && typeof $m.$fields === 'object' && $m.$fields.length > 0) {
+            if ($ !== null && typeof $.Properties === 'object' && $.Properties.length > 0) {
 
-                for (var i = 0, count = $m.$fields.length; i < count; i++) {
-                    var $field = $m.$fields[i];
-                    $fields[$field.$name] = $field;
+                for (var i = 0, count = $.Properties.length; i < count; i++) {
+                    var property = $.Properties[i];
+                    properties[property.Name] = property;
                 }
             }
 
-            return $fields;
+            return properties;
         }
 
-        var isDigit = (function() {
+        var isDigit = (function () {
             var re = /^\d$/;
-            return function(c) {
+            return function (c) {
                 return re.test(c);
             }
         }());
@@ -726,13 +710,13 @@
             return makeExtName(typeName) + '.Model';
         }
 
-        function mergeMetadata($m) {
-            Ext.Object.merge($metadata, $m);
+        function mergeMetadata($) {
+            Ext.Object.merge(metadata, $);
         }
 
-        function selectColumns($m, hash) {
+        function selectColumns($, hash) {
 
-            if (typeof $m !== 'object' || $m === null) {
+            if (typeof $ !== 'object' || $ === null) {
                 return;
             }
 
@@ -740,19 +724,21 @@
                 hash = {};
             }
 
-            if (typeof $m.$base === 'string') {
-                selectColumns(Custom.app.Application.findMetadata($m.$base), hash);
+            if (typeof $.BaseType === 'string') {
+                selectColumns(Custom.app.Application.findMetadata($.BaseType), hash);
             }
 
-            if (typeof $m.$head === 'string') {
-                var head = $m.$head.split('|');
-                for (var i = 0; i < head.length; i++) {
-                    var name = head[i];
+            var columns;
+
+            if (typeof $.Columns === 'string') {
+                columns = $.Columns.split('|');
+                for (var i = 0; i < columns.length; i++) {
+                    var name = columns[i];
                     hash[name] = true;
                 }
             }
 
-            var columns = [];
+            columns = [];
 
             var keys = Object.keys(hash);
             for (var i = 0; i < keys.length; i++) {
@@ -816,17 +802,17 @@
 
             var name = segments[0];
             var path = name;
-            var $m = $metadata[name];
+            var namespace = metadata[name];
 
             for (var i = 1; i < segments.length; i++) {
 
-                if ($m === null || typeof $m !== 'object') {
+                if (namespace === null || typeof namespace !== 'object') {
                     result.push(path);
                 }
-                else if ($m.$type !== 'name' && $m.$type !== 'area') {
+                else if (typeof namespace.$ === 'object' && namespace.$ !== null && namespace.$.$type !== 'area') {
                     break;
                 }
-                else if ($m.$dirty !== true) {
+                else if (namespace.$dirty !== true) {
                     result.push(path);
                 }
 
@@ -837,9 +823,11 @@
             return result;
         }
 
-
-
         function switchValues(value, separator, callback) {
+
+            if (typeof value !== 'string') {
+                return;
+            }
 
             var values = value.split(separator);
 
@@ -848,6 +836,47 @@
                 if (typeof fn === 'function') {
                     fn();
                 }
+            }
+        }
+
+        function toDataType(type) {
+
+            var types = Ext.data.Types; // allow shorthand type access
+
+            if (typeof type !== 'object' || type === null) {
+                return types.STRING;
+            }
+
+            switch (type.Name) {
+                case "Boolean":
+                    return types.BOOLEAN;
+
+                case "Byte":
+                case "Int16":
+                case "Int32":
+                case "Int64":
+                case "UInt16":
+                case "UInt32":
+                case "UInt64":
+                case "SByte":
+                    return types.INTEGER;
+
+                case "Decimal":
+                case "Double":
+                case "Single":
+                    return types.NUMBER;
+
+                case "Date":
+                case "Time":
+                case "DateTime":
+                case "DateTimeOffset":
+                    return types.DATE;
+
+                case "Char":
+                case "String":
+                    return types.STRING;
+                default:
+                    return toDataType(findMetadata(type.BaseType));
             }
         }
 
@@ -943,11 +972,11 @@
             extend: 'Ext.data.writer.Json',
             getRecordData: function (record, operation) {
                 // Setup variables
-                var me = this, $m = this.$m, $fields = {}, i, association, childStore, data;
+                var me = this, $ = this.$, properties = {}, i, association, childStore, data;
 
                 data = me.callParent(arguments);
 
-                var $fields = hashFields($m, $fields);
+                var properties = hashFields($, properties);
 
                 // Iterate over all the hasMany associations
                 for (i = 0; i < record.associations.length; i++) {
@@ -958,9 +987,9 @@
                         data[association.name] = null;
                         childStore = record[association.storeName];
 
-                        var $field = $fields[association.name];
+                        var property = properties[association.name];
 
-                        if (typeof $field === 'object' && $field !== null && typeof $field.$id === 'string') {
+                        if (typeof property === 'object' && property !== null && typeof property.$id === 'string') {
 
                             // Iterate over all the children in the current
                             // association
@@ -987,7 +1016,7 @@
                                  */
 
                                 if (childRecord.dirty || childRecord.phantom || (childData != null)) {
-                                    var key = childRecord.raw[$field.$id] || childData[$field.$id];
+                                    var key = childRecord.raw[property.$id] || childData[property.$id];
                                     data[association.name][key] = childData;
                                     record.setDirty();
                                 }
@@ -1002,7 +1031,7 @@
                                 // Set a flag here to identify removed
                                 // records
                                 removedChildRecord.set('forDeletion', true);
-                                var key = removedChildRecord.raw[$field.$id];
+                                var key = removedChildRecord.raw[property.$id];
                                 if (!!key) {
                                     var removedChildData = this.getRecordData.call(this, removedChildRecord);
                                     data[association.name][key] = null;
@@ -1055,7 +1084,7 @@
             statics: {
                 asyncMetadata: asyncMetadata,
                 asyncModel: asyncModel,
-                collectFields: collectFields,
+                collectProperties: collectProperties,
                 configGrid: configGrid,
                 defineModel: defineModel,
                 findMetadata: findMetadata,
@@ -1065,7 +1094,9 @@
                 makeExtName: makeExtName,
                 makeModelName: makeModelName,
                 selectColumns: selectColumns,
-                splitRole: splitRole
+                splitRole: splitRole,
+                switchValues: switchValues,
+                toDataType: toDataType
             },
             culture: 'en',
             dirty: false,
