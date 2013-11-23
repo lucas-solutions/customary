@@ -171,28 +171,24 @@
 
             var fieldType = Custom.app.Application.toDataType(propertyType);
 
+            var types = Ext.data.Types; // allow shorthand type access
+
             switch (fieldType) {
 
-                case 'boolean':
+                case types.BOOLEAN:
                     Ext.merge(config, {
                         xtype: 'checkbox'
                     });
                     break;
 
-                case 'string':
-                    Ext.merge(config, {
-                        xtype: 'textfield'
-                    });
-                    break;
-
-                case 'integer':
+                case types.INTEGER:
                     Ext.merge(config, {
                         xtype: 'numberfield',
                         decimalPrecision: 0
                     });
                     break;
 
-                case 'number':
+                case types.NUMBER:
                     Ext.merge(config, {
                         xtype: 'numberfield',
                         decimalPrecision: property.Precision || 2,
@@ -200,7 +196,7 @@
                     });
                     break;
 
-                case 'date':
+                case types.DATE:
                     Ext.merge(config, {
                         xtype: 'datefield',//'timefield'
                         format: 'm d Y',
@@ -214,6 +210,13 @@
                         minValue: '6:00 AM',
                         maxValue: '8:00 PM',
                         increment: 30
+                    });
+                    break;
+
+                case types.STRING:
+                default:
+                    Ext.merge(config, {
+                        xtype: 'textfield'
                     });
                     break;
             }
@@ -830,6 +833,10 @@
 
                         case 'hasOne':
                             model = record[association.instanceName];
+                            if (typeof model !== 'object' || model === null) {
+                                model = new association.associatedModel;
+                                record[association.instanceName] = model;
+                            }
                             break;
                     }
                 }

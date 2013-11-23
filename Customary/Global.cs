@@ -27,6 +27,7 @@ namespace Custom
             public const string ValueSetRouteName = "Value_Set";
             public const string ValueItemRouteName = "Value_Item";
 
+            public const string DataMetadataRouteName = "Data_Metadata";
             public const string DataNameMetadataRouteName = "Data_Name_Metadata";
 
             public const string ExtRouteName = "Scripts_Ext";

@@ -104,7 +104,7 @@
             var $ = Custom.app.Application.findMetadata(typeName);
 
             if ($ !== null && typeof $ === 'object') {
-                callback($);
+                callback.call(this, $);
             }
             else {
 
@@ -208,8 +208,10 @@
                 var text = Ext.custom.Adapter.toString(property.Title, property.Name);
                 var role = Custom.app.Application.splitRole(property.Role);
 
-                if (property.$type === 'model') {
-                    switch (property.Type) {
+                var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
+
+                if (propertyType.$type === 'model') {
+                    switch (propertyType.Name) {
                         case 'Text':
                             items.push({
                                 dataIndex: '$' + property.Name,

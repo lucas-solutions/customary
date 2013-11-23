@@ -345,16 +345,87 @@ namespace Custom.Areas.Data.Controllers
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Delete(string name, Guid id, string property, string index)
         {
-            var data = new RavenJObject();
-            data["url"] = new RavenJValue((RouteData.Route as Route).Url);
+            const string MissmatchError = "Only model type entities can be accessed this way ({0} found on this path). If you are looking for the metadata, use Data/[*name]/$metadata path instead.";
+            const string UnexpectedError = "Unexpected error";
+
+            RavenJObjectResult result = null;
+
+            var descriptor = DataDictionary.Current.Describe(name);
+
+            if (descriptor == null)
+            {
+                result = Failure("Name not Found");
+            }
+            else if (descriptor.Type == NodeKinds.Error)
+            {
+                result = Failure((descriptor as ErrorDescriptor).Message);
+            }
+            else if (descriptor.Type != NodeKinds.Type)
+            {
+                result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
+            }
+            else
+            {
+                var type = descriptor as TypeDescriptor;
+
+                if (TypeCategories.Model != type.Category)
+                {
+                    result = Failure(string.Format(MissmatchError, System.Enum.GetName(typeof(NodeKinds), descriptor.Type)));
+                }
+                else
+                {
+                    var model = type as ModelDescriptor;
+
+                    var repository = model.Repository;
+
+                    if (repository != null)
+                    {
+                        var body = this.InputRavenJObject;
+                        var data = body["data"];
+
+                        if (data != null)
+                        {
+                            switch (data.Type)
+                            {
+                                case JTokenType.Array:
+                                    result = new RavenJObjectResult { Content = repository.Delete(data as RavenJArray) };
+                                    break;
+
+                                case JTokenType.Object:
+                                    result = new RavenJObjectResult { Content = repository.Delete(data as RavenJObject) };
+                                    break;
+                            }
+                        }
+                        else if (Guid.Empty.Equals(id))
+                        {
+                            result = Failure("Invalid request. id param expected");
+                        }
+                        else
+                        {
+                            result = new RavenJObjectResult { Content = repository.Delete(id) };
+                        }
+                    }
+                    else
+                    {
+                        result = Failure("Could not resolve repository");
+                    }
+                }
+            }
+
+            result.Content["route"] = new RavenJValue((RouteData.Route as Route).Url);
 
             foreach (var item in RouteData.Values)
-                data[item.Key] = new RavenJValue(item.Value);
+            {
+                result.Content[item.Key] = new RavenJValue(item.Value);
+            }
 
-            data["name"] = new RavenJValue(name);
-            data["id"] = new RavenJValue(id);
+            result.Content["name"] = new RavenJValue(name);
+            if (!id.Equals(Guid.Empty))
+            {
+                result.Content["id"] = new RavenJValue(id);
+            }
 
-            return Failure(data, "Not found");
+            return result;
         }
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]

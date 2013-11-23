@@ -196,6 +196,88 @@ namespace Custom.Data.Persistence.Repositories
             return result;
         }
 
+        public RavenJObject Delete(RavenJObject entity)
+        {
+            var result = new RavenJObject();
+
+            try
+            {
+                var key = _descriptor.KeyPrefix + entity["Id"];
+
+                var current = _context.Session.Load<RavenJObject>(key);
+
+                if (current != null)
+                {
+                    _context.Session.Delete(current);
+                    _context.Session.SaveChanges();
+                }
+                else
+                {
+                    result["message"] = new RavenJValue("Not found");
+                }
+
+                result["success"] = new RavenJValue(true);
+            }
+            catch (Exception e)
+            {
+                result["success"] = new RavenJValue(false);
+                result["message"] = new RavenJValue(e.Message);
+            }
+
+            return result;
+        }
+
+        public RavenJObject Delete(RavenJArray data)
+        {
+            var result = new RavenJObject();
+
+            try
+            {
+                foreach (var item in data)
+                {
+                    string id;
+
+                    switch (item.Type)
+                    {
+                        case JTokenType.Guid:
+                            id = item.Value<Guid>().ToString("D");
+                            break;
+
+                        case JTokenType.String:
+                            id = item.Value<string>();
+                            break;
+
+                        case JTokenType.Object:
+                            id = item.Value<String>("Id");
+                            break;
+
+                        default:
+                            continue;
+                    }
+
+                    var key = _descriptor.KeyPrefix + id;
+
+                    var current = _context.Session.Load<RavenJObject>(key);
+
+                    if (current != null)
+                    {
+                        _context.Session.Delete(current);
+                    }
+                }
+
+                _context.Session.SaveChanges();
+
+                result["success"] = new RavenJValue(true);
+            }
+            catch (Exception e)
+            {
+                result["success"] = new RavenJValue(false);
+                result["message"] = new RavenJValue(e.Message);
+            }
+
+            return result;
+        }
+
 
         public RavenJObject Create(RavenJArray data)
         {

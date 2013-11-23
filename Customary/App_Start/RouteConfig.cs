@@ -338,6 +338,22 @@ namespace Custom
             */
             // NameController
 
+            #region Data/$metadata
+
+            routes.MapGreedyRoute(
+                name: Global.Routes.DataMetadataRouteName,
+                url: "Data/$metadata",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Name",
+                    name = string.Empty,
+                    action = "Metadata"
+                }
+            );
+
+            #endregion
+
             #region Data/{*name}/{id}/Invoke/{fn}
 
             routes.MapGreedyRoute(

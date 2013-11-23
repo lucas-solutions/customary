@@ -2,7 +2,7 @@
     // Create model, grid and forms for data definitions
 
     Ext.define('Ext.custom.data.Directory', function () {
-        
+
         function fullName(node) {
             /// <param name="node" type="Ext.data.NodeInterface">
             /// </param>
@@ -90,12 +90,28 @@
         }
         //returns 0.000000123
 
-        function onCreateClick() {
-            this._component.fireEvent('select', this);
+        function onRecordCreateClick(component) {
+            console.log("Create click");
+            var store = this._recordsStore;
+            var record = new store.model({});
+            store.addSorted(record);
+            component.getView().getSelectionModel().select(record, false, true);
+            var rowediting = component.getPlugin();
+            if (typeof rowediting === 'object' && rowediting !== null) {
+                rowediting.startEdit(record, 0);
+            }
+            this._component.fireEvent('select', this, record);
         }
 
-        function onDestroyClick() {
+        function onRecordDestroyClick(component) {
             this._component.fireEvent('select', this);
+            /*var record = component.getView().getSelectionModel().getSelection()[0];
+            if (typeof record === 'object' && record != null) {
+                record.destroy({ id: record.Id });
+            }*/
+            var selection = component.getView().getSelectionModel().getSelection();
+            component.getStore().remove(selection);
+            component.getStore().sync();
         }
 
         function onRefreshClick() {
@@ -185,11 +201,11 @@
         }
 
         function onRecordsActivate(component, eOpts) {
-            findToolItem('create', component, 'show').setHandler(component.onCreateClick, component);
-            findToolItem('destroy', component, 'show').setHandler(component.onDestroyClick, component);
+            findToolItem('create', component, 'show').setHandler(function () { onRecordCreateClick.call(this, component) }, this);
+            findToolItem('destroy', component, 'show').setHandler(function () { onRecordDestroyClick.call(this, component) }, this);
             if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
                 var typeName = this._indexRecord.name;
-                Custom.app.Application.asyncMetadata(typeName, function ($) {
+                Custom.app.Application.asyncMetadata.call(this, typeName, function ($) {
                     var modelName = Custom.app.Application.makeModelName(typeName);
 
                     this._recordsModel = Ext.ModelManager.getModel(modelName);
@@ -204,8 +220,7 @@
                         $modelName: modelName
                     });
 
-                    component.getSelectionModel().clearSelections(); // a must or you get an exception
-                    component.reconfigure(Ext.create('Ext.data.Store', {
+                    this._recordsStore = Ext.create('Ext.data.Store', {
                         autoDestroy: false,// <- error if true
                         autoLoad: true,
                         batchActions: true,
@@ -241,7 +256,10 @@
                     property: 'Name',
                     direction: 'ASC'
                 }]*/
-                    }), config.columns.items);
+                    });
+
+                    component.getSelectionModel().clearSelections(); // a must or you get an exception
+                    component.reconfigure(this._recordsStore, config.columns.items);
 
                     /*this._recordsStore.load({
                         scope: this,
@@ -396,7 +414,6 @@
                                 {
                                     $action: 'create',
                                     disabled: false,
-                                    handler: onCreateClick,
                                     hidden: true,
                                     iconCls: 'icon-new',
                                     scope: this,
@@ -406,7 +423,6 @@
                                 {
                                     $action: 'destroy',
                                     disabled: true,
-                                    handler: onDestroyClick,
                                     hidden: true,
                                     iconCls: 'icon-delete',
                                     scope: this,
@@ -559,28 +575,14 @@
                             columns: {
                                 items: []
                             },
-                            onCreateClick: function () {
-                                console.log("Create click");
-                                var store = this.getStore();
-                                var record = new store.model({});
-                                store.addSorted(record);
-                                this.getSelectionModel().select(record, false, true);
-                                var rowediting = this.getPlugin();
-                                if (typeof rowediting === 'object' && rowediting !== null) {
-                                    rowediting.startEdit(record, 0);
-                                }
-                            },
-                            onDestroyClick: function () {
-                                console.log("Destroy click");
-                            },
-                            /*plugins: [
+                            plugins: [
                                 {
                                     autoCancel: true,
                                     clicksToEdit: 2,
                                     clicksToMoveEditor: 1,
                                     ptype: 'rowediting'
                                 }
-                            ],*/
+                            ],
                             selModel: 'rowmodel',
                             /*selModel: Ext.create("Ext.selection.RowModel", {
                                 selType: "rowmodel",
