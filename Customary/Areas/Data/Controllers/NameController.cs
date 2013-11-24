@@ -9,8 +9,8 @@ namespace Custom.Areas.Data.Controllers
     using Custom.Data;
     using Custom.Models;
     using Custom.Web.Mvc;
-    using Raven.Imports.Newtonsoft.Json.Linq;
-    using Raven.Json.Linq;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Json.Linq;
     using System.Web.Routing;
 
     public class NameController : CustomController

@@ -7,8 +7,8 @@ using System.Web.Routing;
 namespace Custom.Data.Persistence
 {
     using Custom.Web.Mvc;
-    using Raven.Client;
-    using Raven.Client.Embedded;
+    using global::Raven.Client;
+    using global::Raven.Client.Embedded;
     
     public class NavigationContext : DocumentContext
     {

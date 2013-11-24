@@ -7,12 +7,12 @@ using System.Linq;
 namespace Custom
 {
     using Custom.Data.Metadata;
-    using Raven.Abstractions.Data;
-    using Raven.Client;
-    using Raven.Client.Indexes;
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Imports.Newtonsoft.Json.Linq;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
+    using global::Raven.Client.Indexes;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Json.Linq;
     
     public static class DocumentStoreExtensions
     {

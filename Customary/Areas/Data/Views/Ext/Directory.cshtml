@@ -593,24 +593,10 @@
                                     }
                                 }
                             }),*/
-                            title: 'Records',
-                            tooltip: 'KK',
+                            title: 'Data',
+                            tooltip: 'Selected model data records',
                             xtype: 'gridpanel',
 
-                        },
-                        {
-                            header: false,
-                            listeners: {
-                                selectionchange: {
-                                    fn: onStoreSelectionChange,
-                                    scope: this
-                                }
-                            },
-                            columns: {
-                                items: []
-                            },
-                            title: 'Stores',
-                            xtype: 'gridpanel'
                         }
                     ],
                     layout: 'fit',

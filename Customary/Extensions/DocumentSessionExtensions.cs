@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Custom
 {
-    using Raven.Client;
-    using Raven.Client.Indexes;
-    using Raven.Json.Linq;
+    using global::Raven.Client;
+    using global::Raven.Client.Indexes;
+    using global::Raven.Json.Linq;
 
     public static class DocumentSessionExtensions
     {

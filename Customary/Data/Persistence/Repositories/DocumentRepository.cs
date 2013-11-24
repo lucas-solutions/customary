@@ -6,9 +6,9 @@ using System.Web;
 namespace Custom.Data.Persistence.Repositories
 {
     using Custom.Data.Metadata;
-    using Raven.Abstractions.Data;
-    using Raven.Imports.Newtonsoft.Json.Linq;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public class DocumentRepository : IRavenJObjectRepository
     {

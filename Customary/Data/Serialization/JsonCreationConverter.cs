@@ -2,8 +2,8 @@
 
 namespace Custom.Data.Serialization
 {
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
 
     public abstract class JsonCreationConverter<T> : JsonConverter
     {

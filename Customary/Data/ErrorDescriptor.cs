@@ -5,8 +5,8 @@ using System.Web;
 
 namespace Custom.Data
 {
-    using Raven.Abstractions.Data;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Json.Linq;
 
     public class ErrorDescriptor : NameDescriptor
     {

@@ -7,7 +7,7 @@ using System.Web;
 namespace Custom.Data.Serialization
 {
     using Custom.Data.Metadata;
-    using Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
 
     public class TypeConverter : JsonCreationConverter<TypeDefinition>
     {

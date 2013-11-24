@@ -6,10 +6,10 @@ namespace Custom.Data.Metadata
 {
     using Custom.Data.Persistence;
     using Custom.Data.Serialization;
-    using Raven.Abstractions.Data;
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Imports.Newtonsoft.Json.Linq;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public static class MetadataExtensions
     {

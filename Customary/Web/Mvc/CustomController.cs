@@ -12,7 +12,7 @@ namespace Custom.Web.Mvc
     using Custom.Models;
     using Custom.Site.Presentation;
     using Custom.Results;
-    using Raven.Json.Linq;
+    using global::Raven.Json.Linq;
     
     [Diagnostics(Category="Controller", Instance="Custom")]
     public abstract class CustomController : Controller

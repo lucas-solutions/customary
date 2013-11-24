@@ -5,10 +5,10 @@ using System.Web;
 
 namespace Custom.Data.Persistence
 {
-    using Raven.Abstractions.Data;
-    using Raven.Client;
-    using Raven.Client.Indexes;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
+    using global::Raven.Client.Indexes;
+    using global::Raven.Json.Linq;
 
     public abstract class DocumentContext
     {

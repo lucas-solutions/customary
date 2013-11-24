@@ -6,8 +6,8 @@ using System.Web;
 namespace Custom.Data.Persistence
 {
     using Custom.Data.Metadata;
-    using Raven.Client;
-    using Raven.Client.Embedded;
+    using global::Raven.Client;
+    using global::Raven.Client.Embedded;
 
     public class MasterdataContext : DocumentContext
     {

@@ -9,10 +9,10 @@ using System.Text;
 
 namespace Custom.Data.Persistence
 {
-    using Raven.Abstractions.Data;
-    using Raven.Client;
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Json.Linq;
 
     public class DocumentArchive
     {

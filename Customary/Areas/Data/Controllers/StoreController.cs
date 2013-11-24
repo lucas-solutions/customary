@@ -10,7 +10,7 @@ namespace Custom.Areas.Data.Controllers
     using Custom.Data;
     using Custom.Data.Metadata;
     using Custom.Web.Mvc;
-    using Raven.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public sealed class StoreController : CustomController
     {

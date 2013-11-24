@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Models
 {
-    using Raven.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public class RavenJTokenCallbackModel
     {

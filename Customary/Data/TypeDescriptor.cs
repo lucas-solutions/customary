@@ -7,8 +7,8 @@ namespace Custom.Data
 {
     using Custom.Data.Metadata;
     using Custom.Data.Serialization;
-    using Raven.Abstractions.Data;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Json.Linq;
 
     public abstract class TypeDescriptor : NameDescriptor
     {

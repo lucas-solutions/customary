@@ -46,6 +46,42 @@
         background-image: url("@Url.Content("~/Images/Metadata/unit.png")");
     }
 
+    .icon-create, .icon-new {
+    background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-delete, .icon-destroy {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-refresh {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-add {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-remove {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-save, .icon-submit {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-cancel, .icon-reset {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-grid {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-form {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
 </style>
 
 <script type="text/javascript">
@@ -455,7 +491,7 @@
                 }
             }
 
-            if ($.Embedded == true) {
+            if ($.Embeddable === true) {
             }
             else {
 
@@ -757,7 +793,6 @@
 
             var role = {
                 optional: true,
-                embedded: false,
                 identity: false,
                 required: false,
                 unique: false,
@@ -766,10 +801,6 @@
             };
 
             switchValues($role, '|', {
-
-                'Embedded': function () {
-                    role.embedded = true;
-                },
 
                 'Identity': function () {
                     role.identity = true;
@@ -1177,9 +1208,9 @@
                                                 this.centerPanel.setTitle('Empty View');
                                             }
                                             else {
-                                                var title = record.typeName + '/' + record.id;
+                                                var title = record.typeName + ' [' + record.id + ']';
                                                 this.centerPanel.removeAll();
-                                                this.centerPanel.setTitle(title + ' (loading...)');
+                                                this.centerPanel.setTitle(title + ' loading...');
                                                 this.centerPanel.mask('Loading... Please wait', 'loading');
                                                 Ext.custom.Droplet.asyncCreate(record.typeName, false, function (droplet) {
                                                     this.centerPanel.add(droplet.initComponent({

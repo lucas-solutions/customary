@@ -6,8 +6,8 @@ using System.Web.Mvc;
 
 namespace Custom.Results
 {
-    using Raven.Json.Linq;
-    using Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Json.Linq;
+    using global::Raven.Imports.Newtonsoft.Json;
 
     public class RavenResult : ActionResult
     {

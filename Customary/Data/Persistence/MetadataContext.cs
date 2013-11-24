@@ -3,12 +3,12 @@
 namespace Custom.Data.Persistence
 {
     using Custom.Data.Metadata;
-    using Raven.Abstractions;
-    using Raven.Abstractions.Data;
-    using Raven.Client;
-    using Raven.Client.Embedded;
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Imports.Newtonsoft.Json.Serialization;
+    using global::Raven.Abstractions;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
+    using global::Raven.Client.Embedded;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Imports.Newtonsoft.Json.Serialization;
 
     public class MetadataContext : DocumentContext
     {

@@ -4,8 +4,8 @@ using System.Linq;
 
 namespace Custom
 {
-    using Raven.Abstractions.Data;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Json.Linq;
 
     public static class JsonDocumentExtensions
     {

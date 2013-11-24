@@ -5,8 +5,8 @@ using System.Web;
 
 namespace Custom.Data.Metadata
 {
-    using Raven.Client;
-    using Raven.Json.Linq;
+    using global::Raven.Client;
+    using global::Raven.Json.Linq;
 
     /// <summary>
     /// A business object usually does nothing itself but holds a set of instance variables or properties.

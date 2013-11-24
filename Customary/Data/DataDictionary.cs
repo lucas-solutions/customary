@@ -7,9 +7,9 @@ using System.Web;
 
 namespace Custom.Data
 {
-    using Raven.Abstractions.Data;
-    using Raven.Client;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
+    using global::Raven.Json.Linq;
 
     public class DataDictionary : NameDescriptor
     {

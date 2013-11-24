@@ -7,11 +7,11 @@ namespace Custom
 {
     using Custom.Data.Metadata;
     using Custom.Models;
-    using Raven.Abstractions;
-    using Raven.Imports.Newtonsoft.Json;
-    using Raven.Imports.Newtonsoft.Json.Linq;
-    using Raven.Imports.Newtonsoft.Json.Serialization;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions;
+    using global::Raven.Imports.Newtonsoft.Json;
+    using global::Raven.Imports.Newtonsoft.Json.Linq;
+    using global::Raven.Imports.Newtonsoft.Json.Serialization;
+    using global::Raven.Json.Linq;
     
     public static partial class RavenExtensions
     {

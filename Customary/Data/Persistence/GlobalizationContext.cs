@@ -9,9 +9,9 @@ namespace Custom.Data.Persistence
     using Custom.Data.Metadata;
     using Custom.Data.Serialization;
     using Newtonsoft.Json;
-    using Raven.Client;
-    using Raven.Client.Embedded;
-    using Raven.Json.Linq;
+    using global::Raven.Client;
+    using global::Raven.Client.Embedded;
+    using global::Raven.Json.Linq;
 
     public class GlobalizationContext : DocumentContext
     {

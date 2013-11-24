@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Data.Persistence
 {
-    using Raven.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public interface IRavenJObjectRepository
     {

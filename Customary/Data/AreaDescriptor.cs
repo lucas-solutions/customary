@@ -1,4 +1,4 @@
-﻿using Raven.Abstractions.Data;
+﻿using global::Raven.Abstractions.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace Custom.Data
 {
     using Custom.Data.Metadata;
     using Custom.Data.Persistence;
-    using Raven.Json.Linq;
+    using global::Raven.Json.Linq;
 
     public class AreaDescriptor : NameDescriptor
     {

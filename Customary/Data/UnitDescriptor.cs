@@ -6,8 +6,8 @@ using System.Web;
 namespace Custom.Data
 {
     using Custom.Data.Metadata;
-    using Raven.Abstractions.Data;
-    using Raven.Json.Linq;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Json.Linq;
 
     public class UnitDescriptor : TypeDescriptor<UnitDefinition>
     {

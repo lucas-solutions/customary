@@ -6,9 +6,9 @@ using System.Web;
 namespace Custom.Indexes
 {
     using Custom.Data.Metadata;
-    using Raven.Abstractions.Indexing;
-    using Raven.Client.Document;
-    using Raven.Client.Indexes;
+    using global::Raven.Abstractions.Indexing;
+    using global::Raven.Client.Document;
+    using global::Raven.Client.Indexes;
 
     public class MetadaTypeIndexCreationTask : AbstractIndexCreationTask
     {

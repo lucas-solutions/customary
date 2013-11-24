@@ -6,7 +6,7 @@ using System.Web;
 namespace Custom.Data.Serialization
 {
     using Custom.Data.Metadata;
-    using Raven.Imports.Newtonsoft.Json.Serialization;
+    using global::Raven.Imports.Newtonsoft.Json.Serialization;
 
     public class TypeContractResolver : DefaultContractResolver
     {

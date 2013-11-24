@@ -5,8 +5,8 @@ using System.Web;
 
 namespace Custom.Data
 {
-    using Raven.Abstractions.Data;
-    using Raven.Client;
+    using global::Raven.Abstractions.Data;
+    using global::Raven.Client;
 
     public static class DocumentStoreExtensions
     {

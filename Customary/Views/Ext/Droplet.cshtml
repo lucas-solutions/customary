@@ -63,29 +63,11 @@
             });
         };
 
-        function configCombobox(property, config) {
-
-            var $ = Custom.app.Application.findMetadata(property.Type);
-
-            var store = Ext.create('Ext.data.Store', {
-                fields: ['name', 'title', 'summary'],
-                data: $.Members,
-                queryMode: 'local',
-                displayField: 'title',
-                valueField: 'name',
+        function enumHandler(property, propertyType, config) {
+            return Ext.merge(config, enumCombobox(propertyType), {
+                fieldLabel: Ext.custom.Adapter.toString(config.title, property.Title, propertyType.Title, property.Name),
+                name: property.Name
             });
-
-            Ext.merge(config, {
-                fieldLabel: config.title,
-                store: store,
-                xtype: 'combobox'
-            });
-
-            return config;
-        }
-
-        function enumHandler(property, config) {
-            return configCombobox(property, config);
         }
 
         // Convenience function to check if the component has any dirty fields.
@@ -221,9 +203,9 @@
                     break;
             }
 
-            var role = Custom.app.Application.splitRole(property.Role);
+            var propertyRole = Custom.app.Application.splitRole(property.Role);
 
-            if (role.readOnly) {
+            if (propertyRole.readOnly) {
                 config.readOnly = true;
             }
 
@@ -393,42 +375,93 @@
             }
         }
 
+        function enumCombobox($) {
+
+            var store = Ext.create('Ext.data.Store', {
+                fields: ['Name', 'Title', 'Summary', 'Value'],
+                data: $.Members,
+                queryMode: 'local'
+            });
+
+            return {
+                displayField: 'Name',
+                displayTpl: '<tpl for=".">' +
+                    '{[typeof values === "string" ? values : values.Name]}' +
+                    '<tpl if="xindex < xcount">, </tpl>' +
+                    '</tpl>',
+                editable: false,
+                forceSelection: true,
+                listeners: {
+                    added: {
+                        fn: function (component, container, pos, eOpts) {
+                            component.getStore().load();
+                        },
+                        scope: this
+                    }
+                },
+                queryMode: 'local',
+                store: store,
+                valueField: 'Name',
+                xtype: 'combobox'
+            }        }
+
+        function modelCombobox($) {
+
+            var modelName = Custom.app.Application.makeModelName($.Name);
+
+            var model = Ext.ModelManager.getModel(modelName);
+
+            if (model === null || typeof model !== 'function') {
+                model = Custom.app.Application.defineModel(modelName, $);
+            }
+
+            var properties = Custom.app.Application.collectProperties($, []);
+
+            var store = Ext.create('Ext.data.Store', {
+                autoDestroy: false,// <- error if true
+                autoLoad: true,
+                batchActions: true,
+                model: model,
+                pageSize: 100,
+                sorters: [{
+                    property: 'Name',
+                    direction: 'ASC'
+                }]
+            });
+
+            return {
+                displayField: 'Name',
+                displayTpl: '<tpl for=".">' +
+                    '{[typeof values === "string" ? values : values.Name]}' +
+                    '<tpl if="xindex < xcount">, </tpl>' +
+                    '</tpl>',
+                pageSize: 50,
+                queryMode: 'remote',
+                store: store,
+                valueField: 'Name',
+                xtype: 'combobox'
+            }
+        }
+
         function modelHandler(property, propertyType, config) {
 
             var droplet = this;
-
-            var role = Custom.app.Application.splitRole(property.Role);
-
-            // dummy code
-            if (role.embedded == false && role.hasMany === false) {
-                // combobox with store
-
-                var store = Ext.create('Ext.data.Store', {
-                    fields: ['name', 'title', 'tooltip'],
-                    data: [
-                        { name: 'String', title: 'String', tooltip: 'String type' },
-                        { name: 'Int32', title: 'Integer 32bits', tooltip: 'Integer 32bits' },
-                        { name: 'Simple', title: 'Simple float point', tooltip: 'Simple float point decimal' },
-                        { name: 'Double', title: 'Dloble float point', tooltip: 'Simple float point decimal' }
-                    ],
-                    queryMode: 'local',
-                    displayField: 'title',
-                    valueField: 'name',
-                });
-
-                Ext.merge(config, {
-                    fieldLabel: Ext.custom.Adapter.toString(config.title, property.Title, property.Name),
-                    store: store,
-                    xtype: 'combobox'
-                });
-
-                return config;
-            }
 
             var $ = propertyType;
 
             if (typeof $ !== 'object' || $ === null) {
                 return;
+            }
+
+            var propertyRole = Custom.app.Application.splitRole(property.Role);
+
+            // dummy code
+            if ($.Embeddable !== true && propertyRole.hasMany !== true) {
+                return Ext.merge(config, modelCombobox($), {
+                    fieldLabel: Ext.custom.Adapter.toString(config.title, property.Title, property.Name),
+                    hiddenName: property.Name,
+                    typeAhead: true
+                });
             }
 
             var properties = Custom.app.Application.collectProperties($, []);
@@ -454,7 +487,7 @@
 
             var modelName = Custom.app.Application.makeModelName(property.Type);
 
-            if (role.hasMany) {
+            if (propertyRole.hasMany) {
 
                 var title = Ext.custom.Adapter.toString($.Title, $.Name);
                 var summary = Ext.custom.Adapter.toString($.Summary, property.Summary);
