@@ -278,7 +278,6 @@
     <Compile Include="Data\Persistence\DocumentArchive.cs" />
     <Compile Include="Data\Persistence\Raven\RavenStore.cs" />
     <Compile Include="Data\Persistence\Raven\RavenStoreInfo.cs" />
-    <Compile Include="Data\Persistence\Raven\Replication\Destination.cs" />
     <Compile Include="Data\TypeCategories.cs" />
     <Compile Include="Data\DocumentStoreExtensions.cs" />
     <Compile Include="Data\EnumDescriptor.cs" />

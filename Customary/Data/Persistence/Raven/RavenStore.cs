@@ -107,6 +107,7 @@ namespace Custom.Data.Persistence.Raven
             {
                 var embeddableStore = new EmbeddableDocumentStore
                 {
+                    ApiKey = info.ApiKey + '/' + info.Secret,
                     DataDirectory = "/App_Data/" + info.Name
                 };
 
@@ -114,7 +115,10 @@ namespace Custom.Data.Persistence.Raven
             }
             else
             {
-                var documentStore = new DocumentStore();
+                var documentStore = new DocumentStore
+                {
+                    ApiKey = info.ApiKey + '/' + info.Secret
+                };
 
                 if (info.Url != null)
                 {

@@ -5,12 +5,27 @@ using System.Web;
 
 namespace Custom.Data.Persistence.Raven
 {
+    using global::Raven.Abstractions.Data;
     using global::Raven.Abstractions.Replication;
-    using Custom.Data.Persistence.Raven.Replication;
 
     public class RavenStoreInfo
     {
-        public string Name
+        public string ApiKey
+        {
+            get;
+            set;
+        }
+
+        public List<ApiKeyDefinition> ApiKeys
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Replication Destinations. It's what telling the RavenDB instance where to replicate to.
+        /// </summary>
+        public List<ReplicationDestination> Destinations
         {
             get;
             set;
@@ -22,7 +37,7 @@ namespace Custom.Data.Persistence.Raven
             set;
         }
 
-        public string Url
+        public string Name
         {
             get;
             set;
@@ -34,10 +49,13 @@ namespace Custom.Data.Persistence.Raven
             set;
         }
 
-        /// <summary>
-        /// Replication Destinations. It's what telling the RavenDB instance where to replicate to.
-        /// </summary>
-        public List<Destination> Destinations
+        public string Secret
+        {
+            get;
+            set;
+        }
+
+        public string Url
         {
             get;
             set;

@@ -100,7 +100,7 @@
             if (typeof rowediting === 'object' && rowediting !== null) {
                 rowediting.startEdit(record, 0);
             }
-            this._component.fireEvent('select', this, record);
+            this._component.fireEvent('create', this, model, store);
         }
 
         function onRecordDestroyClick(component) {

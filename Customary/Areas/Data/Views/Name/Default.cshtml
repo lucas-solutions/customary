@@ -1198,30 +1198,77 @@
                             header: false,
                             layout: 'fit',
                             listeners: {
+                                create: {
+                                    fn: function (component, eOpts) {
+                                        this.centerPanel.mask();
+                                        this.centerPanel.removeAll();
+                                        var record = droplet.create({
+                                            model: eOpts.model,
+                                            store: eOpts.store,
+                                            success: function (record, operation) {
+                                                //var title = record.typeName + ' [' + record.id + ']';
+                                                //this.centerPanel.setTitle(title);
+                                                this.centerPanel.unmask();
+                                            },
+                                            failure: function (record, operation) {
+                                            },
+                                            callback: function (record, operation, success) {
+                                            }
+                                        });
+                                    },
+                                    scope: this
+                                },
+                                destroy: {
+                                    fn: function (component, eOpts) {
+                                        this._droplet.delete({
+                                            record: record,
+                                            model: model,
+                                            store: store,
+                                            success: function (record, operation) {
+                                                if (typeof eOpts.success === 'function') {
+                                                    eOpts.success(record, operation);
+                                                }
+                                            },
+                                            failure: function (record, operation) {
+                                                if (typeof eOpts.failure === 'function') {
+                                                    eOpts.failure(record, operation);
+                                                }
+                                            },
+                                            callback: function (record, operation, success) {
+                                                if (typeof eOpts.callback === 'function') {
+                                                    eOpts.callback(record, operation);
+                                                }
+                                            }
+                                        });
+                                        return true;
+                                    },
+                                    scope: this
+                                },
                                 select: {
-                                    fn: function (directory, record, selModel, selections) {
-                                        if (record !== null && typeof record === 'object') {
+                                    fn: function (component, eOpts) {
+                                        if (eOpts !== null && typeof eOpts === 'object') {
 
-                                            if (typeof record.typeName !== 'string') {
+                                            if (typeof eOpts.typeName !== 'string') {
                                                 this.centerPanel.removeAll();
                                                 this.centerPanel.doLayout();
                                                 this.centerPanel.setTitle('Empty View');
                                             }
                                             else {
-                                                var title = record.typeName + ' [' + record.id + ']';
+                                                var title = eOpts.typeName + ' [' + eOpts.id + ']';
                                                 this.centerPanel.removeAll();
                                                 this.centerPanel.setTitle(title + ' loading...');
                                                 this.centerPanel.mask('Loading... Please wait', 'loading');
-                                                Ext.custom.Droplet.asyncCreate(record.typeName, false, function (droplet) {
+                                                Ext.custom.Droplet.asyncCreate(eOpts.typeName, false, function (droplet) {
+                                                    this._droplet = droplet;
                                                     this.centerPanel.add(droplet.initComponent({
                                                     }));
                                                     this.centerPanel.doLayout();
 
-                                                    droplet.load(record.id, function () {
+                                                    droplet.load(eOpts.id, function () {
                                                         this.centerPanel.setTitle(title);
                                                         this.centerPanel.unmask();
                                                     }, this);
-                                                    //droplet.asyncLoad(record.id);
+                                                    //droplet.asyncLoad(eOpts.id);
                                                 }, this);
                                             }
 

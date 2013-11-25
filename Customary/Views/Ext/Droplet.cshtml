@@ -403,7 +403,8 @@
                 store: store,
                 valueField: 'Name',
                 xtype: 'combobox'
-            }        }
+            }
+        }
 
         function modelCombobox($) {
 
@@ -1130,6 +1131,136 @@
                 }
 
                 return dirty;
+            },
+
+            create: function (config) {
+
+                console.log("Droplet.create (record)");
+
+                if (typeof config !== 'object' || config === null) {
+                    return false;
+                }
+
+                var record, self = this;
+
+                var success = function (record) {
+                    if (typeof config.success === 'function') {
+                        config.success(record, config);
+                    }
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                };
+
+                var failure = function (record) {
+                    if (typeof config.failure === 'function') {
+                        config.failure(record, config);
+                    }
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                };
+
+                var cancel = function (record) {
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                }
+
+                var createRecord = function () {
+                    record = new this.model();
+                    try {
+                        loadRecord(self._component, record);
+                        self._record = record;
+                        success(record);
+                        console.log("Droplet.create (record) -> success");
+                    }
+                    catch (e) {
+                        failure(record);
+                        console.log("Droplet.create (record) -> failure: " + e);
+                    }
+                };
+
+                if (this.isDirty() === false) {
+                    createRecord();
+                }
+                else {
+                    Ext.MessageBox.show({
+                        closable: false,
+                        title: 'Save Changes?',
+                        msg: 'Your moving out of a record that has unsaved changes. Would you like to save your changes?',
+                        width: 300,
+                        buttons: Ext.Msg.YESNOCANCEL,
+                        multiline: true,
+                        fn: function (buttonId, text, opt) {
+                            // The ID of the button pressed
+                            switch (buttonId) {
+                                case 'ok':
+                                case 'yes':
+                                    this._record.save({
+                                        callback: function (records, operation, success) {
+                                            if (success) {
+                                                createRecord();
+                                            }
+                                            else {
+                                                failure(record);
+                                            }
+                                        }
+                                    });
+                                    break;
+                                case 'no':
+                                    createRecord();
+                                    break;
+                                case 'cancel':
+                                    cancel();
+                                    break;
+                            }
+                            // text : String
+                            // Value of the input field if either prompt or multiline is true
+                            // opt : Object
+                            // The config object passed to show.
+                        },
+                        //animEl: 'elId'
+                        //animateTarget: 'addAddressBtn',
+                        icon: Ext.window.MessageBox.INFO
+                    });
+                }
+                return true;
+            },
+
+            destroy: function (config) {
+
+                var success = function (record) {
+                    if (typeof config.success === 'function') {
+                        config.success(record, config);
+                    }
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                };
+
+                var failure = function (record) {
+                    if (typeof config.failure === 'function') {
+                        config.failure(record, config);
+                    }
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                };
+
+                var cancel = function (record) {
+                    if (typeof config.callback === 'function') {
+                        config.callback(record, config);
+                    }
+                }
+
+                this._record.destroy();
+
+                loadRecord(this._component);
+
+                success(this._record, config);
+
+                console.log("Droplet.destroy (record)");
             },
 
             load: function (id, callcack, scope) {
