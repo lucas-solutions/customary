@@ -22,16 +22,7 @@ namespace Custom.Data.Persistence.Raven
             set;
         }
 
-        /// <summary>
-        /// Replication Destinations. It's what telling the RavenDB instance where to replicate to.
-        /// </summary>
-        public List<ReplicationDestination> Destinations
-        {
-            get;
-            set;
-        }
-
-        public bool Embeddable
+       public bool Embeddable
         {
             get;
             set;

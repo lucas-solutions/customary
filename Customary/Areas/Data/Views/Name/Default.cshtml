@@ -135,12 +135,12 @@
         var metadata = {
         };
 
-        function asyncMetadata(typeName, callback) {
+        function asyncMetadata(typeName, callback, scope) {
 
             var $ = Custom.app.Application.findMetadata(typeName);
 
             if ($ !== null && typeof $ === 'object') {
-                callback.call(this, $);
+                callback.call(scope || this, $);
             }
             else {
 
@@ -168,7 +168,7 @@
                             $ = Custom.app.Application.findMetadata(typeName);
 
                             if ($ !== null && typeof $ === 'object') {
-                                callback.call(this, $);
+                                callback.call(scope || this, $);
                             }
 
                         } else if (typeof json.message === 'string') {
@@ -872,6 +872,35 @@
             }
         }
 
+        function selectRecord(record, model) {
+
+            console.log(record.$type, record.$className === model.getName());
+
+            if (typeof this._droplet !== 'object' || this._droplet === null || this._droplet.model !== model) {
+
+                Custom.app.Application.asyncMetadata(record.$type, function ($) {
+                    var title = record.$type + ' [new]';
+
+                    var droplet = Ext.custom.Droplet.create(record.$type, false, $);
+
+                    this._droplet = droplet;
+
+                    this.centerPanel.removeAll();
+
+                    this.centerPanel.add(droplet.initComponent({
+                    }));
+
+                    this.centerPanel.doLayout();
+
+                    this._droplet.loadRecord(record);
+
+                }, this);
+            }
+            else {
+                this._droplet.loadRecord(record);
+            }
+        }
+
         function toDataType(type) {
 
             var types = Ext.data.Types; // allow shorthand type access
@@ -1198,55 +1227,79 @@
                             header: false,
                             layout: 'fit',
                             listeners: {
-                                create: {
-                                    fn: function (component, eOpts) {
-                                        this.centerPanel.mask();
-                                        this.centerPanel.removeAll();
-                                        var record = droplet.create({
-                                            model: eOpts.model,
-                                            store: eOpts.store,
-                                            success: function (record, operation) {
-                                                //var title = record.typeName + ' [' + record.id + ']';
-                                                //this.centerPanel.setTitle(title);
-                                                this.centerPanel.unmask();
+                                beforeselect: {
+                                    fn: function (callback, scope) {
+
+                                        if (typeof this._droplet !== 'object' || this._droplet === null) {
+                                            console.log('beforeselect: true 1');
+                                            return true;
+                                        }
+
+                                        if (!this._droplet.isDirty()) {
+                                            console.log('beforeselect: true 2');
+                                            return true;
+                                        }
+
+                                        Ext.MessageBox.show({
+                                            closable: false,
+                                            title: 'Save Changes?',
+                                            msg: 'Your moving out of a record that has unsaved changes. Would you like to save your changes?',
+                                            width: 300,
+                                            buttons: Ext.Msg.YESNOCANCEL,
+                                            //multiline: true,
+                                            scope: this,
+                                            fn: function (buttonId, text, opt) {
+                                                // The ID of the button pressed
+                                                switch (buttonId) {
+                                                    case 'ok':
+                                                    case 'yes':
+                                                        console.log("yes");
+                                                        this._droplet._record.save({
+                                                            callback: function (records, operation, success) {
+                                                                success = operation.wasSuccessful();
+                                                                if (success) {
+                                                                    callback.call(scope, true);
+                                                                }
+                                                                else {
+                                                                    // TODO: message with failure
+                                                                    callback.call(scope, true);
+                                                                }
+                                                            },
+                                                            scope: this
+                                                        });
+                                                        break;
+                                                    case 'no':
+                                                        callback.call(scope, true);
+                                                        break;
+                                                    case 'cancel':
+                                                        callback.call(scope, false);
+                                                        break;
+                                                }
+                                                // text : String
+                                                // Value of the input field if either prompt or multiline is true
+                                                // opt : Object
+                                                // The config object passed to show.
                                             },
-                                            failure: function (record, operation) {
-                                            },
-                                            callback: function (record, operation, success) {
-                                            }
+                                            //animEl: 'elId'
+                                            //animateTarget: 'addAddressBtn',
+                                            icon: Ext.window.MessageBox.INFO
                                         });
+
+                                        console.log('beforeselect: false');
+
+                                        return false;
                                     },
                                     scope: this
                                 },
-                                destroy: {
-                                    fn: function (component, eOpts) {
-                                        this._droplet.delete({
-                                            record: record,
-                                            model: model,
-                                            store: store,
-                                            success: function (record, operation) {
-                                                if (typeof eOpts.success === 'function') {
-                                                    eOpts.success(record, operation);
-                                                }
-                                            },
-                                            failure: function (record, operation) {
-                                                if (typeof eOpts.failure === 'function') {
-                                                    eOpts.failure(record, operation);
-                                                }
-                                            },
-                                            callback: function (record, operation, success) {
-                                                if (typeof eOpts.callback === 'function') {
-                                                    eOpts.callback(record, operation);
-                                                }
-                                            }
-                                        });
-                                        return true;
+                                create: {
+                                    fn: function (record, model) {
+                                        selectRecord.call(this, record, model);
                                     },
                                     scope: this
                                 },
                                 select: {
                                     fn: function (component, eOpts) {
-                                        if (eOpts !== null && typeof eOpts === 'object') {
+                                        if (typeof eOpts === 'object' && eOpts !== null) {
 
                                             if (typeof eOpts.typeName !== 'string') {
                                                 this.centerPanel.removeAll();

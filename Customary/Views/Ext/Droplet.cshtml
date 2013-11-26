@@ -15,21 +15,21 @@
                     fn: function (component, eOpts) {
                         // perform some visual configuration on the actual instances
                         //cmp.headerCt.setHeight(25);
-                        console.log('beforerender ' + component.xtype);
+                        //console.log('beforerender ' + component.xtype);
                     },
                     scope: this
                 },
                 change: {
                     fn: function (field, newValue, oldValue, eOpts) {
                         // Fires when the value of a field is changed via the setValue method.
-                        console.log('change ' + oldValue + ' to ' + newValue);
+                        //console.log('change ' + oldValue + ' to ' + newValue);
                     },
                     scope: this,
                 },
                 dirtychange: {
                     fn: function (component, dirty, eOpts) {
                         // Fires when the dirty state of the entire form changes.
-                        console.log('dirtychange ' + dirty);
+                        //console.log('dirtychange ' + dirty);
                         if (dirty) {
                             isDirty.call(droplet, true);
                         }
@@ -42,21 +42,21 @@
                 fielderrorchange: {
                     fn: function (fieldAncestor, field, error, eOpts) {
                         // Fires when the active error message is changed for any one of the Ext.form.Labelable instances within this container.
-                        console.log('fielderrorchange ' + field.xtype + ': ' + error);
+                        //console.log('fielderrorchange ' + field.xtype + ': ' + error);
                     },
                     scope: this
                 },
                 fieldvaliditychange: {
                     fn: function (fieldAncestor, field, valid, eOpts) {
                         // Fires when the validity state of any one of the Ext.form.field.Field instances within this container changes.
-                        console.log('fieldvaliditychange ' + field.xtype + ': ' + valid);
+                        //console.log('fieldvaliditychange ' + field.xtype + ': ' + valid);
                     },
                     scope: this
                 },
                 validitychange: {
                     fn: function (basicForm, valid, eOpts) {
                         // Fires when the validity of the entire form changes.
-                        console.log('validitychange ' + basicForm.xtype + ': ' + valid);
+                        //console.log('validitychange ' + basicForm.xtype + ': ' + valid);
                     },
                     scope: this
                 }
@@ -1117,7 +1117,7 @@
             // Convenience function to check if the form has any dirty fields. This is the same as calling this.getForm().isDirty().
             isDirty: function (dirty) {
 
-                console.log('isDirty(' + dirty + ')');
+                //console.log('isDirty(' + dirty + ')');
 
                 if (typeof dirty !== 'boolean') {
                     dirty = Ext.custom.Droplet.isDirty(this._component);
@@ -1133,134 +1133,9 @@
                 return dirty;
             },
 
-            create: function (config) {
-
-                console.log("Droplet.create (record)");
-
-                if (typeof config !== 'object' || config === null) {
-                    return false;
-                }
-
-                var record, self = this;
-
-                var success = function (record) {
-                    if (typeof config.success === 'function') {
-                        config.success(record, config);
-                    }
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                };
-
-                var failure = function (record) {
-                    if (typeof config.failure === 'function') {
-                        config.failure(record, config);
-                    }
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                };
-
-                var cancel = function (record) {
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                }
-
-                var createRecord = function () {
-                    record = new this.model();
-                    try {
-                        loadRecord(self._component, record);
-                        self._record = record;
-                        success(record);
-                        console.log("Droplet.create (record) -> success");
-                    }
-                    catch (e) {
-                        failure(record);
-                        console.log("Droplet.create (record) -> failure: " + e);
-                    }
-                };
-
-                if (this.isDirty() === false) {
-                    createRecord();
-                }
-                else {
-                    Ext.MessageBox.show({
-                        closable: false,
-                        title: 'Save Changes?',
-                        msg: 'Your moving out of a record that has unsaved changes. Would you like to save your changes?',
-                        width: 300,
-                        buttons: Ext.Msg.YESNOCANCEL,
-                        multiline: true,
-                        fn: function (buttonId, text, opt) {
-                            // The ID of the button pressed
-                            switch (buttonId) {
-                                case 'ok':
-                                case 'yes':
-                                    this._record.save({
-                                        callback: function (records, operation, success) {
-                                            if (success) {
-                                                createRecord();
-                                            }
-                                            else {
-                                                failure(record);
-                                            }
-                                        }
-                                    });
-                                    break;
-                                case 'no':
-                                    createRecord();
-                                    break;
-                                case 'cancel':
-                                    cancel();
-                                    break;
-                            }
-                            // text : String
-                            // Value of the input field if either prompt or multiline is true
-                            // opt : Object
-                            // The config object passed to show.
-                        },
-                        //animEl: 'elId'
-                        //animateTarget: 'addAddressBtn',
-                        icon: Ext.window.MessageBox.INFO
-                    });
-                }
-                return true;
-            },
-
-            destroy: function (config) {
-
-                var success = function (record) {
-                    if (typeof config.success === 'function') {
-                        config.success(record, config);
-                    }
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                };
-
-                var failure = function (record) {
-                    if (typeof config.failure === 'function') {
-                        config.failure(record, config);
-                    }
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                };
-
-                var cancel = function (record) {
-                    if (typeof config.callback === 'function') {
-                        config.callback(record, config);
-                    }
-                }
-
-                this._record.destroy();
-
-                loadRecord(this._component);
-
-                success(this._record, config);
-
-                console.log("Droplet.destroy (record)");
+            loadRecord: function (record) {
+                this._record = record;
+                loadRecord(this._component, this._record);
             },
 
             load: function (id, callcack, scope) {

@@ -90,30 +90,6 @@
         }
         //returns 0.000000123
 
-        function onRecordCreateClick(component) {
-            console.log("Create click");
-            var store = this._recordsStore;
-            var record = new store.model({});
-            store.addSorted(record);
-            component.getView().getSelectionModel().select(record, false, true);
-            var rowediting = component.getPlugin();
-            if (typeof rowediting === 'object' && rowediting !== null) {
-                rowediting.startEdit(record, 0);
-            }
-            this._component.fireEvent('create', this, model, store);
-        }
-
-        function onRecordDestroyClick(component) {
-            this._component.fireEvent('select', this);
-            /*var record = component.getView().getSelectionModel().getSelection()[0];
-            if (typeof record === 'object' && record != null) {
-                record.destroy({ id: record.Id });
-            }*/
-            var selection = component.getView().getSelectionModel().getSelection();
-            component.getStore().remove(selection);
-            component.getStore().sync();
-        }
-
         function onRefreshClick() {
             this.indexStore.load();
             //Ext.custom.Adapter.publish('Ext.custom.data.Directory.selectionchange', this.panel.selModel);
@@ -289,7 +265,47 @@
             return true;
         }
 
-        function onRecordSelectionChange(selModel, selections, opts) {
+        function onRecordCreateClick(component, eOpts) {
+            console.log("Create click");
+            this._component.fireEvent('beforeselect', function (procceed) {
+                if (procceed) {
+                    console.log('create');
+                    var store = this._recordsStore;
+                    var model = this._recordsModel;
+                    var record = new model({
+                        $type: this._indexRecord.name
+                    });
+                    record.$type = this._indexRecord.name;
+                    store.addSorted(record);
+                    var selModel = component.getView().getSelectionModel();
+                    selModel.select(record, false, true);
+                    onRecordSelectionChange.call(this, selModel, [record], eOpts);
+                    this._component.fireEvent('create', record, model);
+                }
+            }, this);
+        }
+
+        function onRecordDestroyClick(component) {
+            this._component.fireEvent('select', this);
+            /*var record = component.getView().getSelectionModel().getSelection()[0];
+            if (typeof record === 'object' && record != null) {
+                record.destroy({ id: record.Id });
+            }*/
+            var selection = component.getView().getSelectionModel().getSelection();
+            component.getStore().remove(selection);
+            component.getStore().sync();
+        }
+
+        function onBeforeSelect(selModel, record, index, eOpts) {
+            return this._component.fireEvent('beforeselect', function (procceed) {
+                if (procceed) {
+                    selModel.select(record, false, true);
+                    onRecordSelectionChange.call(this, selModel, [record], eOpts);
+                }
+            }, this);
+        }
+
+        function onRecordSelectionChange(selModel, selections, eOpts) {
 
             if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
 
@@ -330,7 +346,7 @@
                         break;
 
                     case "model":
-                        type = record.raw.$type;
+                        type = record.raw.$type || "Metadata/Model";
                         break;
 
                     case "unit":
@@ -345,17 +361,15 @@
                         this._component.fireEvent('select', this);
                         return;
                 }
+
+                //var model = store.getModel();
+
+                //record.$type = typeName;
+
+
                 this._component.fireEvent('select', this, { id: data.Id, typeName: type }, selModel, selections);
             }
             else {
-                this._component.fireEvent('select', this);
-            }
-        }
-
-        function onStoreSelectionChange(selModel, selections, opts) {
-            if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
-                this._component.fireEvent('select', this);
-            } else {
                 this._component.fireEvent('select', this);
             }
         }
@@ -541,6 +555,10 @@
                                             }
                                         }
                                     });
+                                },
+                                beforeselect: {
+                                    fn: onBeforeSelect,
+                                    scope: this
                                 },
                                 selectionchange: {
                                     fn: onRecordSelectionChange,
