@@ -24,6 +24,31 @@
                 //defaultRootId: '0',
                 //defaultRootText: "text",
                 //defaultRootProperty: 'children',
+                fields: [
+                    {
+                        name: 'Name'
+                    },
+                    {
+                        name: 'Title'
+                    },
+                    {
+                        name: 'Type'
+                    },
+                    {
+                        name: 'LastModified',
+                        mapping: 'LastModified',
+                        type: 'date',
+                        dateFormat: 'c'
+                    },
+                    {
+                        name: '$Title',
+                        persist: false,
+                        mapping: 'Title',
+                        convert: function (v, record) {
+                            return Ext.custom.Adapter.toString(v || "<null>");
+                        }
+                    }
+                ],
                 folderSort: true,
                 // not using model. direct proxy
                 proxy: {
@@ -118,36 +143,7 @@
 
             var typeName;
 
-            switch (indexType) {
-
-                case 'area':
-                    typeName = 'Metadata/Area';
-                    break;
-
-                case 'enum':
-                    typeName = 'Metadata/Enum';
-                    break;
-
-                case 'model':
-                    typeName = 'Metadata/Model';
-                    break;
-
-                case 'name':
-                    //typeName = 'Metadata/Name';
-                    break;
-
-                case 'store':
-                    typeName = 'Metadata/Store';
-                    break;
-
-                case 'unit':
-                    typeName = 'Metadata/Unit';
-                    break;
-
-                case 'value':
-                    typeName = 'Metadata/Value';
-                    break;
-            }
+            typeName = indexType;
 
             return typeName;
         }
@@ -243,7 +239,7 @@
                             // the operation object
                             // contains all of the details of the load operation
                             console.log(records);
-
+    
                             component.reconfigure(this._recordsStore);
                         }
                     });*/
@@ -337,35 +333,7 @@
                     findToolItem('destroy', panel, 'enable');
                 }
 
-                var type, data = record.getData();
-
-                switch (this._indexRecord.type) {
-
-                    case "area":
-                        type = "Metadata/Area";
-                        break;
-
-                    case "model":
-                        type = record.raw.$type || "Metadata/Model";
-                        break;
-
-                    case "unit":
-                        type = "Metadata/Unit";
-                        break;
-
-                    case "value":
-                        type = "Metadata/Value";
-                        break;
-
-                    default:
-                        this._component.fireEvent('select', this);
-                        return;
-                }
-
-                //var model = store.getModel();
-
-                //record.$type = typeName;
-
+                var type = record.raw.$type, data = record.getData();
 
                 this._component.fireEvent('select', this, { id: data.Id, typeName: type }, selModel, selections);
             }
@@ -461,6 +429,80 @@
                     header: false,
                     items: [
                         {
+                            columns: [
+                                {
+                                    xtype: 'treecolumn', //this is so we know which column will show the tree
+                                    text: 'Name',
+                                    width: 200,
+                                    sortable: true,
+                                    dataIndex: 'Name',
+                                    locked: true
+                                },
+                                {
+                                    text: 'Title',
+                                    flex: 1,
+                                    dataIndex: '$Title',
+                                    sortable: true
+                                },
+                                {
+                                    text: 'Type',
+                                    width: 100,
+                                    dataIndex: 'Type',
+                                    sortable: true
+                                },
+                                {
+                                    text: 'Last Modified',
+                                    flex: 2,
+                                    dataIndex: 'LastModified',
+                                    sortable: true
+                                }
+                                /*,
+                                {
+                                    //we must use the templateheader component so we can use a custom tpl
+                                    xtype: 'templatecolumn',
+                                    text: 'Duration',
+                                    width: 150,
+                                    sortable: true,
+                                    dataIndex: 'duration',
+                                    align: 'center',
+                                    //add in the custom tpl for the rows
+                                    tpl: Ext.create('Ext.XTemplate', '{duration:this.formatHours}', {
+                                        formatHours: function (v) {
+                                            if (v < 1) {
+                                                return Math.round(v * 60) + ' mins';
+                                            } else if (Math.floor(v) !== v) {
+                                                var min = v - Math.floor(v);
+                                                return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
+                                            } else {
+                                                return v + ' hour' + (v === 1 ? '' : 's');
+                                            }
+                                        }
+                                    })
+                                },
+                                {
+                                    xtype: 'checkcolumn',
+                                    header: 'Done',
+                                    dataIndex: 'done',
+                                    width: 40,
+                                    stopSelection: false
+                                },
+                                {
+                                    text: 'Edit',
+                                    width: 40,
+                                    menuDisabled: true,
+                                    xtype: 'actioncolumn',
+                                    tooltip: 'Edit task',
+                                    align: 'center',
+                                    icon: '../simple-tasks/resources/images/edit_task.png',
+                                    handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
+                                        Ext.Msg.alert('Editing' + (record.get('done') ? ' completed task' : ''), record.get('task'));
+                                    },
+                                    // Only leaf level tasks may be edited
+                                    isDisabled: function (view, rowIdx, colIdx, item, record) {
+                                        return !record.data.leaf;
+                                    }
+                                }*/
+                            ],
                             header: false,
                             listeners: {
                                 activate: {
@@ -505,6 +547,7 @@
                                 }
                             ],
                             header: false,
+                            multiSelect: true,
                             listeners: {
                                 activate: {
                                     fn: onRecordsActivate,

@@ -32,9 +32,14 @@ namespace Custom.Data
             get;
         }
 
-        public RavenJObject DataAsJson
+        public RavenJObject DocumentJObject
         {
-            get { return _jsonContext.DataAsJson; }
+            get { return _jsonContext.DocumentJObject; }
+        }
+
+        public RavenJObject DocumentMetadata
+        {
+            get { return _jsonContext.DocumentMetadata; }
         }
 
         public Guid Id
@@ -54,19 +59,43 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            var result = new RavenJObject();
+            var ravenJObject = base.ToRavenJObject(false);
+            var metadata = DocumentMetadata;
+
+            switch (Category)
+            {
+                case TypeCategories.Enum:
+                    ravenJObject["type"] = "Metadata/Enum";
+                    break;
+
+                case TypeCategories.Model:
+                    ravenJObject["type"] = "Metadata/Model";
+                    break;
+
+                case TypeCategories.Unit:
+                    ravenJObject["type"] = "Metadata/Unit";
+                    break;
+
+                case TypeCategories.Value:
+                    ravenJObject["type"] = "Metadata/Value";
+                    break;
+            }
+
+            ravenJObject["Name"] = new RavenJValue(Name);
+            ravenJObject["Title"] = DocumentJObject["Title"];
+            ravenJObject["Type"] = ravenJObject["type"];
+            ravenJObject["LastModified"] = metadata["Last-Modified"];
 
             var type = System.Enum.GetName(typeof(TypeCategories), Category);
 
-            result["id"] = new RavenJValue(Id);
-            result["key"] = new RavenJValue(string.Format("{0}/{1}/{2}", Type, Category, _id.ToString(idFormat)));
-            result["leaf"] = new RavenJValue(true);
-            result["type"] = new RavenJValue(type.ToLowerInvariant());
-            result["text"] = new RavenJValue(Name);
-            result["cls"] = new RavenJValue("metadata" + type);
-            result["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
+            ravenJObject["id"] = new RavenJValue(Id);
+            ravenJObject["key"] = new RavenJValue(string.Format("{0}/{1}/{2}", Type, Category, _id.ToString(idFormat)));
+            ravenJObject["leaf"] = new RavenJValue(true);
+            ravenJObject["text"] = new RavenJValue(Name);
+            ravenJObject["cls"] = new RavenJValue("metadata" + type);
+            ravenJObject["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
 
-            return result;
+            return ravenJObject;
         }
     }
 
@@ -117,7 +146,7 @@ namespace Custom.Data
 
         public TDefinition Definition
         {
-            get { return /*_definition ?? (_definition = */Deserialize(_jsonContext.DataAsJson)/*)*/; }
+            get { return /*_definition ?? (_definition = */Deserialize(_jsonContext.DocumentJObject)/*)*/; }
         }
 
         protected virtual TDefinition Deserialize(RavenJObject dataAsJson)

@@ -222,7 +222,21 @@
 
                 var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
 
-                var handler = handlers[propertyType.$type];
+                var category = 'Model';
+
+                switch (propertyType.$type) {
+                    case 'Metadata/Enum':
+                        category = "Enum";
+                        break;
+                    case 'Metadata/Unit':
+                        category = "Unit";
+                        break;
+                    case 'Metadata/Value':
+                        category = "Value";
+                        break;
+                }
+                
+                var handler = handlers[category];
 
                 if (typeof handler === 'function') {
 
@@ -277,13 +291,27 @@
 
                     var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
 
-                    if (propertyType.$type === 'model' && (typeof config.xtype !== 'string' || config.xtype == 'form' || config.xtype == 'tabpanel' || config.xtype == 'panel')) {
+                    var category = 'Model';
+
+                    switch (propertyType.$type) {
+                        case 'Metadata/Enum':
+                            category = "Enum";
+                            break;
+                        case 'Metadata/Unit':
+                            category = "Unit";
+                            break;
+                        case 'Metadata/Value':
+                            category = "Value";
+                            break;
+                    }
+
+                    if (category === 'Model' && (typeof config.xtype !== 'string' || config.xtype == 'form' || config.xtype == 'tabpanel' || config.xtype == 'panel')) {
                         sections[property.Name] = config;
                     }
                     else {
-                        var title, summary, section = '$';
+                        var title, summary, section = '$'
 
-                        if (propertyType.$type === 'model') {
+                        if (category === 'Model') {
                             title = Ext.custom.Adapter.toString(property.Title, property.Name);
                             summary = Ext.custom.Adapter.toString(property.Summary, $.Summary);
                         }
@@ -444,6 +472,32 @@
             }
         }
 
+        function toolItems($) {
+
+            var items = [];
+
+            if (typeof $.UI === 'object' && typeof $.UI !== null && typeof $.UI.Actions === 'object' && typeof $.UI.Actions.length === 'number') {
+
+                for (var i = 0, count = $.UI.Actions.length; i < count; i++) {
+                    var action = $.UI.Actions[i];
+                    var button = {
+                        $action: action.Name,
+                        disabled: false,
+                        handler: Ext.emptyFn,
+                        iconCls: action.IconClass,
+                        scope: this,
+                        text: action.Name,
+                        tooltip: 'some action in the UI',
+                        xtype: 'button'
+                    };
+
+                    items.push(button);
+                }
+            }
+
+            return items;
+        }
+
         function modelHandler(property, propertyType, config) {
 
             var droplet = this;
@@ -468,10 +522,10 @@
             var properties = Custom.app.Application.collectProperties($, []);
 
             Ext.merge(config, sectionsToView(splitFields($, properties, {
-                'enum': enumHandler,
-                'unit': unitHandler,
-                'value': valueHandler,
-                'model': modelHandler
+                'Enum': enumHandler,
+                'Unit': unitHandler,
+                'Value': valueHandler,
+                'Model': modelHandler
             })));
 
             var title = Ext.custom.Adapter.toString(property.Title, property.Name, $.Title, $.Name);
@@ -493,11 +547,21 @@
                 var title = Ext.custom.Adapter.toString($.Title, $.Name);
                 var summary = Ext.custom.Adapter.toString($.Summary, property.Summary);
 
+                var dockedItems = toolItems($);
+
                 return Ext.merge(config, {
                     bodyPadding: '0',
                     border: false,
                     frame: false,
                     iconCls: 'icon-grid',
+                    dockedItems: [
+                        {
+                            xtype: 'toolbar',
+                            dock: 'bottom',
+                            ui: 'footer',
+                            items: dockedItems
+                        }
+                    ],
                     items: [
                         // form panel (edit)
                         Ext.merge({}, config, {
@@ -712,9 +776,19 @@
                 });
             }
 
+            var dockedItems = toolItems($);
+
             Ext.merge(config, {
                 propertyName: property.Name,
                 $modelName: modelName,
+                dockedItems: [
+                    {
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui: 'footer',
+                        items: dockedItems
+                    }
+                ],
                 listeners: {
                     add: {
                         fn: function (parent, component, index) {
@@ -734,14 +808,62 @@
             var properties = Custom.app.Application.collectProperties($, []);
 
             var config = sectionsToView(splitFields.call(this, $, properties, {
-                'enum': enumHandler,
-                'unit': unitHandler,
-                'value': valueHandler,
-                'model': modelHandler
+                'Enum': enumHandler,
+                'Unit': unitHandler,
+                'Value': valueHandler,
+                'Model': modelHandler
             }));
 
             var title = Ext.custom.Adapter.toString($.Title, $.Name);
             var summary = Ext.custom.Adapter.toString($.Summary);
+
+            var droplet = this;
+
+            var dockedItems = toolItems($);
+
+            dockedItems.push.apply(dockedItems, [
+                {
+                    $action: 'add',
+                    disabled: false,
+                    handler: this.onCreateClick,
+                    hidden: true,
+                    iconCls: 'icon-add',
+                    scope: this,
+                    text: 'Add',
+                    xtype: 'button'
+                },
+                {
+                    $action: 'remove',
+                    disabled: true,
+                    handler: this.onDestroyClick,
+                    hidden: true,
+                    iconCls: 'icon-delete',
+                    scope: this,
+                    text: 'Remove',
+                    xtype: 'button'
+                },
+                '->',
+                {
+                    $action: 'update',
+                    disabled: true,
+                    handler: this.onUpdateClick,
+                    iconCls: 'icon-save',
+                    scope: this,
+                    text: 'Submit',
+                    tooltip: 'Accept changes by submitting data to the server.',
+                    xtype: 'button'
+                },
+                {
+                    $action: 'read',
+                    disabled: false,
+                    handler: this.onReadClick,
+                    iconCls: 'icon-cancel',
+                    scope: this,
+                    text: 'Reset',
+                    tooltip: 'Reject changes by reloading data from the server.',
+                    xtype: 'button'
+                }
+            ]);
 
             Ext.merge(config, {
                 title: title,
@@ -751,54 +873,10 @@
                         xtype: 'toolbar',
                         dock: 'bottom',
                         ui: 'footer',
-                        items: [
-                            {
-                                $action: 'add',
-                                disabled: false,
-                                handler: this.onCreateClick,
-                                hidden: true,
-                                iconCls: 'icon-add',
-                                scope: this,
-                                text: 'Add',
-                                xtype: 'button'
-                            },
-                            {
-                                $action: 'remove',
-                                disabled: true,
-                                handler: this.onDestroyClick,
-                                hidden: true,
-                                iconCls: 'icon-delete',
-                                scope: this,
-                                text: 'Remove',
-                                xtype: 'button'
-                            },
-                            '->',
-                            {
-                                $action: 'update',
-                                disabled: true,
-                                handler: this.onUpdateClick,
-                                iconCls: 'icon-save',
-                                scope: this,
-                                text: 'Submit',
-                                tooltip: 'Accept changes by submitting data to the server.',
-                                xtype: 'button'
-                            },
-                            {
-                                $action: 'read',
-                                disabled: false,
-                                handler: this.onReadClick,
-                                iconCls: 'icon-cancel',
-                                scope: this,
-                                text: 'Reset',
-                                tooltip: 'Reject changes by reloading data from the server.',
-                                xtype: 'button'
-                            }
-                        ]
+                        items: dockedItems
                     }
                 ]
             });
-
-            var droplet = this;
 
             Ext.merge(config.items[0], {
                 listeners: {

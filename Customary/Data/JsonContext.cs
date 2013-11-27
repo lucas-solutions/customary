@@ -13,36 +13,13 @@ namespace Custom.Data
     {
         private readonly string _key;
         private WeakReference<JsonDocument> _jsonDocument;
-        private WeakReference<RavenJObject> _dataAsJson;
+        private WeakReference<RavenJObject> _documentJObject;
+        private WeakReference<RavenJObject> _metadataJObject;
 
         public JsonContext(JsonDocument jsonDocument)
         {
             _key = jsonDocument.Key;
             _jsonDocument = new WeakReference<JsonDocument>(jsonDocument);
-        }
-
-        public RavenJObject DataAsJson
-        {
-            get
-            {
-                RavenJObject dataAsJson;
-
-                if (_dataAsJson != null && _dataAsJson.TryGetTarget(out dataAsJson))
-                    return dataAsJson;
-
-                dataAsJson = Document.DataAsJson;
-
-                dataAsJson.EnsureSnapshot(string.Empty);
-
-                dataAsJson = dataAsJson.CreateSnapshot() as RavenJObject;
-
-                if (_dataAsJson != null)
-                    _dataAsJson.SetTarget(dataAsJson);
-                else
-                    _dataAsJson = new WeakReference<RavenJObject>(dataAsJson);
-
-                return dataAsJson;
-            }
         }
 
         public JsonDocument Document
@@ -62,6 +39,53 @@ namespace Custom.Data
                 _jsonDocument.SetTarget(document);
 
                 return document;
+            }
+        }
+
+        public RavenJObject DocumentJObject
+        {
+            get
+            {
+                RavenJObject documentJObject;
+
+                if (_documentJObject != null && _documentJObject.TryGetTarget(out documentJObject))
+                    return documentJObject;
+
+                documentJObject = Document.DataAsJson;
+
+                documentJObject.EnsureSnapshot(string.Empty);
+
+                documentJObject = documentJObject.CreateSnapshot() as RavenJObject;
+
+                if (_documentJObject != null)
+                    _documentJObject.SetTarget(documentJObject);
+                else
+                    _documentJObject = new WeakReference<RavenJObject>(documentJObject);
+
+                return documentJObject;
+            }
+        }
+
+        public RavenJObject DocumentMetadata
+        {
+            get
+            {
+                RavenJObject metadataJObject;
+
+                if (_metadataJObject != null && _metadataJObject.TryGetTarget(out metadataJObject))
+                    return metadataJObject;
+
+                var ravenJObject = Global.Metadata.Session.Load<RavenJObject>(_key);
+                metadataJObject = Global.Metadata.Session.Advanced.GetMetadataFor<RavenJObject>(ravenJObject);
+
+                //metadataJObject = Document.Metadata;
+
+                if (_metadataJObject != null)
+                    _metadataJObject.SetTarget(metadataJObject);
+                else
+                    _metadataJObject = new WeakReference<RavenJObject>(metadataJObject);
+
+                return metadataJObject;
             }
         }
 

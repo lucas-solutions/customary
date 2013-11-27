@@ -36,21 +36,13 @@ namespace Custom.Data.Persistence.Repositories
 
                 foreach (var entity in data)
                 {
-                    var key = _context.Session.Advanced.GetDocumentId(entity);
-                    var type = _descriptor.Path;
-                    var typeName = string.Join("/", key.Split('/').Reverse().Skip(1).Reverse().Last());
+                    var metadata = _context.Session.Advanced.GetMetadataFor<RavenJObject>(entity);
 
-                    if (!type.EndsWith(typeName))
-                    {
-                        var path = string.Join("/", _descriptor.Path.Split('/').Reverse().Skip(1).Reverse());
-                        type = string.IsNullOrEmpty(path) ? typeName : path + '/' + typeName;
-                    }
-
-                    entity["$key"] = key;
-                    entity["$type"] = new RavenJValue(type);
+                    entity["$key"] = metadata["@id"];
+                    entity["$type"] = metadata["Raven-Entity-Name"];
 
                     Guid id;
-                    if (Guid.TryParse(key.Split('/').Last(), out id))
+                    if (Guid.TryParse(metadata["@id"].Value<string>().Split('/').Last(), out id))
                     {
                         entity["Id"] = new RavenJValue(id);
                     }

@@ -53,8 +53,8 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var modelJObject = this.DataAsJson;
-            modelJObject["$type"] = "model";
+            var modelJObject = this.DocumentJObject;
+            modelJObject["$type"] = "Metadata/Model";
 
             var nameJObject = stack.Pop();
             nameJObject.Remove("$dirty");
@@ -317,19 +317,19 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            var result = new RavenJObject();
+            var jObject = base.ToRavenJObject(false);
 
             var type = System.Enum.GetName(typeof(TypeCategories), Category);
 
-            result["id"] = new RavenJValue(Id);
-            result["key"] = new RavenJValue(KeyPrefix + Id.ToString(idFormat));
-            result["leaf"] = new RavenJValue(true);
-            result["type"] = new RavenJValue(type.ToLowerInvariant());
-            result["text"] = new RavenJValue(Name);
-            result["cls"] = new RavenJValue("metadata" + type);
-            result["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
+            jObject["id"] = new RavenJValue(Id);
+            jObject["key"] = new RavenJValue(KeyPrefix + Id.ToString(idFormat));
+            jObject["leaf"] = new RavenJValue(true);
+            //jObject["type"] = new RavenJValue(type.ToLowerInvariant());
+            jObject["text"] = new RavenJValue(Name);
+            jObject["cls"] = new RavenJValue("metadata" + type);
+            jObject["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
 
-            return result;
+            return jObject;
         }
     }
 

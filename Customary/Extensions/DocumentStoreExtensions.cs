@@ -19,6 +19,7 @@ namespace Custom
         const string idProp = "id";
         const string keyProp = "key";
         const string dataProp = "data";
+        const string metadataProp = "@metadata";
 
         #region - Create -
 
@@ -142,32 +143,40 @@ namespace Custom
 
         public static bool Import(this IDocumentStore store, RavenJObject record, ModelDefinition descriptor = null)
         {
-            var keyToken = record[keyProp];
+            string key;
+            var metadata = record.Value<RavenJObject>("@metadata");
 
-            var key = keyToken.Value<string>();
+            if (metadata != null)
+            {
+                key = metadata.Value<string>("@id");
+                record.Remove("@metadata");
+            }
+            else
+            {
+                key = record.Value<string>(keyProp);
+                record.Remove(keyProp);
+                metadata = new RavenJObject();
+                metadata["@id"] = key;
+                metadata["Raven-Entity-Name"] = new RavenJValue(key.Split('/').First());
+            }
 
             Guid id;
             if (string.IsNullOrWhiteSpace(key) || !Guid.TryParse(key.Split('/').Last(), out id))
                 return false;
-
-            record.Remove(keyProp);
+            
             //record.Add(idProp, new RavenJValue(id));
 
-            Import(store, record, key, descriptor);
+            Import(store, record, key, metadata, descriptor);
 
             return true;
         }
 
-        public static void Import(this IDocumentStore store, RavenJObject record, string key, ModelDefinition descriptor = null)
+        public static void Import(this IDocumentStore store, RavenJObject record, string key, RavenJObject metadata, ModelDefinition descriptor = null)
         {
             if (descriptor != null)
             {
                 record.Validate(descriptor, null);
             }
-
-            var metadata = new RavenJObject();
-            
-            metadata["Raven-Entity-Name"] = new RavenJValue(key.Split('/').First());
             
             var result = store.DatabaseCommands.Put(key, null, record, metadata);
 

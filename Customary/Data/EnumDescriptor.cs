@@ -23,8 +23,8 @@ namespace Custom.Data
 
         internal protected override void Metadata(Stack<RavenJObject> stack, string[] requires, Dictionary<string, TypeDescriptor> types)
         {
-            var enumJObject = this.DataAsJson;
-            enumJObject["$type"] = "enum";
+            var enumJObject = this.DocumentJObject;
+            enumJObject["$type"] = "Metadata/Enum";
 
             var nameJObject = stack.Peek();
             nameJObject.Remove("$dirty");
@@ -33,7 +33,9 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            return base.ToRavenJObject(false);
+            var jObject = base.ToRavenJObject(false);
+            jObject["type"] = "Metadata/Enum";
+            return jObject;
         }
     }
 }

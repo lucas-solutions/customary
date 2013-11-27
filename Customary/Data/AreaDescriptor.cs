@@ -32,14 +32,19 @@ namespace Custom.Data
             }
         }
 
-        public RavenJObject DataAsJson
+        public RavenJObject DocumentJObject
         {
-            get { return _jsonContext.DataAsJson; }
+            get { return _jsonContext.DocumentJObject; }
+        }
+
+        public RavenJObject DocumentMetadata
+        {
+            get { return _jsonContext.DocumentMetadata; }
         }
 
         public AreaDefinition Definition
         {
-            get { return _jsonContext.DataAsJson.Deserialize<AreaDefinition>(); }
+            get { return _jsonContext.DocumentJObject.Deserialize<AreaDefinition>(); }
         }
 
         public Guid Id
@@ -56,8 +61,8 @@ namespace Custom.Data
         {
             base.Metadata(stack, requires, types);
 
-            var areaJObject = this.DataAsJson;
-            areaJObject["$type"] = "area";
+            var areaJObject = this.DocumentJObject;
+            areaJObject["$type"] = "Metadata/Area";
 
             var nameJObject = stack.Peek();
             nameJObject["$"] = areaJObject;
@@ -65,13 +70,18 @@ namespace Custom.Data
 
         public override RavenJObject ToRavenJObject(bool deep)
         {
-            var result = new RavenJObject();
+            var ravenJObject = base.ToRavenJObject(deep);
+            var metadata = DocumentMetadata;
 
-            result["id"] = new RavenJValue(Id);
-            result["key"] = new RavenJValue(string.Format("{0}/{1}", Type, _id.ToString(idFormat)));
-            result["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type).ToLowerInvariant());
+            ravenJObject["id"] = new RavenJValue(Id);
+            ravenJObject["key"] = new RavenJValue(string.Format("{0}/{1}", Type, _id.ToString(idFormat)));
+            ravenJObject["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type).ToLowerInvariant());
 
-            result["text"] = new RavenJValue(Name);
+            ravenJObject["Title"] = DocumentJObject["Title"];
+            ravenJObject["LastModified"] = metadata["Last-Modified"];
+
+
+            ravenJObject["text"] = new RavenJValue(Name);
 
             if (deep)
             {
@@ -79,11 +89,11 @@ namespace Custom.Data
 
                 if (items != null)
                 {
-                    result["children"] = new RavenJArray(_items.Select(o => o.ToRavenJObject(false)).AsEnumerable<RavenJToken>());
+                    ravenJObject["children"] = new RavenJArray(_items.Select(o => o.ToRavenJObject(false)).AsEnumerable<RavenJToken>());
                 }
             }
 
-            return result;
+            return ravenJObject;
         }
     }
 }

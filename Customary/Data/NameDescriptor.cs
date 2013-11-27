@@ -69,7 +69,7 @@ namespace Custom.Data
         {
             var nameJObject = stack.Peek();
 
-            nameJObject["$type"] = "name";
+            nameJObject["$type"] = "Metadata/Name";
             nameJObject["$dirty"] = true;
 
             var items = _items;
@@ -345,18 +345,39 @@ namespace Custom.Data
 
         public virtual RavenJObject ToRavenJObject(bool deep)
         {
-            var result = new RavenJObject();
+            var ravenJObject = new RavenJObject();
 
-            result["text"] = new RavenJValue(Name);
-            result["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type));
+            ravenJObject["text"] = new RavenJValue(Name);
 
+            switch (Type)
+            {
+                case NodeKinds.Area:
+                    ravenJObject["type"] = "Metadata/Area";
+                    break;
+
+                case NodeKinds.Error:
+                    ravenJObject["type"] = "Metadata/Error";
+                    break;
+
+                case NodeKinds.Name:
+                    ravenJObject["type"] = "Metadata/Name";
+                    break;
+
+                case NodeKinds.Type:
+                    ravenJObject["type"] = "Metadata/Type";
+                    break;
+            }
+
+            ravenJObject["Name"] = Name;
+            ravenJObject["Type"] = ravenJObject["type"];
+            
             if (deep)
             {
                 var items = _items;
 
                 if (items != null)
                 {
-                    result["children"] = new RavenJArray(_items.Select(o => o.ToRavenJObject(false)).AsEnumerable<RavenJToken>());
+                    ravenJObject["children"] = new RavenJArray(_items.Select(o => o.ToRavenJObject(false)).AsEnumerable<RavenJToken>());
                 }
             }
 
@@ -366,7 +387,7 @@ namespace Custom.Data
             // type
             // raw
 
-            return result;
+            return ravenJObject;
         }
 
         int IComparable<NameDescriptor>.CompareTo(NameDescriptor other)

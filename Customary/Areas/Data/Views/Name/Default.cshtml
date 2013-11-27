@@ -126,6 +126,11 @@
 </script>
 
 <script type="text/javascript">
+
+    Ext.onReady(function () {
+        Ext.tip.QuickTipManager.init();
+    });
+
     Ext.define('Custom.app.Application', function () {
 
         var _baseUrl = 'http://data.customary.com';
@@ -246,7 +251,7 @@
 
                 var propertyType = Custom.app.Application.findMetadata(property.Type) || Custom.app.Application.findMetadata("String");
 
-                if (propertyType.$type === 'model') {
+                if (propertyType.$type === 'Metadata/Model') {
                     switch (propertyType.Name) {
                         case 'Text':
                             items.push({
@@ -274,9 +279,9 @@
                     text: text
                 };
 
-                var editor = {};
+                var editor = { xtype: 'textfield' };
 
-                switch (property.$type) {
+                /*switch (property.$type) {
 
                     case 'boolean':
                         column.xtype = 'booleancolumn';
@@ -295,7 +300,7 @@
                     case 'string':
                         column.editor.xtype = 'textfield';
                         break;
-                }
+                }*/
 
                 switch (property.Type) {
                     case 'Boolean':
@@ -392,14 +397,27 @@
                     break;
                 }
 
-                switch (propertyType.$type) {
+                var category = "Model";
 
-                    case 'enum':
+                switch (propertyType.$type) {
+                    case 'Metadata/Enum':
+                        category = "Enum";
+                        break;
+                    case 'Metadata/Unit':
+                        category = "Unit";
+                        break;
+                    case 'Metadata/Value':
+                        category = "Value";
+                        break;
+                }
+                
+                switch (category) {
+                    case 'Enum':
                         field.type = types.STRING;
                         config.fields.push(field);
                         break;
 
-                    case 'model':
+                    case 'Model':
 
                         if (propertyType.Embeddable) {
 
@@ -442,12 +460,12 @@
                         }
                         break;
 
-                    case 'unit':
+                    case 'Unit':
                         field.type = types.STRING;
                         config.fields.push(field);
                         break;
 
-                    case 'value':
+                    case 'Value':
                         field.type = toDataType(propertyType);
 
                         /*if (typeof property.Type === 'string') {
@@ -842,7 +860,7 @@
                 if (namespace === null || typeof namespace !== 'object') {
                     result.push(path);
                 }
-                else if (typeof namespace.$ === 'object' && namespace.$ !== null && namespace.$.$type !== 'area') {
+                else if (typeof namespace.$ === 'object' && namespace.$ !== null && namespace.$.$type !== 'Metadata/Area') {
                     break;
                 }
                 else if (namespace.$dirty !== true) {
