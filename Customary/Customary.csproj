@@ -298,11 +298,9 @@
     </Compile>
     <Compile Include="Data\UnitDescriptor.cs" />
     <Compile Include="Data\ValueDescriptor.cs" />
-    <Compile Include="Extensions\DescriptorExtensions.cs" />
-    <Compile Include="Extensions\DocumentContextExtensions.cs" />
     <Compile Include="Extensions\DocumentSessionExtensions.cs" />
     <Compile Include="Extensions\JsonDocumentExtensions.cs" />
-    <Compile Include="Extensions\QuariableExtensions.cs" />
+    <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TextExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -3898,19 +3896,8 @@
     <Content Include="Views\Test\Logger.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Connection.cshtml" />
     <Content Include="Views\Sencha\Ext\data\Model.cshtml" />
-    <Content Include="Views\Core\Adapter.cshtml" />
-    <Content Include="Views\Core\Text.cshtml" />
-    <Content Include="Views\Core\TextField.cshtml" />
-    <Content Include="Views\Core\TextArea.cshtml" />
-    <Content Include="Views\Data\Browse.cshtml" />
-    <Content Include="Views\Data\Header.cshtml" />
-    <Content Include="Views\Data\Directory.cshtml" />
-    <Content Include="Views\Data\Type.cshtml" />
-    <Content Include="Views\Data\Edit.cshtml" />
-    <Content Include="Views\Data\View.cshtml" />
-    <Content Include="Views\Data\New.cshtml" />
-    <Content Include="Views\Data\Drop.cshtml" />
     <Content Include="Views\Ext\Droplet.cshtml" />
+    <Content Include="Views\Ext\Library.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Business\" />

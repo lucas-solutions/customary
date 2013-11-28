@@ -9,6 +9,7 @@ namespace Custom.Web
 {
     using Custom.Data.Serialization;
 
+    [Obsolete]
     public class RequestDescriptor
     {
         private static readonly Dictionary<string, StreamFormat> SupportedTypes = new Dictionary<string, StreamFormat>

@@ -8,6 +8,7 @@ namespace Custom.Web
 {
     using Custom.Data.Serialization;
 
+    [Obsolete]
     public class DataRequestVerb
     {
         /// <summary>

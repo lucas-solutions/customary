@@ -6,6 +6,7 @@ using System.Web.Routing;
 
 namespace Custom.Web
 {
+    [Obsolete]
     public class RequestDescriptorFactory
     {
         static readonly string[] EmptySubdmain = new string[0];

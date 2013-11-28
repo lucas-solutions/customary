@@ -110,8 +110,8 @@ namespace Custom.Results
         public static void Unbox(List<string> lines, int first, int count, NameValueCollection attributes = null)
         {
             int last = first + count - 1;
-            int first0 = first, last0 = last; 
-            
+            int first0 = first, last0 = last;
+
             int tagIndex = -1;
             for (var i = first; i < last; i++)
             {
@@ -182,7 +182,9 @@ namespace Custom.Results
         public virtual void Render(List<string> lines)
         {
             if (!Strip && !TrimLeft)
+            {
                 lines.Add(ToString());
+            }
             else
             {
                 var first = lines.Count;
@@ -242,7 +244,23 @@ namespace Custom.Results
 
         public string ToHtmlString()
         {
-            return this.ToString();
+            if (!Strip && !TrimLeft)
+            {
+                return ToString();
+            }
+
+            var lines = new List<string>();
+
+            Render(lines);
+
+            var sb = new System.Text.StringBuilder();
+
+            using (var sw = new StringWriter(sb))
+            {
+                sw.WriteAllLines(lines);
+            }
+
+            return sb.ToString();
         }
 
         public override string ToString()
@@ -260,7 +278,7 @@ namespace Custom.Results
             {
                 return builder != null ? builder.ToModel() : null;
             }
-            
+
             public Builder()
                 : base(new ScriptFunction())
             {

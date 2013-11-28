@@ -6,6 +6,7 @@ using System.Web.Routing;
 
 namespace Custom.Web
 {
+    [Obsolete]
     public class EditRequestDescriptor : RequestDescriptor
     {
         public EditRequestDescriptor(RequestContext requestContext, string controllerName)

@@ -8,6 +8,7 @@ using System.Web.WebPages;
 
 namespace System.Web.Mvc
 {
+    using Custom.Results;
     using Custom.Site.Presentation;
 
     public static class RazorExtensions
@@ -18,6 +19,60 @@ namespace System.Web.Mvc
             var root = request.Url.GetLeftPart(UriPartial.Scheme | UriPartial.Authority) + request.ApplicationPath;
             path = path != null ? path.TrimStart('~', '/') : string.Empty;
             return new Uri(new Uri(root, UriKind.Absolute), path).ToString().TrimEnd('/');
+        }
+
+        /// <summary>
+        /// Render script view.
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="viewName">Script view path and name</param>
+        public static void RenderScript(this HtmlHelper helper, string viewName)
+        {
+            var view = helper.ViewContext.View;
+            var controllerContext = helper.ViewContext.Controller.ControllerContext;
+            var viewData = helper.ViewContext.ViewData;
+            var tempData = helper.ViewContext.TempData;
+
+            var scriptViewResult = new ScriptViewResult
+                {
+                    ControllerContext = controllerContext,
+                    Model = helper.ViewData.Model,
+                    TempData = tempData,
+                    ViewData = viewData,
+                    ViewName = viewName,
+                };
+
+            scriptViewResult.Strip = true;
+            scriptViewResult.TrimLeft = true;
+
+            scriptViewResult.Write(helper.ViewContext.Writer);
+        }
+
+        /// <summary>
+        /// Partial script view.
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <param name="viewName">Script view path and name</param>
+        public static IHtmlString PartialScript(this HtmlHelper helper, string viewName)
+        {
+            var view = helper.ViewContext.View;
+            var controllerContext = helper.ViewContext.Controller.ControllerContext;
+            var viewData = helper.ViewContext.ViewData;
+            var tempData = helper.ViewContext.TempData;
+
+            var scriptViewResult = new ScriptViewResult
+            {
+                ControllerContext = controllerContext,
+                Model = helper.ViewData.Model,
+                TempData = tempData,
+                ViewData = viewData,
+                ViewName = viewName,
+            };
+
+            scriptViewResult.Strip = true;
+            scriptViewResult.TrimLeft = true;
+
+            return scriptViewResult;
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ namespace Custom.Web
     using Custom.Data.Metadata;
     using Custom.Data.Serialization;
 
+    [Obsolete]
     public class DataRequestDescriptor : RequestDescriptor
     {
         const string idProp = "Id";

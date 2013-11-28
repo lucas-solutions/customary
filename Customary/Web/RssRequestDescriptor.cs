@@ -6,6 +6,7 @@ using System.Web.Routing;
 
 namespace Custom.Web
 {
+    [Obsolete]
     public class RssRequestDescriptor : RequestDescriptor
     {
         public RssRequestDescriptor(RequestContext requestContext, string controllerName)

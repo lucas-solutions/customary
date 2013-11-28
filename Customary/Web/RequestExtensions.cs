@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Custom.Web.Mvc
 {
+    [Obsolete]
     public static class RequestExtensions
     {
         private static readonly Dictionary<string, AcceptTypes> SupportedTypes = new Dictionary<string, AcceptTypes>
