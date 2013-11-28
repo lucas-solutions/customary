@@ -73,15 +73,12 @@ namespace Custom.Data
             var ravenJObject = base.ToRavenJObject(deep);
             var metadata = DocumentMetadata;
 
-            ravenJObject["id"] = new RavenJValue(Id);
+            ravenJObject["Id"] = new RavenJValue(Id);
             ravenJObject["key"] = new RavenJValue(string.Format("{0}/{1}", Type, _id.ToString(idFormat)));
-            ravenJObject["type"] = new RavenJValue(System.Enum.GetName(typeof(NodeKinds), Type).ToLowerInvariant());
+            ravenJObject["Type"] = "Metadata/Area";
 
             ravenJObject["Title"] = DocumentJObject["Title"];
             ravenJObject["LastModified"] = metadata["Last-Modified"];
-
-
-            ravenJObject["text"] = new RavenJValue(Name);
 
             if (deep)
             {

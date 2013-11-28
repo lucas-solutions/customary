@@ -14,8 +14,8 @@ namespace Custom.Areas.Data.Controllers
 
     public class TypeController : NameController
     {
-        // Data/Store/Metadata/Type/{category}/{id}/{action}
-        // Data/Store/Metadata/Type/{category}/{action}
+        // Data/Metadata/Type/{category}/{id}/{action}
+        // Data/Metadata/Type/{category}/{action}
 
         private ModelDescriptor _model;
 
@@ -45,13 +45,13 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // GET: Data/Store/Metadata/Type/{category}
-        // GET: Data/Store/Metadata/Type/{category}/{Select|Read}
-        // GET: Data/Store/Metadata/Type/{category}/{id}
-        // GET: Data/Store/Metadata/Type/{category}/{id}/{Select|Read}
+        // GET: Data/Metadata/Type/{category}
+        // GET: Data/Metadata/Type/{category}/{Select|Read}
+        // GET: Data/Metadata/Type/{category}/{id}
+        // GET: Data/Metadata/Type/{category}/{id}/{Select|Read}
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public virtual ActionResult Select(string category, Guid id, int? skip, int? take)
+        public ActionResult Select(string category, Guid id, int? skip, int? take)
         {
             TypeCategories cat;
             System.Enum.TryParse<TypeCategories>(category, true, out cat);
@@ -62,11 +62,11 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // POST: Data/Store/Metadata/Type/{category}
-        // POST: Data/Store/Metadata/Type/{category}/{Insert|Create}
+        // POST: Data/Metadata/Type/{category}
+        // POST: Data/Metadata/Type/{category}/{Insert|Create}
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public virtual ActionResult Create(string category, Guid type)
+        public ActionResult Create(string category, Guid type)
         {
             TypeCategories cat;
             System.Enum.TryParse<TypeCategories>(category, true, out cat);
@@ -88,15 +88,16 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // PUT: Data/Store/Metadata/Type/{category}/{id}
-        // PUT: Data/Store/Metadata/Type/{category}/{id}/Update
-        // PATCH: Data/Store/Metadata/Type/{category}/{id}
-        // PATCH: Data/Store/Metadata/Type/{category}/{id}/Update
-        // POST: Data/Store/Metadata/Type/{category}/{id}/Update
+        // PUT: Data/Metadata/Type/{category}/{id}
+        // PUT: Data/Metadata/Type/{category}/{id}/Update
+        // PATCH: Data/Metadata/Type/{category}/{id}
+        // PATCH: Data/Metadata/Type/{category}/{id}/Update
+        // POST: Data/Metadata/Type/{category}/{id}/Update
 
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
-        public virtual ActionResult Update(string category, Guid id, bool patch)
+        public ActionResult Update(string category, Guid id, bool patch)
         {
+            //var definition = InputRavenJObject.Deserialize<TypeDefinition>();
             TypeCategories cat;
             System.Enum.TryParse<TypeCategories>(category, true, out cat);
 
@@ -117,12 +118,12 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // DELETE: Data/Store/Metadata/Type/{category}/{id}
-        // DELETE: Data/Store/Metadata/Type/{category}/{id}/{Delete|Destroy}
-        // GET: Data/Store/Metadata/Type/{category}/{id}/{Delete|Destroy}
+        // DELETE: Data/Metadata/Type/{category}/{id}
+        // DELETE: Data/Metadata/Type/{category}/{id}/{Delete|Destroy}
+        // GET: Data/Metadata/Type/{category}/{id}/{Delete|Destroy}
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
-        public virtual ActionResult Delete(string category, Guid id)
+        public ActionResult Delete(string category, Guid id)
         {
             TypeCategories cat;
             System.Enum.TryParse<TypeCategories>(category, true, out cat);

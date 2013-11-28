@@ -11,10 +11,10 @@ namespace Custom.Areas.Data.Controllers
     public sealed class ModelController : NameController
     {
         //
-        // GET: Data/Store/Metadata/Type/Model
-        // GET: Data/Store/Metadata/Type/Model/{Select|Read}
-        // GET: Data/Store/Metadata/Type/Model/{id}
-        // GET: Data/Store/Metadata/Type/Model/{id}/{Select|Read}
+        // GET: Data/Metadata/Type/Model
+        // GET: Data/Metadata/Type/Model/{Select|Read}
+        // GET: Data/Metadata/Type/Model/{id}
+        // GET: Data/Metadata/Type/Model/{id}/{Select|Read}
 
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Select(Guid id)
@@ -23,8 +23,8 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // POST: Data/Store/Metadata/Type/Model
-        // POST: Data/Store/Metadata/Type/Model/{Insert|Create}
+        // POST: Data/Metadata/Type/Model
+        // POST: Data/Metadata/Type/Model/{Insert|Create}
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create()
@@ -33,11 +33,11 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // PUT: Data/Store/Metadata/Type/Model/{id}
-        // PUT: Data/Store/Metadata/Type/Model/{id}/Update
-        // PATCH: Data/Store/Metadata/Type/Model/{id}
-        // PATCH: Data/Store/Metadata/Type/Model/{id}/Update
-        // POST: Data/Store/Metadata/Type/Model/{id}/Update
+        // PUT: Data/Metadata/Type/Model/{id}
+        // PUT: Data/Metadata/Type/Model/{id}/Update
+        // PATCH: Data/Metadata/Type/Model/{id}
+        // PATCH: Data/Metadata/Type/Model/{id}/Update
+        // POST: Data/Metadata/Type/Model/{id}/Update
 
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
         public ActionResult Update(Guid id, bool patch)
@@ -46,9 +46,9 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // DELETE: Data/Store/Metadata/Type/Model/{id}
-        // DELETE: Data/Store/Metadata/Type/Model/{id}/{Delete|Destroy}
-        // GET: Data/Store/Metadata/Type/Model/{id}/{Delete|Destroy}
+        // DELETE: Data/Metadata/Type/Model/{id}
+        // DELETE: Data/Metadata/Type/Model/{id}/{Delete|Destroy}
+        // GET: Data/Metadata/Type/Model/{id}/{Delete|Destroy}
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Delete(Guid id, string property, string index)
@@ -56,7 +56,7 @@ namespace Custom.Areas.Data.Controllers
             return base.Delete("Type/Model", id, property, index);
         }
 
-        // POST: Data/Store/Metadata/Type/Model/{id}/Validate
+        // POST: Data/Metadata/Type/Model/{id}/Validate
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Validate(Guid id)
@@ -64,10 +64,10 @@ namespace Custom.Areas.Data.Controllers
             return base.Validate("Type/Model", id);
         }
 
-        // GET: Data/Store/Metadata/Type/Model/Invoke/{fn}
-        // GET: Data/Store/Metadata/Type/Model/{id}/Invoke/{fn}
-        // POST: Data/Store/Metadata/Type/Model/Invoke/{fn}
-        // POST: Data/Store/Metadata/Type/Model/{id}/Invoke/{fn}
+        // GET: Data/Metadata/Type/Model/Invoke/{fn}
+        // GET: Data/Metadata/Type/Model/{id}/Invoke/{fn}
+        // POST: Data/Metadata/Type/Model/Invoke/{fn}
+        // POST: Data/Metadata/Type/Model/{id}/Invoke/{fn}
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Invoke(Guid id, string fn)

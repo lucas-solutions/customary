@@ -33,7 +33,9 @@ namespace Custom
             public const string ExtRouteName = "Scripts_Ext";
             public const string ExtAreaRouteName = "Scripts_Area_Ext";
             public const string DataDomainRouteName = "Data_Domain";
-            public const string DataDirectoryRouteName = "Data_Directory";
+            public const string DataRootActionRouteName = "Data_Root_Action";
+            public const string DataRootIndexRouteName = "Data_Root_Children";
+            public const string DataNameIndexRouteName = "Data_Name_Children";
             public const string DataEntityRouteName = "Data_Entity_Item";
             public const string DataPropertyRouteName = "Data_Property_Item";
             public const string DataEntityInvokeRouteName = "Data_Entity_Invoke";

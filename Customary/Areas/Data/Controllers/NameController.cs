@@ -16,6 +16,18 @@ namespace Custom.Areas.Data.Controllers
     public class NameController : CustomController
     {
         //
+        // GET: /Data/{name}/$children
+
+        public ActionResult Index(string name)
+        {
+            var descriptor = DataDictionary.Current.Describe(name);
+
+            return descriptor != null
+                ? Success(descriptor.ToRavenJObject(true)["children"])
+                : Failure("Not found");
+        }
+
+        //
         // GET: data.{domain}/{*name}/{id}
 
         public ActionResult Default(string name, Guid id)

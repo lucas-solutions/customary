@@ -1319,23 +1319,23 @@
                                     fn: function (component, eOpts) {
                                         if (typeof eOpts === 'object' && eOpts !== null) {
 
-                                            if (typeof eOpts.typeName !== 'string') {
+                                            if (typeof eOpts.Type !== 'string') {
                                                 this.centerPanel.removeAll();
                                                 this.centerPanel.doLayout();
                                                 this.centerPanel.setTitle('Empty View');
                                             }
                                             else {
-                                                var title = eOpts.typeName + ' [' + eOpts.id + ']';
+                                                var title = eOpts.Type + ' [' + eOpts.Id + ']';
                                                 this.centerPanel.removeAll();
                                                 this.centerPanel.setTitle(title + ' loading...');
                                                 this.centerPanel.mask('Loading... Please wait', 'loading');
-                                                Ext.custom.Droplet.asyncCreate(eOpts.typeName, false, function (droplet) {
+                                                Ext.custom.Droplet.asyncCreate(eOpts.Type, false, function (droplet) {
                                                     this._droplet = droplet;
                                                     this.centerPanel.add(droplet.initComponent({
                                                     }));
                                                     this.centerPanel.doLayout();
 
-                                                    droplet.load(eOpts.id, function () {
+                                                    droplet.load(eOpts.Id, function () {
                                                         this.centerPanel.setTitle(title);
                                                         this.centerPanel.unmask();
                                                     }, this);

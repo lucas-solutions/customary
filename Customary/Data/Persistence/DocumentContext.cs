@@ -16,6 +16,7 @@ namespace Custom.Data.Persistence
 
         [ThreadStatic]
         private static IDocumentSession _session;
+        private static DateTime? _startTime;
 
         private static IDocumentStore _store;
 
@@ -33,7 +34,24 @@ namespace Custom.Data.Persistence
 
         public IDocumentSession Session
         {
-            get { return _session ?? (_session = Store.OpenSession()); }
+            get
+            {
+                var startTime = System.Web.HttpContext.Current.Items["SessionStartTime"] as Nullable<DateTime>;
+
+                if (!startTime.HasValue)
+                {
+                        startTime = DateTime.Now;
+                        System.Web.HttpContext.Current.Items["SessionStartTime"] = startTime;
+                }
+
+                if (_session == null || !_startTime.HasValue || _startTime.Value < startTime.Value)
+                {
+                    _startTime = startTime;
+                    _session = Store.OpenSession();
+                }
+
+                return _session;
+            }
         }
 
         public IDocumentStore Store

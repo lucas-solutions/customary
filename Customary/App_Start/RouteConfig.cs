@@ -93,23 +93,7 @@ namespace Custom
             );
 
             #endregion
-
-            // DirectoryController
-
-            #region Data/Directory/{action}/{*name}
-
-            routes.MapRoute(
-                name: Global.Routes.DataDirectoryRouteName,
-                url: "Data/Directory/{action}/{*name}",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Directory"
-                }
-            );
-
-            #endregion
-
+            
             // AreaController
             /*
             #region Data/Metadata/Area/{id}/{action}
@@ -338,16 +322,45 @@ namespace Custom
             */
             // NameController
 
-            #region Data/$metadata
+            #region Data/${action}
 
-            routes.MapGreedyRoute(
-                name: Global.Routes.DataMetadataRouteName,
-                url: "Data/$metadata",
+            routes.MapRoute(
+                name: Global.Routes.DataRootActionRouteName,
+                url: "Data/${action}",
                 defaults: new
                 {
                     area = "Data",
                     controller = "Name",
                     name = string.Empty,
+                }
+            );
+
+            #endregion
+
+            #region Data/{*name}/$index
+
+            routes.MapGreedyRoute(
+                name: Global.Routes.DataNameIndexRouteName,
+                url: "Data/{*name}/$index",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Name",
+                    action = "Index"
+                }
+            );
+
+            #endregion
+
+            #region Data/{*name}/$metadata
+
+            routes.MapGreedyRoute(
+                name: Global.Routes.DataNameMetadataRouteName,
+                url: "Data/{*name}/$metadata",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Name",
                     action = "Metadata"
                 }
             );
@@ -368,21 +381,6 @@ namespace Custom
                 constraints: new
                 {
                     id = new GuidConstraint(true)
-                }
-            );
-
-            #endregion
-
-            #region Data/{*name}/$metadata
-
-            routes.MapGreedyRoute(
-                name: Global.Routes.DataNameMetadataRouteName,
-                url: "Data/{*name}/$metadata",
-                defaults: new
-                {
-                    area = "Data",
-                    controller = "Name",
-                    action = "Metadata"
                 }
             );
 

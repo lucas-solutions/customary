@@ -29,6 +29,8 @@ namespace Custom.Web
 
         Destroy = Delete,
 
-        Call = Invoke
+        Call = Invoke,
+
+        Children = 12
     }
 }

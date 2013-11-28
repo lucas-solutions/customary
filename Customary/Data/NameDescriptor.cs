@@ -347,30 +347,27 @@ namespace Custom.Data
         {
             var ravenJObject = new RavenJObject();
 
-            ravenJObject["text"] = new RavenJValue(Name);
+            ravenJObject["Name"] = Path;
 
             switch (Type)
             {
                 case NodeKinds.Area:
-                    ravenJObject["type"] = "Metadata/Area";
+                    ravenJObject["Type"] = "Metadata/Area";
                     break;
 
                 case NodeKinds.Error:
-                    ravenJObject["type"] = "Metadata/Error";
+                    ravenJObject["Type"] = "Metadata/Error";
                     break;
 
                 case NodeKinds.Name:
-                    ravenJObject["type"] = "Metadata/Name";
+                    ravenJObject["Type"] = "Metadata/Name";
                     break;
 
                 case NodeKinds.Type:
-                    ravenJObject["type"] = "Metadata/Type";
+                    ravenJObject["Type"] = "Metadata/Type";
                     break;
             }
 
-            ravenJObject["Name"] = Name;
-            ravenJObject["Type"] = ravenJObject["type"];
-            
             if (deep)
             {
                 var items = _items;

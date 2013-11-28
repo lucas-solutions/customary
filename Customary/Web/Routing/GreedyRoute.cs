@@ -105,13 +105,13 @@ namespace Custom.Web.Routing
                     throw new ArgumentException("Route URL is invalid. Sequence \"//\" is not allowed.", "url");
                 }
 
-                if (string.Equals("$metadata", segment))
+                if (segment.StartsWith("$"))
                 {
                     var s = new GreedyRouteSegment
                     {
                         IsToken = false,
                         IsGreedy = false,
-                        Name = "$metadata"
+                        Name = segment
                     };
                     this.urlSegments.AddLast(s);
 

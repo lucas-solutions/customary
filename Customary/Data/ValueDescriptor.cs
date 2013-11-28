@@ -80,7 +80,6 @@ namespace Custom.Data
         public override RavenJObject ToRavenJObject(bool deep)
         {
             var jObject = base.ToRavenJObject(false);
-            jObject["type"] = "Metadata/Value";
             return jObject;
         }
     }

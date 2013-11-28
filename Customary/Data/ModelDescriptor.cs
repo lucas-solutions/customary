@@ -318,17 +318,6 @@ namespace Custom.Data
         public override RavenJObject ToRavenJObject(bool deep)
         {
             var jObject = base.ToRavenJObject(false);
-
-            var type = System.Enum.GetName(typeof(TypeCategories), Category);
-
-            jObject["id"] = new RavenJValue(Id);
-            jObject["key"] = new RavenJValue(KeyPrefix + Id.ToString(idFormat));
-            jObject["leaf"] = new RavenJValue(true);
-            //jObject["type"] = new RavenJValue(type.ToLowerInvariant());
-            jObject["text"] = new RavenJValue(Name);
-            jObject["cls"] = new RavenJValue("metadata" + type);
-            jObject["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
-
             return jObject;
         }
     }

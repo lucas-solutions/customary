@@ -62,36 +62,35 @@ namespace Custom.Data
             var ravenJObject = base.ToRavenJObject(false);
             var metadata = DocumentMetadata;
 
+            ravenJObject["Id"] = new RavenJValue(Id);
+            ravenJObject["Name"] = new RavenJValue(Path);
+            ravenJObject["Title"] = DocumentJObject["Title"];
+
             switch (Category)
             {
                 case TypeCategories.Enum:
-                    ravenJObject["type"] = "Metadata/Enum";
+                    ravenJObject["Type"] = "Metadata/Enum";
                     break;
 
                 case TypeCategories.Model:
-                    ravenJObject["type"] = "Metadata/Model";
+                    ravenJObject["Type"] = "Metadata/Model";
                     break;
 
                 case TypeCategories.Unit:
-                    ravenJObject["type"] = "Metadata/Unit";
+                    ravenJObject["Type"] = "Metadata/Unit";
                     break;
 
                 case TypeCategories.Value:
-                    ravenJObject["type"] = "Metadata/Value";
+                    ravenJObject["Type"] = "Metadata/Value";
                     break;
             }
 
-            ravenJObject["Name"] = new RavenJValue(Name);
-            ravenJObject["Title"] = DocumentJObject["Title"];
-            ravenJObject["Type"] = ravenJObject["type"];
             ravenJObject["LastModified"] = metadata["Last-Modified"];
 
             var type = System.Enum.GetName(typeof(TypeCategories), Category);
 
-            ravenJObject["id"] = new RavenJValue(Id);
             ravenJObject["key"] = new RavenJValue(string.Format("{0}/{1}/{2}", Type, Category, _id.ToString(idFormat)));
             ravenJObject["leaf"] = new RavenJValue(true);
-            ravenJObject["text"] = new RavenJValue(Name);
             ravenJObject["cls"] = new RavenJValue("metadata" + type);
             ravenJObject["iconCls"] = new RavenJValue("x-tree-icon-" + type.ToLowerInvariant());
 

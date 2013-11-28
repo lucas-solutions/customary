@@ -11,10 +11,10 @@ namespace Custom.Areas.Data.Controllers
     public sealed class UnitController : NameController
     {
         //
-        // GET: Data/Store/Metadata/Type/Unit
-        // GET: Data/Store/Metadata/Type/Unit/{Select|Read}
-        // GET: Data/Store/Metadata/Type/Unit/{id}
-        // GET: Data/Store/Metadata/Type/Unit/{id}/{Select|Read}
+        // GET: Data/Metadata/Type/Unit
+        // GET: Data/Metadata/Type/Unit/{Select|Read}
+        // GET: Data/Metadata/Type/Unit/{id}
+        // GET: Data/Metadata/Type/Unit/{id}/{Select|Read}
 
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Select(Guid id)
@@ -23,8 +23,8 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // POST: Data/Store/Metadata/Type/Unit
-        // POST: Data/Store/Metadata/Type/Unit/{Insert|Create}
+        // POST: Data/Metadata/Type/Unit
+        // POST: Data/Metadata/Type/Unit/{Insert|Create}
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create(Guid id)
@@ -33,11 +33,11 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // PUT: Data/Store/Metadata/Type/Unit/{id}
-        // PUT: Data/Store/Metadata/Type/Unit/{id}/Update
-        // PATCH: Data/Store/Metadata/Type/Unit/{id}
-        // PATCH: Data/Store/Metadata/Type/Unit/{id}/Update
-        // POST: Data/Store/Metadata/Type/Unit/{id}/Update
+        // PUT: Data/Metadata/Type/Unit/{id}
+        // PUT: Data/Metadata/Type/Unit/{id}/Update
+        // PATCH: Data/Metadata/Type/Unit/{id}
+        // PATCH: Data/Metadata/Type/Unit/{id}/Update
+        // POST: Data/Metadata/Type/Unit/{id}/Update
 
         [AcceptVerbs(HttpVerbs.Put | HttpVerbs.Patch | HttpVerbs.Post)]
         public ActionResult Update(Guid id, bool patch)
@@ -46,9 +46,9 @@ namespace Custom.Areas.Data.Controllers
         }
 
         //
-        // DELETE: Data/Store/Metadata/Type/Unit/{id}
-        // DELETE: Data/Store/Metadata/Type/Unit/{id}/{Delete|Destroy}
-        // GET: Data/Store/Metadata/Type/Unit/{id}/{Delete|Destroy}
+        // DELETE: Data/Metadata/Type/Unit/{id}
+        // DELETE: Data/Metadata/Type/Unit/{id}/{Delete|Destroy}
+        // GET: Data/Metadata/Type/Unit/{id}/{Delete|Destroy}
 
         [AcceptVerbs(HttpVerbs.Delete | HttpVerbs.Get | HttpVerbs.Post)]
         public ActionResult Delete(Guid id)
@@ -56,7 +56,7 @@ namespace Custom.Areas.Data.Controllers
             return new RavenJObjectResult { Content = null };
         }
 
-        // POST: Data/Store/Metadata/Type/Unit/{id}/Validate
+        // POST: Data/Metadata/Type/Unit/{id}/Validate
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Validate(Guid id)

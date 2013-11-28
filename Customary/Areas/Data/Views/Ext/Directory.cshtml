@@ -7,48 +7,59 @@
             /// <param name="node" type="Ext.data.NodeInterface">
             /// </param>
             /// <returns type="String"></returns>
-            var name = [];
-            name.push(node.raw.text);
-            for (node = node.parentNode; node; node = node.parentNode) {
-                name.push(node.raw.text);
+            var name = '/';
+            if (typeof node.raw.Name === 'string') {
+                name += node.raw.Name;
             }
-            name = name.reverse().slice(1);
-            return name.join('/');
+            return name;
         }
 
         function createIndexStore(directory) {
 
             return Ext.create('Ext.data.TreeStore', {
-                id: 'Ext.custom.data.Directory.Store',
+                id: 'Ext.custom.data.Index.Store',
                 autoLoad: true,
                 //defaultRootId: '0',
                 //defaultRootText: "text",
                 //defaultRootProperty: 'children',
-                fields: [
-                    {
-                        name: 'Name'
-                    },
-                    {
-                        name: 'Title'
-                    },
-                    {
-                        name: 'Type'
-                    },
-                    {
-                        name: 'LastModified',
-                        mapping: 'LastModified',
-                        type: 'date',
-                        dateFormat: 'c'
-                    },
-                    {
-                        name: '$Title',
-                        persist: false,
-                        mapping: 'Title',
-                        convert: function (v, record) {
-                            return Ext.custom.Adapter.toString(v || "<null>");
+                model: Ext.define('Ext.custom.data.Index.Model', {
+                    extend: 'Ext.data.Model',
+                    idProperty: 'Id',
+                    fields: [
+                        {
+                            name: 'Name'
+                        },
+                        {
+                            name: 'Title'
+                        },
+                        {
+                            name: 'Type'
+                        },
+                        {
+                            name: 'LastModified',
+                            mapping: 'LastModified',
+                            type: 'date',
+                            dateFormat: 'c'
+                        },
+                        {
+                            name: '$Name',
+                            persist: false,
+                            mapping: 'Name',
+                            convert: function (v, record) {
+                                var name = v.split('/');
+                                return name[name.length - 1];
+                            }
+                        },
+                        {
+                            name: '$Title',
+                            persist: false,
+                            mapping: 'Title',
+                            convert: function (v, record) {
+                                return Ext.custom.Adapter.toString(v || "<null>");
+                            }
                         }
-                    }
-                ],
+                    ]
+                }),
                 folderSort: true,
                 // not using model. direct proxy
                 proxy: {
@@ -58,7 +69,7 @@
                     buildUrl: function (request) {
                         switch (request.action) {
                             case 'read':
-                                return directory.baseUrl + '/Data/Directory/Index/' + fullName(request.operation.node);
+                                return directory.baseUrl + '/Data' + fullName(request.operation.node) + '/$index';
                         }
                     },
                     headers: {
@@ -67,7 +78,7 @@
                     listeners: {
                         exception: function (proxy, response, operation) {
                             Ext.MessageBox.show({
-                                title: 'REMOTE EXCEPTION',
+                                title: 'Request returned with an error message:',
                                 msg: operation.getError(),
                                 icon: Ext.MessageBox.ERROR,
                                 buttons: Ext.Msg.OK
@@ -139,33 +150,15 @@
             this._component.fireEvent('select', this);
         }
 
-        function makeModelTypeName(indexType) {
-
-            var typeName;
-
-            typeName = indexType;
-
-            return typeName;
-        }
-
         function onIndexSelectionChange(selModel, selections, opts) {
             if (typeof selections == 'object' && selections.length === 1 && typeof selections[0].raw == 'object') {
 
                 var path = fullName(selections[0]);
-                var data = selections[0].raw;
-                var typeName = makeModelTypeName(data.type);
-
-                this.typeName = typeName;
-
-                this._indexRecord = Ext.Object.merge({
-                    typeName: typeName
-                },
-                data,
-                {
-                    name: path,
-                });
+                var data = selections[0].getData();
+                this.typeName = data.Type;
+                this._indexRecord = data;
                 Ext.History.add(path, false);
-                this._component.fireEvent('select', this, this._indexRecord, selModel, selections);
+                this._component.fireEvent('select', this, data, selModel, selections);
             } else {
                 delete this._indexRecord;
                 this._component.fireEvent('select', this);
@@ -176,7 +169,7 @@
             findToolItem('create', component, 'show').setHandler(function () { onRecordCreateClick.call(this, component) }, this);
             findToolItem('destroy', component, 'show').setHandler(function () { onRecordDestroyClick.call(this, component) }, this);
             if (typeof this._indexRecord === 'object' && this._indexRecord !== null) {
-                var typeName = this._indexRecord.name;
+                var typeName = this._indexRecord.Name;
                 Custom.app.Application.asyncMetadata.call(this, typeName, function ($) {
                     var modelName = Custom.app.Application.makeModelName(typeName);
 
@@ -335,7 +328,7 @@
 
                 var type = record.raw.$type, data = record.getData();
 
-                this._component.fireEvent('select', this, { id: data.Id, typeName: type }, selModel, selections);
+                this._component.fireEvent('select', this, { Id: data.Id, Type: type }, selModel, selections);
             }
             else {
                 this._component.fireEvent('select', this);
@@ -435,7 +428,7 @@
                                     text: 'Name',
                                     width: 200,
                                     sortable: true,
-                                    dataIndex: 'Name',
+                                    dataIndex: '$Name',
                                     locked: true
                                 },
                                 {
