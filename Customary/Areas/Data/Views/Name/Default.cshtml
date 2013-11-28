@@ -217,7 +217,7 @@
             }
 
             if ($ !== null && typeof $.Properties === 'object' && $.Properties.length > 0) {
-                properties.push.apply(properties, $.Properties);
+                properties.push.apply(properties, Ext.clone($.Properties));
             }
 
             return properties;
@@ -722,24 +722,58 @@
             }
         }
 
+        function aDownload(url, name) {
+            // Original code from https://github.com/eligrey/FileSaver.js
+            // Rewrited to work without blobs
+            // Will return true if worked
+            var click, save_link, event;
+            save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+            if (!("download" in save_link)) return false; // a[download] not supported on this browser
+            save_link.href = url;
+            save_link.download = name;
+            event = document.createEvent("MouseEvents");
+            event.initMouseEvent(
+                "click", true, false, window, 0, 0, 0, 0, 0
+                , false, false, false, false, 0, null
+            );
+            return save_link.dispatchEvent(event); // false if event was cancelled
+        }
+
+        // http://jsfiddle.net/vHwzu/
+        function download(url) {
+            var iframe = document.createElement("iframe");
+            iframe.src = url;
+            iframe.style.display = "none";
+            document.body.appendChild(iframe);
+        }
+
         var myThing = {
             regex: new RegExp("123", "g"),
             text: "good",
             func: function (x) {
-                return x * x
-            }
+                return "Lucas " + x;
+            },
+            aDownload: aDownload
         }
 
         var myThing_json = JSONEX.stringify(myThing);
         // "{"regex":{"type":"RegExp","value":"/123/g"},"text":{"type":"String","value":"good"},"func":{"type":"Function","value":"function (x) {\n    return x * x;\n}"}}"
 
+        console.log(myThing_json);
+
         var myThing_obj = JSONEX.parse(myThing_json);
         // native object representing original object
+
+        console.log(myThing_obj);
 
         // JSON Object (can be an imported file, of course)
         // Store RegExp pattern as a string
         // Double backslashes are required to put literal \ characters in the string
         var jsonObject = { "regex": "^http:\\/\\/" };
+
+        console.log(myThing_obj.regex.test('123'));
+        console.log(myThing_obj.text);
+        console.log(myThing_obj.func(7));
 
         function fun(url) {
             var match, regexp;
@@ -755,8 +789,9 @@
             return match;
         }
 
-        fun("http:\\google.com");
+        var mtch = fun("http:\\google.com");
 
+        console.log(mtch);
 
         function makeExtName(typeName) {
             return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
@@ -767,7 +802,7 @@
         }
 
         function mergeMetadata($) {
-            Ext.Object.merge(metadata, $);
+            Ext.merge(metadata, $);
         }
 
         function selectColumns($, hash) {

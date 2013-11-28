@@ -152,6 +152,9 @@
             });
 
             var fieldType = Custom.app.Application.toDataType(propertyType);
+            var propertyUI = Ext.merge({
+                Height: 1
+            }, propertyType.UI, property.UI);
 
             var types = Ext.data.Types; // allow shorthand type access
 
@@ -197,9 +200,18 @@
 
                 case types.STRING:
                 default:
-                    Ext.merge(config, {
-                        xtype: 'textfield'
-                    });
+                    if (typeof propertyUI.Height === 'number' && propertyUI.Height > 1) {
+                        Ext.merge(config, {
+                            rows: propertyUI.Height,
+                            grow: true,
+                            xtype: 'textareafield'
+                        });
+                    }
+                    else {
+                        Ext.merge(config, {
+                            xtype: 'textfield'
+                        });
+                    }
                     break;
             }
 
@@ -235,7 +247,7 @@
                         category = "Value";
                         break;
                 }
-                
+
                 var handler = handlers[category];
 
                 if (typeof handler === 'function') {
@@ -521,6 +533,20 @@
 
             var properties = Custom.app.Application.collectProperties($, []);
 
+            // just so summary gets the extra lines
+            if (propertyType.BaseType === 'Text') {
+                for (var i = 0, count = properties.length; i < count; i++) {
+                    var prop = properties[i];
+                    if (typeof prop.UI === 'object') {
+                        var ui = Ext.merge({}, propertyType.UI, prop.UI);
+                        Ext.merge(prop.UI, ui);
+                    }
+                    else {
+                        prop.UI = Ext.merge({}, propertyType.UI);
+                    }
+                }
+            }
+
             Ext.merge(config, sectionsToView(splitFields($, properties, {
                 'Enum': enumHandler,
                 'Unit': unitHandler,
@@ -555,6 +581,12 @@
                     frame: false,
                     iconCls: 'icon-grid',
                     dockedItems: [
+                        {
+                            margin: '4 0 6 0',
+                            dock: 'top',
+                            text: summary || '',
+                            xtype: 'text'
+                        },
                         {
                             xtype: 'toolbar',
                             dock: 'bottom',
@@ -783,6 +815,12 @@
                 $modelName: modelName,
                 dockedItems: [
                     {
+                        margin: '4 0 6 0',
+                        dock: 'top',
+                        text: summary || '',
+                        xtype: 'text'
+                    },
+                    {
                         xtype: 'toolbar',
                         dock: 'bottom',
                         ui: 'footer',
@@ -869,6 +907,12 @@
                 title: title,
                 tooltip: summary,
                 dockedItems: [
+                    {
+                        margin: '4 0 6 0',
+                        dock: 'top',
+                        text: summary || '',
+                        xtype: 'text'
+                    },
                     {
                         xtype: 'toolbar',
                         dock: 'bottom',
