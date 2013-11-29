@@ -10,7 +10,7 @@ namespace Custom.Web.Mvc
     using Custom.Diagnostics;
     using Custom.Filters;
     using Custom.Models;
-    using Custom.Site.Presentation;
+    using Custom.Presentation;
     using Custom.Results;
     using global::Raven.Json.Linq;
     
@@ -220,7 +220,7 @@ namespace Custom.Web.Mvc
             "ExtJs"
         };
 
-        protected internal virtual PageResult Page(string viewName, string layout, object model)
+        /*protected internal virtual PageResult Page(string viewName, string layout, object model)
         {
             if (model != null)
             {
@@ -231,7 +231,7 @@ namespace Custom.Web.Mvc
                 };
             }
             return new PageResult { ViewName = viewName, TempData = base.TempData, ViewEngineCollection = this.ViewEngineCollection };
-        }
+        }*/
 
         protected virtual RavenJObjectResult Success(RavenJToken data)
         {

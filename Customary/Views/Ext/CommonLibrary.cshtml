@@ -1,0 +1,843 @@
+﻿<script type="text/javascript">
+
+    var _baseUrl = 'http://data.customary.com';
+
+    var guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+
+    var metadata = {
+    };
+
+    function asyncMetadata(typeName, callback, scope) {
+
+        var $ = Ext.custom.Application.findMetadata(typeName);
+
+        if ($ !== null && typeof $ === 'object') {
+            callback.call(scope || this, $);
+        }
+        else {
+
+            var jsonData = {
+                requires: requires(typeName)
+            };
+
+            Ext.Ajax.request({
+                url: _baseUrl + '/Data/' + typeName + '/$metadata',
+                method: 'POST',
+                jsonData: jsonData,
+                /*params: {
+                    id: '00000000-0000-0000-0000-000000000001'
+                },*/
+                success: function (response, options) {
+                    var text = response.responseText;
+                    var json = Ext.JSON.decode(text, true);
+                    if (json == null || typeof json !== 'object') {
+                        alert(text);
+                    }
+                    else if (json.success === true && typeof json.data === 'object') {
+
+                        mergeMetadata(json.data);
+
+                        $ = Ext.custom.Application.findMetadata(typeName);
+
+                        if ($ !== null && typeof $ === 'object') {
+                            callback.call(scope || this, $);
+                        }
+
+                    } else if (typeof json.message === 'string') {
+                        alert(json.message);
+                    }
+                },
+                failure: function (response, options) {
+                },
+                scope: this
+            });
+        }
+    }
+
+    function asyncModel(typeName, callback) {
+
+        var modelName = makeModelName(typeName);
+
+        var model = Ext.ModelManager.getModel(modelName);
+
+        if (model !== null && typeof model === 'function') {
+            callback(modelName, model);
+            return;
+        }
+
+        this.asyncMetadata(typeName, function ($) {
+
+            model = Ext.custom.Application.defineModel(modelName, $);
+
+            callback(modelName, model);
+        });
+    }
+
+    function collectProperties($, properties) {
+
+        if ($ === null || typeof $ !== 'object') {
+            return properties;
+        }
+
+        if (typeof $.BaseType === 'string') {
+            collectProperties(Ext.custom.Application.findMetadata($.BaseType), properties);
+        }
+
+        if ($ !== null && typeof $.Properties === 'object' && $.Properties.length > 0) {
+            properties.push.apply(properties, Ext.clone($.Properties));
+        }
+
+        return properties;
+    }
+
+    function configGrid(properties, columns, config) {
+
+        if (Object.prototype.toString.call(columns) === '[object Array]' && columns.length > 0) {
+            //if (typeof columns === 'object' && columns !== null && typeof columns.length === 'int' && columns.length > 0) {
+            var hash = {};
+            for (var i = 0; i < properties.length; i++) {
+                var property = properties[i];
+                hash[property.Name] = property;
+            }
+            properties = [];
+            for (var i = 0; i < columns.length; i++) {
+                var property = hash[columns[i]];
+                if (typeof property === 'object' && property != null) {
+                    properties.push(property);
+                }
+            }
+        }
+
+        var items = [];
+
+        for (var i = 0; i < properties.length; i++) {
+
+            var property = properties[i];
+            var text = Ext.custom.Adapter.toString(property.Title, property.Name);
+            var role = Ext.custom.Application.splitRole(property.Role);
+
+            var propertyType = Ext.custom.Application.findMetadata(property.Type) || Ext.custom.Application.findMetadata("String");
+
+            if (propertyType.$type === 'Metadata/Model') {
+                switch (propertyType.Name) {
+                    case 'Text':
+                        items.push({
+                            dataIndex: '$' + property.Name,
+                            flex: 2,
+                            header: text,
+                            /*renderer: function (value) {
+                                return Ext.custom.Adapter.toString(value);
+                            },*/
+                            text: text
+                        });
+                        break;
+                }
+                continue;
+            }
+
+            var column = {
+                editor: {
+                    xtype: 'textfield',
+                    allowBlank: !role.required
+                },
+                dataIndex: property.Name,
+                flex: 1,
+                header: text,
+                text: text
+            };
+
+            var editor = { xtype: 'textfield' };
+
+            /*switch (property.$type) {
+
+                case 'boolean':
+                    column.xtype = 'booleancolumn';
+                    break;
+
+                case 'date':
+                    column.xtype = 'datecolumn';
+                    column.format = 'Y-m-d';
+                    break;
+
+                case 'number':
+                    column.xtype = 'numbercolumn';
+                    //column.editor.format = '0.00';
+                    break;
+
+                case 'string':
+                    column.editor.xtype = 'textfield';
+                    break;
+            }*/
+
+            switch (property.Type) {
+                case 'Boolean':
+                    Ext.merge(column, {
+                        editor: {
+                        }
+                    });
+                    break;
+
+                case 'Email':
+                    editor = { vtype: 'email' };
+                    break;
+
+                case 'Password':
+                    break;
+
+                case 'Date':
+                    Ext.merge(column, {
+                        editor: {
+                            xtype: 'checkbox'
+                        }
+                    });
+                    break;
+            }
+
+            items.push(column);
+        }
+
+        var selModel = Ext.create("Ext.selection.RowModel", {
+            selType: "rowmodel",
+            listeners: {
+                selectionchange: {
+                    fn: function (selModel, selections) {
+                        //this.onSelectionChange(selModel, selections, "master")
+                    },
+                    scope: this
+                }
+            }
+        });
+
+        Ext.merge(config, {
+            selModel: selModel,
+            //plugins: [this.rowEditing],
+            columns: {
+                items: items
+            },
+            xtype: 'grid'
+        });
+
+        return config;
+    }
+
+    function defineModel(name, $) {
+
+        var extend = 'Ext.data.Model';
+
+        if (typeof $.BaseType === 'string') {
+            var extendModel = this.findModel($.BaseType);
+            //extend = makeModelName($.BaseType);
+        }
+
+        var config = {
+            extend: extend,
+            idProperty: 'Id',
+            fields: [],
+            associations: [],
+            validations: []
+        };
+
+        if (typeof $.BelongsTo === 'string') {
+            config['belongsTo'] = makeModelName($.BelongsTo);
+            /*var belongsTo = this.findModel($.BelongsTo);
+            if (belongsTo) {
+                config['belongsTo'] = belongsTo.modelName;
+            }*/
+        }
+
+        var properties = Ext.custom.Application.collectProperties($, []);
+
+        var types = Ext.data.Types; // allow shorthand type access
+
+        for (var i = 0; i < properties.length; i++) {
+            var property = properties[i];
+            var role = splitRole(property.Role);
+            var field = { name: property.Name };
+
+            if (role.required) {
+                field.useNull = false;
+            }
+
+            var propertyType = Ext.custom.Application.findMetadata(property.Type);
+
+            if (typeof propertyType !== 'object' || propertyType === null) {
+                break;
+            }
+
+            var category = "Model";
+
+            switch (propertyType.$type) {
+                case 'Metadata/Enum':
+                    category = "Enum";
+                    break;
+                case 'Metadata/Unit':
+                    category = "Unit";
+                    break;
+                case 'Metadata/Value':
+                    category = "Value";
+                    break;
+            }
+
+            switch (category) {
+                case 'Enum':
+                    field.type = types.STRING;
+                    config.fields.push(field);
+                    break;
+
+                case 'Model':
+
+                    if (propertyType.Embeddable) {
+
+                        var propertyModel = this.findModel(property.Type);
+
+                        if (typeof propertyModel !== 'function') {
+                        }
+                        else if (role.hasMany) {
+                            config.associations.push({
+                                type: 'hasMany',
+                                model: propertyModel.modelName,
+                                name: property.Name
+                            });
+                        }
+                        else {
+                            //field.type = propertyModel.modelName;
+                            //config.fields.push(field);
+                            config.associations.push({
+                                type: 'hasOne',
+                                model: propertyModel.modelName,
+                                name: property.Name,
+                                associationKey: property.Name
+                            });
+
+                            if (property.Type === 'Text') {
+                                config.fields.push({
+                                    name: '$' + property.Name,
+                                    persist: false,
+                                    mapping: property.Name,
+                                    convert: function (v, record) {
+                                        return Ext.custom.Adapter.toString(v || "<null>");
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    else {
+                        field.type = types.STRING;
+                        config.fields.push(field);
+                    }
+                    break;
+
+                case 'Unit':
+                    field.type = types.STRING;
+                    config.fields.push(field);
+                    break;
+
+                case 'Value':
+                    field.type = toDataType(propertyType);
+
+                    /*if (typeof property.Type === 'string') {
+                        var $prototype = Ext.custom.Application.findMetadata(property.Type);
+                        var $validations = Type.$validations;
+                        if (typeof $validations === 'object' && $validations != null) {
+                            for (var i = 0; i < $validations.length; i++) {
+
+                                var $validation = $validations[i];
+
+                                var validation = { name: property.Name, type: $validation.$type };
+
+                                switch ($validation.$type) {
+                                    case 'presence':
+                                        break;
+
+                                    case 'length':
+                                        break;
+
+                                    case 'format':
+                                        break;
+
+                                    case 'inclusion':
+                                        break;
+
+                                    case 'exclusion':
+                                        break;
+
+                                    default:
+                                        continue;
+                                }
+
+                                config.validations.push(validation);
+                            }
+                        }
+                    }*/
+
+                    config.fields.push(field);
+
+                    break;
+            }
+        }
+
+        if ($.Embeddable === true) {
+        }
+        else {
+
+            var proxy = {
+                // Use for ajax proxy, since all the create, update and detroy requests will be all POST
+                // and for jsonp the api is the same, but the method is GET
+                type: 'ajax', // rest, jsonp or ajax.
+                //url: url,
+                /*api: {
+                    create: url + '/create',
+                    read: url + '/read',
+                    update: url + '/update',
+                    destroy: url + '/destroy'
+                },*/
+                buildUrl: function (request) {
+
+                    var url = _baseUrl + '/Data/' + $.Name;
+
+                    if (typeof request.operation.id === 'string') {
+                        url += '/' + request.operation.id;
+                    }
+
+                    switch (request.operation.action) {
+                        case 'create':
+                            return url + '/create';
+                        case 'read':
+                            return url + '/read';
+                        case 'update':
+                            return url + '/update';
+                        case 'destroy':
+                            return url + '/destroy';
+                    }
+                },
+                headers: {
+                    "Accept": "application/json"
+                },
+                listeners: {
+                    exception: function (proxy, response, operation) {
+                        Ext.MessageBox.show({
+                            title: 'REMOTE EXCEPTION',
+                            msg: operation.getError(),
+                            icon: Ext.MessageBox.ERROR,
+                            buttons: Ext.Msg.OK
+                        });
+                    }
+                },
+                reader: {
+                    type: "json",
+                    root: "data",
+                    totalProperty: 'total',
+                    successProperty: 'success',
+                    messageProperty: 'message'
+                },
+                writer: Ext.create('Ext.data.writer.DeepPureJson', {
+                    $: $,
+                    type: 'json',
+                    root: 'data',
+                    allowSingle: false, // force data to be array
+                    //dateFormat: "",
+                    writeAllFields: false,
+                    writeRecordId: true
+                })
+            };
+
+            Ext.merge(config, {
+                proxy: proxy
+            });
+        }
+
+        model = Ext.define(name, config);
+
+        return model;
+    }
+
+    function findMetadata(typeName) {
+
+        if (typeof typeName !== 'string') {
+            return;
+        }
+
+        var path = typeName.split('/');
+        var namespace = metadata;
+        for (var i = 0; i < path.length && typeof namespace === 'object' && namespace !== null; i++) {
+            var name = path[i];
+            namespace = namespace[name];
+        }
+        if (typeof namespace === 'object' && namespace !== null) {
+            return namespace.$;
+        }
+    }
+
+    function findModel(typeName) {
+
+        var modelName = makeModelName(typeName);
+
+        var model = Ext.ModelManager.getModel(modelName);
+
+        if (model === null || typeof model === 'undefined') {
+
+            var $ = Ext.custom.Application.findMetadata(typeName);
+
+            if ($ !== null && typeof $ === 'object') {
+
+                model = Ext.custom.Application.defineModel(modelName, $);
+            }
+        }
+
+        return model;
+    }
+
+    var isDigit = (function () {
+        var re = /^\d$/;
+        return function (c) {
+            return re.test(c);
+        }
+    }());
+
+    function javascriptDecode(str) {
+        var result = "";
+        for (var i = 0, count = str.length; i < count; i++) {
+            var c = str[i];
+            if (c !== '&') {
+                result += c;
+            }
+            else if (count < i + 1) {
+                // error;
+            }
+            else if (str[i + 1] !== '#') {
+                // error;
+            }
+            else {
+                var len = 0;
+                for (; i + len + 1 < count && isDigit(str[i + len + 1]) ; len++);
+                if (len > 0 && i + len + 1 < count && str[i + len + 1] === ';') {
+                    var code = str.substring(i + 2, len);
+                    result += String.fromCharCode(code);
+                    i += 2 + len;
+                }
+                else {
+                    // error;
+                }
+            }
+        }
+        return result;
+    }
+
+    function javascriptEncode(str) {
+        var result = "";
+        for (var i = 0, count = str.length; i < count; i++) {
+            var c = str[i];
+            result += ("{}\"\'".indexOf(c) === -1) ? c : c.charCodeAt(0);
+        }
+        return result;
+    }
+
+    var JSONEX = {
+
+        stringify: function (obj) {
+            var jsonified = {}
+            // loop through object and write string and type to newly stored data structure
+            for (i in obj)
+                jsonified[i] = {
+                    // some voodoo to determine the variable type
+                    type: Object.prototype.toString.call(obj[i]).split(/\W/)[2],
+                    value: obj[i].toString()
+                }
+            return JSON.stringify(jsonified)
+        },
+
+        parse: function (json) {
+            objectified = {}
+            obj = JSON.parse(json)
+            // loop through object, and handle parsing of string according to type
+            for (i in obj)
+                if (obj[i].type == "RegExp") {
+                    var m = obj[i].value.match(/\/(.*)\/([a-z]+)?/)
+                    objectified[i] = new RegExp(m[1], m[2]);
+                } else if (obj[i].type == "String") {
+                    objectified[i] = obj[i].value
+                } else if (obj[i].type == "Function") {
+                    // WARNING: this is more or less like using eval
+                    // All the usual caveats apply - including jailtime
+                    objectified[i] = new Function("return (" + obj[i].value + ")")();
+                }
+            // ADD MORE TYPE HANDLERS HERE ...
+
+            return objectified
+
+        }
+    }
+
+    function aDownload(url, name) {
+        // Original code from https://github.com/eligrey/FileSaver.js
+        // Rewrited to work without blobs
+        // Will return true if worked
+        var click, save_link, event;
+        save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        if (!("download" in save_link)) return false; // a[download] not supported on this browser
+        save_link.href = url;
+        save_link.download = name;
+        event = document.createEvent("MouseEvents");
+        event.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0
+            , false, false, false, false, 0, null
+        );
+        return save_link.dispatchEvent(event); // false if event was cancelled
+    }
+
+    // http://jsfiddle.net/vHwzu/
+    function download(url) {
+        var iframe = document.createElement("iframe");
+        iframe.src = url;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+    }
+
+    var myThing = {
+        regex: new RegExp("123", "g"),
+        text: "good",
+        func: function (x) {
+            return "Lucas " + x;
+        },
+        aDownload: aDownload
+    }
+
+    var myThing_json = JSONEX.stringify(myThing);
+    // "{"regex":{"type":"RegExp","value":"/123/g"},"text":{"type":"String","value":"good"},"func":{"type":"Function","value":"function (x) {\n    return x * x;\n}"}}"
+
+    console.log(myThing_json);
+
+    var myThing_obj = JSONEX.parse(myThing_json);
+    // native object representing original object
+
+    console.log(myThing_obj);
+
+    // JSON Object (can be an imported file, of course)
+    // Store RegExp pattern as a string
+    // Double backslashes are required to put literal \ characters in the string
+    var jsonObject = { "regex": "^http:\\/\\/" };
+
+    console.log(myThing_obj.regex.test('123'));
+    console.log(myThing_obj.text);
+    console.log(myThing_obj.func(7));
+
+    function fun(url) {
+        var match, regexp;
+
+        // You can do:
+        match = url.match(new RegExp(jsonObject.regex, 'i'));
+        // Or (useful for capturing groups when doing global search):
+        regexp = new RegExp(jsonObject.regex, 'i');
+        match = regexp.exec(url);
+
+        // Logic to process match results
+        // ...
+        return match;
+    }
+
+    var mtch = fun("http:\\google.com");
+
+    console.log(mtch);
+
+    function makeExtName(typeName) {
+        return 'Ext.custom.data.' + typeName.replace(new RegExp('/', 'g'), '.');
+    }
+
+    function makeModelName(typeName) {
+        return makeExtName(typeName) + '.Model';
+    }
+
+    function mergeMetadata($) {
+        Ext.merge(metadata, $);
+    }
+
+    function selectColumns($, hash) {
+
+        if (typeof $ !== 'object' || $ === null) {
+            return;
+        }
+
+        if (typeof hash !== 'object' || hash === null) {
+            hash = {};
+        }
+
+        if (typeof $.BaseType === 'string') {
+            selectColumns(Ext.custom.Application.findMetadata($.BaseType), hash);
+        }
+
+        var columns;
+
+        if (typeof $.Columns === 'string') {
+            columns = $.Columns.split('|');
+            for (var i = 0; i < columns.length; i++) {
+                var name = columns[i];
+                hash[name] = true;
+            }
+        }
+
+        columns = [];
+
+        var keys = Object.keys(hash);
+        for (var i = 0; i < keys.length; i++) {
+            var name = keys[i];
+            if (hash[name] === true) {
+                columns.push(name);
+            }
+        }
+
+        return columns;
+    }
+
+    function splitRole($role) {
+
+        var role = {
+            optional: true,
+            identity: false,
+            required: false,
+            unique: false,
+            readOnly: false,
+            hasMany: false
+        };
+
+        switchValues($role, '|', {
+
+            'Identity': function () {
+                role.identity = true;
+            },
+
+            'Required': function () {
+                role.optional = false;
+                role.required = true;
+            },
+
+            'Unique': function () {
+                role.unique = true;
+            },
+
+            'Readonly': function () {
+                role.readOnly = true;
+            },
+
+            'HasMany': function () {
+                role.hasMany = true;
+            },
+        });
+
+        return role;
+    }
+
+    // get the name spaces that are not clean (!dirty)
+    function requires(path) {
+
+        var segments = path.split('/');
+        var result = [];
+
+        var name = segments[0];
+        var path = name;
+        var namespace = metadata[name];
+
+        for (var i = 1; i < segments.length; i++) {
+
+            if (namespace === null || typeof namespace !== 'object') {
+                result.push(path);
+            }
+            else if (typeof namespace.$ === 'object' && namespace.$ !== null && namespace.$.$type !== 'Metadata/Area') {
+                break;
+            }
+            else if (namespace.$dirty !== true) {
+                result.push(path);
+            }
+
+            name = segments[i];
+            path = path + '/' + name;
+        }
+
+        return result;
+    }
+
+    function switchValues(value, separator, callback) {
+
+        if (typeof value !== 'string') {
+            return;
+        }
+
+        var values = value.split(separator);
+
+        for (var i = 0; i < values.length; i++) {
+            var fn = callback[values[i]];
+            if (typeof fn === 'function') {
+                fn();
+            }
+        }
+    }
+
+    function selectRecord(record, model) {
+
+        console.log(record.$type, record.$className === model.getName());
+
+        if (typeof this._droplet !== 'object' || this._droplet === null || this._droplet.model !== model) {
+
+            Ext.custom.Application.asyncMetadata(record.$type, function ($) {
+                var title = record.$type + ' [new]';
+
+                var droplet = Ext.custom.Droplet.create(record.$type, false, $);
+
+                this._droplet = droplet;
+
+                this.centerPanel.removeAll();
+
+                this.centerPanel.add(droplet.initComponent({
+                }));
+
+                this.centerPanel.doLayout();
+
+                this._droplet.loadRecord(record);
+
+            }, this);
+        }
+        else {
+            this._droplet.loadRecord(record);
+        }
+    }
+
+    function toDataType(type) {
+
+        var types = Ext.data.Types; // allow shorthand type access
+
+        if (typeof type !== 'object' || type === null) {
+            return types.STRING;
+        }
+
+        switch (type.Name) {
+            case "Boolean":
+                return types.BOOLEAN;
+
+            case "Byte":
+            case "Int16":
+            case "Int32":
+            case "Int64":
+            case "UInt16":
+            case "UInt32":
+            case "UInt64":
+            case "SByte":
+                return types.INTEGER;
+
+            case "Decimal":
+            case "Double":
+            case "Single":
+                return types.NUMBER;
+
+            case "Date":
+            case "Time":
+            case "DateTime":
+            case "DateTimeOffset":
+                return types.DATE;
+
+            case "Char":
+            case "String":
+                return types.STRING;
+            default:
+                return toDataType(findMetadata(type.BaseType));
+        }
+    }
+</script>

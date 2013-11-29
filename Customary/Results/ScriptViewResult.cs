@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Custom.Results
 {
-    using Custom.Site.Presentation;
+    using Custom.Presentation;
 
     public partial class ScriptViewResult : ActionResult, IScriptable, IHtmlString
     {

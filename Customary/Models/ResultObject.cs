@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Models
 {
-    public class ResultObject : Custom.Site.Presentation.ScriptObject
+    public class ResultObject : Custom.Presentation.ScriptObject
     {
         protected override string ContentType
         {

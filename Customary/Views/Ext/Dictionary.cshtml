@@ -1,0 +1,112 @@
+﻿@using Custom.Data.Metadata
+@{
+    Layout = "~/Views/Ext/_Layout.cshtml";
+}
+
+<style>
+    .x-tab-bar-default-top {
+        background-color: #dfe8f5;
+        background-image: none; /*-webkit-linear-gradient(top,#dde8f5,#cbdbef);*/
+    }
+
+    /* Replaces default tree node yellow 
+       folder icon with an OSX style one */
+    /*#containerTreePanel .x-tree-icon-parent {
+        background-image: url("images/icon-fldr-default-closed.png");
+    }*/
+
+    /* This is the open state of the yellow
+       folder icon. */
+    /*#containerTreePanel .x-grid-tree-node-expanded .x-tree-icon-parent {
+        background-image: url("images/icon-fldr-default-closed.png");
+        padding-top: 1px;
+    }*/
+
+    /* Replaces the default tree node leaf
+       icon with Hub List list icon */
+    /*#containerTreePanel .x-tree-icon-leaf {
+        background-image: url("images/icon-sdbar-list.png");
+        width: 14px;
+    }*/
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-model {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-value {
+        background-image: url("@Url.Content("~/Images/Metadata/value.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-enum {
+        background-image: url("@Url.Content("~/Images/Metadata/enum.png")");
+    }
+
+    .x-tree-icon.x-tree-icon-leaf.x-tree-icon-unit {
+        background-image: url("@Url.Content("~/Images/Metadata/unit.png")");
+    }
+
+    .icon-create, .icon-new {
+    background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-delete, .icon-destroy {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-refresh {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-add {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-remove {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-save, .icon-submit {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-cancel, .icon-reset {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-grid {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+    .icon-form {
+        background-image: url("@Url.Content("~/Images/Metadata/model.png")");
+    }
+
+</style>
+
+<script type="text/javascript">
+    var frameStyle = 'background-color:#dfe8f5;';
+</script>
+
+<script type="text/javascript">
+
+    Ext.Loader.setPath('Ext', '@Url.Absolute("/Scripts/Ext")');
+
+    (function (undefined) {
+
+        @Html.PartialScript("~/Views/Ext/CommonLibrary.cshtml")
+
+        @Html.PartialScript("~/Views/Ext/Adapter.cshtml")
+
+        @Html.PartialScript("~/Views/Ext/Droplet.cshtml")
+
+        @Html.PartialScript("~/Views/Ext/Application.cshtml")
+
+    })();
+
+    Ext.onReady(function () {
+        Ext.tip.QuickTipManager.init();
+
+        Ext.application('Ext.custom.Application');
+    });
+    
+</script>

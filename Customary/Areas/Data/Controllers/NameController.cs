@@ -33,7 +33,7 @@ namespace Custom.Areas.Data.Controllers
         public ActionResult Default(string name, Guid id)
         {
             ViewBag.Title = "Data Dictionary";
-            return View("~/Areas/Data/Views/Name/Default.cshtml");
+            return View("~/Views/Ext/Dictionary.cshtml");
         }
 
         //

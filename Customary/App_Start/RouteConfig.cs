@@ -15,6 +15,24 @@ namespace Custom
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            #region Styles/Ext.css
+
+            routes.MapRoute(
+                name: "ExtStyle",//Global.Routes.ExtRouteName,
+                url: "Styles/Ext.css",
+                defaults: new
+                {
+                    controller = "Ext",
+                    action = "Style"
+                },
+                namespaces: new[]
+                {
+                   "Custom.Controllers"
+                }
+            );
+
+            #endregion
+
             #region Scripts/Ext/custom/{action}
 
             routes.MapRoute(

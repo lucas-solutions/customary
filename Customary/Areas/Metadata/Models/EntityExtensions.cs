@@ -6,13 +6,13 @@ using System.Web;
 namespace Custom.Areas.Metadata.Models
 {
     using Custom.Data.Metadata;
-    using Custom.Site.Presentation;
+    using Custom.Presentation;
     using global::Raven.Json;
     using global::Raven.Json.Linq;
     using global::Raven.Imports.Newtonsoft;
     using global::Raven.Imports.Newtonsoft.Json;
     using global::Raven.Imports.Newtonsoft.Json.Serialization;
-    using Ext = Custom.Site.Presentation.Sencha.Ext;
+    using Ext = Custom.Presentation.Sencha.Ext;
     
     public static class EntityExtensions
     {

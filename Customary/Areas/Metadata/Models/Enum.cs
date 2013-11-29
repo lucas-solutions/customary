@@ -6,8 +6,8 @@ using System.Web;
 namespace Custom.Areas.Metadata.Models
 {
     using Custom.Data.Metadata;
-    using Custom.Site.Presentation;
-    using Ext = Custom.Site.Presentation.Sencha.Ext;
+    using Custom.Presentation;
+    using Ext = Custom.Presentation.Sencha.Ext;
 
     public class Enum
     {

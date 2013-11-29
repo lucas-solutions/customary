@@ -6,8 +6,8 @@ using System.Web.Mvc;
 
 namespace Custom.Controllers
 {
-    using Ext = Custom.Site.Presentation.Sencha.Ext;
-    using Custom.Site.Presentation;
+    using Ext = Custom.Presentation.Sencha.Ext;
+    using Custom.Presentation;
 
     public class FnController : Custom.Web.Mvc.CustomController
     {

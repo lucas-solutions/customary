@@ -1,0 +1,213 @@
+﻿<script type="text/javascript">
+    function hashFields($, properties) {
+
+        if ($ === null || typeof $ !== 'object') {
+            return properties;
+        }
+
+        if (typeof $.BaseType === 'string') {
+            hashFields(Ext.custom.Application.findMetadata($.BaseType), properties);
+        }
+
+        if ($ !== null && typeof $.Properties === 'object' && $.Properties.length > 0) {
+
+            for (var i = 0, count = $.Properties.length; i < count; i++) {
+                var property = $.Properties[i];
+                properties[property.Name] = property;
+            }
+        }
+
+        return properties;
+    }
+
+    /**
+    * class Ext.data.writer.DeepJson This class is used to write
+     *        {link Ext.data.Model} data to the server in a JSON format.
+     * 
+     * It overrides the original Ext.data.writer.Json since the Json can not handle
+     * hasMany association, it can only transform the outside part into Json, the
+     * inside data will be omiited.
+     * 
+     * Yi Fang Reference:
+        *     http://www.sencha.com/forum/showthread.php?141957-Saving-objects-that-are-linked-hasMany-relation-with-a-single-Store/page3     23 Mar 2012 6:00 AM
+    *     http://www.sencha.com/forum/showthread.php?141957-Saving-objects-that-are-linked-hasMany-relation-with-a-single-Store/page5     13 Feb 2013 2:57 PM
+    *     
+    */
+    Ext.define('Ext.data.writer.DeepJson', {
+        extend: 'Ext.data.writer.Json',
+        getRecordData: function (record, operation) {
+            // Setup variables
+            var me = this, i, association, childStore, data;
+
+            data = me.callParent(arguments);
+
+            // Iterate over all the hasMany associations
+            for (i = 0; i < record.associations.length; i++) {
+                association = record.associations.get(i);
+                if (association.type == 'hasMany') {
+                    data[association.name] = null;
+                    childStore = record[association.storeName];
+
+                    // Iterate over all the children in the current
+                    // association
+                    childStore.each(function (childRecord) {
+
+                        if (!data[association.name]) {
+                            data[association.name] = [];
+                        }
+
+                        // Recursively get the record data for
+                        // children (depth first)
+                        var childData = this.getRecordData.call(
+                                this, childRecord);
+
+                        /*
+                         * If the child was marked dirty or phantom
+                         * it must be added. If there was data
+                         * returned that was neither dirty or
+                         * phantom, this means that the depth first
+                         * recursion has detected that it has a
+                         * child which is either dirty or phantom.
+                         * For this child to be put into the
+                         * prepared data, it's parents must be in
+                         * place whether they were modified or not.
+                         */
+                        if (childRecord.dirty
+                                || childRecord.phantom
+                                || (childData != null)) {
+                            data[association.name].push(childData);
+                            record.setDirty();
+                        }
+                    }, me);
+
+                    /*
+                     * Iterate over all the removed records and add them to
+                     * the preparedData. Set a flag on them to show that
+                     * they are to be deleted
+                     */
+                    Ext.each(childStore.removed, function (
+                                    removedChildRecord) {
+                        // Set a flag here to identify removed
+                        // records
+                        removedChildRecord.set('forDeletion', true);
+                        var removedChildData = this.getRecordData
+                                .call(this, removedChildRecord);
+                        data[association.name]
+                                .push(removedChildData);
+                        record.setDirty();
+                    }, me);
+                }
+            }
+
+            // Only return data if it was dirty, new or marked for deletion.
+            if (record.dirty || record.phantom || record.get('forDeletion')) {
+                return data;
+            }
+            return null;
+        }
+    });
+
+    // convert arrays to objects usin property id as property name
+    Ext.define('Ext.data.writer.DeepPureJson', {
+        extend: 'Ext.data.writer.Json',
+        getRecordData: function (record, operation) {
+            // Setup variables
+            var me = this, $ = this.$, properties = {}, i, association, childStore, data;
+
+            data = me.callParent(arguments);
+
+            var properties = hashFields($, properties);
+
+            // Iterate over all the hasMany associations
+            for (i = 0; i < record.associations.length; i++) {
+
+                association = record.associations.get(i);
+
+                if (association.type == 'hasMany') {
+                    data[association.name] = null;
+                    childStore = record[association.storeName];
+
+                    var property = properties[association.name];
+
+                    if (typeof property === 'object' && property !== null && typeof property.$id === 'string') {
+
+                        // Iterate over all the children in the current
+                        // association
+                        childStore.each(function (childRecord) {
+
+                            if (!data[association.name]) {
+                                data[association.name] = {};
+                            }
+
+                            // Recursively get the record data for
+                            // children (depth first)
+                            var childData = this.getRecordData.call(this, childRecord);
+
+                            /*
+                             * If the child was marked dirty or phantom
+                             * it must be added. If there was data
+                             * returned that was neither dirty or
+                             * phantom, this means that the depth first
+                             * recursion has detected that it has a
+                             * child which is either dirty or phantom.
+                             * For this child to be put into the
+                             * prepared data, it's parents must be in
+                             * place whether they were modified or not.
+                             */
+
+                            if (childRecord.dirty || childRecord.phantom || (childData != null)) {
+                                var key = childRecord.raw[property.$id] || childData[property.$id];
+                                data[association.name][key] = childData;
+                                record.setDirty();
+                            }
+                        }, me);
+
+                        /*
+                         * Iterate over all the removed records and add them to
+                         * the preparedData. Set a flag on them to show that
+                         * they are to be deleted
+                         */
+                        Ext.each(childStore.removed, function (removedChildRecord) {
+                            // Set a flag here to identify removed
+                            // records
+                            removedChildRecord.set('forDeletion', true);
+                            var key = removedChildRecord.raw[property.$id];
+                            if (!!key) {
+                                var removedChildData = this.getRecordData.call(this, removedChildRecord);
+                                data[association.name][key] = null;
+                                record.setDirty();
+                            }
+                        }, me);
+                    }
+                }
+                else if (association.type === 'hasOne') {
+
+                    var childRecord = record[association.instanceName];
+
+                    if (typeof childRecord === 'object' && childRecord !== null) {
+
+                        // Recursively get the record data for
+                        // children (depth first)
+                        //var childData = childRecord.getData(true);// this.getRecordData.call(this, childRecord);
+
+                        var changes = childRecord.getChanges();
+
+                        var changesKeys = Object.keys(changes);
+
+                        if (changesKeys.length > 0) {
+                            data[association.name] = Ext.merge({}, changes);
+                            record.setDirty();
+                        }
+                    }
+                }
+            }
+
+            // Only return data if it was dirty, new or marked for deletion.
+            if (record.dirty || record.phantom || record.get('forDeletion')) {
+                return data;
+            }
+
+            return null;
+        }
+    });
+</script>

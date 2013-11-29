@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Custom.Models
 {
-    using Custom.Site.Presentation;
+    using Custom.Presentation;
 
     public class PageModel : ViewModel
     {
