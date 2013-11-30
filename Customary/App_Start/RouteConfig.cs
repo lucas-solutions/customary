@@ -500,6 +500,23 @@ namespace Custom
                 }
             );
 
+            routes.MapDomainRoute(
+                name: "data.customary.biz",
+                domain: "data.customary.biz",
+                url: "{*path}/{id}",
+                defaults: new
+                {
+                    area = "Data",
+                    controller = "Name",
+                    action = "Default",
+                    id = Guid.Empty
+                },
+                constraints: new
+                {
+                    id = new GuidConstraint()
+                }
+            );
+
             #endregion
 
             #endregion - Data -

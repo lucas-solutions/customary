@@ -24,6 +24,18 @@ namespace Custom
             get { return Global.Logger; }
         }
 
+        protected void Application_BeginRequest()
+        {
+            var startTime = DateTime.Now;
+            System.Web.HttpContext.Current.Items["SessionStartTime"] = (Nullable<DateTime>)startTime;
+        }
+
+        protected void Application_EndRequest()
+        {
+            System.Web.HttpContext.Current.Items["SessionStartTime"] = null;
+            System.Web.HttpContext.Current.Items["RavenSession"] = null;
+        }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();

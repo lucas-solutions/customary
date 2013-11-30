@@ -28,9 +28,12 @@ namespace Custom.Areas.Data.Controllers
             if (name == null)
             {
                 var definitionKey = string.Concat("Area/", id.ToString("D"));
-                var definition = Global.Metadata.Session.Load<RavenJObject>(definitionKey);
-                if (definition != null)
-                    name = definition.Value<string>("name");
+                using (var session = Global.Metadata.Store.OpenSession())
+                {
+                    var definition = session.Load<RavenJObject>(definitionKey);
+                    if (definition != null)
+                        name = definition.Value<string>("name");
+                }
             }
 
             if (name == null)

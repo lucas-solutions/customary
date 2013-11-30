@@ -14,10 +14,6 @@ namespace Custom.Data.Persistence
     {
         private static readonly object _lock = new object();
 
-        [ThreadStatic]
-        private static IDocumentSession _session;
-        private static DateTime? _startTime;
-
         private static IDocumentStore _store;
 
         private readonly string _name;
@@ -32,27 +28,34 @@ namespace Custom.Data.Persistence
             get { return _name; }
         }
 
+        /*private string SessionName
+        {
+            get { return "RavenSession" + Name; }
+        }
+
         public IDocumentSession Session
         {
             get
             {
-                var startTime = System.Web.HttpContext.Current.Items["SessionStartTime"] as Nullable<DateTime>;
+                var session = System.Web.HttpContext.Current.Items[SessionName] as IDocumentSession;
 
-                if (!startTime.HasValue)
+                if (session != null)
                 {
-                        startTime = DateTime.Now;
-                        System.Web.HttpContext.Current.Items["SessionStartTime"] = startTime;
+                    return session;
                 }
 
-                if (_session == null || !_startTime.HasValue || _startTime.Value < startTime.Value)
-                {
-                    _startTime = startTime;
-                    _session = Store.OpenSession();
-                }
+                session = Store.OpenSession();
 
-                return _session;
+                System.Web.HttpContext.Current.Items[SessionName] = session;
+
+                return session;
             }
-        }
+            private set
+            {
+                var itemName = "RavenSession" + Name;
+                System.Web.HttpContext.Current.Items[itemName] = value;
+            }
+        }*/
 
         public IDocumentStore Store
         {
@@ -92,16 +95,16 @@ namespace Custom.Data.Persistence
             new RavenDocumentsByEntityName().Execute(store);
         }
 
-        public void SaveChanges()
+        /*public void SaveChanges()
         {
-            var session = _session;
+            var session = System.Web.HttpContext.Current.Items[SessionName] as IDocumentSession; ;
 
             if (session != null)
             {
-                _session = null;
+                System.Web.HttpContext.Current.Items[SessionName] = null;
 
                 session.SaveChanges();
             }
-        }
+        }*/
     }
 }

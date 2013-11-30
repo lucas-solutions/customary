@@ -489,5 +489,25 @@ namespace Custom.Areas.Data.Controllers
 
             return Failure(data, "Not found");
         }
+
+        public ActionResult Options(string name)
+        {
+            var accept = Request.Headers["Accept"];
+            var acceptEncoding = Request.Headers["Accept-Encoding"];
+            var acceptLanguage = Request.Headers["Accept-Language"];
+            var acceptHeaders = Request.Headers["Access-Control-Request-Headers"];
+            var acceptMethod = Request.Headers["Access-Control-Request-Method"];
+
+            var content = new RavenJObject();
+            content["Accept"] = Request.Headers["Accept"];
+            content["Accept-Encoding"] = Request.Headers["Accept-Encoding"];
+            content["Accept-Language"] = Request.Headers["Accept-Language"];
+            content["Access-Control-Request-Headers"] = Request.Headers["Access-Control-Request-Headers"];
+            content["Access-Control-Request-Method"] = Request.Headers["Access-Control-Request-Method"];
+
+            Response.Headers["Access-Control-Allow-Origin"] = "*";
+
+            return Success(content);
+        }
     }
 }

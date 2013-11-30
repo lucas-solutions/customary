@@ -30,7 +30,7 @@ namespace Custom.Data.Persistence.Raven
 
         public IDocumentSession Session
         {
-            get { return _session ?? (_session = Store.OpenSession()); }
+            get { return Store.OpenSession(); }
         }
 
         public IDocumentStore Store

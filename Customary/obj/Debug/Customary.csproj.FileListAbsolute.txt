@@ -108,3 +108,8 @@ C:\Playground\Customary\Customary\bin\log4net.xml
 C:\Playground\Customary\Customary\obj\Debug\Customary.csprojResolveAssemblyReference.cache
 C:\Playground\Customary\Customary\bin\Custom.dll
 C:\Playground\Customary\Customary\bin\Custom.pdb
+C:\Playground\Customary\Customary\bin\App_Data\Seeds\Metadata\business.package.js
+C:\Playground\Customary\Customary\bin\App_Data\Seeds\Metadata\globalization.package.js
+C:\Playground\Customary\Customary\bin\App_Data\Seeds\Metadata\metadata.package.js
+C:\Playground\Customary\Customary\bin\App_Data\Seeds\Metadata\Metadata.zip
+C:\Playground\Customary\Customary\bin\App_Data\Seeds\Metadata\sap.package.js

@@ -231,7 +231,16 @@ namespace Custom.Results
             {
                 var lines = new List<string>();
                 Render(lines);
-                writer.WriteAllLines(lines);
+                if (System.Web.Hosting.HostingEnvironment.IsDevelopmentEnvironment)
+                {
+                    writer.WriteAllLines(lines);
+                }
+                else
+                {
+                    var minifier = new Minifiers.JSMinify();
+                    var script = minifier.Compress(lines);
+                    writer.Write(script);
+                }
             }
         }
 

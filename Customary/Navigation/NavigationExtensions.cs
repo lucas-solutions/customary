@@ -22,7 +22,10 @@ namespace Custom.Navigation
 
                 if ("Applications".Equals(segment, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var application = ctx.Session.Advanced.LuceneQuery<RavenJObject>("ByHost").WhereStartsWith("Id", "Applications/").Where("Host: '" + name + "'").FirstOrDefault();
+                    using (var session = ctx.Store.OpenSession())
+                    {
+                        var application = session.Advanced.LuceneQuery<RavenJObject>("ByHost").WhereStartsWith("Id", "Applications/").Where("Host: '" + name + "'").FirstOrDefault();
+                    }
                 }
 
                 lookup.Path.Push(name);

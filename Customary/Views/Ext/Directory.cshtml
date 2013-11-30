@@ -1,6 +1,8 @@
 ﻿<script type="text/javascript">
     // Create model, grid and forms for data definitions
 
+    var _baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+
     Ext.define('Ext.custom.Directory', function () {
 
         function fullName(node) {
@@ -369,7 +371,7 @@
             },
 
             constructor: function () {
-                this.baseUrl = 'http://data.customary.com';
+                this.baseUrl = _baseUrl;
                 this.indexStore = createIndexStore(this);
             },
 

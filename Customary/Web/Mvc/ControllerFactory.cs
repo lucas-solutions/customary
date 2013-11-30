@@ -50,6 +50,10 @@ namespace Custom.Web.Mvc
                                     crudAction = CrudActions.Update;
                                     break;
 
+                                case HttpVerbs.Options:
+                                    requestContext.RouteData.Values["action"] = "Options";
+                                    return controllerType;
+
                                 default:
                                     crudAction = CrudActions.Default;
                                     break;

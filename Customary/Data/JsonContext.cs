@@ -75,8 +75,11 @@ namespace Custom.Data
                 if (_metadataJObject != null && _metadataJObject.TryGetTarget(out metadataJObject))
                     return metadataJObject;
 
-                var ravenJObject = Global.Metadata.Session.Load<RavenJObject>(_key);
-                metadataJObject = Global.Metadata.Session.Advanced.GetMetadataFor<RavenJObject>(ravenJObject);
+                using (var session = Global.Metadata.Store.OpenSession())
+                {
+                    var ravenJObject = session.Load<RavenJObject>(_key);
+                    metadataJObject = session.Advanced.GetMetadataFor<RavenJObject>(ravenJObject);
+                }
 
                 //metadataJObject = Document.Metadata;
 

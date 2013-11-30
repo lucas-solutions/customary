@@ -273,6 +273,9 @@
     <Compile Include="Extensions\RavenExtensions.cs" />
     <Compile Include="Extensions\TextExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Minifiers\CSSMinify.cs" />
+    <Compile Include="Minifiers\ICompress.cs" />
+    <Compile Include="Minifiers\JSMinify.cs" />
     <Compile Include="Presentation\IScriptable.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -381,7 +384,6 @@
     <Compile Include="Data\Persistence\MetadataContext.cs" />
     <Compile Include="Data\Persistence\NavigationContext.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Data\Metadata\PrototypeExtensions.cs" />
     <Compile Include="Models\MapPathModel.cs" />
     <Compile Include="Navigation\HostDescriptor.cs" />
     <Compile Include="Navigation\HostExtensions.cs" />
@@ -459,6 +461,21 @@
     <Content Include="App_Data\Seeds\Globalization\Language.js" />
     <Content Include="App_Data\Seeds\Globalization\Measure.js" />
     <Content Include="App_Data\Seeds\Globalization\Texts.js" />
+    <Content Include="App_Data\Seeds\Metadata\business.package.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\Seeds\Metadata\globalization.package.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\Seeds\Metadata\metadata.package.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\Seeds\Metadata\Metadata.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\Seeds\Metadata\sap.package.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\Seeds\Navigation\localhost.js" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -554,6 +571,7 @@
     <Content Include="Views\Ext\Directory.cshtml" />
     <Content Include="Views\Ext\Header.cshtml" />
     <Content Include="Views\Ext\_Layout.cshtml" />
+    <None Include="Properties\PublishProfiles\customary.biz - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\adapter.js" />
     <Content Include="Scripts\Angular\account.js" />
@@ -3664,7 +3682,6 @@
     <Folder Include="App_Data\Seeds\Automation\" />
     <Folder Include="App_Data\Seeds\Business\" />
     <Folder Include="App_Data\Seeds\Masterdata\" />
-    <Folder Include="App_Data\Seeds\Metadata\" />
     <Folder Include="App_Data\Seeds\Presentation\" />
     <Folder Include="App_Data\Seeds\Syndication\" />
     <Folder Include="App_Data\Seeds\System\" />

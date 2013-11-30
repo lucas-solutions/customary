@@ -9,8 +9,10 @@ namespace Custom.Navigation
     {
         public static HostDescriptor Save(this HostDescriptor host)
         {
-            var session = Global.Navigation.Session;
-            session.Store(host);
+            using (var session = Global.Navigation.Store.OpenSession())
+            {
+                session.Store(host);
+            }
             return host;
         }
     }

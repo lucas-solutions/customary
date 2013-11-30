@@ -32,19 +32,24 @@ namespace Custom.Data.Persistence.Repositories
 
             try
             {
-                var data = _context.Session.Advanced.LoadStartingWith<RavenJObject>(_descriptor.KeyPrefix, null, skip, take);
-
-                foreach (var entity in data)
+                RavenJObject[] data;
+                using (var session = _context.Store.OpenSession())
                 {
-                    var metadata = _context.Session.Advanced.GetMetadataFor<RavenJObject>(entity);
+                    data = session.Advanced.LoadStartingWith<RavenJObject>(_descriptor.KeyPrefix, null, skip, take);
 
-                    entity["$key"] = metadata["@id"];
-                    entity["$type"] = metadata["Raven-Entity-Name"];
-
-                    Guid id;
-                    if (Guid.TryParse(metadata["@id"].Value<string>().Split('/').Last(), out id))
+                    foreach (var entity in data)
                     {
-                        entity["Id"] = new RavenJValue(id);
+                        RavenJObject metadata;
+                        metadata = session.Advanced.GetMetadataFor<RavenJObject>(entity);
+
+                        entity["$key"] = metadata["@id"];
+                        entity["$type"] = metadata["Raven-Entity-Name"];
+
+                        Guid id;
+                        if (Guid.TryParse(metadata["@id"].Value<string>().Split('/').Last(), out id))
+                        {
+                            entity["Id"] = new RavenJValue(id);
+                        }
                     }
                 }
 
@@ -68,7 +73,12 @@ namespace Custom.Data.Persistence.Repositories
             {
                 var keyPrefix = _descriptor.KeyPrefix;
                 var key = string.Concat(keyPrefix, id);
-                var data = _context.Session.Load<RavenJObject>(key);
+                RavenJObject data;
+
+                using (var session = _context.Store.OpenSession())
+                {
+                    data = session.Load<RavenJObject>(key);
+                }
 
                 if (data != null)
                 {
@@ -102,7 +112,10 @@ namespace Custom.Data.Persistence.Repositories
 
                 value["id"] = new RavenJValue(id);
 
-                _context.Session.Store(value, key);
+                using (var session = _context.Store.OpenSession())
+                {
+                    session.Store(value, key);
+                }
 
                 result["success"] = new RavenJValue(true);
                 result["data"] = value;
@@ -126,21 +139,32 @@ namespace Custom.Data.Persistence.Repositories
 
                 if (patch)
                 {
-                    var current = _context.Session.Load<RavenJObject>(key);
+                    RavenJObject current;
+
+                    using (var session = _context.Store.OpenSession())
+                    {
+                        current = session.Load<RavenJObject>(key);
+                    }
 
                     patch = current != null;
 
                     if (patch)
                     {
                         current.Merge(value, _descriptor.Definition);
-                        _context.Session.Store(current, key);
+                        using (var session = _context.Store.OpenSession())
+                        {
+                            session.Store(current, key);
+                        }
                         value = current;
                     }
                 }
 
                 if (!patch)
                 {
-                    _context.Session.Store(value, key);
+                    using (var session = _context.Store.OpenSession())
+                    {
+                        session.Store(value, key);
+                    }
                 }
 
                 value["id"] = new RavenJValue(id);
@@ -165,12 +189,20 @@ namespace Custom.Data.Persistence.Repositories
             {
                 var key = _descriptor.KeyPrefix + id.ToString("D");
 
-                var current = _context.Session.Load<RavenJObject>(key);
+                RavenJObject current;
+
+                using (var session = _context.Store.OpenSession())
+                {
+                    current = session.Load<RavenJObject>(key);
+                }
 
                 if (current != null)
                 {
-                    _context.Session.Delete(current);
-                    _context.Session.SaveChanges();
+                    using (var session = _context.Store.OpenSession())
+                    {
+                        session.Delete(current);
+                        session.SaveChanges();
+                    }
                 }
                 else
                 {
@@ -196,12 +228,20 @@ namespace Custom.Data.Persistence.Repositories
             {
                 var key = _descriptor.KeyPrefix + entity["Id"];
 
-                var current = _context.Session.Load<RavenJObject>(key);
+                RavenJObject current;
+
+                using (var session = _context.Store.OpenSession())
+                {
+                    current = session.Load<RavenJObject>(key);
+                }
 
                 if (current != null)
                 {
-                    _context.Session.Delete(current);
-                    _context.Session.SaveChanges();
+                    using (var session = _context.Store.OpenSession())
+                    {
+                        session.Delete(current);
+                        session.SaveChanges();
+                    }
                 }
                 else
                 {
@@ -249,15 +289,22 @@ namespace Custom.Data.Persistence.Repositories
 
                     var key = _descriptor.KeyPrefix + id;
 
-                    var current = _context.Session.Load<RavenJObject>(key);
+                    RavenJObject current;
+
+                    using (var session = _context.Store.OpenSession())
+                    {
+                        current = session.Load<RavenJObject>(key);
+                    }
 
                     if (current != null)
                     {
-                        _context.Session.Delete(current);
+                        using (var session = _context.Store.OpenSession())
+                        {
+                            session.Delete(current);
+                            session.SaveChanges();
+                        }
                     }
                 }
-
-                _context.Session.SaveChanges();
 
                 result["success"] = new RavenJValue(true);
             }
@@ -324,7 +371,12 @@ namespace Custom.Data.Persistence.Repositories
 
                     if (patch)
                     {
-                        var current = _context.Session.Load<RavenJObject>(key);
+                        RavenJObject current;
+
+                        using (var session = _context.Store.OpenSession())
+                        {
+                            current = session.Load<RavenJObject>(key);
+                        }
 
                         patch = current != null;
 
@@ -339,7 +391,10 @@ namespace Custom.Data.Persistence.Repositories
 
                     if (!patch)
                     {
-                        _context.Session.Store(entity, key);
+                        using (var session = _context.Store.OpenSession())
+                        {
+                            session.Store(entity, key);
+                        }
                     }
 
                     result["success"] = new RavenJValue(true);

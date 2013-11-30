@@ -9,8 +9,10 @@ namespace Custom.Data.Metadata
     {
         public static PropertyDefinition Save(this PropertyDefinition property)
         {
-            var session = Global.Metadata.Session;
-            session.Store(property);
+            using (var session = Global.Metadata.Store.OpenSession())
+            {
+                session.Store(property);
+            }
             return property;
         }
     }

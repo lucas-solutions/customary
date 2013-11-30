@@ -33,13 +33,19 @@ namespace Custom.Data.Metadata
                     {
                         var descriptor = t as TypeDefinition;
                         //descriptor.ID = Guid.NewGuid();
-                        ctx.Session.Store(t);
+                        using (var session = Global.Metadata.Store.OpenSession())
+                        {
+                            session.Store(t);
+                            session.SaveChanges();
+                        }
                     }
-                    ctx.Session.SaveChanges();
 
                     foreach (var t in types)
                     {
-                        RavenJObject metadata = ctx.Session.Advanced.GetMetadataFor(t);
+                        using (var session = Global.Metadata.Store.OpenSession())
+                        {
+                            RavenJObject metadata = session.Advanced.GetMetadataFor(t);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -66,7 +72,10 @@ namespace Custom.Data.Metadata
             var descriptor = System.Web.HttpContext.Current.Items[documentId] as TypeDefinition;
             if (descriptor == null)
             {
-                descriptor = metadata.Session.Load<TypeDefinition>(documentId);
+                using (var session = metadata.Store.OpenSession())
+                {
+                    descriptor = session.Load<TypeDefinition>(documentId);
+                }
                 System.Web.HttpContext.Current.Items[documentId] = descriptor;
             }
             return descriptor;
@@ -97,9 +106,12 @@ namespace Custom.Data.Metadata
 
             try
             {
-                record = context.Session.Advanced.LuceneQuery<RavenJObject, Indexes.MetadaTypeIndexCreationTask>().Where("Name:" + name).FirstOrDefault();
-                var id = context.Session.Advanced.GetDocumentId(record);
-                record["id"] = id;
+                using (var session = Global.Metadata.Store.OpenSession())
+                {
+                    record = session.Advanced.LuceneQuery<RavenJObject, Indexes.MetadaTypeIndexCreationTask>().Where("Name:" + name).FirstOrDefault();
+                    var id = session.Advanced.GetDocumentId(record);
+                    record["id"] = id;
+                }
             }
             catch (Exception e)
             {
@@ -139,7 +151,12 @@ namespace Custom.Data.Metadata
             if (descriptor == null)
                 throw new InvalidOperationException();
 
-            var data = metadata.Session.Load<RavenJObject>(id);
+            RavenJObject data;
+
+            using (var session = metadata.Store.OpenSession())
+            {
+                data = session.Load<RavenJObject>(id);
+            }
 
             if (data == null)
                 throw new InvalidOperationException();

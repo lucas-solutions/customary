@@ -1,6 +1,8 @@
 ﻿<script type="text/javascript">
 
-    var _baseUrl = 'http://data.customary.com';
+    var _baseUrl = '@Request.Url.GetLeftPart(UriPartial.Authority)';
+
+    var frameStyle = 'background-color:#dfe8f5;';
 
     var guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 

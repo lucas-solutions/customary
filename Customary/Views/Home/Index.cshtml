@@ -1,5 +1,4 @@
-﻿@using Ext = Custom.Presentation.Sencha.Ext
-@{
+﻿@{
     ViewBag.Title = "Home Page";
 }
 @section featured {
@@ -21,17 +20,17 @@
 }
 <h3>Index</h3>
 @{
-    var fnViewportClick = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.Click });
-    var fnViewportMouseMove = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseMove });
-    var fnViewportMouseDown = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseDown });
-    var fnViewportMouseUp = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseUp });
+    //var fnViewportClick = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.Click });
+    //var fnViewportMouseMove = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseMove });
+    //var fnViewportMouseDown = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseDown });
+    //var fnViewportMouseUp = Url.RouteUrl("Default", new { controller = "Fn", action = "Viewport", id = Ext.container.Viewport.Events.MouseUp });
     var redirectTo = Url.RouteUrl("Default", new { controller = "Test", action = "Redirect", returnTO = "https://www.easeaccess.com/thisisgood?aparam=1&antoherParam=2" });
     var redirectTo2 = "/Test/Redirect?returnTO=https://www.easeaccess.com/thisisgood?aparam=1&antoherParam=2";
     var mapPath = Url.RouteUrl("Default", new { controller = "Test", action = "MapPath", path = "~Test/MapPath" });
     var logger = Url.RouteUrl("Default", new { controller = "Test", action = "Logger", category = "Info", message = "test" });
-    var modl = Url.RouteUrl("Metadata_ext", new { controller = "Entity", action = "Model" });
-    var entity = Url.RouteUrl("Metadata_default", new { controller = "Entity" });
-    var enu = Url.RouteUrl("Metadata_default", new { controller = "Enum" });
+    //var modl = Url.RouteUrl("Metadata_ext", new { controller = "Entity", action = "Model" });
+    //var entity = Url.RouteUrl("Metadata_default", new { controller = "Entity" });
+    //var enu = Url.RouteUrl("Metadata_default", new { controller = "Enum" });
 }
 <ol class="round">
     <li class="one">
@@ -45,25 +44,15 @@
     <li class="two">
         <h5>Scripting</h5>
         Javascript Generation and composition
-        <ul>
+        @*<ul>
             <li><a href="@fnViewportClick">@fnViewportClick</a></li>
             <li><a href="@fnViewportMouseMove">@fnViewportMouseMove</a></li>
             <li><a href="@fnViewportMouseDown">@fnViewportMouseDown</a></li>
             <li><a href="@fnViewportMouseUp">@fnViewportMouseUp</a></li>
-        </ul>
+        </ul>*@
     </li>
 
     <li class="three">
-        <h5>Metadata</h5>
-        Metadata editing (Entities, Enums, etc)
-        <ul>
-            <li><a href="@entity">@entity</a></li>
-            <li><a href="@enu">@enu</a></li>
-            <li><a href="@modl">@modl</a></li>
-        </ul>
-    </li>
-
-    <li class="four">
         <h5>Utilities</h5>
         Redirection, MapPath, etc.
         <ul>
