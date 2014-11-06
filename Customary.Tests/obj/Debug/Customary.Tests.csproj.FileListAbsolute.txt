@@ -230,3 +230,6 @@ C:\Bitbucket\customary\Customary.Tests\bin\Debug\Mono.Math.xml
 C:\Bitbucket\customary\Customary.Tests\obj\Debug\Customary.Tests.csprojResolveAssemblyReference.cache
 C:\Bitbucket\customary\Customary.Tests\obj\Debug\Customary.Tests.dll
 C:\Bitbucket\customary\Customary.Tests\obj\Debug\Customary.Tests.pdb
+C:\Bitbucket\customary\Customary.Tests\bin\Debug\Customary.Tests.dll.config
+C:\Bitbucket\customary\Customary.Tests\bin\Debug\Customary.Tests.dll
+C:\Bitbucket\customary\Customary.Tests\bin\Debug\Customary.Tests.pdb
