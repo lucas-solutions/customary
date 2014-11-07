@@ -485,7 +485,7 @@ namespace Custom
 
             routes.MapDomainRoute(
                 name: Global.Routes.DataDomainRouteName,
-                domain: "data.customary.com",
+                domain: "data.spredwell.com",
                 url: "{*path}/{id}",
                 defaults: new
                 {

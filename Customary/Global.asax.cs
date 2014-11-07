@@ -68,10 +68,10 @@ namespace Custom
 
             //Global.Metadata.Store.Import(cultures);
 
-            /*using (var fileStream = System.IO.File.Open(metadataDir + "\\Metadata.zip", System.IO.FileMode.Open))
+            using (var fileStream = System.IO.File.Open(metadataDir + "\\Metadata.zip", System.IO.FileMode.Open))
             {
                 DocumentArchive.Import(Global.Metadata.Store, fileStream);
-            }*/
+            }
 
             var dictionary = Data.DataDictionary.Current;
 
